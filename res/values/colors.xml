@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+  <!-- base colors -->
+  <color name="midnight_dark">#ff0d1012</color>
+  <color name="midnight_medium">#ff181e20</color>
+  <color name="midnight_light">#ff171c1d</color>
+
+  <color name="midnight_ultralight">#ff2d3538</color>
+
+  <color name="slate">#ff445d68</color>
+
+  <!-- base text colors -->
+  <color name="text_color_primary">#fffffded</color>
+  <color name="text_color_secondary">#ff88827f</color>
+
+  <!-- color variations -->
+  <color name="midnight_dark_tint">#ff101414</color>
+  <color name="midnight_ultralight_pressed">#ff35464c</color>
+  <color name="midnight_medium_disabled">#88181e20</color>
+
+  <color name="text_color_primary_slightly_transparent">#ddfffded</color>
+  <color name="text_color_primary_subtle">#88fffded</color>
+  <color name="text_color_primary_disabled">#44fffded</color>
+</resources>

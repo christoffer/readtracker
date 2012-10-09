@@ -1,0 +1,9 @@
+<resources>
+  <style name="ReadTrackerTheme"
+         parent="android:Theme">
+    <item name="android:windowTitleSize">0dip</item>
+    <item name="android:windowTitleBackgroundStyle">@style/ReadTrackerTitle</item>
+    <item name="android:windowContentOverlay">@null</item>
+    <item name="android:windowBackground">@color/midnight_medium</item>
+  </style>
+</resources>

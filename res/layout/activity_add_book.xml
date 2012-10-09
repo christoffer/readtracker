@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
+              android:scrollbars="vertical"
+              android:orientation="vertical">
+
+  <include layout="@layout/_generic_nav_header" />
+
+  <LinearLayout android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:padding="12dp"
+                android:orientation="vertical">
+
+    <TextView android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_marginTop="24dp"
+              android:layout_marginBottom="6dp"
+              android:textColor="@color/text_color_secondary"
+              android:text="Title &amp; author" />
+
+    <EditText android:id="@+id/editTitle"
+              style="@style/default_input_field"
+              android:layout_marginBottom="12dp"
+              android:hint="Title" />
+
+    <EditText android:id="@+id/editAuthor"
+              style="@style/default_input_field"
+              android:layout_marginBottom="12dp"
+              android:hint="Author" />
+
+    <TextView android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_marginTop="24dp"
+              android:layout_marginBottom="6dp"
+              android:textColor="@color/text_color_secondary"
+              android:text="Length" />
+
+    <LinearLayout android:layout_height="wrap_content"
+                  android:layout_width="fill_parent"
+                  android:layout_marginBottom="6dp"
+                  android:orientation="horizontal">
+
+      <EditText android:id="@+id/editPageCount"
+                style="@style/default_input_field"
+                android:layout_width="fill_parent"
+                android:layout_weight="1"
+                android:layout_marginRight="6dp"
+                android:inputType="number"
+                android:gravity="center"
+                android:text="0"
+                android:hint="Optional" />
+
+      <ToggleButton android:id="@+id/togglePagesPercent"
+                    style="@style/default_toggle_button"
+                    android:layout_weight="1"
+                    android:textOn="Pages"
+                    android:textOff="Percent"
+                    android:checked="true"
+                    android:layout_marginLeft="6dp" />
+    </LinearLayout>
+
+    <TextView android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_marginTop="24dp"
+              android:layout_marginBottom="6dp"
+              android:textColor="@color/text_color_secondary"
+              android:text="Readmill" />
+
+    <ToggleButton android:id="@+id/togglePublicPrivate"
+                  style="@style/default_toggle_button"
+                  android:textOn="Show on profile"
+                  android:textOff="Only visible to me"
+                  android:checked="true" />
+
+    <View android:layout_width="fill_parent"
+          android:layout_height="fill_parent"
+          android:layout_weight="1" />
+
+    <Button android:id="@+id/buttonAddBook"
+            style="@style/default_button_primary_action"
+            android:layout_alignParentBottom="true"
+            android:text="Add" />
+
+  </LinearLayout>
+</LinearLayout>

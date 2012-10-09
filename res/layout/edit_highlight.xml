@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_height="fill_parent"
+                android:layout_width="fill_parent"
+                android:gravity="center_horizontal">
+
+  <include layout="@layout/_book_header" />
+
+  <LinearLayout android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:padding="10dp"
+                android:orientation="vertical"
+                android:layout_below="@id/_bookHeader"
+                android:layout_above="@+id/dividerAbovePageWheelLayout">
+
+    <EditText android:id="@+id/editHighlightText"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
+              android:layout_weight="1"
+              android:background="@drawable/default_input_field"
+              android:textColor="@color/text_color_primary"
+              android:text=""
+              android:typeface="serif"
+              android:textStyle="italic"
+              android:textSize="16dp"
+              android:padding="15dp"
+              android:inputType="text|textCapSentences|textAutoCorrect|textMultiLine"
+              android:gravity="fill_horizontal" />
+
+  </LinearLayout>
+
+  <View android:id="@+id/dividerAbovePageWheelLayout"
+        style="@style/thick_divider"
+        android:layout_above="@+id/pageWheelLayout"
+        android:layout_marginBottom="0dp" />
+
+  <LinearLayout android:id="@+id/pageWheelLayout"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/dividerBelowPageWheelLayout"
+                android:background="@color/midnight_medium"
+                android:paddingTop="20dp"
+                android:paddingBottom="20dp"
+                android:orientation="vertical"
+                android:gravity="center_horizontal">
+
+    <TextView android:layout_height="wrap_content"
+              android:layout_width="wrap_content"
+              android:text="What page is the highlight on?"
+              android:lines="1"
+              android:textSize="12sp"
+              android:textColor="@color/text_color_secondary"
+              android:gravity="center_horizontal"
+              android:layout_marginBottom="30dp" />
+
+    <com.readtracker.thirdparty.widget.WheelView android:id="@+id/wheelHighlightPage"
+                                                         android:layout_marginLeft="0dp"
+                                                         android:minHeight="50dp"
+                                                         android:minWidth="100dp"
+                                                         android:layout_width="wrap_content"
+                                                         android:layout_height="wrap_content" />
+
+  </LinearLayout>
+
+  <View android:id="@+id/dividerBelowPageWheelLayout"
+        style="@style/thick_divider"
+        android:layout_above="@+id/btnSaveHighlight" />
+
+  <Button android:id="@+id/btnSaveHighlight"
+          style="@style/default_button"
+          android:text="Save"
+          android:layout_margin="5dp"
+          android:layout_alignParentBottom="true" />
+
+</RelativeLayout>

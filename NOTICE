@@ -1,0 +1,15 @@
+NOTICE
+
+The ViewPagerIndicator library is used under the terms of the Apache 2.0 license and is copyright Patrik Akerfeldt, Francisco Figueiredo Jr., and Jake Wharton.
+See https://github.com/JakeWharton/Android-ViewPagerIndicator for details.
+
+The SafeViewFlipper class is copyright Eric Burke.
+See http://pastie.org/1086467 for details.
+
+The DrawableManager class is used under the terms of the Apache 2.0 license and is copyright James A Wilson, with modifications by Martin Flodin.
+See http://stackoverflow.com/questions/541966/android-how-do-i-do-a-lazy-load-of-images-in-listview/559781#559781 for details.
+
+The Android Wheel Control widget is used under the terms of the Apache 2.0 license and is copyright Yuri Kanivets.
+See http://code.google.com/p/android-wheel/ for details.
+
+This code is made available under the Apache License and is copyright Christoffer Klang.

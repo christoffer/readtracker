@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="failed_to_connect_to_readmill">Connect the book to your Readmill account.\n\nTry logging out and in again.</string>
+  <string name="redirect_uri">readtracker://connected</string>
+  <string name="redirect_scheme">readtracker</string>
+
+  <string name="please_enter_number_of_pages">Please enter the number of pages in\n%s to start reading</string>
+  <string name="sample_closing_remark">Not really sure I agree that this was better than the first one, but it was definitely as good. I was missing a real build up for the middle part though, and it kind of broke the pace of the story for me a little. But looking forward to reading the last one, hoping for a satisfying conclusion.</string>
+  <string name="sample_reading_session_text">Read for about <b>0 minutes</b>, and reached <b>page 130</b> yesterday in the evening</string>
+
+  <string name="visible_to_friends">Visible to friends</string>
+</resources>

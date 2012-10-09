@@ -1,0 +1,4 @@
+<resources>
+  <dimen name="edit_text_huge">75sp</dimen>
+  <dimen name="edit_text_medium">25sp</dimen>
+</resources>

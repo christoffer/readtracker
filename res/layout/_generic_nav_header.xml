@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  generic header with a logo that lets the user navigate home
+-->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                style="@style/activity_header">
+
+  <ImageView android:layout_width="wrap_content"
+             android:layout_height="fill_parent"
+             android:layout_alignParentLeft="true"
+             android:scaleType="centerInside"
+             android:layout_gravity="left"
+             android:layout_marginLeft="10dp"
+             android:src="@drawable/logo_readtracker" />
+
+  <TextView android:id="@+id/textOffline"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:text="Offline"
+            android:visibility="gone"
+            android:textColor="#fff"
+            android:background="#8000"
+            android:layout_alignParentRight="true"
+            android:gravity="center_vertical"
+            android:padding="6dp" />
+
+</RelativeLayout>
+

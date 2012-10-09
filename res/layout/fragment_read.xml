@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent">
+
+  <!-- Flipper for switching between "Please enter page count" and reading mode -->
+
+  <com.readtracker.thirdparty.SafeViewFlipper android:id="@+id/flipperReadingSession"
+                                              android:layout_height="fill_parent"
+                                              android:layout_width="fill_parent"
+                                              android:layout_alignParentTop="true">
+    <!-- screen for time tracking  -->
+    <RelativeLayout android:layout_height="fill_parent"
+                    android:layout_width="fill_parent"
+                    android:padding="12dp"
+                    android:orientation="vertical">
+
+      <!-- flipper between the start and pause/done button -->
+
+      <com.readtracker.thirdparty.SafeViewFlipper android:id="@+id/flipperSessionControl"
+                                                  style="@style/flipper_action_buttons"
+                                                  android:layout_alignParentBottom="true">
+
+        <!-- start button -->
+
+        <Button style="@style/default_button"
+                android:id="@+id/buttonStart"
+                android:layout_gravity="center"
+                android:text="Start" />
+
+        <!-- group of pause/resume and done button -->
+
+        <LinearLayout android:layout_width="fill_parent"
+                      android:layout_height="wrap_content">
+
+          <Button style="@style/default_button"
+                  android:id="@+id/buttonPause"
+                  android:layout_weight="1"
+                  android:layout_marginRight="6dp"
+                  android:text="Pause" />
+
+          <Button style="@style/default_button"
+                  android:id="@+id/buttonDone"
+                  android:layout_alignParentBottom="true"
+                  android:layout_weight="1"
+                  android:layout_marginLeft="6dp"
+                  android:text="Done" />
+
+        </LinearLayout>
+
+      </com.readtracker.thirdparty.SafeViewFlipper>
+
+      <!-- session timer
+
+      sandwich the timer between two views to center and
+      stretch it to a percentage of the available height
+      -->
+
+      <LinearLayout android:layout_height="fill_parent"
+                    android:layout_width="fill_parent"
+                    android:layout_above="@id/flipperSessionControl"
+                    android:layout_centerInParent="true"
+                    android:orientation="vertical">
+
+        <View android:layout_height="fill_parent"
+              android:layout_width="fill_parent"
+              android:layout_weight="1.1" />
+
+        <include android:id="@+id/layoutSessionTimer"
+                 layout="@layout/_read_session_timer"
+                 android:layout_weight="1"
+                 android:layout_width="fill_parent"
+                 android:layout_height="fill_parent" />
+
+        <View android:layout_height="fill_parent"
+              android:layout_width="fill_parent"
+              android:layout_weight="1.1" />
+      </LinearLayout>
+
+    </RelativeLayout>
+
+    <!-- input screen for total pages -->
+
+    <RelativeLayout android:id="@+id/layoutTotalPages"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent">
+
+      <TextView android:id="@+id/textEnterNumberOfPages"
+                android:text="@string/please_enter_number_of_pages"
+                style="@style/small_content_text"
+                android:layout_above="@+id/editPageCount"
+                android:gravity="center"
+                android:layout_marginBottom="20dp" />
+
+      <!-- Use a dummy view as parent center so that we can relate other views
+      up or down from it -->
+      <View android:id="@+id/dummyView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="-20dp"
+            android:layout_centerInParent="true" />
+
+      <EditText android:text=""
+                android:id="@+id/editPageCount"
+                style="@style/centered_number_input_field"
+                android:layout_above="@+id/dummyView"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center_horizontal" />
+
+      <Button android:id="@+id/buttonUpdatePageNumbers"
+              style="@style/default_button"
+              android:layout_width="fill_parent"
+              android:layout_height="wrap_content"
+              android:layout_alignParentBottom="true"
+              android:text="Save" />
+
+    </RelativeLayout>
+  </com.readtracker.thirdparty.SafeViewFlipper>
+</LinearLayout>

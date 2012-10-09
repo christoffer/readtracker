@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="13dip"
+                android:paddingBottom="12dip"
+                android:paddingLeft="13dip"
+                android:paddingRight="13dip">
+
+  <ImageView android:id="@+id/imageCover" style="@style/cover_image" />
+
+  <LinearLayout android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/imageCover"
+                android:orientation="vertical">
+
+    <TextView android:id="@+id/textTitle"
+              style="@style/single_line_title"
+              android:text="Metamorphosis" />
+
+    <TextView android:id="@+id/textAuthor"
+              style="@style/single_line_author"
+              android:layout_below="@id/textTitle"
+              android:text="Franz Kafka" />
+
+    <ProgressBar android:id="@+id/progressReadingProgress"
+                 style="@style/progress_bar"
+                 android:layout_marginTop="7dip"
+                 android:layout_marginBottom="7dip" />
+
+    <TextView android:id="@+id/textEstimatedTimeLeft"
+              android:textColor="@color/text_color_secondary"
+              android:textSize="10sp"
+              android:layout_width="fill_parent"
+              android:layout_height="wrap_content"
+              android:text="Estimated time left: 3 hours 40 minutes" />
+
+  </LinearLayout>
+
+</RelativeLayout>

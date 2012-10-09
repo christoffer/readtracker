@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_height="fill_parent"
+              android:layout_width="fill_parent"
+              android:background="@color/midnight_medium"
+              android:padding="10dp">
+
+  <Button android:id="@+id/buttonWhyAccount"
+          style="@style/button_small"
+          android:text="Why do I need an account?"
+          android:visibility="invisible"
+          android:layout_gravity="center_horizontal" />
+
+  <LinearLayout android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="1.0"
+                android:gravity="center">
+
+    <ImageView android:layout_marginTop="13dp"
+               android:layout_width="fill_parent"
+               android:layout_gravity="center"
+               android:layout_height="wrap_content"
+               android:src="@drawable/logo_timer"
+               android:paddingLeft="20dip"
+               android:paddingRight="20dip"
+               android:scaleType="centerInside" />
+
+  </LinearLayout>
+
+  <LinearLayout android:layout_height="wrap_content"
+                android:layout_width="fill_parent"
+                android:layout_gravity="bottom"
+                android:layout_marginTop="40dp"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+    <Button android:id="@+id/btnAuthorization"
+            style="@style/default_button"
+            android:layout_margin="0dp"
+            android:text="Sign in to Readmill" />
+
+    <Button android:id="@+id/btnSignUp"
+            style="@style/default_button"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="0dp"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="0dp"
+            android:text="Create an account"/>
+
+  </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
+              android:padding="12dp">
+
+  <com.readtracker.thirdparty.widget.WheelView android:id="@+id/wheelHours"
+                                               android:layout_marginLeft="0dp"
+                                               style="@style/default_wheel_view" />
+
+  <com.readtracker.thirdparty.widget.WheelView android:id="@+id/wheelMinutes"
+                                               android:layout_marginLeft="6dp"
+                                               android:layout_marginRight="6dp"
+                                               style="@style/default_wheel_view" />
+
+  <com.readtracker.thirdparty.widget.WheelView android:id="@+id/wheelSeconds"
+                                               android:layout_marginRight="0dp"
+                                               style="@style/default_wheel_view" />
+
+</LinearLayout>
