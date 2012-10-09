@@ -88,15 +88,12 @@ public class ApplicationReadTracker extends Application implements TokenChangeLi
     Environment environment;
     ReadmillWrapper wrapper;
 
-    boolean useReadmillLive = getResources().getBoolean(R.bool.use_readmill_live);
+    // The setup for Readmill is fetched from a resource file. Check sample_credentials.xml for how to set it up.
+    String readmillDomain = getString(R.string.readmill_domain);
+    boolean useHttps = getResources().getBoolean(R.bool.readmill_https);
 
-    if(useReadmillLive) {
-      environment = new Environment("api.readmill.com", "m.readmill.com", true);
-      wrapper = new ReadmillWrapper(getString(R.string.client_id), getString(R.string.client_secret), environment);
-    } else {
-      environment = new Environment("api.readmill.local", "m.readmill.local", false);
-      wrapper = new ReadmillWrapper(getString(R.string.development_client_id), getString(R.string.development_client_secret), environment);
-    }
+    environment = new Environment("api." + readmillDomain, "m." + readmillDomain, useHttps);
+    wrapper = new ReadmillWrapper(getString(R.string.client_id), getString(R.string.client_secret), environment);
 
     URI redirectURI = URI.create(getString(R.string.redirect_uri));
     wrapper.setRedirectURI(redirectURI);
