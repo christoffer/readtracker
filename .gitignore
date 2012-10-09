@@ -1,0 +1,16 @@
+.classpath
+bin/*
+tests/bin/*
+R.java
+default.properties
+.project
+.settings
+res/values/application.xml
+*.apk
+.idea/*
+proguard/*
+exported/*
+project.properties
+out/*
+proguard_logs/*
+res/values/credentials.xml
