@@ -9,7 +9,7 @@
 
   <Button android:id="@+id/buttonOffline"
           style="@style/button_small"
-          android:text="Use ReadTracker offline"
+          android:text="Use ReadTracker without Readmill"
           android:layout_gravity="center_horizontal" />
 
   <LinearLayout android:layout_width="fill_parent"
