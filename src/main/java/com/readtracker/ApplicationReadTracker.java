@@ -256,7 +256,12 @@ public class ApplicationReadTracker extends Application implements TokenChangeLi
 
   public void clearProgressDialog() {
     if(mProgressDialog != null) {
-      mProgressDialog.dismiss();
+      try {
+        mProgressDialog.dismiss();
+      } catch(IllegalArgumentException ignored) {
+        // We sometimes end up here if the activity that started the progress dialog is no longer
+        // attached to the view manager.
+      }
     }
     mProgressDialog = null;
   }
