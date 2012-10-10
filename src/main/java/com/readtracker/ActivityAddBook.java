@@ -3,10 +3,7 @@ package com.readtracker;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
-import android.widget.CompoundButton;
-import android.widget.EditText;
-import android.widget.ToggleButton;
+import android.widget.*;
 import com.readtracker.db.LocalReading;
 import com.readtracker.interfaces.SaveLocalReadingListener;
 import com.readtracker.tasks.ConnectReadingTask;
@@ -18,6 +15,9 @@ import com.readtracker.tasks.SaveLocalReadingTask;
  */
 public class ActivityAddBook extends ReadTrackerActivity {
   public static final String TAG = ActivityAddBook.class.getName();
+
+  private static LinearLayout mLayoutConnect;
+
   private static EditText mEditTitle;
   private static EditText mEditAuthor;
   private static EditText mEditPageCount;
@@ -36,6 +36,10 @@ public class ActivityAddBook extends ReadTrackerActivity {
     bindViews();
     bindEvents();
 
+    if(getCurrentUser() == null) {
+      mLayoutConnect.setVisibility(View.GONE);
+    }
+
     Bundle extras = getIntent().getExtras();
     if(extras != null) {
       mEditTitle.setText(extras.getString(IntentKeys.TITLE));
@@ -51,6 +55,7 @@ public class ActivityAddBook extends ReadTrackerActivity {
   }
 
   private void bindViews() {
+    mLayoutConnect = (LinearLayout) findViewById(R.id.layoutConnect);
     mEditTitle = (EditText) findViewById(R.id.editTitle);
     mEditAuthor = (EditText) findViewById(R.id.editAuthor);
     mEditPageCount = (EditText) findViewById(R.id.editPageCount);
@@ -94,14 +99,13 @@ public class ActivityAddBook extends ReadTrackerActivity {
 
     if(mTogglePagesPercent.isChecked()) {
       localReading.totalPages = Integer.parseInt(mEditPageCount.getText().toString());
+      localReading.measureInPercent = false;
     } else {
-      // TODO Add percentage support
+      localReading.totalPages = 10000;
+      localReading.measureInPercent = true;
     }
 
     boolean isPublic = mTogglePublicPrivate.isChecked();
-
-    // TODO inline spinner on the button
-    getApp().showProgressDialog(this, "Connecting your book to Readmill...");
 
     saveOrConnectLocalReading(localReading, isPublic);
   }
@@ -161,12 +165,15 @@ public class ActivityAddBook extends ReadTrackerActivity {
    */
   private void saveOrConnectLocalReading(LocalReading localReading, boolean isPublic) {
     if(getCurrentUser() == null) {
+      getApp().showProgressDialog(this, "Saving book...");
       SaveLocalReadingTask.save(localReading, new SaveLocalReadingListener() {
         @Override public void onLocalReadingSaved(LocalReading localReading) {
+          getApp().clearProgressDialog();
           exitToReadingSession(localReading);
         }
       });
     } else {
+      getApp().showProgressDialog(this, "Connecting your book to Readmill...");
       ConnectReadingTask.connect(localReading, isPublic, new ConnectedReadingListener() {
         @Override public void onLocalReadingConnected(LocalReading localReading) {
           getApp().clearProgressDialog();
