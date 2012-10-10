@@ -6,6 +6,8 @@ import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.AssetManager;
+import android.content.res.Resources;
 import android.util.Log;
 import com.j256.ormlite.dao.Dao;
 import com.readmill.api.Environment;
@@ -19,9 +21,12 @@ import com.readtracker.value_objects.ReadTrackerUser;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * Shared state for the entire application
@@ -88,14 +93,47 @@ public class ApplicationReadTracker extends Application implements TokenChangeLi
     Environment environment;
     ReadmillWrapper wrapper;
 
+    /*
+    NOTE Readmill properties are not included in the repo.
+
+    Properties are read from the file: <PROJECT-ROOT>/assets/readmill.properties
+
+    The following properties are used:
+       client-id       - The Readmill client id (from readmill.com/you/apps)
+       client-secret   - The Readmill client secret (from readmill.com/you/apps)
+       readmill-domain - The base domain of the readmill server to use (default: "readmill.com")
+       use-https       - Whether or not to use https in API requests (default: "true")
+     */
+    Resources resources = this.getResources();
+    AssetManager assetManager = resources.getAssets();
+
+    String readmillDomain;
+    boolean useHTTPS;
+    String clientId;
+    String clientSecret;
+
+    try {
+      InputStream inputStream = assetManager.open("readmill.properties");
+      Properties properties = new Properties();
+      properties.load(inputStream);
+
+      readmillDomain = properties.getProperty("readmill-domain", "readmill.com");
+      useHTTPS = properties.getProperty("use-https", "true").equals("true");
+      clientId = properties.getProperty("client-id");
+      clientSecret = properties.getProperty("client-secret");
+
+      if(clientId == null) throw new RuntimeException("readmill.properties did not include property: 'client-id'");
+      if(clientSecret == null) throw new RuntimeException("readmill.properties did not include property: 'client-secret'");
+    } catch (IOException e) {
+      Log.e(TAG, "Could not load properties file: /assets/readmill.properties", e);
+      throw new RuntimeException("Failed to load readmill properties file");
+    }
+
     // The setup for Readmill is fetched from a resource file. Check sample_credentials.xml for how to set it up.
-    String readmillDomain = getString(R.string.readmill_domain);
-    boolean useHttps = getResources().getBoolean(R.bool.readmill_https);
+    environment = new Environment("api." + readmillDomain, "m." + readmillDomain, useHTTPS);
+    wrapper = new ReadmillWrapper(clientId, clientSecret, environment);
 
-    environment = new Environment("api." + readmillDomain, "m." + readmillDomain, useHttps);
-    wrapper = new ReadmillWrapper(getString(R.string.client_id), getString(R.string.client_secret), environment);
-
-    URI redirectURI = URI.create(getString(R.string.redirect_uri));
+    URI redirectURI = URI.create(getString(R.string.readmill_callback));
     wrapper.setRedirectURI(redirectURI);
     wrapper.setScope("non-expiring");
 
