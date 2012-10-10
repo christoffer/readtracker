@@ -54,7 +54,7 @@ public class ActivityBookSearch extends ReadTrackerActivity {
 
     // Suggest that the soft input keyboard is visible at once
     mInputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-    mInputMethodManager.showSoftInput(mEditTextSearch, InputMethod.SHOW_EXPLICIT);
+    mInputMethodManager.showSoftInput(mEditTextSearch, InputMethodManager.SHOW_IMPLICIT);
 
     bindEvents();
   }
@@ -217,7 +217,7 @@ public class ActivityBookSearch extends ReadTrackerActivity {
       for(GoogleBook book : foundBooks) {
         mListAdapterBookSearch.add(new ListItemGoogleBook(book));
       }
-      mInputMethodManager.hideSoftInputFromWindow(mEditTextSearch.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
+      mInputMethodManager.hideSoftInputFromWindow(mEditTextSearch.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
     }
   }
 

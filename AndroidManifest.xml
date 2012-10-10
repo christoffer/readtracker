@@ -50,7 +50,7 @@
 
     <activity android:name=".ActivityAddBook"
               android:noHistory="true"
-              android:windowSoftInputMode="stateVisible|adjustPan" />
+              android:windowSoftInputMode="adjustPan" />
 
     <activity android:name=".ActivitySettings" />
 
