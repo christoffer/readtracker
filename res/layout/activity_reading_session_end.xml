@@ -4,15 +4,15 @@
                 android:layout_width="fill_parent"
                 android:gravity="center_horizontal">
 
-  <include layout="@layout/_book_header" />
+  <include layout="@layout/_book_header"/>
 
   <!-- Ending page group -->
   <com.readtracker.thirdparty.SafeViewFlipper android:id="@+id/flipperSessionLength"
-                                                      android:layout_width="fill_parent"
-                                                      android:layout_height="wrap_content"
-                                                      android:layout_below="@id/_bookHeader"
-                                                      android:inAnimation="@anim/slide_up_appear"
-                                                      android:outAnimation="@android:anim/fade_out">
+                                              android:layout_width="fill_parent"
+                                              android:layout_height="wrap_content"
+                                              android:layout_below="@id/_bookHeader"
+                                              android:inAnimation="@anim/slide_up_appear"
+                                              android:outAnimation="@anim/slide_down_disappear">
 
     <!-- Reading duration -->
     <LinearLayout android:id="@+id/layoutEndingPage"
@@ -26,7 +26,7 @@
       <TextView android:id="@+id/textDuration"
                 android:text="Reading for"
                 android:layout_marginBottom="5dp"
-                style="@style/large_text_header" />
+                style="@style/large_text_header"/>
 
       <Button android:id="@+id/buttonShowDurationPicker"
               style="@style/large_text"
@@ -36,10 +36,9 @@
               android:paddingLeft="10dp"
               android:paddingRight="10dp"
               android:text="13h 59m 59s"
-              android:textColor="@color/text_color_primary" />
+              android:textColor="@color/text_color_primary"/>
 
     </LinearLayout>
-
 
     <!-- Change reading duration -->
     <LinearLayout android:layout_width="fill_parent"
@@ -54,36 +53,62 @@
                     android:orientation="horizontal">
 
         <com.readtracker.thirdparty.widget.WheelView android:id="@+id/wheelDurationHours"
-                                                             android:layout_marginRight="0dp"
-                                                             style="@style/default_wheel_view" />
+                                                     android:layout_marginRight="0dp"
+                                                     style="@style/default_wheel_view"/>
 
         <com.readtracker.thirdparty.widget.WheelView android:id="@+id/wheelDurationMinutes"
-                                                             android:layout_marginRight="10dp"
-                                                             android:layout_marginLeft="10dp"
-                                                             style="@style/default_wheel_view" />
+                                                     android:layout_marginRight="12dp"
+                                                     android:layout_marginLeft="12dp"
+                                                     style="@style/default_wheel_view"/>
 
         <com.readtracker.thirdparty.widget.WheelView android:id="@+id/wheelDurationSeconds"
-                                                             android:layout_marginLeft="0dp"
-                                                             style="@style/default_wheel_view" />
+                                                     android:layout_marginLeft="0dp"
+                                                     style="@style/default_wheel_view"/>
 
       </LinearLayout>
 
       <LinearLayout android:layout_height="wrap_content"
                     android:layout_width="fill_parent"
-                    android:layout_gravity="center"
+                    android:padding="12dp"
                     android:orientation="horizontal">
 
         <Button android:id="@+id/buttonCancelSetDuration"
                 style="@style/button_small"
-                android:layout_marginRight="5dp"
-                android:text="Cancel" />
+                android:layout_width="fill_parent"
+                android:layout_weight="1"
+                android:layout_marginRight="6dp"
+                android:text="Cancel"/>
 
         <Button android:id="@+id/buttonSetDuration"
                 style="@style/button_small"
-                android:layout_marginLeft="10dp"
-                android:text="Set duration" />
+                android:layout_width="fill_parent"
+                android:layout_weight="1"
+                android:layout_marginLeft="6dp"
+                android:text="Set duration"/>
 
       </LinearLayout>
+
+
+    </LinearLayout>
+    <LinearLayout android:layout_height="wrap_content"
+                  android:layout_width="fill_parent"
+                  android:layout_gravity="center"
+                  android:padding="12dp"
+                  android:orientation="horizontal">
+
+      <Button android:id="@+id/buttonCancelSetDuration"
+              style="@style/button_small"
+              android:layout_width="fill_parent"
+              android:layout_weight="1"
+              android:layout_marginRight="6dp"
+              android:text="Cancel" />
+
+      <Button android:id="@+id/buttonSetDuration"
+              style="@style/button_small"
+              android:layout_width="fill_parent"
+              android:layout_weight="1"
+              android:layout_marginLeft="6dp"
+              android:text="Set duration" />
 
     </LinearLayout>
 
@@ -91,7 +116,7 @@
 
   <View style="@style/thick_divider"
         android:layout_below="@+id/flipperSessionLength"
-        android:layout_marginBottom="13dp" />
+        android:layout_marginBottom="13dp"/>
 
   <LinearLayout android:id="@+id/layoutPageEntry"
                 android:layout_height="0px"
@@ -111,21 +136,21 @@
               android:textColor="@color/text_color_secondary"
               android:gravity="center_horizontal"
               android:layout_gravity="center_horizontal"
-              android:layout_marginBottom="30dp" />
+              android:layout_marginBottom="30dp"/>
 
     <com.readtracker.thirdparty.widget.WheelView android:id="@+id/wheelEndingPage"
-                                                         android:layout_marginLeft="0dp"
-                                                         android:minHeight="50dp"
-                                                         android:minWidth="100dp"
-                                                         android:layout_width="wrap_content"
-                                                         android:layout_height="wrap_content"
-                                                          />
+                                                 android:layout_marginLeft="0dp"
+                                                 android:minHeight="50dp"
+                                                 android:minWidth="100dp"
+                                                 android:layout_width="wrap_content"
+                                                 android:layout_height="wrap_content"
+        />
 
   </LinearLayout>
 
   <View style="@style/thick_divider"
         android:layout_below="@+id/layoutPageEntry"
-        android:layout_marginBottom="13dp" />
+        android:layout_marginBottom="13dp"/>
 
   <LinearLayout android:id="@+id/layoutActionBar"
                 android:padding="5dp"
@@ -136,7 +161,7 @@
     <Button android:id="@+id/btnSaveReadingSession"
             style="@style/default_button"
             android:text="Save"
-            android:layout_alignParentBottom="true" />
+            android:layout_alignParentBottom="true"/>
 
   </LinearLayout>
 
