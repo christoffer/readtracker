@@ -73,28 +73,7 @@ public class ActivityBook extends ReadTrackerActivity {
 
     bindViews();
 
-    mButtonAddHighlight.setOnClickListener(new OnClickListener() {
-      @Override
-      public void onClick(View view) { exitToHighlightScreen(); }
-    });
-
-    // Book bar + history button
-    mPageTitleIndicator.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-      @Override public void onPageSelected(int position) {
-        Log.i(TAG, "Selected page " + position);
-        boolean isOnHighlightPage = position == mBookFragmentAdapter.getHighlightPageIndex();
-        int highlightButtonState = isOnHighlightPage ? 1 : 0;
-        // Show add highlight button when on highlight page, hide it when
-        // leaving for another page
-        if(mFlipperActionButtons.getDisplayedChild() != highlightButtonState) {
-          mFlipperActionButtons.setDisplayedChild(highlightButtonState);
-        }
-      }
-
-      @Override public void onPageScrollStateChanged(int i) { }
-
-      @Override public void onPageScrolled(int p, float po, int pop) { }
-    });
+    setupActionBar();
 
     ReadingState readingState = getIntent().getExtras().getParcelable(IntentKeys.READING_SESSION_STATE);
 
@@ -225,10 +204,6 @@ public class ActivityBook extends ReadTrackerActivity {
     setupFragments(bundle);
 
     mFlipperActionButtons.setVisibility(View.VISIBLE);
-    //    int flipperActionButtonChild = 0;
-    //    if(mStartingPage == VIEW_PAGER_HIGHLIGHTS)
-    //      flipperActionButtonChild = 1;
-    //    mFlipperActionButtons.setDisplayedChild(flipperActionButtonChild);
     animateBookBar();
 
     Log.i(TAG, "Initialized for reading with id:" + mLocalReading.id);
@@ -272,6 +247,31 @@ public class ActivityBook extends ReadTrackerActivity {
         break;
     }
     mViewPagerReading.setCurrentItem(page, false);
+  }
+
+  private void setupActionBar() {
+    mButtonAddHighlight.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View view) { exitToHighlightScreen(); }
+    });
+
+    // Book bar + history button
+    mPageTitleIndicator.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+      @Override public void onPageSelected(int position) {
+        Log.i(TAG, "Selected page " + position);
+        boolean isOnHighlightPage = position == mBookFragmentAdapter.getHighlightPageIndex();
+        int highlightButtonState = isOnHighlightPage ? 1 : 0;
+        // Show add highlight button when on highlight page, hide it when
+        // leaving for another page
+        if(mFlipperActionButtons.getDisplayedChild() != highlightButtonState) {
+          mFlipperActionButtons.setDisplayedChild(highlightButtonState);
+        }
+      }
+
+      @Override public void onPageScrollStateChanged(int i) { }
+
+      @Override public void onPageScrolled(int p, float po, int pop) { }
+    });
   }
 
   private void setBookMarkPage(long currentPage) {
