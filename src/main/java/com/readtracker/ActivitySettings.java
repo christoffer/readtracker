@@ -17,9 +17,36 @@ public class ActivitySettings extends PreferenceActivity {
     Preference emailPreference = findPreference(SettingsKeys.USER_EMAIL);
 
     final ReadTrackerUser currentUser = getApp().getCurrentUser();
-    emailPreference.setSummary(currentUser.getEmail());
+
+    // Current user info
+    if(currentUser == null) {
+      emailPreference.setTitle("Anonymous user");
+      emailPreference.setSummary("Not logged in to Readmill");
+      emailPreference.setEnabled(false);
+    } else {
+      emailPreference.setTitle(currentUser.getDisplayName());
+      emailPreference.setSummary(currentUser.getEmail());
+      emailPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+        @Override
+        public boolean onPreferenceClick(Preference preference) {
+          Uri userUri = Uri.parse(currentUser.getWebURL());
+          Intent browserIntent = new Intent(Intent.ACTION_VIEW, userUri);
+          startActivity(browserIntent);
+          return true;
+        }
+      });
+    }
+
+    // Hook up the sign out button
 
     Preference signOutPreference = findPreference(SettingsKeys.USER_SIGN_OUT);
+    if(currentUser == null) {
+      signOutPreference.setTitle("Sign in");
+      signOutPreference.setSummary("Click to sign in to Readmill");
+    } else {
+      signOutPreference.setTitle("Sign out");
+    }
+
     signOutPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
       @Override
       public boolean onPreferenceClick(Preference preference) {
@@ -33,7 +60,8 @@ public class ActivitySettings extends PreferenceActivity {
       String versionName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
       Preference versionPreference = findPreference(SettingsKeys.ABOUT_VERSION);
       versionPreference.setSummary(versionName);
-    } catch(PackageManager.NameNotFoundException ignored) {}
+    } catch(PackageManager.NameNotFoundException ignored) {
+    }
 
     Preference legalPreference = findPreference(SettingsKeys.ABOUT_LEGAL);
     legalPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -45,20 +73,6 @@ public class ActivitySettings extends PreferenceActivity {
         return true;
       }
     });
-
-    if(currentUser != null) {
-      Preference username = findPreference(SettingsKeys.USER_EMAIL);
-      username.setTitle(currentUser.getDisplayName());
-      username.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-        @Override
-        public boolean onPreferenceClick(Preference preference) {
-          Uri userUri = Uri.parse(currentUser.getWebURL());
-          Intent browserIntent = new Intent(Intent.ACTION_VIEW, userUri);
-          startActivity(browserIntent);
-          return true;
-        }
-      });
-    }
   }
 
   /**

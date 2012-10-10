@@ -94,14 +94,10 @@ public class ActivityHome extends ReadTrackerActivity {
 
     bindEvents();
 
-    if(!getApp().userSignedIn()) {
-      exitToSignInScreen();
-    }
-
     updateConnectivityState();
 
-    boolean cameFromSignIn = getIntent().getBooleanExtra(IntentKeys.SIGNED_IN, false);
-    if(cameFromSignIn) {
+    boolean signedIn = getIntent().getBooleanExtra(IntentKeys.SIGNED_IN, false);
+    if(signedIn) {
       Log.d(TAG, "After sign in: Starting sync");
       startSyncWithReadmill();
     }
@@ -265,6 +261,11 @@ public class ActivityHome extends ReadTrackerActivity {
       return;
     }
 
+    if(getCurrentUser() == null) {
+      Log.i(TAG, "Not logged in, skipping sync");
+      return;
+    }
+
     startService(new Intent(this, ReadmillTransferIntent.class));
 
     Log.i(TAG, "Starting AsyncTask for Syncing Readmill Readings");
@@ -276,7 +277,7 @@ public class ActivityHome extends ReadTrackerActivity {
     // Prevent starting another sync while this is ongoing
     toggleSyncMenuOption(false);
 
-    long readmillUserId = getCurrentUser().getReadmillId();
+    long readmillUserId = getCurrentUserId();
     mReadmillSyncTask.execute(readmillUserId);
   }
 
@@ -347,7 +348,7 @@ public class ActivityHome extends ReadTrackerActivity {
   private void refreshReadingList() {
     Log.d(TAG, "Refreshing reading list...");
     getApp().showProgressDialog(this, "Loading book list...");
-    (new RefreshBookListTask()).execute(getCurrentUser().getReadmillId());
+    (new RefreshBookListTask()).execute(getCurrentUserId());
   }
 
   private void onFetchedReadings(List<LocalReading> localReadingList) {

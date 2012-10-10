@@ -42,8 +42,8 @@ public class ActivitySignInAndAuthorize extends ReadTrackerActivity {
 
     WebView webView = createWebContentView();
     RelativeLayout.LayoutParams paramsWebView = new RelativeLayout.LayoutParams(
-        LayoutParams.FILL_PARENT,
-        LayoutParams.FILL_PARENT);
+      LayoutParams.FILL_PARENT,
+      LayoutParams.FILL_PARENT);
     paramsWebView.addRule(RelativeLayout.CENTER_IN_PARENT);
     webView.setLayoutParams(paramsWebView);
 
@@ -132,10 +132,6 @@ public class ActivitySignInAndAuthorize extends ReadTrackerActivity {
       return;
     }
 
-    String successMessage = "Successfully logged in as " +
-        getCurrentUser().getDisplayName();
-
-    toast(successMessage);
     setResult(RESULT_OK);
     finish();
   }

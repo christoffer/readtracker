@@ -14,4 +14,6 @@ public class ActivityCodes {
   public static final int SETTINGS = 3;
   public static final int CLOSE_BOOK = 4;
   public static final int CREATE_HIGHLIGHT = 5;
+  public static final int REQUEST_CREATE_ACCOUNT = 6;
+  public static final int REQUEST_SIGN_IN = 7;
 }

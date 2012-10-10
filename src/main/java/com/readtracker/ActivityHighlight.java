@@ -14,6 +14,7 @@ import com.readtracker.tasks.CreateHighlightAsyncTask;
 import com.readtracker.interfaces.CreateHighlightTaskListener;
 import com.readtracker.thirdparty.widget.WheelView;
 import com.readtracker.thirdparty.widget.adapters.NumericWheelAdapter;
+import com.readtracker.value_objects.ReadTrackerUser;
 
 import java.util.Date;
 
@@ -99,7 +100,7 @@ public class ActivityHighlight extends ReadTrackerActivity {
       return;
     }
 
-    long userId = getCurrentUser().getReadmillId();
+    long readmillUserId = getCurrentUserId();
 
     double position = 0.0f;
 
@@ -112,7 +113,7 @@ public class ActivityHighlight extends ReadTrackerActivity {
     highlight.content = content;
     highlight.readingId = mLocalReading.id;
     highlight.readmillReadingId = mLocalReading.readmillReadingId;
-    highlight.readmillUserId = userId;
+    highlight.readmillUserId = readmillUserId;
     highlight.position = position;
     highlight.highlightedAt = new Date();
 

@@ -64,7 +64,10 @@ public class ActivityWelcome extends ReadTrackerActivity {
   }
 
   private void onOfflineClicked() {
-    toast("Not implemented");
+    Log.d(TAG, "clicked Start in offline mode");
+    Intent intentWelcome = new Intent(this, ActivityHome.class);
+    startActivity(intentWelcome);
+    finish();
   }
 
   private void onSignInClicked() {
