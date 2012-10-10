@@ -2,7 +2,10 @@ package com.readtracker.customviews;
 
 import android.app.Activity;
 import android.util.Log;
+import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.readtracker.ApplicationReadTracker;
@@ -49,5 +52,13 @@ public class ViewBindingBookHeader {
         drawableMgr.fetchDrawableOnThread(localReading.coverURL, imageCover);
       }
     }
+
+    Animation appear = AnimationUtils.loadAnimation(activity, R.anim.fade_in);
+    textTitle.startAnimation(appear);
+    textTitle.setVisibility(View.VISIBLE);
+    textAuthor.startAnimation(appear);
+    textAuthor.setVisibility(View.VISIBLE);
+    imageCover.startAnimation(appear);
+    imageCover.setVisibility(View.VISIBLE);
   }
 }
