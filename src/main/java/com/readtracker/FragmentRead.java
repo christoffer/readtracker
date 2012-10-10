@@ -100,7 +100,13 @@ public class FragmentRead extends Fragment {
     if(mLocalReading != null) {
       Log.d(TAG, "Loaded with local reading: " + mLocalReading.getInfo());
       // Show the book initialization screen or the read tracker
-      mFlipperReadingSession.setDisplayedChild(mLocalReading.hasPageInfo() ? PAGE_READING_SESSION : PAGE_PAGE_ENTRY);
+      if(mLocalReading.hasPageInfo()) {
+        mFlipperReadingSession.setDisplayedChild(PAGE_READING_SESSION);
+      } else {
+        String filledNumberOfPagesText = String.format(getString(R.string.please_enter_number_of_pages), mLocalReading.title);
+        mTextNumberOfPages.setText(filledNumberOfPagesText);
+        mFlipperReadingSession.setDisplayedChild(PAGE_PAGE_ENTRY);
+      }
     } else {
       Log.d(TAG, "Loaded without local reading");
     }
