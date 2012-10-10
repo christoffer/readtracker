@@ -3,12 +3,11 @@ package com.readtracker;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import com.readtracker.customviews.ViewBindingBookHeader;
 import com.readtracker.db.LocalReading;
@@ -42,11 +41,6 @@ public class ActivityReadingSessionEnd extends ReadTrackerActivity {
 
   private static SafeViewFlipper mFlipperSessionLength;
 
-  private Animation mSlideUp;
-  private Animation mSlideDown;
-  private Animation mFadeIn;
-  private Animation mFadeOut;
-
   private LocalReading mLocalReading;
   private long mSessionLengthMillis;
 
@@ -55,7 +49,7 @@ public class ActivityReadingSessionEnd extends ReadTrackerActivity {
     super.onCreate(in);
     Log.i(TAG, "onCreate");
 
-    setContentView(R.layout.reading_session_end);
+    setContentView(R.layout.activity_reading_session_end);
 
     bindViews();
 
@@ -98,6 +92,7 @@ public class ActivityReadingSessionEnd extends ReadTrackerActivity {
     ViewBindingBookHeader.bind(this, mLocalReading);
 
     NumericWheelAdapter endingPageAdapter = new NumericWheelAdapter(this, 0, (int) mLocalReading.totalPages);
+    configureWheelAdapterStyle(endingPageAdapter);
 
     mWheelEndingPage.setViewAdapter(endingPageAdapter);
     mWheelEndingPage.setCurrentItem((Integer) mWheelEndingPage.getTag());
@@ -136,19 +131,28 @@ public class ActivityReadingSessionEnd extends ReadTrackerActivity {
     closeDurationPicker();
   }
 
+  private void configureWheelAdapterStyle(NumericWheelAdapter wheelAdapter) {
+    wheelAdapter.setTextColor(getResources().getColor(R.color.text_color_primary));
+    wheelAdapter.setTypeFace(Typeface.DEFAULT);
+    wheelAdapter.setTypeStyle(Typeface.NORMAL);
+  }
+
   private void showDurationPicker() {
-    // Lazily initalize the adapters, since they'll probably be used very seldom
+    // Lazily initialize the adapters, since they'll probably be used very seldom
 
     if(mDurationHoursAdapter == null) {
       mDurationHoursAdapter = new NumericWheelAdapter(this, 0, 48, "%sh");
+      configureWheelAdapterStyle(mDurationHoursAdapter);
     }
 
     if(mDurationMinutesAdapter == null) {
       mDurationMinutesAdapter = new NumericWheelAdapter(this, 0, 59, "%sm");
+      configureWheelAdapterStyle(mDurationMinutesAdapter);
     }
 
     if(mDurationSecondsAdapter == null) {
       mDurationSecondsAdapter = new NumericWheelAdapter(this, 0, 59, "%ss");
+      configureWheelAdapterStyle(mDurationSecondsAdapter);
     }
 
     mWheelDurationHours.setViewAdapter(mDurationHoursAdapter);
@@ -163,27 +167,10 @@ public class ActivityReadingSessionEnd extends ReadTrackerActivity {
   }
 
   private void closeDurationPicker() {
-    if(mSlideDown == null) {
-      mSlideDown = AnimationUtils.loadAnimation(this, R.anim.slide_down_appear);
-    }
-    if(mFadeIn == null) {
-      mFadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in);
-    }
-    mFlipperSessionLength.setOutAnimation(mSlideDown);
-    mFlipperSessionLength.setInAnimation(mFadeIn);
     mFlipperSessionLength.setDisplayedChild(0);
   }
 
   private void openDurationPicker() {
-    if(mSlideUp == null) {
-      mSlideUp = AnimationUtils.loadAnimation(this, R.anim.slide_up_appear);
-      mSlideUp.setDuration(350);
-    }
-    if(mFadeOut == null) {
-      mFadeOut = AnimationUtils.loadAnimation(this, R.anim.fade_out);
-    }
-    mFlipperSessionLength.setOutAnimation(mFadeOut);
-    mFlipperSessionLength.setInAnimation(mSlideUp);
     mFlipperSessionLength.setDisplayedChild(1);
   }
 
@@ -192,12 +179,16 @@ public class ActivityReadingSessionEnd extends ReadTrackerActivity {
 
     mButtonSaveReadingSession.setOnClickListener(new View.OnClickListener() {
       @Override
-      public void onClick(View view) { handleSave(); }
+      public void onClick(View view) {
+        handleSave();
+      }
     });
 
     mButtonShowDurationPicker.setOnClickListener(new View.OnClickListener() {
       @Override
-      public void onClick(View view) { showDurationPicker(); }
+      public void onClick(View view) {
+        showDurationPicker();
+      }
     });
 
     mButtonSetDuration.setOnClickListener(new View.OnClickListener() {
@@ -247,7 +238,7 @@ public class ActivityReadingSessionEnd extends ReadTrackerActivity {
   }
 
   // --------------------------------------------------------------------
-  // AsyncTask Class
+  // ASyncTask Class
   // --------------------------------------------------------------------
 
   private class UpdateAndCreateSession extends AsyncTask<ObjectBundle, Void, Boolean> {
