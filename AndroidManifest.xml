@@ -16,7 +16,6 @@
   <application android:icon="@drawable/icon"
                android:label="ReadTracker"
                android:name=".ApplicationReadTracker"
-               android:debuggable="true"
                android:theme="@style/ReadTrackerTheme">
 
     <activity android:label="ReadTracker"
@@ -50,6 +49,7 @@
     <service android:name=".ReadmillTransferIntent" />
 
     <activity android:name=".ActivityAddBook"
+              android:noHistory="true"
               android:windowSoftInputMode="stateVisible|adjustPan" />
 
     <activity android:name=".ActivitySettings" />

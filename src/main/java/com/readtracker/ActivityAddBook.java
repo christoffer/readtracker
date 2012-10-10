@@ -48,17 +48,6 @@ public class ActivityAddBook extends ReadTrackerActivity {
     }
   }
 
-  @Override
-  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    switch(requestCode) {
-      case ActivityCodes.REQUEST_READING_SESSION:
-        if(resultCode == RESULT_OK) {
-          setResult(RESULT_OK);
-          finish();
-        }
-    }
-  }
-
   private void bindViews() {
     mEditTitle = (EditText) findViewById(R.id.editTitle);
     mEditAuthor = (EditText) findViewById(R.id.editAuthor);
