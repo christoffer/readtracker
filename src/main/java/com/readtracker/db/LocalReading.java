@@ -22,6 +22,8 @@ public class LocalReading implements Parcelable {
 
   public static final String TOTAL_PAGES_FIELD_NAME = "totalPages";
   public static final String CURRENT_PAGE_FIELD_NAME = "currentPage";
+  public static final String MEASURE_IN_PERCENT = "measure_in_percent";
+
   public static final String PROGRESS_FIELD_NAME = "rt_progress";
   public static final String TIME_SPENT_FIELD_NAME = "timeSpent";
   public static final String LAST_READ_AT_FIELD_NAME = "lastReadAt";
@@ -35,6 +37,7 @@ public class LocalReading implements Parcelable {
   public static final String READMILL_STATE_FIELD_NAME = "rm_state";
   public static final String READMILL_CLOSING_REMARK = "rm_closing_remark";
 
+
   // Database => Member bindings
 
   @DatabaseField(generatedId = true)
@@ -46,6 +49,7 @@ public class LocalReading implements Parcelable {
 
   @DatabaseField(columnName = TOTAL_PAGES_FIELD_NAME) public long totalPages = 0;
   @DatabaseField(columnName = CURRENT_PAGE_FIELD_NAME) public long currentPage = 0;
+  @DatabaseField(columnName = MEASURE_IN_PERCENT) public boolean measureInPercent = false;
   @DatabaseField(columnName = PROGRESS_FIELD_NAME) public double progress = 0.0f;
   @DatabaseField(columnName = TIME_SPENT_FIELD_NAME) public long timeSpentMillis = 0;
   @DatabaseField(columnName = LAST_READ_AT_FIELD_NAME) public long lastReadAt = 0;
@@ -113,6 +117,10 @@ public class LocalReading implements Parcelable {
     return readmillState == ReadmillApiHelper.ReadingState.READING;
   }
 
+  public boolean isMeasuredInPercent() {
+    return measureInPercent;
+  }
+
   public boolean isInteresting() {
     return readmillState == ReadmillApiHelper.ReadingState.INTERESTING;
   }
@@ -150,6 +158,7 @@ public class LocalReading implements Parcelable {
     parcel.writeLong(readmillTouchedAt);
     parcel.writeInt(readmillState);
     parcel.writeString(readmillClosingRemark);
+    parcel.writeInt(measureInPercent ? 1 : 0);
   }
 
   public LocalReading(Parcel parcel) {
@@ -168,6 +177,7 @@ public class LocalReading implements Parcelable {
     readmillTouchedAt = parcel.readLong();
     readmillState = parcel.readInt();
     readmillClosingRemark = parcel.readString();
+    measureInPercent = parcel.readInt() == 1;
   }
 
   @Override

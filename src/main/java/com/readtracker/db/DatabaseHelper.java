@@ -19,7 +19,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
   }
 
   public static final String DATABASE_NAME = "readtracker.db";
-  public static final int DATABASE_VERSION = 5;
+  public static final int DATABASE_VERSION = 6;
   private static final String TAG = DatabaseHelper.class.getName();
 
   private Dao<LocalReading, Integer> readingDao = null;
@@ -74,10 +74,17 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
       }
       if(runningVersion == 3) {
         _upgradeToVersion4(db, connectionSource);
+        runningVersion++;
       }
       if(runningVersion == 4) {
         _upgradeToVersion5(db, connectionSource);
+        runningVersion++;
       }
+      if(runningVersion == 5) {
+        _upgradeToVersion6(db, connectionSource);
+        runningVersion++;
+      }
+      Log.d(TAG, "Ended on running version: " + runningVersion);
     } catch(SQLiteException e) {
       Log.e(TAG, "Failed to upgrade database: " + DATABASE_NAME, e);
       throw new RuntimeException(e);
@@ -184,5 +191,11 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     db.execSQL("ALTER TABLE ReadingData RENAME TO LocalReading;");
     db.execSQL("ALTER TABLE ReadingHighlight RENAME TO LocalHighlight;");
     db.execSQL("ALTER TABLE ReadingSession RENAME TO LocalSession;");
+  }
+
+  private void _upgradeToVersion6(SQLiteDatabase db, ConnectionSource connectionSource) {
+    Log.i(TAG, "Running database upgrade 6");
+    // Add measure in percent flag
+    db.execSQL("ALTER TABLE LocalReading ADD COLUMN " + LocalReading.MEASURE_IN_PERCENT + " INTEGER NOT NULL DEFAULT 0;");
   }
 }
