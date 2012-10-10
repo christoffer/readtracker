@@ -7,6 +7,7 @@ proguard/*
 exported/*
 bin/*
 tests/bin/*
+readmill.properties
 
 .DS_Store
 .classpath
