@@ -26,7 +26,6 @@ import java.util.ArrayList;
  * Screen for searching for books on Google Books
  */
 public class ActivityBookSearch extends ReadTrackerActivity {
-
   private static ListView mListSearchResults;
   private static EditText mEditTextSearch;
 
@@ -197,7 +196,7 @@ public class ActivityBookSearch extends ReadTrackerActivity {
    */
   public void exitToBookInitForNewBook() {
     Intent intent = new Intent(this, ActivityAddBook.class);
-    startActivity(intent);
+    startActivityForResult(intent, ActivityCodes.REQUEST_ADD_BOOK);
   }
 
   public void setSearchResults(ArrayList<GoogleBook> foundBooks) {
