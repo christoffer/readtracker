@@ -68,8 +68,8 @@ public class FragmentRead extends Fragment {
   private static final int PAUSE_DONE = 1;
 
   // Pages for flipper between reading session and page information entry
-  private static final int PAGE_PAGE_ENTRY = 0;
-  private static final int PAGE_READING_SESSION = 1;
+  private static final int PAGE_READING_SESSION = 0;
+  private static final int PAGE_PAGE_ENTRY = 1;
 
   public static Fragment newInstance(LocalReading localReading, long elapsed) {
     Log.d(TAG, "newInstance()");
@@ -98,8 +98,11 @@ public class FragmentRead extends Fragment {
     bindEvents();
 
     if(mLocalReading != null) {
+      Log.d(TAG, "Loaded with local reading: " + mLocalReading.getInfo());
       // Show the book initialization screen or the read tracker
       mFlipperReadingSession.setDisplayedChild(mLocalReading.hasPageInfo() ? PAGE_READING_SESSION : PAGE_PAGE_ENTRY);
+    } else {
+      Log.d(TAG, "Loaded without local reading");
     }
 
     mFlipperSessionControl.setDisplayedChild(START);
