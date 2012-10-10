@@ -1,0 +1,3 @@
+<resources>
+  <string name="readmill_callback">readtracker://connected</string>
+</resources>
