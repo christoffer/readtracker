@@ -20,7 +20,7 @@ public class ActivityWelcome extends ReadTrackerActivity implements OnClickListe
     super.onCreate(savedInstanceState);
     Log.d(TAG, "Start " + TAG);
 
-    setContentView(R.layout.welcome);
+    setContentView(R.layout.activity_welcome);
 
     Button btnSignUp = (Button) findViewById(R.id.btnSignUp);
     Button btnAuthorization = (Button) findViewById(R.id.btnAuthorization);

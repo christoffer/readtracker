@@ -5,12 +5,11 @@
               android:layout_height="fill_parent"
               android:layout_width="fill_parent"
               android:background="@color/midnight_medium"
-              android:padding="10dp">
+              android:padding="12dp">
 
-  <Button android:id="@+id/buttonWhyAccount"
+  <Button android:id="@+id/buttonOffline"
           style="@style/button_small"
-          android:text="Why do I need an account?"
-          android:visibility="invisible"
+          android:text="Use ReadTracker offline"
           android:layout_gravity="center_horizontal" />
 
   <LinearLayout android:layout_width="fill_parent"
@@ -30,25 +29,36 @@
 
   </LinearLayout>
 
+  <View android:layout_height="1px"
+        android:background="@color/midnight_ultralight"
+        android:layout_width="fill_parent" />
+
+  <TextView android:text="Readmill"
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:textSize="20dp"
+            android:layout_marginTop="-18dp"
+            android:gravity="center"/>
+
   <LinearLayout android:layout_height="wrap_content"
                 android:layout_width="fill_parent"
                 android:layout_gravity="bottom"
-                android:layout_marginTop="40dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="12dp"
                 android:gravity="center_horizontal"
-                android:orientation="vertical">
-
-    <Button android:id="@+id/btnAuthorization"
-            style="@style/default_button"
-            android:layout_margin="0dp"
-            android:text="Sign in to Readmill" />
+                android:orientation="horizontal">
 
     <Button android:id="@+id/btnSignUp"
             style="@style/default_button"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="0dp"
-            android:layout_marginLeft="0dp"
-            android:layout_marginRight="0dp"
-            android:text="Create an account"/>
+            android:layout_weight="1"
+            android:layout_marginRight="6dp"
+            android:text="Create Account"/>
+
+    <Button android:id="@+id/btnAuthorization"
+            style="@style/default_button"
+            android:layout_marginLeft="6dp"
+            android:layout_weight="1"
+            android:text="Sign in" />
 
   </LinearLayout>
 
