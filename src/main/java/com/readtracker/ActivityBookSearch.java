@@ -71,6 +71,14 @@ public class ActivityBookSearch extends ReadTrackerActivity {
     return true;
   }
 
+  @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    // Fall through when coming back from a successful book activity
+    if(requestCode == ActivityCodes.REQUEST_ADD_BOOK && resultCode == ActivityCodes.RESULT_OK) {
+      setResult(ActivityCodes.RESULT_OK);
+      finish();
+    }
+  }
+
   /**
    * Bind local variables to views in the layout
    */
@@ -171,14 +179,16 @@ public class ActivityBookSearch extends ReadTrackerActivity {
    *
    * @param title     title of book
    * @param author    author of book
+   * @param coverURL  cover url
    * @param pageCount number of pages in the book (Use -1 if not available)
    */
   private void exitToBookInit(String title, String author, String coverURL, Long pageCount) {
     Intent intent = new Intent(this, ActivityAddBook.class);
     intent.putExtra(IntentKeys.TITLE, title);
     intent.putExtra(IntentKeys.AUTHOR, author);
+    intent.putExtra(IntentKeys.COVER_URL, coverURL);
     intent.putExtra(IntentKeys.PAGE_COUNT, pageCount);
-    startActivity(intent);
+    startActivityForResult(intent, ActivityCodes.REQUEST_ADD_BOOK);
   }
 
   /**
