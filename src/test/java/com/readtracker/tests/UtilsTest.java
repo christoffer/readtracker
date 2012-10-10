@@ -22,9 +22,9 @@ public class UtilsTest {
   }
 
   @Test
-  public void testhoursAndMinutesFromMillis() {
-    assertEquals("0m", Utils.hoursAndMinutesFromMillis(0));
-    assertEquals("59m", Utils.hoursAndMinutesFromMillis(_ms(59, 0)));
+  public void testHoursAndMinutesFromMillis() {
+    assertEquals("0 min", Utils.hoursAndMinutesFromMillis(0));
+    assertEquals("59 min", Utils.hoursAndMinutesFromMillis(_ms(59, 0)));
 
     assertEquals("1h 0m", Utils.hoursAndMinutesFromMillis(_ms(1, 0, 0)));
     assertEquals("1h 0m", Utils.hoursAndMinutesFromMillis(_ms(1, 0, 1)));
