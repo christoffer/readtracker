@@ -11,9 +11,7 @@ import android.widget.Button;
 /**
  * Splash screen that lets a user sign in or sign up to Readmill
  */
-public class ActivityWelcome extends ReadTrackerActivity implements OnClickListener {
-  private static final int RQ_AUTHORIZE = 1;
-  private static final int RQ_CREATE_ACCOUNT = 2;
+public class ActivityWelcome extends ReadTrackerActivity {
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -24,9 +22,25 @@ public class ActivityWelcome extends ReadTrackerActivity implements OnClickListe
 
     Button btnSignUp = (Button) findViewById(R.id.btnSignUp);
     Button btnAuthorization = (Button) findViewById(R.id.btnAuthorization);
+    Button buttonOffline = (Button) findViewById(R.id.buttonOffline);
 
-    btnSignUp.setOnClickListener(this);
-    btnAuthorization.setOnClickListener(this);
+    btnSignUp.setOnClickListener(new OnClickListener() {
+      @Override public void onClick(View view) {
+        onCreateAccountClicked();
+      }
+    });
+
+    btnAuthorization.setOnClickListener(new OnClickListener() {
+      @Override public void onClick(View view) {
+        onSignInClicked();
+      }
+    });
+
+    buttonOffline.setOnClickListener(new OnClickListener() {
+      @Override public void onClick(View view) {
+        onOfflineClicked();
+      }
+    });
   }
 
   @Override
@@ -35,39 +49,35 @@ public class ActivityWelcome extends ReadTrackerActivity implements OnClickListe
   }
 
   @Override
-  protected void onResume() {
-    super.onResume();
-    Log.d(TAG, "Resuming " + TAG);
-  }
-
-  public void onClick(View clickedView) {
-    Intent intentWebview = new Intent(this, ActivitySignInAndAuthorize.class);
-    int resultCode = 0;
-
-    switch(clickedView.getId()) {
-      case R.id.btnAuthorization:
-        Log.d(TAG, "Authorize Application");
-        intentWebview.putExtra(IntentKeys.WEB_VIEW_ACTION, IntentKeys.WEB_VIEW_SIGN_IN_AND_AUTHORIZE);
-        resultCode = RQ_AUTHORIZE;
-        break;
-      case R.id.btnSignUp:
-        Log.d(TAG, "Create Readmill Account");
-        intentWebview.putExtra(IntentKeys.WEB_VIEW_ACTION, IntentKeys.WEB_VIEW_CREATE_ACCOUNT);
-        resultCode = RQ_CREATE_ACCOUNT;
-        break;
-    }
-
-    startActivityForResult(intentWebview, resultCode);
-  }
-
-  @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    boolean validRequestCode = (requestCode == RQ_AUTHORIZE || requestCode == RQ_CREATE_ACCOUNT);
+    boolean validRequestCode = (
+      requestCode == ActivityCodes.REQUEST_SIGN_IN ||
+      requestCode == ActivityCodes.REQUEST_CREATE_ACCOUNT
+    );
+
     if(validRequestCode && (resultCode == RESULT_OK)) {
       Intent intentWelcome = new Intent(this, ActivityHome.class);
       intentWelcome.putExtra(IntentKeys.SIGNED_IN, true);
       startActivity(intentWelcome);
       finish();
     }
+  }
+
+  private void onOfflineClicked() {
+    toast("Not implemented");
+  }
+
+  private void onSignInClicked() {
+    Log.d(TAG, "clicked Sign in");
+    Intent intentWebView = new Intent(this, ActivitySignInAndAuthorize.class);
+    intentWebView.putExtra(IntentKeys.WEB_VIEW_ACTION, IntentKeys.WEB_VIEW_SIGN_IN_AND_AUTHORIZE);
+    startActivityForResult(intentWebView, ActivityCodes.REQUEST_SIGN_IN);
+  }
+
+  private void onCreateAccountClicked() {
+    Log.d(TAG, "clicked Create Account");
+    Intent intentWebView = new Intent(this, ActivitySignInAndAuthorize.class);
+    intentWebView.putExtra(IntentKeys.WEB_VIEW_ACTION, IntentKeys.WEB_VIEW_CREATE_ACCOUNT);
+    startActivityForResult(intentWebView, ActivityCodes.REQUEST_CREATE_ACCOUNT);
   }
 }
