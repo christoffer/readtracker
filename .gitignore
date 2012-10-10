@@ -1,4 +1,6 @@
+target/*
 out/*
+gen/*
 proguard_logs/*
 .idea/*
 proguard/*
