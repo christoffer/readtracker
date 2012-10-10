@@ -8,8 +8,10 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ToggleButton;
 import com.readtracker.db.LocalReading;
+import com.readtracker.interfaces.SaveLocalReadingListener;
 import com.readtracker.tasks.ConnectReadingTask;
 import com.readtracker.interfaces.ConnectedReadingListener;
+import com.readtracker.tasks.SaveLocalReadingTask;
 
 /**
  * Screen for adding a new book manually
@@ -101,16 +103,7 @@ public class ActivityAddBook extends ReadTrackerActivity {
     // TODO inline spinner on the button
     getApp().showProgressDialog(this, "Connecting your book to Readmill...");
 
-    ConnectReadingTask.connect(localReading, isPublic, new ConnectedReadingListener() {
-      @Override public void onLocalReadingConnected(LocalReading localReading) {
-        getApp().clearProgressDialog();
-        if(localReading == null) {
-          toastLong("Could not connect with Readmill");
-        } else {
-          exitToReadingSession(localReading);
-        }
-      }
-    });
+    saveOrConnectLocalReading(localReading, isPublic);
   }
 
   /**
@@ -137,7 +130,8 @@ public class ActivityAddBook extends ReadTrackerActivity {
 
       try {
         pageCount = Integer.parseInt(mEditPageCount.getText().toString());
-      } catch(NumberFormatException ignored) {}
+      } catch(NumberFormatException ignored) {
+      }
 
       if(pageCount < 1) {
         toast("Please enter a reasonable number of pages");
@@ -156,5 +150,33 @@ public class ActivityAddBook extends ReadTrackerActivity {
     startActivity(readingSessionIntent);
     setResult(ActivityCodes.RESULT_OK);
     finish();
+  }
+
+  /**
+   * Persists a local reading to the database.
+   * The reading is also connected if the user is signed in.
+   *
+   * @param localReading Local reading to save or connect
+   * @param isPublic     Toggle for connecting as public reading if signed in
+   */
+  private void saveOrConnectLocalReading(LocalReading localReading, boolean isPublic) {
+    if(getCurrentUser() == null) {
+      SaveLocalReadingTask.save(localReading, new SaveLocalReadingListener() {
+        @Override public void onLocalReadingSaved(LocalReading localReading) {
+          exitToReadingSession(localReading);
+        }
+      });
+    } else {
+      ConnectReadingTask.connect(localReading, isPublic, new ConnectedReadingListener() {
+        @Override public void onLocalReadingConnected(LocalReading localReading) {
+          getApp().clearProgressDialog();
+          if(localReading == null) {
+            toastLong("Could not connect with Readmill");
+          } else {
+            exitToReadingSession(localReading);
+          }
+        }
+      });
+    }
   }
 }

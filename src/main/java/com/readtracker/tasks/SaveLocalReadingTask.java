@@ -21,6 +21,16 @@ public class SaveLocalReadingTask extends AsyncTask<LocalReading, Void, LocalRea
     mListener = listener;
   }
 
+  /**
+   * Saves a local reading and calls the given callback when done.
+   * @param localReading Local reading to save.
+   * @param listener listener to invoke when save is complete.
+   */
+  public static void save(LocalReading localReading, SaveLocalReadingListener listener) {
+    SaveLocalReadingTask task = new SaveLocalReadingTask(listener);
+    task.execute(localReading);
+  }
+
   @Override
   protected LocalReading doInBackground(LocalReading... localReadings) {
     LocalReading localReading = localReadings[0];
