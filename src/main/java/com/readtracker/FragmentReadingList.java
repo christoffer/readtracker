@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import com.readtracker.db.LocalReading;
+import com.readtracker.interfaces.LocalReadingInteractionListener;
 
 import java.util.ArrayList;
 

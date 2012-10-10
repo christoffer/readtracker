@@ -9,7 +9,7 @@ import android.widget.EditText;
 import android.widget.ToggleButton;
 import com.readtracker.db.LocalReading;
 import com.readtracker.tasks.ConnectReadingTask;
-import com.readtracker.tasks.ConnectedReadingListener;
+import com.readtracker.interfaces.ConnectedReadingListener;
 
 /**
  * Screen for adding a new book manually

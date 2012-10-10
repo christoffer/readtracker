@@ -23,6 +23,7 @@ import com.readtracker.db.LocalHighlight;
 import com.readtracker.db.LocalReading;
 import com.readtracker.db.LocalSession;
 import com.readtracker.helpers.ReadmillSyncStatusUIHandler;
+import com.readtracker.interfaces.LocalReadingInteractionListener;
 import com.readtracker.readmill.ReadmillApiHelper;
 import com.readtracker.tasks.ReadmillSyncAsyncTask;
 import com.readtracker.thirdparty.TitlePageIndicator;

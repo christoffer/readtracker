@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.util.Log;
 import android.view.ViewGroup;
 import com.readtracker.db.LocalReading;
+import com.readtracker.interfaces.LocalReadingInteractionListener;
 import com.readtracker.thirdparty.TitleProvider;
 
 import java.util.ArrayList;

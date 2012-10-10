@@ -5,7 +5,7 @@ import android.util.Log;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.Where;
 import com.readtracker.ApplicationReadTracker;
-import com.readtracker.ReadmillSyncProgressListener;
+import com.readtracker.interfaces.ReadmillSyncProgressListener;
 import com.readtracker.db.*;
 import com.readtracker.readmill.Converter;
 import com.readtracker.readmill.ReadmillApiHelper;

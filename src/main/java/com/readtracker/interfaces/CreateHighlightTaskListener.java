@@ -1,4 +1,4 @@
-package com.readtracker.tasks;
+package com.readtracker.interfaces;
 
 public interface CreateHighlightTaskListener {
   public void onReadingHighlightCreated(boolean result);

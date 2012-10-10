@@ -10,7 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.readtracker.R;
-import com.readtracker.ReadmillSyncProgressListener;
+import com.readtracker.interfaces.ReadmillSyncProgressListener;
 import com.readtracker.db.LocalReading;
 
 /**

@@ -1,4 +1,4 @@
-package com.readtracker;
+package com.readtracker.interfaces;
 
 import com.readtracker.db.LocalReading;
 

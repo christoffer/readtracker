@@ -9,7 +9,7 @@ import android.widget.TextView;
 import com.readtracker.customviews.ViewBindingBookHeader;
 import com.readtracker.db.LocalReading;
 import com.readtracker.readmill.ReadmillApiHelper;
-import com.readtracker.tasks.SaveLocalReadingListener;
+import com.readtracker.interfaces.SaveLocalReadingListener;
 import com.readtracker.tasks.SaveLocalReadingTask;
 
 import java.util.Date;

@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 import com.readtracker.ApplicationReadTracker;
 import com.readtracker.db.LocalHighlight;
+import com.readtracker.interfaces.CreateHighlightTaskListener;
 
 import java.sql.SQLException;
 

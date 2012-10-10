@@ -11,7 +11,7 @@ import com.readtracker.customviews.ViewBindingBookHeader;
 import com.readtracker.db.LocalHighlight;
 import com.readtracker.db.LocalReading;
 import com.readtracker.tasks.CreateHighlightAsyncTask;
-import com.readtracker.tasks.CreateHighlightTaskListener;
+import com.readtracker.interfaces.CreateHighlightTaskListener;
 import com.readtracker.thirdparty.widget.WheelView;
 import com.readtracker.thirdparty.widget.adapters.NumericWheelAdapter;
 

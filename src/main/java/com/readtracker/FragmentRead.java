@@ -15,7 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import com.readtracker.db.LocalReading;
-import com.readtracker.tasks.SaveLocalReadingListener;
+import com.readtracker.interfaces.SaveLocalReadingListener;
 import com.readtracker.tasks.SaveLocalReadingTask;
 import com.readtracker.thirdparty.SafeViewFlipper;
 import com.readtracker.thirdparty.widget.WheelView;

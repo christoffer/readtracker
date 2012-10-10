@@ -3,6 +3,7 @@ package com.readtracker.tasks;
 import android.os.AsyncTask;
 import android.util.Log;
 import com.readtracker.ApplicationReadTracker;
+import com.readtracker.interfaces.ConnectedReadingListener;
 import com.readtracker.readmill.Converter;
 import com.readtracker.db.LocalReading;
 import com.readtracker.readmill.ReadmillException;
