@@ -1,6 +1,5 @@
 package com.readtracker;
 
-import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -18,8 +16,6 @@ import com.readtracker.db.LocalReading;
 import com.readtracker.interfaces.SaveLocalReadingListener;
 import com.readtracker.tasks.SaveLocalReadingTask;
 import com.readtracker.thirdparty.SafeViewFlipper;
-import com.readtracker.thirdparty.widget.WheelView;
-import com.readtracker.thirdparty.widget.adapters.NumericWheelAdapter;
 import com.readtracker.value_objects.ReadingState;
 
 /**
@@ -115,14 +111,13 @@ public class FragmentRead extends Fragment {
     // Rig for a fresh session
     if(mLocalReading != null) {
       if(mElapsed == 0) {
-        mTextHeader.setText("Continuing from");
+        mTextHeader.setText("Last read on");
         mTextSummary.setText(mLocalReading.describeCurrentPosition());
       } else {
         refreshElapsedTime();
         mTextHeader.setText(getString(R.string.paused_at));
       }
     }
-
     return view;
   }
 
@@ -295,30 +290,6 @@ public class FragmentRead extends Fragment {
     mForceReInitialize = forceReinitialize;
   }
 
-  private void configureSessionTimer() {
-    //    configureWheelForMaximumValue(mWheelHours, 48);
-    //    configureWheelForMaximumValue(mWheelMinutes, 59);
-    //    configureWheelForMaximumValue(mWheelSeconds, 59);
-    //
-    //    mWheelHours.setCyclic(false);
-    //    mWheelMinutes.setCyclic(true);
-    //    mWheelSeconds.setCyclic(true);
-  }
-
-  private void configureWheelForMaximumValue(WheelView view, int maxNum) {
-    NumericWheelAdapter adapter = new NumericWheelAdapter(getActivity(), 0, maxNum);
-
-    adapter.setTextColor(getResources().getColor(R.color.text_color_primary));
-    adapter.setTypeFace(Typeface.DEFAULT);
-    adapter.setTypeStyle(Typeface.NORMAL);
-    adapter.setTextSize(36);
-
-    view.setInterpolator(new DecelerateInterpolator());
-    view.setScrollingSpeed(200);
-
-    view.setViewAdapter(adapter);
-  }
-
   /**
    * Loads and restores a timing state from preferences
    */
@@ -372,7 +343,7 @@ public class FragmentRead extends Fragment {
     int pageNumbers = Utils.parseInt(mEditPageCount.getText().toString(), 0);
 
     if(pageNumbers < 1 || pageNumbers > 10000) {
-      ((ReadTrackerActivity) getActivity()).toast("Please input a reasonable number of pages");
+      ((ReadTrackerActivity) getActivity()).toast("Please enter a reasonable number of pages");
       mEditPageCount.requestFocus();
       return;
     }
@@ -385,7 +356,7 @@ public class FragmentRead extends Fragment {
       @Override
       public void onLocalReadingSaved(LocalReading localReading) {
         // Flip back to active reading state
-        mFlipperReadingSession.setDisplayedChild(1);
+        mFlipperReadingSession.setDisplayedChild(PAGE_READING_SESSION);
       }
     });
   }
@@ -511,9 +482,6 @@ public class FragmentRead extends Fragment {
 
     public EnableReadingControls(boolean enabled) {
       this.enabled = enabled;
-    }
-
-    private void setControlsEnabled(boolean enabled) {
     }
 
     @Override public void onAnimationEnd(Animation animation) {
