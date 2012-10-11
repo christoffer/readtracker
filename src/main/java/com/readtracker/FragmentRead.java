@@ -45,9 +45,8 @@ public class FragmentRead extends Fragment {
   // Flipper for showing start vs. pause/done
   private static SafeViewFlipper mFlipperSessionControl;
 
-  private static WheelView mWheelHours;
-  private static WheelView mWheelMinutes;
-  private static WheelView mWheelSeconds;
+  private static TextView mTextHeader;
+  private static TextView mTextSummary;
 
   // Reading to track
   private LocalReading mLocalReading;
@@ -107,20 +106,20 @@ public class FragmentRead extends Fragment {
         mTextNumberOfPages.setText(filledNumberOfPagesText);
         mFlipperReadingSession.setDisplayedChild(PAGE_PAGE_ENTRY);
       }
+      setSummary(mLocalReading);
     } else {
       Log.d(TAG, "Loaded without local reading");
     }
 
     mFlipperSessionControl.setDisplayedChild(START);
 
-    configureSessionTimer();
-    redrawTimeTracker(false);
-    return view;
-  }
+    // Rig for a fresh session
+    if(mLocalReading != null && mElapsed == 0) {
+      mTextHeader.setText("Continuing from");
+      mTextSummary.setText("page " + mLocalReading.describeCurrentPosition());
+    }
 
-  @Override public void onViewCreated(View view, Bundle savedInstanceState) {
-    super.onViewCreated(view, savedInstanceState);
-    redrawTimeTracker();
+    return view;
   }
 
   @Override
@@ -139,7 +138,7 @@ public class FragmentRead extends Fragment {
       Log.d(TAG, "Parent Activity is shutting down - don't store state");
     } else {
       Log.d(TAG, "Parent Activity not shutting down - store state");
-      storeTimingState();
+      ReadingStateHandler.store(mLocalReading.id, elapsed(), mTimestampLastStarted);
     }
 
     stopTrackerUpdates();
@@ -154,6 +153,7 @@ public class FragmentRead extends Fragment {
       loadTimingState();
     } else {
       Log.d(TAG, "Skipping loading of stored session due to forced initialize");
+      mForceReInitialize = false;
     }
   }
 
@@ -170,28 +170,35 @@ public class FragmentRead extends Fragment {
     mFlipperSessionControl = (SafeViewFlipper) view.findViewById(R.id.flipperSessionControl);
     mLayoutSessionTimer = (ViewGroup) view.findViewById(R.id.layoutSessionTimer);
 
-    mWheelHours = (WheelView) mLayoutSessionTimer.findViewById(R.id.wheelHours);
-    mWheelMinutes = (WheelView) mLayoutSessionTimer.findViewById(R.id.wheelMinutes);
-    mWheelSeconds = (WheelView) mLayoutSessionTimer.findViewById(R.id.wheelSeconds);
+    mTextHeader = (TextView) mLayoutSessionTimer.findViewById(R.id.textHeader);
+    mTextSummary = (TextView) mLayoutSessionTimer.findViewById(R.id.textSummary);
   }
 
   private void bindEvents() {
     Log.d(TAG, "bindEvents()");
 
     mButtonPause.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View view) { onClickedPause(); }
+      @Override public void onClick(View view) {
+        onClickedPause();
+      }
     });
 
     mButtonStart.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View view) { onClickedStart(); }
+      @Override public void onClick(View view) {
+        onClickedStart();
+      }
     });
 
     mButtonDone.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View view) { onClickedDone(); }
+      @Override public void onClick(View view) {
+        onClickedDone();
+      }
     });
 
     mButtonUpdatePageNumbers.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View view) { onClickedSetPageCount(); }
+      @Override public void onClick(View view) {
+        onClickedSetPageCount();
+      }
     });
 
     if(!mLocalReading.hasPageInfo()) {
@@ -214,15 +221,21 @@ public class FragmentRead extends Fragment {
    */
   public ReadingState getReadingState() {
     if(mLocalReading == null) return null;
-    return new ReadingState(mLocalReading.id, elapsed(),isTiming());
+    return new ReadingState(mLocalReading.id, elapsed(), mTimestampLastStarted);
   }
 
+  /**
+   * Called when the start button is clicked
+   */
   private void onClickedStart() {
     startTiming();
     ((ActivityBook) getActivity()).setDirty(true);
     mFlipperSessionControl.setDisplayedChild(PAUSE_DONE);
   }
 
+  /**
+   * Called when the pause button is clicked
+   */
   private void onClickedPause() {
     if(isTiming()) {
       stopTimingAndUpdateElapsed();
@@ -233,6 +246,9 @@ public class FragmentRead extends Fragment {
     }
   }
 
+  /**
+   * Called when the done button is clicked
+   */
   private void onClickedDone() {
     if(isTiming()) {
       activatePause();
@@ -247,13 +263,13 @@ public class FragmentRead extends Fragment {
   }
 
   private void configureSessionTimer() {
-    configureWheelForMaximumValue(mWheelHours, 48);
-    configureWheelForMaximumValue(mWheelMinutes, 59);
-    configureWheelForMaximumValue(mWheelSeconds, 59);
-
-    mWheelHours.setCyclic(false);
-    mWheelMinutes.setCyclic(true);
-    mWheelSeconds.setCyclic(true);
+//    configureWheelForMaximumValue(mWheelHours, 48);
+//    configureWheelForMaximumValue(mWheelMinutes, 59);
+//    configureWheelForMaximumValue(mWheelSeconds, 59);
+//
+//    mWheelHours.setCyclic(false);
+//    mWheelMinutes.setCyclic(true);
+//    mWheelSeconds.setCyclic(true);
   }
 
   private void configureWheelForMaximumValue(WheelView view, int maxNum) {
@@ -270,12 +286,9 @@ public class FragmentRead extends Fragment {
     view.setViewAdapter(adapter);
   }
 
-  private void storeTimingState() {
-    Log.d(TAG, "Storing reading session state");
-    boolean isActive = mTimestampLastStarted > 0;
-    ReadingStateHandler.store(mLocalReading.id, elapsed(), isActive);
-  }
-
+  /**
+   * Loads and restores a timing state from preferences
+   */
   private void loadTimingState() {
     Log.d(TAG, "Loading stored timing state");
     final ReadingState readingState = ReadingStateHandler.load();
@@ -287,10 +300,15 @@ public class FragmentRead extends Fragment {
     }
   }
 
+  /**
+   * Restores the current timing state to a given one
+   *
+   * @param readingState The reading state to restore to
+   */
   public void restoreTimingState(ReadingState readingState) {
     Log.i(TAG, "Restoring session: " + readingState);
 
-    mTimestampLastStarted = 0;
+    mTimestampLastStarted = readingState.getActiveTimestamp();
     mElapsed = readingState.getElapsedMilliseconds();
 
     // Notify to the parent activity that our data is dirty so it can store
@@ -303,16 +321,19 @@ public class FragmentRead extends Fragment {
     mButtonDone.setVisibility(View.VISIBLE);
 
     // Check if we should automatically start the timer
-    if(readingState.getIsActive()) {
+    if(readingState.isActive()) {
       Log.d(TAG, "Got active reading state, starting timer");
       deactivatePause();
-      startTiming();
+      startTrackerUpdates();
     } else {
       Log.d(TAG, "Got inactive reading state");
       activatePause();
     }
   }
 
+  /**
+   * Called when save has been clicked on the set number of pages dialog
+   */
   private void onClickedSetPageCount() {
     int pageNumbers = Utils.parseInt(mEditPageCount.getText().toString(), 0);
 
@@ -323,19 +344,21 @@ public class FragmentRead extends Fragment {
     }
 
     mLocalReading.totalPages = pageNumbers;
-    ((ActivityBook) getActivity()).onLocalReadingChanged();
-    saveLocalReading(mLocalReading);
-  }
 
-  private void saveLocalReading(LocalReading localReading) {
-    (new SaveLocalReadingTask(new SaveLocalReadingListener() {
+    ((ActivityBook) getActivity()).onLocalReadingChanged();
+
+    SaveLocalReadingTask.save(mLocalReading, new SaveLocalReadingListener() {
       @Override
       public void onLocalReadingSaved(LocalReading localReading) {
+        // Flip back to active reading state
         mFlipperReadingSession.setDisplayedChild(1);
       }
-    })).execute(localReading);
+    });
   }
 
+  /**
+   * Changes UI to pause mode
+   */
   private void activatePause() {
     mButtonPause.setText("Resume");
     Animation fadeOutHalf = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_out_half);
@@ -344,18 +367,15 @@ public class FragmentRead extends Fragment {
     mLayoutSessionTimer.startAnimation(fadeOutHalf);
   }
 
+  /**
+   * Changes UI to resumed mode
+   */
   private void deactivatePause() {
     mButtonPause.setText("Pause");
     Animation fadeInHalf = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_in_half);
     fadeInHalf.setAnimationListener(new EnableReadingControls(true));
     mButtonDone.startAnimation(fadeInHalf);
     mLayoutSessionTimer.startAnimation(fadeInHalf);
-  }
-
-  // Timing events
-
-  private boolean isTiming() {
-    return mTimestampLastStarted > 0;
   }
 
   private void stopTimingAndUpdateElapsed() {
@@ -369,6 +389,16 @@ public class FragmentRead extends Fragment {
     startTrackerUpdates();
   }
 
+  private void setSummary(LocalReading localReading) {
+
+  }
+
+  // Timing events
+
+  private boolean isTiming() {
+    return mTimestampLastStarted > 0;
+  }
+
   private long elapsedSinceTimestamp() {
     if(isTiming()) {
       return System.currentTimeMillis() - mTimestampLastStarted;
@@ -380,20 +410,27 @@ public class FragmentRead extends Fragment {
     return mElapsed + elapsedSinceTimestamp();
   }
 
-  private void redrawTimeTracker(boolean animate) {
+  private void redrawTimeTracker() {
     long[] hms = Utils.convertMillisToHoursMinutesSeconds(elapsed());
     int hours = (int) hms[0];
     int minutes = (int) hms[1];
     int seconds = (int) hms[2];
 
-    mWheelHours.setCurrentItem(hours, animate);
-    mWheelMinutes.setCurrentItem(minutes, animate);
-    mWheelSeconds.setCurrentItem(seconds, animate);
+    String summary = "";
+    if(hours > 0) {
+      summary = String.format("%s\n%s",
+        Utils.pluralizeWithCount(hours, "hour"),
+        Utils.pluralizeWithCount(minutes, "minute")
+      );
+    } else if(minutes > 1) {
+      summary = Utils.pluralizeWithCount(minutes, "minute");
+    } else {
+      summary = Utils.pluralizeWithCount(seconds, "second");
+    }
+
+    mTextSummary.setText(summary);
   }
 
-  private void redrawTimeTracker() {
-    redrawTimeTracker(true);
-  }
 
   private void startTrackerUpdates() {
     stopTrackerUpdates();
@@ -446,26 +483,25 @@ public class FragmentRead extends Fragment {
     }
 
     private void setControlsEnabled(boolean enabled) {
-      mButtonDone.setEnabled(enabled);
-      mWheelHours.setEnabled(enabled);
-      mWheelMinutes.setEnabled(enabled);
-      mWheelSeconds.setEnabled(enabled);
     }
 
     @Override public void onAnimationEnd(Animation animation) {
       if(!this.enabled) {
         mButtonDone.setBackgroundDrawable(getResources().getDrawable(R.drawable.default_button_no_states));
-        setControlsEnabled(false);
+        mTextHeader.setText("Paused at");
+        mButtonDone.setEnabled(false);
       }
     }
 
     @Override public void onAnimationStart(Animation animation) {
       if(this.enabled) {
-        setControlsEnabled(true);
+        mButtonDone.setEnabled(true);
+        mTextHeader.setText("Reading for");
         mButtonDone.setBackgroundDrawable(getResources().getDrawable(R.drawable.default_button));
       }
     }
 
-    @Override public void onAnimationRepeat(Animation animation) { }
+    @Override public void onAnimationRepeat(Animation animation) {
+    }
   }
 }

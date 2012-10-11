@@ -79,6 +79,10 @@ public class Utils {
     return num == 1 ? noun : noun + (noun.endsWith("s") ? "es" : "s");
   }
 
+  public static String pluralizeWithCount(int num, String noun) {
+    return String.format("%d %s", num, pluralize(num, noun));
+  }
+
   public static long parseLong(String str, long defaultValue) {
     try {
       return Long.parseLong(str);

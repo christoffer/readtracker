@@ -184,4 +184,20 @@ public class LocalReading implements Parcelable {
   public int describeContents() {
     return 0;
   }
+
+  /**
+   * Returns a human readable description of the current position.
+   * If the reading is measured in pages, then returns a string like "page 44"
+   * If the reading is measured in percent, then it returns a string like "12.44%"
+   * @return The position description
+   */
+  public String describeCurrentPosition() {
+    if(measureInPercent) {
+      int currentInteger = (int) currentPage / 100;
+      int currentFraction = (int) currentPage - currentInteger * 100;
+      return String.format("%d.%d%%", currentInteger, currentFraction);
+    }  else {
+      return String.format("page %d", currentPage);
+    }
+  }
 }

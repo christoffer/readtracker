@@ -3,6 +3,8 @@ package com.readtracker.value_objects;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.Date;
+
 /**
  * Represents a current reading of a local reading.
  * Used to pass state between ActivityHome and ActivityBook
@@ -10,22 +12,24 @@ import android.os.Parcelable;
 public class ReadingState implements Parcelable {
   private int mLocalReadingId = 0;
   private long mElapsedMilliseconds = 0;
-  private boolean mIsActive;
+  private long mActiveTimestamp;
 
-  public ReadingState(int localReadingId, long elapsedMilliseconds, boolean isActive) {
+  public ReadingState(int localReadingId, long elapsedMilliseconds, long activeTimestamp) {
     mLocalReadingId = localReadingId;
     mElapsedMilliseconds = elapsedMilliseconds;
-    mIsActive = isActive;
+    mActiveTimestamp = activeTimestamp;
   }
 
   public int getLocalReadingId() { return mLocalReadingId; }
 
   public long getElapsedMilliseconds() { return mElapsedMilliseconds; }
 
-  public boolean getIsActive() { return mIsActive; }
+  public boolean isActive() { return mActiveTimestamp > 0; }
+
+  public long getActiveTimestamp() { return mActiveTimestamp; }
 
   public String toString() {
-    return String.format("LocalReading (%s) #%d @ %d", (mIsActive ? "Active" : "Inactive"), mLocalReadingId, mElapsedMilliseconds);
+    return String.format("LocalReading (%s) #%d @ %d", (isActive() ? "Active, started: " + new Date(mActiveTimestamp) : "Inactive"), mLocalReadingId, mElapsedMilliseconds);
   }
 
   // Parcelable interface
@@ -44,15 +48,14 @@ public class ReadingState implements Parcelable {
   public ReadingState(Parcel parcel) {
     mLocalReadingId = parcel.readInt();
     mElapsedMilliseconds = parcel.readLong();
-    mIsActive = (parcel.readInt() == 1);
+    mActiveTimestamp = parcel.readLong();
   }
 
   @Override public void writeToParcel(Parcel parcel, int flags) {
     parcel.writeInt(mLocalReadingId);
     parcel.writeLong(mElapsedMilliseconds);
-    parcel.writeInt(mIsActive ? 1 : 0);
+    parcel.writeLong(mActiveTimestamp);
   }
 
   @Override public int describeContents() { return 0; }
-
 }
