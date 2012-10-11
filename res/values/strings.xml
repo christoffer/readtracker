@@ -9,4 +9,6 @@
   <string name="sample_reading_session_text">Read for about <b>0 minutes</b>, and reached <b>page 130</b> yesterday in the evening</string>
 
   <string name="visible_to_friends">Visible to friends</string>
+  <string name="reading_for">Reading for</string>
+  <string name="paused_at">Paused at</string>
 </resources>

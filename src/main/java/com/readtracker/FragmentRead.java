@@ -106,7 +106,6 @@ public class FragmentRead extends Fragment {
         mTextNumberOfPages.setText(filledNumberOfPagesText);
         mFlipperReadingSession.setDisplayedChild(PAGE_PAGE_ENTRY);
       }
-      setSummary(mLocalReading);
     } else {
       Log.d(TAG, "Loaded without local reading");
     }
@@ -114,9 +113,14 @@ public class FragmentRead extends Fragment {
     mFlipperSessionControl.setDisplayedChild(START);
 
     // Rig for a fresh session
-    if(mLocalReading != null && mElapsed == 0) {
-      mTextHeader.setText("Continuing from");
-      mTextSummary.setText("page " + mLocalReading.describeCurrentPosition());
+    if(mLocalReading != null) {
+      if(mElapsed == 0) {
+        mTextHeader.setText("Continuing from");
+        mTextSummary.setText(mLocalReading.describeCurrentPosition());
+      } else {
+        refreshElapsedTime();
+        mTextHeader.setText(getString(R.string.paused_at));
+      }
     }
 
     return view;
@@ -142,7 +146,7 @@ public class FragmentRead extends Fragment {
     }
 
     stopTrackerUpdates();
-    redrawTimeTracker();
+    refreshElapsedTime();
   }
 
   @Override
@@ -153,7 +157,6 @@ public class FragmentRead extends Fragment {
       loadTimingState();
     } else {
       Log.d(TAG, "Skipping loading of stored session due to forced initialize");
-      mForceReInitialize = false;
     }
   }
 
@@ -228,7 +231,37 @@ public class FragmentRead extends Fragment {
    * Called when the start button is clicked
    */
   private void onClickedStart() {
-    startTiming();
+    final Animation disappear = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_out);
+    final Animation disappearSummary = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_out);
+
+    final Animation appear = AnimationUtils.loadAnimation(getActivity(), R.anim.slide_up_appear);
+    final Animation appearSummary = AnimationUtils.loadAnimation(getActivity(), R.anim.slide_up_appear);
+
+    disappear.setAnimationListener(new Animation.AnimationListener() {
+      @Override public void onAnimationStart(Animation animation) { }
+      @Override public void onAnimationRepeat(Animation animation) { }
+
+      @Override public void onAnimationEnd(Animation animation) {
+        mTextHeader.startAnimation(appear);
+        mTextHeader.setText(getString(R.string.reading_for));
+      }
+    });
+
+    disappearSummary.setAnimationListener(new Animation.AnimationListener() {
+      @Override public void onAnimationStart(Animation animation) { }
+      @Override public void onAnimationRepeat(Animation animation) { }
+
+      @Override public void onAnimationEnd(Animation animation) {
+        appearSummary.setStartOffset(100);
+        mTextSummary.startAnimation(appearSummary);
+        startTiming();
+      }
+    });
+
+    mTextHeader.startAnimation(disappear);
+    disappearSummary.setStartOffset(200);
+    mTextSummary.startAnimation(disappearSummary);
+
     ((ActivityBook) getActivity()).setDirty(true);
     mFlipperSessionControl.setDisplayedChild(PAUSE_DONE);
   }
@@ -263,13 +296,13 @@ public class FragmentRead extends Fragment {
   }
 
   private void configureSessionTimer() {
-//    configureWheelForMaximumValue(mWheelHours, 48);
-//    configureWheelForMaximumValue(mWheelMinutes, 59);
-//    configureWheelForMaximumValue(mWheelSeconds, 59);
-//
-//    mWheelHours.setCyclic(false);
-//    mWheelMinutes.setCyclic(true);
-//    mWheelSeconds.setCyclic(true);
+    //    configureWheelForMaximumValue(mWheelHours, 48);
+    //    configureWheelForMaximumValue(mWheelMinutes, 59);
+    //    configureWheelForMaximumValue(mWheelSeconds, 59);
+    //
+    //    mWheelHours.setCyclic(false);
+    //    mWheelMinutes.setCyclic(true);
+    //    mWheelSeconds.setCyclic(true);
   }
 
   private void configureWheelForMaximumValue(WheelView view, int maxNum) {
@@ -329,6 +362,7 @@ public class FragmentRead extends Fragment {
       Log.d(TAG, "Got inactive reading state");
       activatePause();
     }
+    refreshElapsedTime();
   }
 
   /**
@@ -389,10 +423,6 @@ public class FragmentRead extends Fragment {
     startTrackerUpdates();
   }
 
-  private void setSummary(LocalReading localReading) {
-
-  }
-
   // Timing events
 
   private boolean isTiming() {
@@ -410,7 +440,7 @@ public class FragmentRead extends Fragment {
     return mElapsed + elapsedSinceTimestamp();
   }
 
-  private void redrawTimeTracker() {
+  private void refreshElapsedTime() {
     long[] hms = Utils.convertMillisToHoursMinutesSeconds(elapsed());
     int hours = (int) hms[0];
     int minutes = (int) hms[1];
@@ -419,15 +449,16 @@ public class FragmentRead extends Fragment {
     String summary = "";
     if(hours > 0) {
       summary = String.format("%s\n%s",
-        Utils.pluralizeWithCount(hours, "hour"),
-        Utils.pluralizeWithCount(minutes, "minute")
+          Utils.pluralizeWithCount(hours, "hour"),
+          Utils.pluralizeWithCount(minutes, "minute")
       );
-    } else if(minutes > 1) {
+    } else if(minutes > 0) {
       summary = Utils.pluralizeWithCount(minutes, "minute");
     } else {
-      summary = Utils.pluralizeWithCount(seconds, "second");
+      summary = seconds + " seconds";
     }
 
+    mTextHeader.setText(getString(R.string.reading_for));
     mTextSummary.setText(summary);
   }
 
@@ -467,7 +498,7 @@ public class FragmentRead extends Fragment {
 
     @Override
     protected void onProgressUpdate(Void... values) {
-      redrawTimeTracker();
+      refreshElapsedTime();
     }
   }
 
@@ -488,7 +519,7 @@ public class FragmentRead extends Fragment {
     @Override public void onAnimationEnd(Animation animation) {
       if(!this.enabled) {
         mButtonDone.setBackgroundDrawable(getResources().getDrawable(R.drawable.default_button_no_states));
-        mTextHeader.setText("Paused at");
+        mTextHeader.setText(getString(R.string.paused_at));
         mButtonDone.setEnabled(false);
       }
     }
@@ -496,7 +527,6 @@ public class FragmentRead extends Fragment {
     @Override public void onAnimationStart(Animation animation) {
       if(this.enabled) {
         mButtonDone.setEnabled(true);
-        mTextHeader.setText("Reading for");
         mButtonDone.setBackgroundDrawable(getResources().getDrawable(R.drawable.default_button));
       }
     }

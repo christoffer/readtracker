@@ -7,12 +7,7 @@ import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
 import com.j256.ormlite.dao.Dao;
 import com.readtracker.customviews.ViewBindingBookHeader;
 import com.readtracker.db.LocalHighlight;
@@ -29,18 +24,12 @@ import java.util.ArrayList;
  * Fragmented screen for browsing and reading a book
  */
 public class ActivityBook extends ReadTrackerActivity {
-  private static ViewGroup mLayoutHeader;
-
-  private static TextView mTextBookmarkPage;
-  private static ImageView mImageBookmark;
   private static Button mButtonAddHighlight;
 
   // Toggle visibility of the add highlight button
   private static SafeViewFlipper mFlipperActionButtons;
 
   private LocalReading mLocalReading;
-  private ArrayList<LocalSession> mLocalSessions;
-  private ArrayList<LocalHighlight> mLocalHighlights;
 
   private BookFragmentAdapter mBookFragmentAdapter;
   private ViewPager mViewPagerReading;
@@ -74,8 +63,6 @@ public class ActivityBook extends ReadTrackerActivity {
     bindViews();
 
     setupActionBar();
-
-    ReadingState readingState = getIntent().getExtras().getParcelable(IntentKeys.READING_SESSION_STATE);
 
     // Load information from database
     int readingId = getIntent().getExtras().getInt(IntentKeys.READING_ID);
@@ -158,11 +145,6 @@ public class ActivityBook extends ReadTrackerActivity {
   }
 
   private void bindViews() {
-    mLayoutHeader = (ViewGroup) findViewById(R.id.layoutHeaderBookActivity);
-
-    mTextBookmarkPage = (TextView) findViewById(R.id.textBookmarkPage);
-    mImageBookmark = (ImageView) findViewById(R.id.imageBookmark);
-
     mFlipperActionButtons = (SafeViewFlipper) findViewById(R.id.flipperActionButtons);
     mButtonAddHighlight = (Button) findViewById(R.id.buttonAddHighlight);
 
@@ -171,7 +153,7 @@ public class ActivityBook extends ReadTrackerActivity {
   }
 
   /**
-   * Called when the local information about a reading has finished being laoded
+   * Called when the local information about a reading has finished being loaded
    * from the database.
    *
    * @param bundle The result bundle with all local data
@@ -191,21 +173,17 @@ public class ActivityBook extends ReadTrackerActivity {
     }
 
     mLocalReading = bundle.localReading;
-    mLocalSessions = bundle.localSessions;
-    mLocalHighlights = bundle.localHighlights;
+    ArrayList<LocalSession> localSessions = bundle.localSessions;
+    ArrayList<LocalHighlight> localHighlights = bundle.localHighlights;
 
-    Log.d(TAG, "Got " + mLocalSessions.size() + " reading sessions and " + mLocalHighlights.size() + " highlights");
+    Log.d(TAG, "Got " + localSessions.size() + " reading sessions and " + localHighlights.size() + " highlights");
 
     // Book info
     ViewBindingBookHeader.bind(this, mLocalReading);
 
-    setBookMarkPage(mLocalReading.currentPage);
-
     setupFragments(bundle);
 
     mFlipperActionButtons.setVisibility(View.VISIBLE);
-    animateBookBar();
-
     Log.i(TAG, "Initialized for reading with id:" + mLocalReading.id);
   }
 
@@ -274,41 +252,7 @@ public class ActivityBook extends ReadTrackerActivity {
     });
   }
 
-  private void setBookMarkPage(long currentPage) {
-    if(currentPage > 0) {
-      mTextBookmarkPage.setText("" + mLocalReading.currentPage);
-    } else {
-      mTextBookmarkPage.setText("");
-    }
-  }
-
   // Private
-
-  private void animateBookBar() {
-    boolean shouldShowBookmark = mLocalReading.currentPage > 0;
-    if(shouldShowBookmark) {
-      Log.d(TAG, "Showing with bookmark for page: " + mLocalReading.currentPage);
-      Animation bookmarkAppear = AnimationUtils.loadAnimation(this, R.anim.bookmark_appear);
-      Animation fadeIn = AnimationUtils.loadAnimation(this, android.R.anim.fade_in);
-      fadeIn.setStartOffset(318);
-      bookmarkAppear.setStartOffset(200);
-
-      mImageBookmark.startAnimation(bookmarkAppear);
-      mTextBookmarkPage.startAnimation(fadeIn);
-
-      mImageBookmark.setVisibility(View.VISIBLE);
-      mTextBookmarkPage.setVisibility(View.VISIBLE);
-    } else {
-      Log.d(TAG, "Showing without bookmark");
-      mTextBookmarkPage.setVisibility(View.GONE);
-      mImageBookmark.setVisibility(View.GONE);
-    }
-
-    Animation fadeIn = AnimationUtils.loadAnimation(this, android.R.anim.fade_in);
-    mLayoutHeader.startAnimation(fadeIn);
-    mLayoutHeader.setVisibility(View.VISIBLE);
-    mFlipperActionButtons.setVisibility(View.VISIBLE);
-  }
 
   public void exitToSessionEndScreen(long elapsedMilliseconds) {
     Intent intentReadingSessionEnd = new Intent(this, ActivityReadingSessionEnd.class);
