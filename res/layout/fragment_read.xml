@@ -32,9 +32,9 @@
                     android:layout_centerInParent="true"
                     android:orientation="vertical">
 
-        <View android:layout_height="fill_parent"
-              android:layout_width="fill_parent"
-              android:layout_weight="1.1"/>
+        <!--<View android:layout_height="fill_parent"-->
+              <!--android:layout_width="fill_parent"-->
+              <!--android:layout_weight="1.1"/>-->
 
         <include android:id="@+id/layoutSessionTimer"
                  layout="@layout/_read_session_timer"
@@ -42,9 +42,9 @@
                  android:layout_width="fill_parent"
                  android:layout_height="fill_parent"/>
 
-        <View android:layout_height="fill_parent"
-              android:layout_width="fill_parent"
-              android:layout_weight="1.1"/>
+        <!--<View android:layout_height="fill_parent"-->
+              <!--android:layout_width="fill_parent"-->
+              <!--android:layout_weight="1.1"/>-->
       </LinearLayout>
 
     </RelativeLayout>

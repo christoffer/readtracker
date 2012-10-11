@@ -8,7 +8,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 import com.readtracker.customviews.ViewBindingBookHeader;
 import com.readtracker.db.LocalReading;
 import com.readtracker.db.LocalSession;
@@ -26,6 +28,13 @@ import java.util.UUID;
  */
 public class ActivityReadingSessionEnd extends ReadTrackerActivity {
   private static WheelView mWheelEndingPage;
+
+  private static TextView mTextWhereDidYouEnd;
+
+  private static ViewGroup mLayoutEndPercent;
+  private static WheelView mWheelEndPercentInteger;
+  private static WheelView mWheelEndPercentFraction;
+
   private static Button mButtonSaveReadingSession;
   private static Button mButtonShowDurationPicker;
   private static Button mButtonSetDuration;
@@ -91,26 +100,63 @@ public class ActivityReadingSessionEnd extends ReadTrackerActivity {
   private void initialize() {
     ViewBindingBookHeader.bind(this, mLocalReading);
 
+    int currentPage = (Integer) mWheelEndingPage.getTag();
+
+    if(mLocalReading.isMeasuredInPercent()) {
+      setupPercentWheels(currentPage);
+      mTextWhereDidYouEnd.setText("What position did you end on?");
+      mWheelEndingPage.setVisibility(View.GONE);
+    } else {
+      setupEndPageWheels(currentPage);
+      mTextWhereDidYouEnd.setText("What page did you end on?");
+      mLayoutEndPercent.setVisibility(View.GONE);
+    }
+  }
+
+  private void setupPercentWheels(int currentPage) {
+    NumericWheelAdapter adapterIntegers = new NumericWheelAdapter(this, 0, 99);
+    NumericWheelAdapter adapterFractions = new NumericWheelAdapter(this, 0, 99);
+
+    configureWheelAdapterStyle(adapterIntegers);
+    configureWheelAdapterStyle(adapterFractions);
+
+    mWheelEndPercentInteger.setViewAdapter(adapterIntegers);
+    mWheelEndPercentFraction.setViewAdapter(adapterFractions);
+
+    // Split 578 => 5 and 78
+    int currentInteger = currentPage / 100;
+    int currentFraction = currentPage - currentInteger * 100;
+    Log.d(TAG, "Got current page: " + currentPage + " and split into " + currentInteger + " and " + currentFraction);
+
+    mWheelEndPercentInteger.setCurrentItem(Math.min(99, currentInteger));
+    mWheelEndPercentFraction.setCurrentItem(Math.min(99, currentFraction));
+
+    configureWheelView(mWheelEndPercentInteger);
+    configureWheelView(mWheelEndPercentFraction);
+  }
+
+  private void setupEndPageWheels(int currentPage) {
     NumericWheelAdapter endingPageAdapter = new NumericWheelAdapter(this, 0, (int) mLocalReading.totalPages);
     configureWheelAdapterStyle(endingPageAdapter);
 
     mWheelEndingPage.setViewAdapter(endingPageAdapter);
-    mWheelEndingPage.setCurrentItem((Integer) mWheelEndingPage.getTag());
-    mWheelEndingPage.setInterpolator(null);
-    mWheelEndingPage.setVisibleItems(3);
-
-    mWheelEndingPage.addChangingListener(new OnWheelChangedListener() {
-      @Override
-      public void onChanged(WheelView wheel, int oldValue, int newValue) {
-        mButtonSaveReadingSession.setEnabled(true);
-      }
-    });
+    mWheelEndingPage.setCurrentItem(currentPage);
+    configureWheelView(mWheelEndingPage);
   }
 
   private void bindViews() {
     mButtonSaveReadingSession = (Button) findViewById(R.id.btnSaveReadingSession);
     mButtonShowDurationPicker = (Button) findViewById(R.id.buttonShowDurationPicker);
+
+    mTextWhereDidYouEnd = (TextView) findViewById(R.id.textWhereDidYouEnd);
+
+    // Wheel for normal pages
     mWheelEndingPage = (WheelView) findViewById(R.id.wheelEndingPage);
+
+    // Wheel for percents
+    mLayoutEndPercent = (ViewGroup) findViewById(R.id.layoutEndPercent);
+    mWheelEndPercentInteger = (WheelView) findViewById(R.id.wheelEndPercentInteger);
+    mWheelEndPercentFraction = (WheelView) findViewById(R.id.wheelEndPercentFraction);
 
     mButtonSetDuration = (Button) findViewById(R.id.buttonSetDuration);
     mButtonCancelSetDuration = (Button) findViewById(R.id.buttonCancelSetDuration);
@@ -135,6 +181,18 @@ public class ActivityReadingSessionEnd extends ReadTrackerActivity {
     wheelAdapter.setTextColor(getResources().getColor(R.color.text_color_primary));
     wheelAdapter.setTypeFace(Typeface.DEFAULT);
     wheelAdapter.setTypeStyle(Typeface.NORMAL);
+  }
+
+  private void configureWheelView(WheelView wheelView) {
+    wheelView.setInterpolator(null);
+    wheelView.setVisibleItems(3);
+
+    wheelView.addChangingListener(new OnWheelChangedListener() {
+      @Override
+      public void onChanged(WheelView wheel, int oldValue, int newValue) {
+        mButtonSaveReadingSession.setEnabled(true);
+      }
+    });
   }
 
   private void showDurationPicker() {
@@ -209,7 +267,14 @@ public class ActivityReadingSessionEnd extends ReadTrackerActivity {
   private void handleSave() {
     long sessionEndPage;
 
-    sessionEndPage = mWheelEndingPage.getCurrentItem();
+    if(mLocalReading.isMeasuredInPercent()) {
+      int percentInteger = mWheelEndPercentInteger.getCurrentItem();
+      int percentFraction = mWheelEndPercentFraction.getCurrentItem();
+      // transform 45 and 17 to 4517
+      sessionEndPage = percentInteger * 100 + percentFraction;
+    } else {
+      sessionEndPage = mWheelEndingPage.getCurrentItem();
+    }
 
     mLocalReading.currentPage = sessionEndPage;
     mLocalReading.refreshProgress();

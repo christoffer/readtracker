@@ -15,7 +15,8 @@
     <!-- group of pause/resume and done button -->
 
     <LinearLayout android:layout_width="fill_parent"
-                  android:layout_height="wrap_content">
+                  android:layout_height="wrap_content"
+                  android:layout_alignParentBottom="true">
 
       <Button style="@style/default_button"
               android:id="@+id/buttonPause"
@@ -25,7 +26,6 @@
 
       <Button style="@style/default_button"
               android:id="@+id/buttonDone"
-              android:layout_alignParentBottom="true"
               android:layout_weight="1"
               android:layout_marginLeft="6dp"
               android:text="Done"/>

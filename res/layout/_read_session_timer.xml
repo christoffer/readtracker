@@ -7,15 +7,15 @@
 
   <com.readtracker.thirdparty.widget.WheelView android:id="@+id/wheelHours"
                                                android:layout_marginLeft="0dp"
-                                               style="@style/default_wheel_view" />
+                                               style="@style/reading_session_wheel_view" />
 
   <com.readtracker.thirdparty.widget.WheelView android:id="@+id/wheelMinutes"
                                                android:layout_marginLeft="6dp"
                                                android:layout_marginRight="6dp"
-                                               style="@style/default_wheel_view" />
+                                               style="@style/reading_session_wheel_view" />
 
   <com.readtracker.thirdparty.widget.WheelView android:id="@+id/wheelSeconds"
                                                android:layout_marginRight="0dp"
-                                               style="@style/default_wheel_view" />
+                                               style="@style/reading_session_wheel_view" />
 
 </LinearLayout>
