@@ -12,6 +12,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import com.readtracker.customviews.WaveView;
 import com.readtracker.db.LocalReading;
 import com.readtracker.interfaces.SaveLocalReadingListener;
 import com.readtracker.tasks.SaveLocalReadingTask;
@@ -43,6 +44,8 @@ public class FragmentRead extends Fragment {
 
   private static TextView mTextHeader;
   private static TextView mTextSummary;
+
+  private static WaveView mWaveReading;
 
   // Reading to track
   private LocalReading mLocalReading;
@@ -170,6 +173,8 @@ public class FragmentRead extends Fragment {
 
     mTextHeader = (TextView) mLayoutSessionTimer.findViewById(R.id.textHeader);
     mTextSummary = (TextView) mLayoutSessionTimer.findViewById(R.id.textSummary);
+
+    mWaveReading = (WaveView) view.findViewById(R.id.waveReading);
   }
 
   private void bindEvents() {
@@ -259,6 +264,7 @@ public class FragmentRead extends Fragment {
 
     ((ActivityBook) getActivity()).setDirty(true);
     mFlipperSessionControl.setDisplayedChild(PAUSE_DONE);
+    mWaveReading.setVisibility(View.VISIBLE);
   }
 
   /**
@@ -436,6 +442,7 @@ public class FragmentRead extends Fragment {
 
   private void startTrackerUpdates() {
     stopTrackerUpdates();
+    mWaveReading.start();
     mRedrawTimerTask = new RedrawTimerTask();
     //noinspection unchecked
     mRedrawTimerTask.execute();
@@ -446,6 +453,7 @@ public class FragmentRead extends Fragment {
       mRedrawTimerTask.cancel(true);
       mRedrawTimerTask = null;
     }
+    mWaveReading.stop();
   }
 
   private class RedrawTimerTask extends AsyncTask<Void, Void, Void> {

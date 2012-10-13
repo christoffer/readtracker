@@ -1,9 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:readtracker="http://schemas.android.com/apk/res/com.readtracker"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:padding="12dp">
+
+  <com.readtracker.customviews.WaveView id="@+id/waveReading"
+                                        android:layout_width="fill_parent"
+                                        android:layout_height="100dp"
+                                        android:background="@android:color/transparent"
+                                        android:visibility="invisible"
+                                        readtracker:backgroundColor="@color/midnight_medium"
+                                        readtracker:primaryColor="@color/midnight_ultralight"
+                                        readtracker:secondaryColor="@color/midnight_ultralight_pressed"
+                                        android:layout_centerInParent="true" />
 
   <LinearLayout android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -13,11 +24,11 @@
 
     <TextView android:id="@+id/textHeader"
               style="@style/reading_session_text_passive"
-              android:text="-"/>
+              android:text="Reading for" />
 
     <TextView android:id="@+id/textSummary"
               style="@style/reading_session_text_active"
-              android:text="-"/>
+              android:text="34 minutes" />
 
   </LinearLayout>
 
@@ -25,6 +36,6 @@
 
   <View android:id="@+id/wave"
         android:layout_width="fill_parent"
-        android:layout_height="20dp"/>
+        android:layout_height="20dp" />
 
 </RelativeLayout>

@@ -20,32 +20,11 @@
 
       <include layout="@layout/_reading_session_controls" />
 
-      <!-- session timer
-
-      sandwich the timer between two views to center and
-      stretch it to a percentage of the available height
-      -->
-
-      <LinearLayout android:layout_height="fill_parent"
-                    android:layout_width="fill_parent"
-                    android:layout_above="@id/flipperSessionControl"
-                    android:layout_centerInParent="true"
-                    android:orientation="vertical">
-
-        <!--<View android:layout_height="fill_parent"-->
-              <!--android:layout_width="fill_parent"-->
-              <!--android:layout_weight="1.1"/>-->
-
-        <include android:id="@+id/layoutSessionTimer"
-                 layout="@layout/_read_session_timer"
-                 android:layout_weight="1"
-                 android:layout_width="fill_parent"
-                 android:layout_height="fill_parent"/>
-
-        <!--<View android:layout_height="fill_parent"-->
-              <!--android:layout_width="fill_parent"-->
-              <!--android:layout_weight="1.1"/>-->
-      </LinearLayout>
+      <include android:id="@+id/layoutSessionTimer"
+               layout="@layout/_read_session_timer"
+               android:layout_weight="1"
+               android:layout_width="fill_parent"
+               android:layout_height="fill_parent" />
 
     </RelativeLayout>
 
