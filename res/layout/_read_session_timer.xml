@@ -18,6 +18,7 @@
                                         android:background="@android:color/transparent"
                                         readtracker:backgroundColor="@color/midnight_medium"
                                         readtracker:primaryColor="@color/midnight_ultralight"
+                                        android:visibility="invisible"
                                         readtracker:secondaryColor="@color/midnight_ultralight"
                                         android:layout_above="@id/dummyBaseline" />
 

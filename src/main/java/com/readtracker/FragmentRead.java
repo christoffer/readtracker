@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -113,12 +114,10 @@ public class FragmentRead extends Fragment {
 
     // Rig for a fresh session
     if(mLocalReading != null) {
-      if(mElapsed == 0) {
-        mTextHeader.setText("Last read on");
-        mTextSummary.setText(mLocalReading.describeCurrentPosition());
+      if(mElapsed == 0) { // starting a read session
+        describeLastPosition(mLocalReading);
       } else {
         refreshElapsedTime();
-        mTextHeader.setText(getString(R.string.paused_at));
       }
     }
     return view;
@@ -221,6 +220,28 @@ public class FragmentRead extends Fragment {
   }
 
   /**
+   * Updates the text header and summary to show where the user last left off.
+   * Handles pages/percent and shows a special text for first session.
+   * @param localReading The local reading to describe last position off
+   */
+  private void describeLastPosition(LocalReading localReading) {
+    boolean isFirstRead = localReading.currentPage == 0;
+
+    mTextHeader.setText(isFirstRead ? "" : "Last time you ended on");
+    if(localReading.measureInPercent) {
+      int currentInteger = (int) localReading.currentPage / 100;
+      int currentFraction = (int) localReading.currentPage - currentInteger * 100;
+      mTextSummary.setText(String.format("%d.%d%%", currentInteger, currentFraction));
+    } else {
+      if(isFirstRead) {
+        mTextSummary.setText("First read");
+      } else {
+        mTextSummary.setText(String.format("page %d", localReading.currentPage));
+      }
+    }
+  }
+
+  /**
    * Provides outside access to the current reading state
    *
    * @return the current reading state as a value object
@@ -240,8 +261,14 @@ public class FragmentRead extends Fragment {
     final Animation appear = AnimationUtils.loadAnimation(getActivity(), R.anim.slide_up_appear);
     final Animation appearSummary = AnimationUtils.loadAnimation(getActivity(), R.anim.slide_up_appear);
 
+    final Animation appearWaveform = new AlphaAnimation(0.0f, 1.0f);
+    appearWaveform.setDuration(3000);
+    mWaveReading.startAnimation(appearWaveform);
+    mWaveReading.setVisibility(View.VISIBLE);
+
     disappear.setAnimationListener(new Animation.AnimationListener() {
       @Override public void onAnimationStart(Animation animation) { }
+
       @Override public void onAnimationRepeat(Animation animation) { }
 
       @Override public void onAnimationEnd(Animation animation) {
@@ -252,6 +279,7 @@ public class FragmentRead extends Fragment {
 
     disappearSummary.setAnimationListener(new Animation.AnimationListener() {
       @Override public void onAnimationStart(Animation animation) { }
+
       @Override public void onAnimationRepeat(Animation animation) { }
 
       @Override public void onAnimationEnd(Animation animation) {
@@ -497,7 +525,6 @@ public class FragmentRead extends Fragment {
     @Override public void onAnimationEnd(Animation animation) {
       if(!this.enabled) {
         mButtonDone.setBackgroundDrawable(getResources().getDrawable(R.drawable.default_button_no_states));
-        mTextHeader.setText(getString(R.string.paused_at));
         mButtonDone.setEnabled(false);
       }
     }
