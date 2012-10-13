@@ -9,13 +9,12 @@ import android.view.View;
 import com.readtracker.R;
 
 public class WaveView extends View {
-  private static final String TAG = WaveView.class.getName();
   private static final int DEFAULT_PRIMARY_COLOR = Color.argb(188, 67, 128, 198);
   private static final int DEFAULT_SECONDARY_COLOR = Color.argb(88, 137, 158, 208);
   private static final int DEFAULT_BACKGROUND_COLOR = Color.rgb(0, 0, 0);
 
-  private static final long PIXELS_PER_SECOND = 25;
-  private static final long FPS = 20;
+  private static final long PIXELS_PER_SECOND = 20;
+  private static final long FPS = 15;
   private static final long UPDATE_INTERVAL = 1000 / FPS;
 
   // How many views long the waveform should be
@@ -39,17 +38,60 @@ public class WaveView extends View {
   // Background color, used for masking the ends of the waves
   private int backgroundColor = DEFAULT_BACKGROUND_COLOR;
 
-  private Color background;
-
+  @SuppressWarnings("UnusedDeclaration")
   public WaveView(Context context) {
     super(context);
-    init();
   }
 
+  @SuppressWarnings("UnusedDeclaration")
   public WaveView(Context context, AttributeSet attrs) {
     super(context, attrs);
     readStyles(attrs);
-    init();
+  }
+
+  @SuppressWarnings("UnusedDeclaration")
+  public WaveView(Context context, AttributeSet attrs, int defStyle) {
+    super(context, attrs, defStyle);
+    readStyles(attrs);
+  }
+
+  @Override protected void onDraw(Canvas canvas) {
+    if(bitmap == null) createBitmap();
+    canvas.drawBitmap(bitmap, -offset, 0, null);
+    if(!isInEditMode()) { // for some reason the gradient does not work in edit mode
+      Paint gradientPaint = createGradientPaint();
+      canvas.drawRect(0, 0, getWidth(), getHeight(), gradientPaint);
+    }
+  }
+
+  /**
+   * Sets the primary wave color
+   *
+   * @param color color for drawing the primary wave
+   */
+  @SuppressWarnings("UnusedDeclaration")
+  public void setPrimaryColor(int color) {
+    primaryColor = color;
+  }
+
+  /**
+   * Sets the secondary wave color
+   *
+   * @param color color for drawing the secondary wave
+   */
+  @SuppressWarnings("UnusedDeclaration")
+  public void setSecondaryColor(int color) {
+    secondaryColor = color;
+  }
+
+  /**
+   * Sets the background color. This is used to draw the fading edges of the
+   * wave.
+   *
+   * @param color color of the background of the wave container
+   */
+  public void setBackgroundColor(int color) {
+    backgroundColor = color;
   }
 
   private void readStyles(AttributeSet attrs) {
@@ -73,17 +115,6 @@ public class WaveView extends View {
     styles.recycle();
   }
 
-  private void init() {
-
-  }
-
-  @Override protected void onDraw(Canvas canvas) {
-    if(bitmap == null) createBitmap();
-    Paint gradientPaint = createGradientPaint();
-    canvas.drawBitmap(bitmap, -offset, 0, null);
-    canvas.drawRect(0, 0, getWidth(), getHeight(), gradientPaint);
-  }
-
   private Paint createGradientPaint() {
     int fill = backgroundColor;
     int transparent = Color.argb(
@@ -93,7 +124,7 @@ public class WaveView extends View {
         Color.blue(backgroundColor)
     );
     int[] colors = new int[] { fill, transparent, transparent, fill };
-    float[] positions = new float[] { 0.2f, 0.8f, 0.9f, 0.98f };
+    float[] positions = new float[] { 0.1f, 0.6f, 0.9f, 0.98f };
     LinearGradient gradient = new LinearGradient(0, 0, getWidth(), 0, colors, positions, Shader.TileMode.CLAMP);
     Paint gradientPaint = new Paint();
     gradientPaint.setShader(gradient);
@@ -104,7 +135,7 @@ public class WaveView extends View {
     return new Paint() {{
       setColor(primaryColor);
       setStyle(Paint.Style.STROKE);
-      setStrokeWidth(3.0f);
+      setStrokeWidth(4.0f);
       setAntiAlias(true);
       setPathEffect(new CornerPathEffect(45));
     }};
@@ -133,7 +164,7 @@ public class WaveView extends View {
 
     // render two bitmaps to allow seamless scrolling, stick a full view width
     // at the end of the first one
-    bitmap = Bitmap.createBitmap(waveformWidth + getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
+    bitmap = Bitmap.createBitmap(waveformWidth + getWidth(), getHeight(), Bitmap.Config.ARGB_4444);
 
     Canvas bitmapCanvas = new Canvas(bitmap);
 
@@ -144,7 +175,7 @@ public class WaveView extends View {
     drawWaveform(path, bitmapCanvas, waveformWidth, primaryPaint);
 
     // Draw secondary waves
-    for(int i = 0; i < 5; i++) {
+    for(int i = 0; i < 3; i++) {
       populateWaveform(waveform, 0.2f, 0.3f);
       path = createWaveformPath(waveform, waveformWidth, waveformHeight);
       drawWaveform(path, bitmapCanvas, 0.0f, secondaryPaint);
@@ -152,35 +183,46 @@ public class WaveView extends View {
     }
   }
 
+  @SuppressWarnings("UnusedDeclaration")
   public void start() {
     isRunning = true;
     handler.removeCallbacks(animationTimer);
     handler.postDelayed(animationTimer, UPDATE_INTERVAL);
   }
 
+  @SuppressWarnings("UnusedDeclaration")
+  public void start(long timestamp) {
+    this.timestamp = timestamp;
+    isRunning = true;
+    handler.removeCallbacks(animationTimer);
+    handler.postDelayed(animationTimer, UPDATE_INTERVAL);
+  }
+
+  @SuppressWarnings("UnusedDeclaration")
   public void stop() {
     isRunning = false;
     handler.removeCallbacks(animationTimer);
   }
 
+  @SuppressWarnings("UnusedDeclaration")
   public boolean isRunning() {
     return isRunning;
   }
 
-  private Runnable animationTimer = new Runnable() {
-    @Override public void run() {
-      if(bitmap != null) {
-        long now = System.currentTimeMillis();
-        long elapsed = now - timestamp;
-        float delta = PIXELS_PER_SECOND * ((float) elapsed / 1000.0f);
-        timestamp = now;
-        offset = (offset + delta) % (bitmap.getWidth() - getWidth());
-        invalidate();
-      }
-
-      handler.postDelayed(animationTimer, UPDATE_INTERVAL);
+private Runnable animationTimer = new Runnable() {
+  @Override public void run() {
+    if(bitmap != null) {
+      long now = System.currentTimeMillis();
+      long elapsed = now - timestamp;
+      float delta = PIXELS_PER_SECOND * ((float) elapsed / 1000.0f);
+      timestamp = now;
+      offset = (offset + delta) % (bitmap.getWidth() - getWidth());
+      invalidate();
     }
-  };
+
+    handler.postDelayed(animationTimer, UPDATE_INTERVAL);
+  }
+};
 
   private void drawWaveform(Path waveformPath, Canvas canvas, final float offset, Paint paint) {
     canvas.save();
@@ -194,7 +236,6 @@ public class WaveView extends View {
 
     final int centerY = height / 2;
     final int numPoints = waveform.length;
-    final float halfNumPoints = numPoints * 0.5f;
 
     final float halfHeight = 0.5f * height;
 

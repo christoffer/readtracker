@@ -155,6 +155,7 @@ public class FragmentRead extends Fragment {
       loadTimingState();
     } else {
       Log.d(TAG, "Skipping loading of stored session due to forced initialize");
+      mForceReInitialize = false; // avoid re-init when bringing an instance back into focus
     }
   }
 
@@ -169,12 +170,14 @@ public class FragmentRead extends Fragment {
     mButtonPause = (Button) view.findViewById(R.id.buttonPause);
 
     mFlipperSessionControl = (SafeViewFlipper) view.findViewById(R.id.flipperSessionControl);
-    mLayoutSessionTimer = (ViewGroup) view.findViewById(R.id.layoutSessionTimer);
 
+    mLayoutSessionTimer = (ViewGroup) view.findViewById(R.id.layoutSessionTimer);
     mTextHeader = (TextView) mLayoutSessionTimer.findViewById(R.id.textHeader);
     mTextSummary = (TextView) mLayoutSessionTimer.findViewById(R.id.textSummary);
+    mWaveReading = (WaveView) mLayoutSessionTimer.findViewById(R.id.waveReading);
+    Log.d(TAG, "Wave: " + mWaveReading);
+    Log.d(TAG, "mLayout: " + mLayoutSessionTimer);
 
-    mWaveReading = (WaveView) view.findViewById(R.id.waveReading);
   }
 
   private void bindEvents() {
@@ -423,7 +426,7 @@ public class FragmentRead extends Fragment {
     int minutes = (int) hms[1];
     int seconds = (int) hms[2];
 
-    String summary = "";
+    String summary;
     if(hours > 0) {
       summary = String.format("%s\n%s",
           Utils.pluralizeWithCount(hours, "hour"),
@@ -439,10 +442,9 @@ public class FragmentRead extends Fragment {
     mTextSummary.setText(summary);
   }
 
-
   private void startTrackerUpdates() {
     stopTrackerUpdates();
-    mWaveReading.start();
+    mWaveReading.start(mTimestampLastStarted);
     mRedrawTimerTask = new RedrawTimerTask();
     //noinspection unchecked
     mRedrawTimerTask.execute();
