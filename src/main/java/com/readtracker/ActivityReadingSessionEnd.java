@@ -189,8 +189,8 @@ public class ActivityReadingSessionEnd extends ReadTrackerActivity {
     // Lazily initialize the adapters
     boolean needInitialize = (
         mWheelDurationHours.getViewAdapter() == null ||
-        mWheelDurationMinutes.getViewAdapter() == null ||
-        mWheelDurationSeconds.getViewAdapter() == null
+            mWheelDurationMinutes.getViewAdapter() == null ||
+            mWheelDurationSeconds.getViewAdapter() == null
     );
 
     if(needInitialize) {
@@ -216,22 +216,19 @@ public class ActivityReadingSessionEnd extends ReadTrackerActivity {
   private void bindEvents() {
 
     mButtonSaveReadingSession.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
-        handleSave();
+      @Override public void onClick(View view) {
+        onClickedSave();
       }
     });
 
     mButtonShowDurationPicker.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
+      @Override public void onClick(View view) {
         showDurationPicker();
       }
     });
 
     mButtonSetDuration.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
+      @Override public void onClick(View view) {
         updateSessionLength();
       }
     });
@@ -244,25 +241,25 @@ public class ActivityReadingSessionEnd extends ReadTrackerActivity {
     });
   }
 
-  private void handleSave() {
-    long sessionEndPage;
-
-    sessionEndPage = getCurrentPage();
-
-    mLocalReading.currentPage = sessionEndPage;
+  private void onClickedSave() {
+    mLocalReading.currentPage = getCurrentPage();
     mLocalReading.refreshProgress();
     mLocalReading.lastReadAt = (new Date()).getTime() / 1000; // Convert to seconds
     mLocalReading.timeSpentMillis += mSessionLengthMillis;
 
-    ObjectBundle objectBundle = new ObjectBundle(mLocalReading, mSessionLengthMillis);
-
     // Send off to background task
-    (new UpdateAndCreateSession()).execute(objectBundle);
+    UpdateAndCreateSession.createSession(mLocalReading, mSessionLengthMillis,
+        new UpdateAndCreateSession.OnCompleteListener() {
+          @Override public void onCompleted(LocalSession localSession) {
+            onSessionSaved(localSession);
+          }
+        }
+    );
   }
 
-  private void onPostCreateAndUpdate(Boolean result) {
-    Log.i(TAG, "onPostCreateAndUpdate with success: " + result.toString());
-    if(result) {
+  private void onSessionSaved(LocalSession localSession) {
+    Log.i(TAG, "onSessionSaved: " + localSession);
+    if(localSession != null) {
       Log.i(TAG, "Saved locally, initializing process of queued pings...");
       startService(new Intent(this, ReadmillTransferIntent.class));
       setResult(RESULT_OK);
@@ -312,13 +309,49 @@ public class ActivityReadingSessionEnd extends ReadTrackerActivity {
   // ASyncTask Class
   // --------------------------------------------------------------------
 
-  private class UpdateAndCreateSession extends AsyncTask<ObjectBundle, Void, Boolean> {
+  private static class UpdateAndCreateSession extends AsyncTask<Void, Void, LocalSession> {
+    private static final String TAG = UpdateAndCreateSession.class.getName();
+    private LocalReading mLocalReading;
+    private long mSessionLength;
+    private OnCompleteListener mListener;
+
+    public interface OnCompleteListener {
+      public void onCompleted(LocalSession localSession);
+    }
+
+    public static void createSession(LocalReading localReading, long sessionLengthMillis, OnCompleteListener listener) {
+      UpdateAndCreateSession instance = new UpdateAndCreateSession(localReading, sessionLengthMillis, listener);
+      //noinspection unchecked
+      instance.execute();
+    }
+
+    private UpdateAndCreateSession(LocalReading localReading, long sessionLength, OnCompleteListener listener) {
+      mLocalReading = localReading;
+      mSessionLength = sessionLength;
+      mListener = listener;
+    }
 
     @Override
-    protected Boolean doInBackground(ObjectBundle... sessions) {
-      ObjectBundle session = sessions[0];
-      Log.i(TAG, "Saving reading with id " + session.mLocalReading.id);
-      return updateLocalReading(session.mLocalReading) && createReadingSession(session.generateReadingSession());
+    protected LocalSession doInBackground(Void... args) {
+      Log.i(TAG, "Saving reading with id " + mLocalReading.id);
+      LocalSession newSession = generateReadingSession(mLocalReading, mSessionLength);
+      Log.d(TAG, "Created session: " + newSession);
+      boolean success = updateLocalReading(mLocalReading) && saveReadingSession(newSession);
+      return success ? newSession : null;
+    }
+
+    private LocalSession generateReadingSession(final LocalReading localReading, final long sessionLength) {
+      final long sessionDurationSeconds = (long) Math.floor((double) sessionLength / 1000.0);
+
+      return new LocalSession() {{
+        readingId = localReading.id;
+        readmillReadingId = localReading.readmillReadingId;
+        durationSeconds = sessionDurationSeconds;
+        progress = localReading.progress;
+        endedOnPage = (int) localReading.currentPage;
+        sessionIdentifier = UUID.randomUUID().toString();
+        occurredAt = new Date();
+      }};
     }
 
     private boolean updateLocalReading(LocalReading localReading) {
@@ -332,8 +365,8 @@ public class ActivityReadingSessionEnd extends ReadTrackerActivity {
       }
     }
 
-    private boolean createReadingSession(LocalSession session) {
-      Log.i(TAG, "Creating Session for LocalReading: " + session.readingId);
+    private boolean saveReadingSession(LocalSession session) {
+      Log.i(TAG, "Saving session: " + session.readingId);
       try {
         ApplicationReadTracker.getSessionDao().create(session);
         return true;
@@ -344,37 +377,8 @@ public class ActivityReadingSessionEnd extends ReadTrackerActivity {
     }
 
     @Override
-    protected void onPostExecute(Boolean result) {
-      onPostCreateAndUpdate(result);
-    }
-  }
-
-  // Object for passing two objects at once the the background task
-  class ObjectBundle {
-
-    public LocalReading mLocalReading;
-    public long mSessionDurationMillis;
-
-    public ObjectBundle(LocalReading localReading, long sessionDurationMillis) {
-      this.mLocalReading = localReading;
-      this.mSessionDurationMillis = sessionDurationMillis;
-    }
-
-    public LocalSession generateReadingSession() {
-      long durationSeconds = (long) Math.floor((double) this.mSessionDurationMillis / 1000.0);
-
-      LocalSession session = new LocalSession();
-
-      session.readingId = mLocalReading.id;
-      session.readmillReadingId = mLocalReading.readmillReadingId;
-      session.durationSeconds = durationSeconds;
-      session.progress = mLocalReading.progress;
-      session.endedOnPage = (int) mLocalReading.currentPage;
-      session.sessionIdentifier = UUID.randomUUID().toString();
-      session.occurredAt = new Date();
-
-      Log.i(TAG, "Creating ReadingSession with duration: " + durationSeconds + ", started on " + session.startedOnPage + " to " + session.endedOnPage + " progress: " + session.progress);
-      return session;
+    protected void onPostExecute(LocalSession localSession) {
+      mListener.onCompleted(localSession);
     }
   }
 }
