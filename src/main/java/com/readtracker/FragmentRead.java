@@ -63,8 +63,8 @@ public class FragmentRead extends Fragment {
   private boolean mForceReInitialize;
 
   // Display child index for flipper session control
-  private static final int START = 0;
-  private static final int PAUSE_DONE = 1;
+  private static final int PAGE_READING_CONTROLS_INACTIVE = 0;
+  private static final int PAGE_READING_CONTROLS_ACTIVE = 1;
 
   // Pages for flipper between reading session and page information entry
   private static final int PAGE_READING_SESSION = 0;
@@ -110,7 +110,7 @@ public class FragmentRead extends Fragment {
       Log.d(TAG, "Loaded without local reading");
     }
 
-    mFlipperSessionControl.setDisplayedChild(START);
+    mFlipperSessionControl.setDisplayedChild(PAGE_READING_CONTROLS_INACTIVE);
 
     // Rig for a fresh session
     if(mLocalReading != null) {
@@ -211,6 +211,8 @@ public class FragmentRead extends Fragment {
     }
   }
 
+  /* Public API */
+
   private void setElapsed(long elapsed) {
     mElapsed = elapsed;
   }
@@ -218,6 +220,8 @@ public class FragmentRead extends Fragment {
   public void setLocalReading(LocalReading localReading) {
     mLocalReading = localReading;
   }
+
+  /* Private API */
 
   /**
    * Updates the text header and summary to show where the user last left off.
@@ -234,7 +238,7 @@ public class FragmentRead extends Fragment {
       return;
     }
 
-    mTextHeader.setText("Last time you ended on");
+    mTextHeader.setText("Last time you ended at");
     if(localReading.measureInPercent) {
       int currentInteger = (int) localReading.currentPage / 100;
       int currentFraction = (int) localReading.currentPage - currentInteger * 100;
@@ -297,7 +301,7 @@ public class FragmentRead extends Fragment {
     mTextSummary.startAnimation(disappearSummary);
 
     ((ActivityBook) getActivity()).setDirty(true);
-    mFlipperSessionControl.setDisplayedChild(PAUSE_DONE);
+    mFlipperSessionControl.setDisplayedChild(PAGE_READING_CONTROLS_ACTIVE);
     mWaveReading.setVisibility(View.VISIBLE);
   }
 
@@ -359,10 +363,7 @@ public class FragmentRead extends Fragment {
     // the state if the user leaves the activity.
     ((ActivityBook) getActivity()).setDirty(true);
 
-    // Reset to a "reading" state
-    mButtonStart.setVisibility(View.INVISIBLE);
-    mButtonPause.setVisibility(View.VISIBLE);
-    mButtonDone.setVisibility(View.VISIBLE);
+    mFlipperSessionControl.setDisplayedChild(PAGE_READING_CONTROLS_ACTIVE);
 
     // Check if we should automatically start the timer
     if(readingState.isActive()) {

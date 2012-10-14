@@ -1,5 +1,6 @@
 package com.readtracker;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -14,6 +15,11 @@ import java.util.ArrayList;
 
 /**
  * Fragment for rendering a list of LocalReadings.
+ * <p/>
+ * Requires the Activity where it is attached to implement the local reading
+ * interaction callback interface.
+ *
+ * @see LocalReadingInteractionListener
  */
 public class FragmentReadingList extends Fragment {
   private static final String TAG = FragmentReadingList.class.getName();
@@ -31,12 +37,20 @@ public class FragmentReadingList extends Fragment {
    * @param itemLayoutResourceId resource id of layout to use for rendering readings
    * @return the new instance
    */
-  public static FragmentReadingList newInstance(ArrayList<LocalReading> localReadings, int itemLayoutResourceId, LocalReadingInteractionListener interactionListener) {
+  public static FragmentReadingList newInstance(ArrayList<LocalReading> localReadings, int itemLayoutResourceId) {
     FragmentReadingList instance = new FragmentReadingList();
     instance.setLocalReadings(localReadings);
     instance.setItemLayoutResourceId(itemLayoutResourceId);
-    instance.setInteractionListener(interactionListener);
     return instance;
+  }
+
+  @Override public void onAttach(Activity activity) {
+    super.onAttach(activity);
+    try {
+      interactionListener = (LocalReadingInteractionListener) activity;
+    } catch(ClassCastException ex) {
+      throw new ClassCastException("Parent activity must implement " + LocalReadingInteractionListener.class.getName());
+    }
   }
 
   @Override
@@ -44,6 +58,7 @@ public class FragmentReadingList extends Fragment {
     super.onCreate(in);
     if(in != null) {
       ArrayList<LocalReading> frozenReadings = in.getParcelableArrayList(IntentKeys.LOCAL_READINGS);
+      itemLayoutResourceId = in.getInt(IntentKeys.RESOURCE_ID);
       setLocalReadings(frozenReadings);
     }
   }
@@ -52,6 +67,7 @@ public class FragmentReadingList extends Fragment {
   public void onSaveInstanceState(Bundle out) {
     super.onSaveInstanceState(out);
     out.putParcelableArrayList(IntentKeys.LOCAL_READINGS, localReadings);
+    out.putInt(IntentKeys.RESOURCE_ID, itemLayoutResourceId);
   }
 
   @Override
@@ -105,15 +121,6 @@ public class FragmentReadingList extends Fragment {
     if(listAdapterReadings != null) {
       listAdapterReadings.notifyDataSetChanged();
     }
-  }
-
-  /**
-   * Sets the listener for item interactions of the fragments local reading list
-   *
-   * @param listener listener to receive events
-   */
-  public void setInteractionListener(LocalReadingInteractionListener listener) {
-    this.interactionListener = listener;
   }
 
   /**

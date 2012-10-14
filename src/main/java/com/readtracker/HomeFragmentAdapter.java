@@ -6,7 +6,6 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.util.Log;
 import android.view.ViewGroup;
 import com.readtracker.db.LocalReading;
-import com.readtracker.interfaces.LocalReadingInteractionListener;
 import com.readtracker.thirdparty.TitleProvider;
 
 import java.util.ArrayList;
@@ -36,13 +35,9 @@ public class HomeFragmentAdapter extends FragmentStatePagerAdapter implements Ti
   // A mapping between a local reading instance (in any list) and its id
   private HashMap<Integer, LocalReading> mLocalReadingMap = new HashMap<Integer, LocalReading>();
 
-  // An interaction listener passed down from the hosting activity
-  LocalReadingInteractionListener mInteractionListener;
-
-  public HomeFragmentAdapter(FragmentManager fragmentManager, ArrayList<LocalReading> localReadings, LocalReadingInteractionListener interactionListener) {
+  public HomeFragmentAdapter(FragmentManager fragmentManager, ArrayList<LocalReading> localReadings) {
     super(fragmentManager);
     setLocalReadings(localReadings);
-    this.mInteractionListener = interactionListener;
   }
 
   @Override public int getCount() { return 3; }
@@ -64,11 +59,11 @@ public class HomeFragmentAdapter extends FragmentStatePagerAdapter implements Ti
     FragmentReadingList fragment = null;
 
     if(position == FRAGMENT_FINISHED) {
-      fragment = FragmentReadingList.newInstance(finishedReadings, R.layout.local_reading_item_finished, mInteractionListener);
+      fragment = FragmentReadingList.newInstance(finishedReadings, R.layout.local_reading_item_finished);
     } else if(position == FRAGMENT_ACTIVE) {
-      fragment = FragmentReadingList.newInstance(activeReadings, R.layout.local_reading_item_active, mInteractionListener);
+      fragment = FragmentReadingList.newInstance(activeReadings, R.layout.local_reading_item_active);
     } else if(position == FRAGMENT_INTERESTING) {
-      fragment = FragmentReadingList.newInstance(interestingReadings, R.layout.local_reading_item_interesting, mInteractionListener);
+      fragment = FragmentReadingList.newInstance(interestingReadings, R.layout.local_reading_item_interesting);
     }
 
     // Keep a reference to the active fragment around so we can update it later

@@ -33,7 +33,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ActivityHome extends ReadTrackerActivity {
+public class ActivityHome extends ReadTrackerActivity implements LocalReadingInteractionListener {
 
   private static LinearLayout mLayoutBlankState;
   private static Button mButtonSyncReadmill;
@@ -67,13 +67,7 @@ public class ActivityHome extends ReadTrackerActivity {
 
     bindViews();
 
-    mHomeFragmentAdapter = new HomeFragmentAdapter(getSupportFragmentManager(), new ArrayList<LocalReading>(), new LocalReadingInteractionListener() {
-      @Override public void onLocalReadingClicked(LocalReading localReading) {
-        if(!localReading.isInteresting()) {
-          exitToActivityBook(localReading);
-        }
-      }
-    });
+    mHomeFragmentAdapter = new HomeFragmentAdapter(getSupportFragmentManager(), new ArrayList<LocalReading>());
 
     mPagerHomeActivity.setAdapter(mHomeFragmentAdapter);
     mTitleHomeActivity.setViewPager(mPagerHomeActivity);
@@ -206,6 +200,14 @@ public class ActivityHome extends ReadTrackerActivity {
   public boolean onSearchRequested() {
     startActivityForResult(new Intent(this, ActivityBookSearch.class), ActivityCodes.REQUEST_ADD_BOOK);
     return true;
+  }
+
+  @Override
+  public void onLocalReadingClicked(LocalReading localReading) {
+    // Handles clicks on readings in any of the child fragments
+    if(!localReading.isInteresting()) {
+      exitToActivityBook(localReading);
+    }
   }
 
   private void bindViews() {
