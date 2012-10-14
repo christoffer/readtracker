@@ -14,7 +14,6 @@ import com.readtracker.db.LocalHighlight;
 import com.readtracker.db.LocalReading;
 import com.readtracker.db.LocalSession;
 import com.readtracker.thirdparty.SafeViewFlipper;
-import com.readtracker.thirdparty.TitlePageIndicator;
 import com.readtracker.value_objects.ReadingState;
 
 import java.sql.SQLException;
@@ -33,7 +32,6 @@ public class ActivityBook extends ReadTrackerActivity {
 
   private BookFragmentAdapter mBookFragmentAdapter;
   private ViewPager mViewPagerReading;
-  private TitlePageIndicator mPageTitleIndicator;
 
   private boolean mIsDirty;
   private boolean mLocalReadingDirty;
@@ -147,8 +145,6 @@ public class ActivityBook extends ReadTrackerActivity {
   private void bindViews() {
     mFlipperActionButtons = (SafeViewFlipper) findViewById(R.id.flipperActionButtons);
     mButtonAddHighlight = (Button) findViewById(R.id.buttonAddHighlight);
-
-    mPageTitleIndicator = (TitlePageIndicator) findViewById(R.id.titleBookActivity);
     mViewPagerReading = (ViewPager) findViewById(R.id.pagerBookActivity);
   }
 
@@ -209,9 +205,6 @@ public class ActivityBook extends ReadTrackerActivity {
     mViewPagerReading.setAdapter(mBookFragmentAdapter);
     mViewPagerReading.setOffscreenPageLimit(2);
 
-    //Bind the title indicator to the adapter
-    mPageTitleIndicator.setViewPager(mViewPagerReading);
-
     int page = 0;
     switch(mStartingPage) {
       case PAGE_HISTORY:
@@ -234,7 +227,7 @@ public class ActivityBook extends ReadTrackerActivity {
     });
 
     // Book bar + history button
-    mPageTitleIndicator.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+    mViewPagerReading.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
       @Override public void onPageSelected(int position) {
         Log.i(TAG, "Selected page " + position);
         boolean isOnHighlightPage = position == mBookFragmentAdapter.getHighlightPageIndex();

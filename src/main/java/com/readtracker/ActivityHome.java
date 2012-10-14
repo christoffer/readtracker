@@ -26,7 +26,6 @@ import com.readtracker.helpers.ReadmillSyncStatusUIHandler;
 import com.readtracker.interfaces.LocalReadingInteractionListener;
 import com.readtracker.readmill.ReadmillApiHelper;
 import com.readtracker.tasks.ReadmillSyncAsyncTask;
-import com.readtracker.thirdparty.TitlePageIndicator;
 import com.readtracker.value_objects.ReadingState;
 
 import java.sql.SQLException;
@@ -49,7 +48,6 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
   private BroadcastReceiver mNetworkStateReceiver;
   private DataUpdateReceiver mDataUpdateReceiver;
   private ReadmillSyncAsyncTask mReadmillSyncTask;
-  private TitlePageIndicator mTitleHomeActivity;
 
   // Fragment adapter that manages the reading list fragments
   HomeFragmentAdapter mHomeFragmentAdapter;
@@ -70,7 +68,6 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
     mHomeFragmentAdapter = new HomeFragmentAdapter(getSupportFragmentManager(), new ArrayList<LocalReading>());
 
     mPagerHomeActivity.setAdapter(mHomeFragmentAdapter);
-    mTitleHomeActivity.setViewPager(mPagerHomeActivity);
 
     mPagerHomeActivity.setCurrentItem(mHomeFragmentAdapter.getDefaultPage());
 
@@ -215,7 +212,6 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
     mButtonSyncReadmill = (Button) findViewById(R.id.buttonSyncReadmill);
     mButtonAddBook = (Button) findViewById(R.id.buttonAddBook);
     mPagerHomeActivity = (ViewPager) findViewById(R.id.pagerHomeActivity);
-    mTitleHomeActivity = (TitlePageIndicator) findViewById(R.id.titleHomeActivity);
   }
 
   private void bindEvents() {

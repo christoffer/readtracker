@@ -6,7 +6,6 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.util.Log;
 import android.view.ViewGroup;
 import com.readtracker.db.LocalReading;
-import com.readtracker.thirdparty.TitleProvider;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,7 +15,7 @@ import java.util.List;
  * Managers a set of local readings and partitions them into two states:
  * finished and active.
  */
-public class HomeFragmentAdapter extends FragmentStatePagerAdapter implements TitleProvider {
+public class HomeFragmentAdapter extends FragmentStatePagerAdapter {
   private static final String TAG = HomeFragmentAdapter.class.getName();
 
   private static final int FRAGMENT_FINISHED = 0;
@@ -42,7 +41,7 @@ public class HomeFragmentAdapter extends FragmentStatePagerAdapter implements Ti
 
   @Override public int getCount() { return 3; }
 
-  @Override public String getTitle(int position) {
+  @Override public CharSequence getPageTitle(int position) {
     switch(position) {
       case FRAGMENT_ACTIVE:
         return "Reading";

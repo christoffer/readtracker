@@ -38,15 +38,15 @@
     </com.readtracker.thirdparty.SafeViewFlipper>
   </LinearLayout>
 
-  <com.readtracker.thirdparty.TitlePageIndicator android:id="@+id/titleBookActivity"
-                                                 style="@style/pager_headers"
-                                                 android:layout_below="@id/layoutHeaderBookActivity" />
-
   <!-- container for pages of the book activity -->
 
   <android.support.v4.view.ViewPager android:id="@+id/pagerBookActivity"
-                                     android:layout_below="@id/titleBookActivity"
                                      android:layout_width="fill_parent"
-                                     android:layout_height="fill_parent" />
+                                     android:layout_height="fill_parent"
+                                     android:layout_below="@id/layoutHeaderBookActivity">
+
+    <android.support.v4.view.CustomPagerTabStrip style="@style/pager_title" />
+
+  </android.support.v4.view.ViewPager>
 
 </RelativeLayout>

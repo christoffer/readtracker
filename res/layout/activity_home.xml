@@ -34,14 +34,14 @@
 
   </RelativeLayout>
 
-  <com.readtracker.thirdparty.TitlePageIndicator android:id="@+id/titleHomeActivity"
-                                                 style="@style/pager_headers"
-                                                 android:layout_below="@id/layoutActionBar" />
-
   <android.support.v4.view.ViewPager android:id="@+id/pagerHomeActivity"
                                      android:layout_width="fill_parent"
-                                     android:layout_below="@id/titleHomeActivity"
-                                     android:layout_height="fill_parent" />
+                                     android:layout_below="@id/layoutActionBar"
+                                     android:layout_height="fill_parent">
+
+    <android.support.v4.view.CustomPagerTabStrip style="@style/pager_title" />
+
+  </android.support.v4.view.ViewPager>
 
   <LinearLayout android:id="@+id/readingListBlankState"
                 android:layout_width="fill_parent"

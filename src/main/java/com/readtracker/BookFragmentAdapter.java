@@ -6,7 +6,6 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import com.readtracker.db.LocalHighlight;
 import com.readtracker.db.LocalReading;
 import com.readtracker.db.LocalSession;
-import com.readtracker.thirdparty.TitleProvider;
 import com.readtracker.value_objects.ReadingState;
 
 import java.util.ArrayList;
@@ -14,7 +13,7 @@ import java.util.ArrayList;
 /**
  * Handles the fragments for the book activity
  */
-public class BookFragmentAdapter extends FragmentStatePagerAdapter implements TitleProvider {
+public class BookFragmentAdapter extends FragmentStatePagerAdapter {
   private static final String TAG = BookFragmentAdapter.class.getName();
   private boolean mBrowseMode;
 
@@ -57,8 +56,7 @@ public class BookFragmentAdapter extends FragmentStatePagerAdapter implements Ti
     return mBrowseMode ? 2 : 3;
   }
 
-  @Override
-  public String getTitle(int position) {
+  @Override public CharSequence getPageTitle(int position) {
     if(position == getHistoryPageIndex()) {
       return "Summary";
     } else if(position == getReadPageIndex()) {
