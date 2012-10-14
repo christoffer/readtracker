@@ -1,7 +1,6 @@
 package com.readtracker;
 
 import android.content.Context;
-import android.content.pm.ActivityInfo;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -10,8 +9,8 @@ import android.util.Log;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.Toast;
-import com.readtracker.value_objects.ReadTrackerUser;
 import com.readtracker.readmill.ReadmillApiHelper;
+import com.readtracker.value_objects.ReadTrackerUser;
 
 /**
  * Base of read tracker's activities.
@@ -31,7 +30,7 @@ public class ReadTrackerActivity extends FragmentActivity {
   }
 
   private void initActivity() {
-    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+    // setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
   }
 
   public final ApplicationReadTracker getApp() {
