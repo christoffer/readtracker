@@ -237,7 +237,6 @@
 
   <style name="thick_divider">
     <item name="android:background">@color/midnight_dark</item>
-    <item name="android:layout_below">@+id/layoutEndingPage</item>
     <item name="android:layout_height">2px</item>
     <item name="android:layout_width">fill_parent</item>
     <item name="android:layout_marginBottom">13dp</item>p"

@@ -61,29 +61,33 @@ public class ActivityReadingSessionEnd extends ReadTrackerActivity {
     setContentView(R.layout.activity_reading_session_end);
 
     bindViews();
-
     bindEvents();
 
+    int currentPage;
     if(in != null) {
       Log.i(TAG, "unfreezing state");
       mLocalReading = in.getParcelable(IntentKeys.LOCAL_READING);
       mSessionLengthMillis = in.getLong(IntentKeys.SESSION_LENGTH_MS);
       boolean buttonEnabled = in.getBoolean(IntentKeys.BUTTON_ENABLED);
       mButtonSaveReadingSession.setEnabled(buttonEnabled);
-      mWheelEndingPage.setTag(in.getInt(IntentKeys.PAGE));
+      currentPage = in.getInt(IntentKeys.PAGE);
     } else {
       Bundle extras = getIntent().getExtras();
       mSessionLengthMillis = extras.getLong(IntentKeys.SESSION_LENGTH_MS);
       mLocalReading = extras.getParcelable(IntentKeys.LOCAL_READING);
       mButtonSaveReadingSession.setEnabled(false);
-      mWheelEndingPage.setTag((int) mLocalReading.currentPage);
+      currentPage =  (int) mLocalReading.currentPage;
     }
 
-    initialize();
+    ViewBindingBookHeader.bind(this, mLocalReading);
+
+    initializeWheelViews(mLocalReading.isMeasuredInPercent());
+    setCurrentPage(currentPage);
 
     Log.i(TAG, "Init for reading : " + mLocalReading.id + " with session length:" + mSessionLengthMillis);
 
-    mButtonShowDurationPicker.setText(Utils.shortHumanTimeFromMillis(mSessionLengthMillis));
+    final String duration = Utils.shortHumanTimeFromMillis(mSessionLengthMillis);
+    mButtonShowDurationPicker.setText(duration);
   }
 
   @Override
@@ -93,27 +97,23 @@ public class ActivityReadingSessionEnd extends ReadTrackerActivity {
     out.putParcelable(IntentKeys.LOCAL_READING, mLocalReading);
     out.putLong(IntentKeys.SESSION_LENGTH_MS, mSessionLengthMillis);
     out.putBoolean(IntentKeys.BUTTON_ENABLED, mButtonSaveReadingSession.isEnabled());
-    out.putInt(IntentKeys.PAGE, mWheelEndingPage.getCurrentItem());
+    out.putInt(IntentKeys.PAGE, getCurrentPage());
     Log.d(TAG, "Current page" + mWheelEndingPage.getCurrentItem());
   }
 
-  private void initialize() {
-    ViewBindingBookHeader.bind(this, mLocalReading);
-
-    int currentPage = (Integer) mWheelEndingPage.getTag();
-
-    if(mLocalReading.isMeasuredInPercent()) {
-      setupPercentWheels(currentPage);
+  private void initializeWheelViews(boolean isMeasuredInPercent) {
+    if(isMeasuredInPercent) {
+      setupPercentWheels();
       mTextWhereDidYouEnd.setText("What position did you end on?");
       mWheelEndingPage.setVisibility(View.GONE);
     } else {
-      setupEndPageWheels(currentPage);
+      setupEndPageWheels();
       mTextWhereDidYouEnd.setText("What page did you end on?");
       mLayoutEndPercent.setVisibility(View.GONE);
     }
   }
 
-  private void setupPercentWheels(int currentPage) {
+  private void setupPercentWheels() {
     NumericWheelAdapter adapterIntegers = new NumericWheelAdapter(this, 0, 99);
     NumericWheelAdapter adapterFractions = new NumericWheelAdapter(this, 0, 99);
 
@@ -123,24 +123,15 @@ public class ActivityReadingSessionEnd extends ReadTrackerActivity {
     mWheelEndPercentInteger.setViewAdapter(adapterIntegers);
     mWheelEndPercentFraction.setViewAdapter(adapterFractions);
 
-    // Split 578 => 5 and 78
-    int currentInteger = currentPage / 100;
-    int currentFraction = currentPage - currentInteger * 100;
-    Log.d(TAG, "Got current page: " + currentPage + " and split into " + currentInteger + " and " + currentFraction);
-
-    mWheelEndPercentInteger.setCurrentItem(Math.min(99, currentInteger));
-    mWheelEndPercentFraction.setCurrentItem(Math.min(99, currentFraction));
-
     configureWheelView(mWheelEndPercentInteger);
     configureWheelView(mWheelEndPercentFraction);
   }
 
-  private void setupEndPageWheels(int currentPage) {
+  private void setupEndPageWheels() {
     NumericWheelAdapter endingPageAdapter = new NumericWheelAdapter(this, 0, (int) mLocalReading.totalPages);
     configureWheelAdapterStyle(endingPageAdapter);
 
     mWheelEndingPage.setViewAdapter(endingPageAdapter);
-    mWheelEndingPage.setCurrentItem(currentPage);
     configureWheelView(mWheelEndingPage);
   }
 
@@ -267,14 +258,7 @@ public class ActivityReadingSessionEnd extends ReadTrackerActivity {
   private void handleSave() {
     long sessionEndPage;
 
-    if(mLocalReading.isMeasuredInPercent()) {
-      int percentInteger = mWheelEndPercentInteger.getCurrentItem();
-      int percentFraction = mWheelEndPercentFraction.getCurrentItem();
-      // transform 45 and 17 to 4517
-      sessionEndPage = percentInteger * 100 + percentFraction;
-    } else {
-      sessionEndPage = mWheelEndingPage.getCurrentItem();
-    }
+    sessionEndPage = getCurrentPage();
 
     mLocalReading.currentPage = sessionEndPage;
     mLocalReading.refreshProgress();
@@ -299,6 +283,37 @@ public class ActivityReadingSessionEnd extends ReadTrackerActivity {
       alert.setMessage("Failed to save the data");
       alert.setIcon(android.R.drawable.ic_dialog_alert);
       alert.show();
+    }
+  }
+
+  /**
+   * Read current page from the wheel controls
+   * @return the current page
+   */
+  private int getCurrentPage() {
+    if(mLocalReading.isMeasuredInPercent()) {
+      int percentInteger = mWheelEndPercentInteger.getCurrentItem();
+      int percentFraction = mWheelEndPercentFraction.getCurrentItem();
+      // Concatenate 45 and 17 => 4517
+      return percentInteger * 100 + percentFraction;
+    }
+    return mWheelEndingPage.getCurrentItem();
+  }
+
+  /**
+   * Sets the wheel controls to display the current page.
+   * @param currentPage the current page to use
+   */
+  private void setCurrentPage(int currentPage) {
+    if(mLocalReading.isMeasuredInPercent()) {
+      // Split 578 => 5 and 78
+      int currentInteger = currentPage / 100;
+      int currentFraction = currentPage - currentInteger * 100;
+
+      mWheelEndPercentInteger.setCurrentItem(Math.min(99, currentInteger));
+      mWheelEndPercentFraction.setCurrentItem(Math.min(99, currentFraction));
+    } else {
+      mWheelEndingPage.setCurrentItem(currentPage);
     }
   }
 

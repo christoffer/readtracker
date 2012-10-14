@@ -16,16 +16,15 @@
                     android:padding="12dp"
                     android:orientation="vertical">
 
-      <!-- flipper between the start and pause/done button -->
-
-      <include layout="@layout/_reading_session_controls" />
-
       <include android:id="@+id/layoutSessionTimer"
                layout="@layout/_read_session_timer"
                android:layout_weight="1"
                android:layout_width="fill_parent"
                android:layout_height="fill_parent" />
 
+      <!-- flipper between the start and pause/done button -->
+
+      <include layout="@layout/_reading_session_controls" />
     </RelativeLayout>
 
     <!-- input screen for total pages -->
