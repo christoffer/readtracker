@@ -1,6 +1,5 @@
 package com.readtracker;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -83,11 +82,6 @@ public class FragmentHistory extends Fragment {
     Log.d(TAG, "freezing state");
     out.putParcelable(IntentKeys.LOCAL_READING, mLocalReading);
     out.putParcelableArrayList(IntentKeys.READING_SESSIONS, mLocalSessions);
-  }
-
-  @Override
-  public void onAttach(Activity activity) {
-    super.onAttach(activity);
   }
 
   @Override
