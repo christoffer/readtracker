@@ -373,6 +373,7 @@ public class FragmentRead extends Fragment {
       Log.d(TAG, "Got inactive reading state");
       activatePause();
     }
+    mWaveReading.setVisibility(View.VISIBLE);
     refreshElapsedTime();
   }
 
