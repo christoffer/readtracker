@@ -222,22 +222,25 @@ public class FragmentRead extends Fragment {
   /**
    * Updates the text header and summary to show where the user last left off.
    * Handles pages/percent and shows a special text for first session.
+   *
    * @param localReading The local reading to describe last position off
    */
   private void describeLastPosition(LocalReading localReading) {
     boolean isFirstRead = localReading.currentPage == 0;
 
-    mTextHeader.setText(isFirstRead ? "" : "Last time you ended on");
+    if(isFirstRead) {
+      mTextHeader.setText("");
+      mTextSummary.setText("First read");
+      return;
+    }
+
+    mTextHeader.setText("Last time you ended on");
     if(localReading.measureInPercent) {
       int currentInteger = (int) localReading.currentPage / 100;
       int currentFraction = (int) localReading.currentPage - currentInteger * 100;
       mTextSummary.setText(String.format("%d.%d%%", currentInteger, currentFraction));
     } else {
-      if(isFirstRead) {
-        mTextSummary.setText("First read");
-      } else {
-        mTextSummary.setText(String.format("page %d", localReading.currentPage));
-      }
+      mTextSummary.setText(String.format("page %d", localReading.currentPage));
     }
   }
 
