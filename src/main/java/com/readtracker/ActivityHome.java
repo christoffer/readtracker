@@ -337,7 +337,7 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
     if(localReading.isActive()) {
       intentReadingSession.putExtra(IntentKeys.STARTING_PAGE, ActivityBook.PAGE_READING);
     } else {
-      intentReadingSession.putExtra(IntentKeys.STARTING_PAGE, ActivityBook.PAGE_HISTORY);
+      intentReadingSession.putExtra(IntentKeys.STARTING_PAGE, ActivityBook.PAGE_SESSIONS);
     }
 
     startActivityForResult(intentReadingSession, ActivityCodes.REQUEST_READING_SESSION);

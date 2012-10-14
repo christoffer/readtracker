@@ -21,7 +21,7 @@ import java.util.ArrayList;
 /**
  * Fragment for showing a reading history of a book
  */
-public class FragmentHistory extends Fragment {
+public class FragmentSessions extends Fragment {
   private LocalReading mLocalReading;
   private ArrayList<LocalSession> mLocalSessions;
 
@@ -41,13 +41,13 @@ public class FragmentHistory extends Fragment {
   private static TextView mDividerSessionList;
   private static ViewGroup mLayoutReadingSessions;
 
-  private static final String TAG = FragmentHistory.class.getName();
+  private static final String TAG = FragmentSessions.class.getName();
 
   private boolean mForceReInitialize;
 
   public static Fragment newInstance(LocalReading localReading, ArrayList<LocalSession> localSessions) {
     Log.d(TAG, "newInstance()");
-    FragmentHistory instance = new FragmentHistory();
+    FragmentSessions instance = new FragmentSessions();
     instance.setLocalReading(localReading);
     instance.setReadingSessions(localSessions);
     instance.setForceReinitialize(true);

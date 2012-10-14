@@ -39,9 +39,9 @@ public class ActivityBook extends ReadTrackerActivity {
   private int mStartingPage;
 
   // Fragment pages
-  public static final int PAGE_HISTORY = 0;
+  public static final int PAGE_SESSIONS = 0;
   public static final int PAGE_READING = 1;
-  public static final int PAGE_HIGHLIGHT = 2;
+  public static final int PAGE_HIGHLIGHTS = 2;
 
   public void onCreate(Bundle in) {
     super.onCreate(in);
@@ -50,7 +50,7 @@ public class ActivityBook extends ReadTrackerActivity {
 
     if(in != null) {
       Log.d(TAG, "unfreezing state");
-      mStartingPage = in.getInt(IntentKeys.STARTING_PAGE, PAGE_HISTORY);
+      mStartingPage = in.getInt(IntentKeys.STARTING_PAGE, PAGE_SESSIONS);
     } else {
       if(getIntent() != null) {
         Log.d(TAG, "Started from intent");
@@ -102,7 +102,7 @@ public class ActivityBook extends ReadTrackerActivity {
         break;
       case ActivityCodes.CREATE_HIGHLIGHT:
         if(resultCode == RESULT_OK) {
-          mStartingPage = PAGE_HIGHLIGHT;
+          mStartingPage = PAGE_HIGHLIGHTS;
           // Use a provided reading id since localReading might have been destroyed
           int updateReadingId = data.getIntExtra(IntentKeys.READING_ID, -1);
           if(updateReadingId == -1) {
@@ -207,14 +207,14 @@ public class ActivityBook extends ReadTrackerActivity {
 
     int page = 0;
     switch(mStartingPage) {
-      case PAGE_HISTORY:
-        page = mBookFragmentAdapter.getHistoryPageIndex();
+      case PAGE_SESSIONS:
+        page = mBookFragmentAdapter.getSessionsPageIndex();
         break;
       case PAGE_READING:
-        page = mBookFragmentAdapter.getReadPageIndex();
+        page = mBookFragmentAdapter.getReadingPageIndex();
         break;
-      case PAGE_HIGHLIGHT:
-        page = mBookFragmentAdapter.getHighlightPageIndex();
+      case PAGE_HIGHLIGHTS:
+        page = mBookFragmentAdapter.getHighlightsPageIndex();
         break;
     }
     mViewPagerReading.setCurrentItem(page, false);
@@ -230,7 +230,7 @@ public class ActivityBook extends ReadTrackerActivity {
     mViewPagerReading.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
       @Override public void onPageSelected(int position) {
         Log.i(TAG, "Selected page " + position);
-        boolean isOnHighlightPage = position == mBookFragmentAdapter.getHighlightPageIndex();
+        boolean isOnHighlightPage = position == mBookFragmentAdapter.getHighlightsPageIndex();
         int highlightButtonState = isOnHighlightPage ? 1 : 0;
         // Show add highlight button when on highlight page, hide it when
         // leaving for another page

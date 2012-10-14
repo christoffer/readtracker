@@ -37,15 +37,15 @@ public class BookFragmentAdapter extends FragmentStatePagerAdapter {
 
   @Override
   public Fragment getItem(int position) {
-    if(position == getHistoryPageIndex()) {
-      return FragmentHistory.newInstance(mLocalReading, mLocalSessions);
-    } else if(position == getReadPageIndex()) {
+    if(position == getSessionsPageIndex()) {
+      return FragmentSessions.newInstance(mLocalReading, mLocalSessions);
+    } else if(position == getReadingPageIndex()) {
       // Keep a reference to the FragmentRead since we want the ability to
       // interrogate for the current session state
       long initialElapsed = mReadingState == null ? 0 : mReadingState.getElapsedMilliseconds();
       mFragmentReadInstance = (FragmentRead) FragmentRead.newInstance(mLocalReading, initialElapsed);
       return mFragmentReadInstance;
-    } else if(position == getHighlightPageIndex()) {
+    } else if(position == getHighlightsPageIndex()) {
       return FragmentHighlight.newInstance(mLocalHighlights);
     }
     return null;
@@ -57,25 +57,25 @@ public class BookFragmentAdapter extends FragmentStatePagerAdapter {
   }
 
   @Override public CharSequence getPageTitle(int position) {
-    if(position == getHistoryPageIndex()) {
+    if(position == getSessionsPageIndex()) {
       return "Summary";
-    } else if(position == getReadPageIndex()) {
+    } else if(position == getReadingPageIndex()) {
       return "Read";
-    } else if(position == getHighlightPageIndex()) {
+    } else if(position == getHighlightsPageIndex()) {
       return "Highlights";
     }
     return "";
   }
 
-  public int getHistoryPageIndex() {
+  public int getSessionsPageIndex() {
     return 0;
   }
 
-  public int getReadPageIndex() {
+  public int getReadingPageIndex() {
     return mBrowseMode ? -1 : 1;
   }
 
-  public int getHighlightPageIndex() {
+  public int getHighlightsPageIndex() {
     return mBrowseMode ? 1 : 2;
   }
 
