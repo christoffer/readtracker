@@ -1,118 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="fill_parent"
-            android:orientation="vertical"
-            android:layout_height="fill_parent"
-            android:fillViewport="true">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="fill_parent"
+              android:orientation="vertical"
+              android:layout_height="fill_parent">
 
-  <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="fill_parent"
-                android:orientation="vertical"
-                android:layout_height="fill_parent">
+  <TextView style="@style/divider"
+            android:id="@+id/dividerClosingButtons"
+            android:visibility="gone"
+            android:text="End reading" />
 
-    <LinearLayout android:id="@+id/layoutTimesRead"
-                  android:layout_width="fill_parent"
-                  android:paddingLeft="40dp"
-                  android:paddingRight="40dp"
-                  android:layout_height="wrap_content">
-
-      <TextView android:id="@+id/textTimesReadCount"
-                android:minWidth="70dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="7"
-                android:gravity="center"
-                android:textStyle="bold"
-                android:textSize="90dp"
-                android:textColor="@color/midnight_medium" />
-
-      <TextView android:id="@+id/textTimesReadText"
-                style="@style/summary_text"
-                android:singleLine="false"
-                android:minLines="2"
-                android:text="times read"
-                android:textColor="@color/text_color_secondary"
-                android:layout_height="fill_parent"
-                android:layout_marginLeft="20dp" />
-
-    </LinearLayout>
-
-    <LinearLayout android:id="@+id/layoutTimeSpentReading"
-                  android:layout_height="wrap_content"
-                  android:layout_width="wrap_content"
-                  android:orientation="vertical"
-                  android:layout_gravity="center">
-
-      <TextView android:id="@+id/textTimeSpent"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="2h 45m"
-                android:textSize="60dp"
-                android:textColor="@color/text_color_primary" />
-
-      <TextView android:id="@+id/textTimeSpentFooter"
-                style="@style/summary_text"
-                android:layout_height="wrap_content"
-                android:singleLine="false"
-                android:minLines="2"
-                android:layout_marginTop="-20dp"
-                android:layout_marginBottom="30dp"
-                android:text="and 45s spent in total"
-                android:layout_gravity="right"
-                android:textColor="@color/text_color_secondary" />
-
-    </LinearLayout>
-
-    <TextView style="@style/divider"
-              android:id="@+id/dividerClosingRemark"
-              android:text="Closing remark" />
-
-      <TextView android:id="@+id/textClosingRemark"
+  <LinearLayout android:id="@+id/layoutClosingButtons"
                 android:layout_height="wrap_content"
                 android:layout_width="fill_parent"
-                android:padding="20dp"
-                android:textSize="16dp"
-                android:lineSpacingMultiplier="1.2"
-                android:typeface="serif"
-                android:text=""
-                android:textStyle="italic" />
+                android:padding="10dp"
+                android:orientation="horizontal">
 
-    <TextView style="@style/divider"
-              android:id="@+id/dividerClosingButtons"
-              android:text="End reading" />
+    <Button android:id="@+id/buttonAbandonReading"
+            style="@style/default_button"
+            android:layout_weight="1"
+            android:layout_marginRight="6dp"
+            android:text="Abandon" />
 
-    <LinearLayout android:id="@+id/layoutClosingButtons"
-                  android:layout_height="wrap_content"
-                  android:layout_width="fill_parent"
-                  android:padding="10dp"
-                  android:orientation="horizontal" >
-
-      <Button android:id="@+id/buttonAbandonReading"
-              style="@style/default_button"
-              android:layout_weight="1"
-              android:layout_marginRight="6dp"
-              android:text="Abandon" />
-
-      <Button android:id="@+id/buttonFinishReading"
-              style="@style/default_button"
-              android:layout_weight="1"
-              android:layout_marginLeft="6dp"
-              android:text="Finish" />
-    </LinearLayout>
-
-
-    <TextView style="@style/divider"
-              android:id="@+id/dividerSessionList"
-              android:text="Session list" />
-
-    <LinearLayout android:id="@+id/layoutReadingSessions"
-                  android:layout_width="fill_parent"
-                  android:orientation="vertical"
-                  android:layout_height="wrap_content">
-    </LinearLayout>
-
+    <Button android:id="@+id/buttonFinishReading"
+            style="@style/default_button"
+            android:layout_weight="1"
+            android:layout_marginLeft="6dp"
+            android:text="Finish" />
 
   </LinearLayout>
 
-</ScrollView>
+  <!-- list of reading sessions -->
+  <ListView android:id="@+id/listSessions"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:cacheColorHint="@color/midnight_medium"
+            android:layout_width="fill_parent" />
+
+</LinearLayout>

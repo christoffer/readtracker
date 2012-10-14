@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="#11ffffff"
+                android:minHeight="48dp">
+
+  <!-- todo replace with actual custom view -->
+
+  <com.readtracker.customviews.SessionGraphSegment android:id="@+id/sessionGraphSegment"
+                                                   android:layout_width="fill_parent"
+                                                   android:layout_centerInParent="true"
+                                                   android:layout_height="wrap_content" />
+
+  <TextView android:id="@+id/textDuration"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textSize="12dp"
+            android:gravity="right"
+            android:layout_centerInParent="true"
+            android:text="24 minutes" />
+
+</RelativeLayout>

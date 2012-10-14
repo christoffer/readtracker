@@ -454,7 +454,7 @@ public class FragmentRead extends Fragment {
   }
 
   private void refreshElapsedTime() {
-    long[] hms = Utils.convertMillisToHoursMinutesSeconds(elapsed());
+    int[] hms = Utils.convertMillisToHoursMinutesSeconds(elapsed());
     int hours = (int) hms[0];
     int minutes = (int) hms[1];
     int seconds = (int) hms[2];
