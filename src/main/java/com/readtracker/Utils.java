@@ -13,19 +13,22 @@ public class Utils {
   private static final long DAYS = 60 * 60 * 24 * 1000;
 
   public static String hoursAndMinutesFromMillis(long duration) {
-    long[] hms = convertMillisToHoursMinutesSeconds(duration);
-    long hours = hms[0];
-    long minutes = hms[1];
+    int[] hms = convertMillisToHoursMinutesSeconds(duration);
+    int hours = hms[0];
+    int minutes = hms[1];
 
     if(hours == 0) {
-      return String.format("%s min", minutes);
+      return pluralizeWithCount(minutes, "minute");
     }
 
-    return String.format("%sh %sm", hours, minutes);
+    return String.format("%s, %s",
+        pluralizeWithCount(hours, "hour"),
+        pluralizeWithCount(minutes, "minute")
+    );
   }
 
   public static String shortHumanTimeFromMillis(long duration) {
-    long[] hms = convertMillisToHoursMinutesSeconds(duration);
+    int[] hms = convertMillisToHoursMinutesSeconds(duration);
 
     if(hms[0] == 0 && hms[1] == 0) {
       return String.format("%ss", hms[2]);
@@ -39,11 +42,11 @@ public class Utils {
   }
 
   public static String longHumanTimeFromMillis(long durationMillis) {
-    long[] hms = convertMillisToHoursMinutesSeconds(durationMillis);
+    int[] hms = convertMillisToHoursMinutesSeconds(durationMillis);
 
-    long hours = hms[0];
-    long minutes = hms[1];
-    long seconds = hms[2];
+    int hours = hms[0];
+    int minutes = hms[1];
+    int seconds = hms[2];
 
     ArrayList<String> parts = new ArrayList<String>(3);
 
@@ -99,27 +102,27 @@ public class Utils {
     }
   }
 
-  public static long[] convertMillisToHoursMinutesSeconds(long milliseconds) {
-    long seconds = (long) (milliseconds / 1000.d);
-    long minutes = (long) (seconds / 60.d);
-    long hours = (long) (minutes / 60.0d);
+  public static int[] convertMillisToHoursMinutesSeconds(long milliseconds) {
+    int seconds = (int) (milliseconds / 1000.d);
+    int minutes = (int) (seconds / 60.d);
+    int hours = (int) (minutes / 60.0d);
 
     seconds = seconds - minutes * 60;
     minutes = minutes - hours * 60;
 
-    return new long[] { hours, minutes, seconds };
+    return new int[] { hours, minutes, seconds };
   }
 
   public static int getHoursFromMillis(long milliseconds) {
-    return (int) convertMillisToHoursMinutesSeconds(milliseconds)[0];
+    return convertMillisToHoursMinutesSeconds(milliseconds)[0];
   }
 
   public static int getMinutesFromMillis(long milliseconds) {
-    return (int) convertMillisToHoursMinutesSeconds(milliseconds)[1];
+    return convertMillisToHoursMinutesSeconds(milliseconds)[1];
   }
 
   public static int getSecondsFromMillis(long milliseconds) {
-    return (int) convertMillisToHoursMinutesSeconds(milliseconds)[2];
+    return convertMillisToHoursMinutesSeconds(milliseconds)[2];
   }
 
   /**
