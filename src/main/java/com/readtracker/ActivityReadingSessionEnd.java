@@ -180,7 +180,8 @@ public class ActivityReadingSessionEnd extends ReadTrackerActivity {
     wheelView.addChangingListener(new OnWheelChangedListener() {
       @Override
       public void onChanged(WheelView wheel, int oldValue, int newValue) {
-        mButtonSaveReadingSession.setEnabled(true);
+        boolean hasChanged = mLocalReading.currentPage != getCurrentPage();
+        mButtonSaveReadingSession.setEnabled(hasChanged);
       }
     });
   }
