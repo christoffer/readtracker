@@ -27,6 +27,9 @@ import java.util.UUID;
  * Screen for input the ending page of a reading session
  */
 public class ActivityReadingSessionEnd extends ReadTrackerActivity {
+  private static final int PAGE_DISPLAY_DURATION = 0;
+  private static final int PAGE_EDIT_DURATION = 1;
+
   private static WheelView mWheelEndingPage;
 
   private static TextView mTextWhereDidYouEnd;
@@ -43,10 +46,6 @@ public class ActivityReadingSessionEnd extends ReadTrackerActivity {
   private static WheelView mWheelDurationHours;
   private static WheelView mWheelDurationMinutes;
   private static WheelView mWheelDurationSeconds;
-
-  private static NumericWheelAdapter mDurationHoursAdapter;
-  private static NumericWheelAdapter mDurationMinutesAdapter;
-  private static NumericWheelAdapter mDurationSecondsAdapter;
 
   private static SafeViewFlipper mFlipperSessionLength;
 
@@ -76,7 +75,7 @@ public class ActivityReadingSessionEnd extends ReadTrackerActivity {
       mSessionLengthMillis = extras.getLong(IntentKeys.SESSION_LENGTH_MS);
       mLocalReading = extras.getParcelable(IntentKeys.LOCAL_READING);
       mButtonSaveReadingSession.setEnabled(false);
-      currentPage =  (int) mLocalReading.currentPage;
+      currentPage = (int) mLocalReading.currentPage;
     }
 
     ViewBindingBookHeader.bind(this, mLocalReading);
@@ -165,7 +164,7 @@ public class ActivityReadingSessionEnd extends ReadTrackerActivity {
     mSessionLengthMillis += mWheelDurationSeconds.getCurrentItem();
     mSessionLengthMillis *= 1000;
     mButtonShowDurationPicker.setText(Utils.shortHumanTimeFromMillis(mSessionLengthMillis));
-    closeDurationPicker();
+    mFlipperSessionLength.setDisplayedChild(PAGE_DISPLAY_DURATION);
   }
 
   private void configureWheelAdapterStyle(NumericWheelAdapter wheelAdapter) {
@@ -187,42 +186,32 @@ public class ActivityReadingSessionEnd extends ReadTrackerActivity {
   }
 
   private void showDurationPicker() {
-    // Lazily initialize the adapters, since they'll probably be used very seldom
+    // Lazily initialize the adapters
+    boolean needInitialize = (
+        mWheelDurationHours.getViewAdapter() == null ||
+        mWheelDurationMinutes.getViewAdapter() == null ||
+        mWheelDurationSeconds.getViewAdapter() == null
+    );
 
-    if(mDurationHoursAdapter == null) {
-      mDurationHoursAdapter = new NumericWheelAdapter(this, 0, 48, "%sh");
-      configureWheelAdapterStyle(mDurationHoursAdapter);
+    if(needInitialize) {
+      NumericWheelAdapter hoursAdapter = new NumericWheelAdapter(this, 0, 48, "%sh");
+      NumericWheelAdapter minutesAdapter = new NumericWheelAdapter(this, 0, 59, "%sm");
+      NumericWheelAdapter secondsAdapter = new NumericWheelAdapter(this, 0, 59, "%ss");
+      configureWheelAdapterStyle(hoursAdapter);
+      configureWheelAdapterStyle(minutesAdapter);
+      configureWheelAdapterStyle(secondsAdapter);
+
+      mWheelDurationHours.setViewAdapter(hoursAdapter);
+      mWheelDurationMinutes.setViewAdapter(minutesAdapter);
+      mWheelDurationSeconds.setViewAdapter(secondsAdapter);
     }
-
-    if(mDurationMinutesAdapter == null) {
-      mDurationMinutesAdapter = new NumericWheelAdapter(this, 0, 59, "%sm");
-      configureWheelAdapterStyle(mDurationMinutesAdapter);
-    }
-
-    if(mDurationSecondsAdapter == null) {
-      mDurationSecondsAdapter = new NumericWheelAdapter(this, 0, 59, "%ss");
-      configureWheelAdapterStyle(mDurationSecondsAdapter);
-    }
-
-    mWheelDurationHours.setViewAdapter(mDurationHoursAdapter);
-    mWheelDurationMinutes.setViewAdapter(mDurationMinutesAdapter);
-    mWheelDurationSeconds.setViewAdapter(mDurationSecondsAdapter);
 
     mWheelDurationHours.setCurrentItem(Utils.getHoursFromMillis(mSessionLengthMillis));
     mWheelDurationMinutes.setCurrentItem(Utils.getMinutesFromMillis(mSessionLengthMillis));
     mWheelDurationSeconds.setCurrentItem(Utils.getSecondsFromMillis(mSessionLengthMillis));
 
-    openDurationPicker();
+    mFlipperSessionLength.setDisplayedChild(PAGE_EDIT_DURATION);
   }
-
-  private void closeDurationPicker() {
-    mFlipperSessionLength.setDisplayedChild(0);
-  }
-
-  private void openDurationPicker() {
-    mFlipperSessionLength.setDisplayedChild(1);
-  }
-
 
   private void bindEvents() {
 
@@ -250,7 +239,7 @@ public class ActivityReadingSessionEnd extends ReadTrackerActivity {
     mButtonCancelSetDuration.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
-        closeDurationPicker();
+        mFlipperSessionLength.setDisplayedChild(PAGE_DISPLAY_DURATION);
       }
     });
   }
@@ -288,6 +277,7 @@ public class ActivityReadingSessionEnd extends ReadTrackerActivity {
 
   /**
    * Read current page from the wheel controls
+   *
    * @return the current page
    */
   private int getCurrentPage() {
@@ -302,6 +292,7 @@ public class ActivityReadingSessionEnd extends ReadTrackerActivity {
 
   /**
    * Sets the wheel controls to display the current page.
+   *
    * @param currentPage the current page to use
    */
   private void setCurrentPage(int currentPage) {
