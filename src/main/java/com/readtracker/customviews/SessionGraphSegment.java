@@ -14,7 +14,7 @@ public class SessionGraphSegment extends View {
   private BitmapDrawable bitmapDrawable;
 
   private float mInPosition = 0.0f, mOutPosition = 0.0f;
-  private float mHeightScale = 1.0f;
+  private int mHeight = 48;
 
   @SuppressWarnings("UnusedDeclaration")
   public SessionGraphSegment(Context context) {
@@ -37,7 +37,7 @@ public class SessionGraphSegment extends View {
   }
 
   @Override protected int getSuggestedMinimumHeight() {
-    return (int) (200 * mHeightScale);
+    return mHeight;
   }
 
   public void setPoints(float inPos, float outPos) {
@@ -46,8 +46,11 @@ public class SessionGraphSegment extends View {
     refreshBackground();
   }
 
-  public void setHeightScale(float heightScale) {
-    mHeightScale = heightScale;
+  public void setHeight(int height) {
+    if(height != mHeight) {
+      mHeight = height;
+      requestLayout();
+    }
   }
 
   private void refreshBackground() {
