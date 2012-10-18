@@ -4,168 +4,33 @@
                 android:layout_width="fill_parent"
                 android:gravity="center_horizontal">
 
-  <include layout="@layout/_book_header"/>
+  <include layout="@layout/_book_header" />
 
-  <!-- Ending page group -->
-  <com.readtracker.thirdparty.SafeViewFlipper android:id="@+id/flipperSessionLength"
-                                              android:layout_width="fill_parent"
-                                              android:layout_height="wrap_content"
-                                              android:layout_below="@id/_bookHeader"
-                                              android:inAnimation="@anim/slide_up_appear"
-                                              android:outAnimation="@anim/slide_down_disappear">
-
-    <!-- Reading duration -->
-
-    <LinearLayout android:id="@+id/layoutEndingPage"
-                  android:layout_height="wrap_content"
-                  android:layout_width="fill_parent"
-                  android:layout_gravity="center_horizontal"
-                  android:paddingTop="28dp"
-                  android:paddingBottom="35dp"
-                  android:orientation="vertical">
-
-      <TextView android:id="@+id/textDuration"
-                android:text="Reading for"
-                android:lines="1"
-                style="@style/generic_label"
-                android:gravity="center_horizontal"
-                android:layout_marginBottom="12dp"/>
-
-      <Button android:id="@+id/buttonShowDurationPicker"
-              style="@style/large_text"
-              android:background="@drawable/action_button"
-              android:paddingTop="10dp"
-              android:paddingBottom="10dp"
-              android:paddingLeft="10dp"
-              android:paddingRight="10dp"
-              android:text="13h 59m 59s"
-              android:layout_gravity="center_horizontal"
-              android:textColor="@color/text_color_primary"/>
-
-    </LinearLayout>
-
-    <!-- Change reading duration -->
-    <LinearLayout android:layout_width="fill_parent"
-                  android:layout_height="wrap_content"
-                  android:paddingTop="10dp"
-                  android:paddingBottom="10dp"
-                  android:orientation="vertical">
-
-      <LinearLayout android:layout_height="80dp"
-                    android:layout_width="fill_parent"
-                    android:layout_gravity="center"
-                    android:orientation="horizontal">
-
-        <com.readtracker.thirdparty.widget.WheelView android:id="@+id/wheelDurationHours"
-                                                     android:layout_marginRight="0dp"
-                                                     style="@style/reading_session_wheel_view"/>
-
-        <com.readtracker.thirdparty.widget.WheelView android:id="@+id/wheelDurationMinutes"
-                                                     android:layout_marginRight="12dp"
-                                                     android:layout_marginLeft="12dp"
-                                                     style="@style/reading_session_wheel_view"/>
-
-        <com.readtracker.thirdparty.widget.WheelView android:id="@+id/wheelDurationSeconds"
-                                                     android:layout_marginLeft="0dp"
-                                                     style="@style/reading_session_wheel_view"/>
-
-      </LinearLayout>
-
-      <LinearLayout android:layout_height="wrap_content"
-                    android:layout_width="fill_parent"
-                    android:padding="12dp"
-                    android:orientation="horizontal">
-
-        <Button android:id="@+id/buttonCancelSetDuration"
-                style="@style/button_small"
-                android:layout_width="fill_parent"
-                android:layout_weight="1"
-                android:layout_marginRight="6dp"
-                android:text="Cancel"/>
-
-        <Button android:id="@+id/buttonSetDuration"
-                style="@style/button_small"
-                android:layout_width="fill_parent"
-                android:layout_weight="1"
-                android:layout_marginLeft="6dp"
-                android:text="Set duration"/>
-
-      </LinearLayout>
-
-
-    </LinearLayout>
-
-  </com.readtracker.thirdparty.SafeViewFlipper>
-
-  <View style="@style/thick_divider"
-        android:layout_below="@+id/flipperSessionLength"
-        android:layout_marginBottom="12dp"/>
-
+  <View android:id="@+id/centerDivider"
+        style="@style/thick_divider"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="12dp" />
 
   <Button android:id="@+id/btnSaveReadingSession"
           style="@style/default_button"
           android:text="Save"
           android:layout_margin="6dp"
-          android:layout_alignParentBottom="true"/>
+          android:layout_alignParentBottom="true" />
 
-  <LinearLayout android:id="@+id/layoutPageEntry"
-                android:layout_height="0px"
-                android:layout_width="fill_parent"
-                android:layout_below="@id/flipperSessionLength"
-                android:layout_above="@id/btnSaveReadingSession"
-                android:orientation="vertical"
-                android:layout_centerInParent="true"
-                android:gravity="center">
+  <!-- Ending page group -->
+  <FrameLayout android:layout_height="fill_parent"
+               android:layout_width="fill_parent"
+               android:layout_below="@id/_bookHeader"
+               android:layout_above="@id/centerDivider">
+    <include layout="@layout/_duration_picker" />
+  </FrameLayout>
 
-    <TextView android:id="@+id/textWhereDidYouEnd"
-              style="@style/generic_label"
-              android:text="What page did you end on?"
-              android:lines="1"
-              android:gravity="center_horizontal"
-              android:layout_marginBottom="48dp"/>
-
-    <!-- simple page picker for page numbers -->
-
-    <com.readtracker.thirdparty.widget.WheelView android:id="@+id/wheelEndingPage"
-                                                 style="@style/generic_number_wheel"/>
-
-    <!-- or a dual wheeled (heh) picker for percent integer and fraction -->
-
-    <RelativeLayout android:id="@+id/layoutEndPercent"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content">
-
-      <LinearLayout android:id="@+id/layEndPositionWrapper"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true">
-
-        <com.readtracker.thirdparty.widget.WheelView android:id="@+id/wheelEndPercentInteger"
-                                                     android:layout_marginRight="6dp"
-                                                     style="@style/generic_number_wheel"/>
-
-        <TextView android:layout_height="fill_parent"
-                  android:layout_width="wrap_content"
-                  android:text="."
-                  android:gravity="center_vertical"
-                  android:textColor="@color/text_color_primary"
-                  android:textSize="20dp"/>
-
-        <com.readtracker.thirdparty.widget.WheelView android:id="@+id/wheelEndPercentFraction"
-                                                     android:layout_marginLeft="6dp"
-                                                     style="@style/generic_number_wheel"/>
-
-      </LinearLayout>
-
-      <TextView android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
-                android:text="%"
-                android:layout_toRightOf="@id/layEndPositionWrapper"
-                android:gravity="center_vertical"
-          />
-
-    </RelativeLayout>
-
-  </LinearLayout>
+  <FrameLayout android:layout_above="@id/btnSaveReadingSession"
+               android:layout_below="@id/centerDivider"
+               android:layout_height="fill_parent"
+               android:layout_width="fill_parent"
+               android:layout_weight="1">
+    <include layout="@layout/_progress_picker" />
+  </FrameLayout>
 
 </RelativeLayout>

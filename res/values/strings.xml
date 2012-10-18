@@ -11,4 +11,5 @@
   <string name="visible_to_friends">Visible to friends</string>
   <string name="reading_for">Reading for</string>
   <string name="paused_at">Paused at</string>
+  <string name="you_read_for">You read for</string>
 </resources>

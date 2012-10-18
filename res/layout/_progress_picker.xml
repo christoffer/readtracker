@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+  <!--
+  this layout relies on being embedded inside of another layout that determines the size
+  of the thing. This enables one layout to include the duration picker and have it expand vertically,
+  while another layout can have it expand horizontally.
+  -->
+
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <LinearLayout android:id="@+id/layoutPageEntry"
+                android:layout_height="fill_parent"
+                android:layout_width="fill_parent"
+                android:orientation="vertical"
+                android:gravity="center">
+
+    <TextView android:id="@+id/textWhereDidYouEnd"
+              style="@style/generic_label"
+              android:text="What page did you end on?"
+              android:lines="1"
+              android:gravity="center_horizontal"
+              android:layout_marginTop="12dp"
+               />
+
+    <!-- simple page picker for page numbers -->
+
+    <com.readtracker.thirdparty.widget.WheelView android:id="@+id/wheelEndingPage"
+                                                 style="@style/generic_number_wheel" />
+
+    <!-- or a dual wheeled (heh) picker for percent integer and fraction -->
+
+    <RelativeLayout android:id="@+id/layoutEndPercent"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content">
+
+      <LinearLayout android:id="@+id/layEndPositionWrapper"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true">
+
+        <com.readtracker.thirdparty.widget.WheelView android:id="@+id/wheelEndPercentInteger"
+                                                     android:layout_marginRight="6dp"
+                                                     style="@style/generic_number_wheel" />
+
+        <TextView android:layout_height="fill_parent"
+                  android:layout_width="wrap_content"
+                  android:text="."
+                  android:gravity="center_vertical"
+                  android:textColor="@color/text_color_primary"
+                  android:textSize="20dp" />
+
+        <com.readtracker.thirdparty.widget.WheelView android:id="@+id/wheelEndPercentFraction"
+                                                     android:layout_marginLeft="6dp"
+                                                     style="@style/generic_number_wheel" />
+
+      </LinearLayout>
+
+      <TextView android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:text="%"
+                android:layout_toRightOf="@id/layEndPositionWrapper"
+                android:gravity="center_vertical" />
+
+    </RelativeLayout>
+
+  </LinearLayout>
+</merge>
