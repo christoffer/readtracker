@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+  <!-- include the regular cover + title/author -->
+
+  <include layout="@layout/_book_header" />
+
+  <!-- followed by the action bar buttons -->
+
+  <!-- use a ViewFlipper for action buttons for easy toggle animations -->
+  <com.readtracker.thirdparty.SafeViewFlipper android:id="@+id/flipperActionButtons"
+                                              android:layout_width="wrap_content"
+                                              android:layout_height="fill_parent"
+                                              android:background="@color/midnight_dark"
+                                              android:inAnimation="@anim/fade_in_fast"
+                                              android:visibility="gone"
+                                              android:outAnimation="@anim/fade_out_fast">
+
+    <!-- dummy view for safe view flipper -->
+    <View android:layout_width="0dp"
+          android:layout_height="0dp"
+          android:visibility="gone" />
+
+    <Button android:id="@+id/buttonAddHighlight"
+            style="@style/action_button"
+            android:layout_height="fill_parent"
+            android:drawableLeft="@drawable/icon_add" />
+
+  </com.readtracker.thirdparty.SafeViewFlipper>
+
+</merge>

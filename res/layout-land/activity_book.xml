@@ -9,7 +9,7 @@
                 android:layout_width="fill_parent"
                 xmlns:android="http://schemas.android.com/apk/res/android"
                 android:orientation="horizontal"
-                android:layout_height="72dp">
+                android:layout_height="60dp">
     <include layout="@layout/_book_activity_book_header" />
   </LinearLayout>
 
