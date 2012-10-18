@@ -138,7 +138,7 @@ public class ActivityAddBook extends ReadTrackerActivity {
       }
 
       if(pageCount < 1) {
-        toast("Please enter a reasonable number of pages");
+        toast(getString(R.string.enter_page_count));
         mEditPageCount.requestFocus();
         return false;
       }

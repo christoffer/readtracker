@@ -384,8 +384,8 @@ public class FragmentRead extends Fragment {
   private void onClickedSetPageCount() {
     int pageNumbers = Utils.parseInt(mEditPageCount.getText().toString(), 0);
 
-    if(pageNumbers < 1 || pageNumbers > 10000) {
-      ((ReadTrackerActivity) getActivity()).toast("Please enter a reasonable number of pages");
+    if(pageNumbers < 1) {
+      ((ReadTrackerActivity) getActivity()).toast(getString(R.string.enter_page_count));
       mEditPageCount.requestFocus();
       return;
     }

@@ -12,4 +12,6 @@
   <string name="reading_for">Reading for</string>
   <string name="paused_at">Paused at</string>
   <string name="you_read_for">You read for</string>
+
+  <string name="enter_page_count">Please enter the number of pages</string>
 </resources>
