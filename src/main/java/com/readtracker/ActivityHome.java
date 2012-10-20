@@ -87,10 +87,10 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
 
     updateConnectivityState();
 
-    boolean signedIn = getIntent().getBooleanExtra(IntentKeys.SIGNED_IN, false);
-    if(signedIn) {
-      Log.d(TAG, "After sign in: Starting sync");
-      startSyncWithReadmill();
+    boolean cameFromSignIn = getIntent().getBooleanExtra(IntentKeys.SIGNED_IN, false);
+    if(cameFromSignIn && getCurrentUser() != null) {
+      Log.d(TAG, "Fresh from sign in, doing initial sync.");
+      sync();
     }
   }
 
@@ -155,7 +155,7 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
 
     switch(clickedId) {
       case MENU_SYNC_BOOKS:
-        startSyncWithReadmill();
+        sync();
         break;
       case MENU_SETTINGS:
         exitToPreferences();
@@ -181,7 +181,7 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
         if(requestCode == ActivityCodes.REQUEST_READING_SESSION ||
             requestCode == ActivityCodes.REQUEST_ADD_BOOK) {
           refreshReadingList();
-          startSyncWithReadmill();
+          sync();
         }
         break;
       case ActivityCodes.RESULT_SIGN_OUT:
@@ -225,7 +225,7 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
     mButtonSyncReadmill.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
-        startSyncWithReadmill();
+        sync();
       }
     });
 
@@ -253,17 +253,10 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
    * Initiates a full sync with Readmill.
    * Pushes new reading sessions, readings and highlights to Readmill.
    */
-  private void startSyncWithReadmill() {
-    if(!isNetworkAvailable() || mReadmillSyncTask != null) {
-      Log.d(TAG, "No internet connection or sync already in progress. Skipping sync.");
+  private void sync() {
+    if(!shouldSync()) {
       return;
     }
-
-    if(getCurrentUser() == null) {
-      Log.i(TAG, "Not logged in, skipping sync");
-      return;
-    }
-
     startService(new Intent(this, ReadmillTransferIntent.class));
 
     Log.i(TAG, "Starting AsyncTask for Syncing Readmill Readings");
@@ -277,6 +270,28 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
 
     long readmillUserId = getCurrentUserId();
     mReadmillSyncTask.execute(readmillUserId);
+  }
+
+  /**
+   * Determines if it is appropriate to start a sync with Readmill.
+   * @return true if a sync should be started, false otherwise
+   */
+  private boolean shouldSync() {
+    if(!isNetworkAvailable()) {
+      Log.i(TAG, "No internet connection - skipping sync");
+      return false;
+    }
+
+    if(mReadmillSyncTask != null) {
+      Log.d(TAG, "Sync already in progress - skipping sync.");
+      return false;
+    }
+
+    if(getCurrentUser() == null) {
+      Log.i(TAG, "No user signed in - skipping sync");
+      return false;
+    }
+    return true;
   }
 
   /**
