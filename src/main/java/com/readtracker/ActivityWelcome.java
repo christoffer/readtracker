@@ -93,13 +93,14 @@ public class ActivityWelcome extends ReadTrackerActivity {
 
   private void onCheckAnonymousReadings(int anonymousReadingsCount) {
     Log.d(TAG, "Found " + anonymousReadingsCount + " anonymous readings");
+    final long readmillUserId = getCurrentUserId();
     if(anonymousReadingsCount > 0) {
       // pop dialog and ask the user if s/he wants to
       DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
         @Override public void onClick(DialogInterface dialog, int which) {
           switch(which) {
             case DialogInterface.BUTTON_POSITIVE:
-              associateAnonymousReadings();
+              associateAnonymousReadings(readmillUserId);
               break;
             case DialogInterface.BUTTON_NEGATIVE:
               exitToHomeScreen();
@@ -111,8 +112,8 @@ public class ActivityWelcome extends ReadTrackerActivity {
       AlertDialog.Builder builder = new AlertDialog.Builder(this);
       String question = String.format(getString(R.string.associate_anonymous_readings), anonymousReadingsCount);
       builder.setMessage(question).
-          setPositiveButton("Yes", dialogClickListener).
           setNegativeButton("No", dialogClickListener).
+          setPositiveButton("Yes", dialogClickListener).
           show();
     } else {
       // No anon readings to convert, just go to the home screen
@@ -120,13 +121,16 @@ public class ActivityWelcome extends ReadTrackerActivity {
     }
   }
 
-  private void associateAnonymousReadings() {
+  private void associateAnonymousReadings(long readmillUserId) {
     Log.d(TAG, "Assocation clicked");
+    //noinspection unchecked
+    (new AssociateAnonymousReadings()).execute(readmillUserId);
   }
 
   private void exitToHomeScreen() {
     getApp().removeFirstTimeFlag();
     Intent intentWelcome = new Intent(this, ActivityHome.class);
+    intentWelcome.putExtra(IntentKeys.SIGNED_IN, true);
     startActivity(intentWelcome);
     finish();
   }
