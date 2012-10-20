@@ -64,7 +64,7 @@ public class ApplicationReadTracker extends Application implements TokenChangeLi
   private ProgressDialog mProgressDialog;
 
   // Flag for first time usage of ReadTracker
-  private boolean mIsFirstTimeStartingApp;
+  private boolean mFirstTimeFlag;
 
   public ApplicationReadTracker() { }
 
@@ -83,7 +83,7 @@ public class ApplicationReadTracker extends Application implements TokenChangeLi
     mPreferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
 
     // Flag first time starting the app
-    mIsFirstTimeStartingApp = mPreferences.getBoolean(KEY_FIRST_TIME, true);
+    mFirstTimeFlag = mPreferences.getBoolean(KEY_FIRST_TIME, true);
 
     // Get previous login information
     Token token = getStoredToken();
@@ -243,8 +243,15 @@ public class ApplicationReadTracker extends Application implements TokenChangeLi
    *
    * @return true if this is the first time, otherwise false
    */
-  public boolean isFirstTimeStartingApp() {
-    return mIsFirstTimeStartingApp;
+  public boolean getFirstTimeFlag() {
+    return mFirstTimeFlag;
+  }
+
+  /**
+   * Remove the flag for first time usage.
+   */
+  public void removeFirstTimeFlag() {
+    mPreferences.edit().putBoolean(KEY_FIRST_TIME, false).commit();
   }
 
   /**

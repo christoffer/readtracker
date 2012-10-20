@@ -63,7 +63,7 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
     super.onCreate(savedInstanceState);
 
     // Show welcome screen for first time users
-    if(getApp().isFirstTimeStartingApp()) {
+    if(getApp().getFirstTimeFlag()) {
       exitToSignInScreen();
       return;
     }
