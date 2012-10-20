@@ -47,13 +47,24 @@ public class ApplicationReadTracker extends Application implements TokenChangeLi
   // Access to application instance
   private static ApplicationReadTracker mInstance = null;
 
+  // Store reference to allow cheaper look-ups
   private SharedPreferences mPreferences;
+
+  // Global drawable manager for keeping cached images across activities
   private DrawableManager mDrawableManager;
+
+  // Access to database
   private DatabaseHelper mDatabaseHelper;
 
+  // Currently logged in user
   private ReadTrackerUser mCurrentUser;
 
+  // Keep a reference to the progress bar in a global state, so we can dismiss
+  // it from any activity
   private ProgressDialog mProgressDialog;
+
+  // Flag for first time usage of ReadTracker
+  private boolean mIsFirstTimeStartingApp;
 
   public ApplicationReadTracker() { }
 
