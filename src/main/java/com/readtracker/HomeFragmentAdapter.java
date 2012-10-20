@@ -121,6 +121,7 @@ public class HomeFragmentAdapter extends FragmentStatePagerAdapter {
    * @param localReading The new or updated local reading
    */
   public void put(LocalReading localReading) {
+    Log.i(TAG, "Putting: " + localReading);
     removeReadingsWithId(localReading.id);
     add(localReading);
   }

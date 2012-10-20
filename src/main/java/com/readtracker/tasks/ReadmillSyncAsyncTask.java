@@ -79,6 +79,10 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
   @Override
   protected void onProgressUpdate(ReadmillSyncProgressMessage... messages) {
     for(ReadmillSyncProgressMessage message : messages) {
+      LocalReading localReading = message.getLocalReading();
+      if(localReading != null) {
+        mProgressListener.onReadingUpdated(localReading);
+      }
       mProgressListener.onSyncProgress(message.toString(), message.getProgress());
     }
   }
