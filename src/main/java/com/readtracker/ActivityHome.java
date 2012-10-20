@@ -61,6 +61,13 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+
+    // Show welcome screen for first time users
+    if(getApp().isFirstTimeStartingApp()) {
+      exitToSignInScreen();
+      return;
+    }
+
     setContentView(R.layout.activity_home);
 
     bindViews();

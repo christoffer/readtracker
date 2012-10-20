@@ -1,9 +1,7 @@
 package com.readtracker;
 
-import android.app.ActivityManager;
 import android.app.Application;
 import android.app.ProgressDialog;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
@@ -14,7 +12,10 @@ import com.readmill.api.Environment;
 import com.readmill.api.ReadmillWrapper;
 import com.readmill.api.Token;
 import com.readmill.api.TokenChangeListener;
-import com.readtracker.db.*;
+import com.readtracker.db.DatabaseHelper;
+import com.readtracker.db.LocalHighlight;
+import com.readtracker.db.LocalReading;
+import com.readtracker.db.LocalSession;
 import com.readtracker.readmill.ReadmillApiHelper;
 import com.readtracker.thirdparty.DrawableManager;
 import com.readtracker.value_objects.ReadTrackerUser;
@@ -25,13 +26,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.Properties;
 
 /**
  * Shared state for the entire application
  */
 public class ApplicationReadTracker extends Application implements TokenChangeListener {
+  private static final String TAG = ApplicationReadTracker.class.getName();
+
   public static final String PREF_FILE_NAME = "ReadTrackerPrefFile";
 
   // Readmill integration
@@ -40,9 +42,7 @@ public class ApplicationReadTracker extends Application implements TokenChangeLi
   // Keys for saving information in Settings
   public static final String KEY_TOKEN = "json:token:rt2";
   public static final String KEY_CURRENT_USER = "json:currentuser:rt2";
-
-  // Logging
-  private static final String TAG = ApplicationReadTracker.class.getName();
+  public static final String KEY_FIRST_TIME = "first-time";
 
   // Access to application instance
   private static ApplicationReadTracker mInstance = null;
@@ -82,6 +82,9 @@ public class ApplicationReadTracker extends Application implements TokenChangeLi
     Log.i(TAG, "Initializing application");
     mPreferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
 
+    // Flag first time starting the app
+    mIsFirstTimeStartingApp = mPreferences.getBoolean(KEY_FIRST_TIME, true);
+
     // Get previous login information
     Token token = getStoredToken();
 
@@ -114,6 +117,7 @@ public class ApplicationReadTracker extends Application implements TokenChangeLi
        client-secret   - The Readmill client secret (from readmill.com/you/apps)
        readmill-domain - The base domain of the readmill server to use (default: "readmill.com")
        use-https       - Whether or not to use https in API requests (default: "true")
+
      */
     Resources resources = this.getResources();
     AssetManager assetManager = resources.getAssets();
@@ -133,9 +137,11 @@ public class ApplicationReadTracker extends Application implements TokenChangeLi
       clientId = properties.getProperty("client-id");
       clientSecret = properties.getProperty("client-secret");
 
-      if(clientId == null) throw new RuntimeException("readmill.properties did not include property: 'client-id'");
-      if(clientSecret == null) throw new RuntimeException("readmill.properties did not include property: 'client-secret'");
-    } catch (IOException e) {
+      if(clientId == null)
+        throw new RuntimeException("readmill.properties did not include property: 'client-id'");
+      if(clientSecret == null)
+        throw new RuntimeException("readmill.properties did not include property: 'client-secret'");
+    } catch(IOException e) {
       Log.e(TAG, "Could not load properties file: /assets/readmill.properties", e);
       throw new RuntimeException("Failed to load readmill properties file");
     }
@@ -229,6 +235,16 @@ public class ApplicationReadTracker extends Application implements TokenChangeLi
     }
 
     return mInstance.mDrawableManager;
+  }
+
+  /**
+   * Gets the flag that indicates whether or not this is the first time the user
+   * is starting readtracker or not.
+   *
+   * @return true if this is the first time, otherwise false
+   */
+  public boolean isFirstTimeStartingApp() {
+    return mIsFirstTimeStartingApp;
   }
 
   /**
