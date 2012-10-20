@@ -252,6 +252,7 @@ public class ApplicationReadTracker extends Application implements TokenChangeLi
    */
   public void removeFirstTimeFlag() {
     mPreferences.edit().putBoolean(KEY_FIRST_TIME, false).commit();
+    mFirstTimeFlag = false;
   }
 
   /**
