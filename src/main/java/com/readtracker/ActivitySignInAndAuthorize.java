@@ -121,7 +121,7 @@ public class ActivitySignInAndAuthorize extends ReadTrackerActivity {
    * Attemt to exchange the provided authorization code for a token and update
    * the application state.
    *
-   * @param code
+   * @param code the received authorization code
    */
   private void onAuthorization(String code) {
     if(!readmillApi().authorize(code)) {
