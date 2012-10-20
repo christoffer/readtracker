@@ -20,16 +20,14 @@ public class HomeFragmentAdapter extends FragmentStatePagerAdapter {
 
   private static final int FRAGMENT_FINISHED = 0;
   private static final int FRAGMENT_ACTIVE = 1;
-  private static final int FRAGMENT_INTERESTING = 2;
 
   // Keep references to current fragments to allow updating them when the
   // list of local readings changes
-  private FragmentReadingList[] fragments = new FragmentReadingList[3];
+  private FragmentReadingList[] fragments = new FragmentReadingList[2];
 
   // Bucket local readings on state
   private final ArrayList<LocalReading> finishedReadings = new ArrayList<LocalReading>();
   private final ArrayList<LocalReading> activeReadings = new ArrayList<LocalReading>();
-  private final ArrayList<LocalReading> interestingReadings = new ArrayList<LocalReading>();
 
   // A mapping between a local reading instance (in any list) and its id
   private HashMap<Integer, LocalReading> mLocalReadingMap = new HashMap<Integer, LocalReading>();
@@ -47,10 +45,8 @@ public class HomeFragmentAdapter extends FragmentStatePagerAdapter {
         return "Reading";
       case FRAGMENT_FINISHED:
         return "Finished";
-      case FRAGMENT_INTERESTING:
-        return "Next";
       default:
-        return "N/A";
+        return "";
     }
   }
 
@@ -61,8 +57,6 @@ public class HomeFragmentAdapter extends FragmentStatePagerAdapter {
       fragment = FragmentReadingList.newInstance(finishedReadings, R.layout.local_reading_item_finished);
     } else if(position == FRAGMENT_ACTIVE) {
       fragment = FragmentReadingList.newInstance(activeReadings, R.layout.local_reading_item_active);
-    } else if(position == FRAGMENT_INTERESTING) {
-      fragment = FragmentReadingList.newInstance(interestingReadings, R.layout.local_reading_item_interesting);
     }
 
     // Keep a reference to the active fragment around so we can update it later
@@ -90,9 +84,6 @@ public class HomeFragmentAdapter extends FragmentStatePagerAdapter {
     if(localReading.isActive()) {
       activeReadings.add(localReading);
       refreshFragment(FRAGMENT_ACTIVE, activeReadings);
-    } else if(localReading.isInteresting()) {
-      interestingReadings.add(localReading);
-      refreshFragment(FRAGMENT_INTERESTING, interestingReadings);
     } else {
       finishedReadings.add(localReading);
       refreshFragment(FRAGMENT_FINISHED, finishedReadings);
@@ -112,7 +103,6 @@ public class HomeFragmentAdapter extends FragmentStatePagerAdapter {
     Log.d(TAG, "Found local reading with id, remove from all lists: " + localReading.toString());
     activeReadings.remove(localReading);
     finishedReadings.remove(localReading);
-    interestingReadings.remove(localReading);
 
     mLocalReadingMap.remove(localReading.id);
   }
@@ -136,7 +126,6 @@ public class HomeFragmentAdapter extends FragmentStatePagerAdapter {
     Log.i(TAG, "Clearing all items");
     activeReadings.clear();
     finishedReadings.clear();
-    interestingReadings.clear();
     mLocalReadingMap.clear();
     notifyDataSetChanged();
   }
@@ -165,7 +154,6 @@ public class HomeFragmentAdapter extends FragmentStatePagerAdapter {
 
     refreshFragment(FRAGMENT_ACTIVE, activeReadings);
     refreshFragment(FRAGMENT_FINISHED, finishedReadings);
-    refreshFragment(FRAGMENT_INTERESTING, interestingReadings);
   }
 
   /**
