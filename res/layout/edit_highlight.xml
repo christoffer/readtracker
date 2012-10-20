@@ -12,7 +12,7 @@
                 android:padding="10dp"
                 android:orientation="vertical"
                 android:layout_below="@id/_bookHeader"
-                android:layout_above="@+id/dividerAbovePageWheelLayout">
+                android:layout_above="@+id/btnSaveHighlight">
 
     <EditText android:id="@+id/editHighlightText"
               android:layout_width="fill_parent"
@@ -32,10 +32,12 @@
 
   <View android:id="@+id/dividerAbovePageWheelLayout"
         style="@style/thick_divider"
+        android:visibility="gone"
         android:layout_above="@+id/pageWheelLayout"
         android:layout_marginBottom="0dp" />
 
   <LinearLayout android:id="@+id/pageWheelLayout"
+                android:visibility="gone"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_above="@+id/dividerBelowPageWheelLayout"
@@ -62,10 +64,6 @@
                                                          android:layout_height="wrap_content" />
 
   </LinearLayout>
-
-  <View android:id="@+id/dividerBelowPageWheelLayout"
-        style="@style/thick_divider"
-        android:layout_above="@+id/btnSaveHighlight" />
 
   <Button android:id="@+id/btnSaveHighlight"
           style="@style/default_button"

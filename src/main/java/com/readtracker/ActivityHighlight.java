@@ -10,11 +10,9 @@ import android.widget.EditText;
 import com.readtracker.customviews.ViewBindingBookHeader;
 import com.readtracker.db.LocalHighlight;
 import com.readtracker.db.LocalReading;
-import com.readtracker.tasks.CreateHighlightAsyncTask;
 import com.readtracker.interfaces.CreateHighlightTaskListener;
+import com.readtracker.tasks.CreateHighlightAsyncTask;
 import com.readtracker.thirdparty.widget.WheelView;
-import com.readtracker.thirdparty.widget.adapters.NumericWheelAdapter;
-import com.readtracker.value_objects.ReadTrackerUser;
 
 import java.util.Date;
 
@@ -49,20 +47,25 @@ public class ActivityHighlight extends ReadTrackerActivity {
       mWheelHighlightPage.setTag(null);
     }
 
-    if(mLocalReading.hasPageInfo()) {
-      NumericWheelAdapter mHighlightPageAdapter = new NumericWheelAdapter(this, 0, (int) mLocalReading.totalPages);
-      mWheelHighlightPage.setViewAdapter(mHighlightPageAdapter);
-      if(mWheelHighlightPage.getTag() == null) {
-        mWheelHighlightPage.setCurrentItem((int) mLocalReading.currentPage);
-      } else {
-        mWheelHighlightPage.setCurrentItem((Integer) mWheelHighlightPage.getTag());
-      }
-      mWheelHighlightPage.setInterpolator(null);
-      mWheelHighlightPage.setVisibleItems(3);
-      mPageWheelLayout.setVisibility(View.VISIBLE);
-    } else {
-      mPageWheelLayout.setVisibility(View.GONE);
-    }
+//    if(mLocalReading.hasPageInfo()) {
+//      NumericWheelAdapter mHighlightPageAdapter = new NumericWheelAdapter(this, 0, (int) mLocalReading.totalPages);
+//      mWheelHighlightPage.setViewAdapter(mHighlightPageAdapter);
+//      if(mWheelHighlightPage.getTag() == null) {
+//        mWheelHighlightPage.setCurrentItem((int) mLocalReading.currentPage);
+//      } else {
+//        mWheelHighlightPage.setCurrentItem((Integer) mWheelHighlightPage.getTag());
+//      }
+//      mWheelHighlightPage.setInterpolator(null);
+//      mWheelHighlightPage.setVisibleItems(3);
+//      mPageWheelLayout.setVisibility(View.VISIBLE);
+//    } else {
+//      mPageWheelLayout.setVisibility(View.GONE);
+//    }
+//
+
+    // Remove page entry for now. The page picker should be extracted into a
+    // custom view at some point instead of duplicating it here.
+    mPageWheelLayout.setVisibility(View.GONE);
 
     ViewBindingBookHeader.bind(this, mLocalReading);
   }
