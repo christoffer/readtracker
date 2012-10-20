@@ -114,7 +114,9 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
   @Override
   protected void onDestroy() {
     super.onDestroy();
-    unregisterReceiver(mNetworkStateReceiver);
+    if(mNetworkStateReceiver != null) {
+      unregisterReceiver(mNetworkStateReceiver);
+    }
     // Abort any ongoing readmill sync
     if(mReadmillSyncTask != null) {
       mReadmillSyncTask.cancel(true);
