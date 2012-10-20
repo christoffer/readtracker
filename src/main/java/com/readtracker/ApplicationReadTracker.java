@@ -203,26 +203,6 @@ public class ApplicationReadTracker extends Application implements TokenChangeLi
   }
 
   /**
-   * Returns true if the activity is being hidden due to another app taking
-   * over or false otherwise.
-   *
-   * @param context Context to
-   * @return True of the application is brought to foreground, false otherwise
-   */
-  public static boolean isApplicationBroughtToBackground(final Context context) {
-    ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-    List<ActivityManager.RunningTaskInfo> tasks = am.getRunningTasks(1);
-    if(!tasks.isEmpty()) {
-      ComponentName topActivity = tasks.get(0).topActivity;
-      if(!topActivity.getPackageName().equals(context.getPackageName())) {
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  /**
    * Globally drawable manager (share caching of Drawables)
    *
    * @return the global DrawableManager instance
