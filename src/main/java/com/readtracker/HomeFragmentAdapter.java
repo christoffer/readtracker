@@ -18,12 +18,15 @@ import java.util.List;
 public class HomeFragmentAdapter extends FragmentStatePagerAdapter {
   private static final String TAG = HomeFragmentAdapter.class.getName();
 
+
+  private static final int NUM_PAGES = 2;
+
   private static final int FRAGMENT_FINISHED = 0;
   private static final int FRAGMENT_ACTIVE = 1;
 
   // Keep references to current fragments to allow updating them when the
   // list of local readings changes
-  private FragmentReadingList[] fragments = new FragmentReadingList[2];
+  private FragmentReadingList[] fragments = new FragmentReadingList[NUM_PAGES];
 
   // Bucket local readings on state
   private final ArrayList<LocalReading> finishedReadings = new ArrayList<LocalReading>();
@@ -37,7 +40,7 @@ public class HomeFragmentAdapter extends FragmentStatePagerAdapter {
     setLocalReadings(localReadings);
   }
 
-  @Override public int getCount() { return 3; }
+  @Override public int getCount() { return NUM_PAGES; }
 
   @Override public CharSequence getPageTitle(int position) {
     switch(position) {
