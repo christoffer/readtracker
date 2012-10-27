@@ -21,16 +21,10 @@ package com.readtracker.thirdparty.widget;
 
 import android.content.Context;
 import android.database.DataSetObserver;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.LinearGradient;
-import android.graphics.Shader;
+import android.graphics.*;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.PaintDrawable;
-import android.graphics.drawable.ShapeDrawable;
-import android.graphics.drawable.shapes.RectShape;
 import android.util.AttributeSet;
-import android.util.TypedValue;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
@@ -57,7 +51,14 @@ public class WheelView extends View {
   /**
    * Left and right padding value
    */
-  private static final int PADDING = 10;
+  private static final int DEFAULT_PADDING = 30;
+  private int paddingLeft = DEFAULT_PADDING;
+  private int paddingRight = DEFAULT_PADDING;
+
+  private static final int COVER_COLOR = 0x88000000;
+
+  private static final int CALLIPER_PAINT = 0xffffffff;
+  private static final int CALLIPER_WIDTH = 15;
 
   /**
    * Default count of visible items
@@ -75,17 +76,33 @@ public class WheelView extends View {
   // Item height
   private int itemHeight = 0;
 
-  // Covering drawable
-  private Drawable coverDrawable;
-
   // Scrolling
   private WheelScroller scroller;
   private boolean isScrollingPerformed;
   private int scrollingOffset;
+
   private int scrollingSpeed = DEFAULT_SCROLLING_SPEED;
 
   // Cyclic
   boolean isCyclic = false;
+
+  // Callipers
+  public enum CalliperMode {
+    NO_CALLIPERS,
+    LEFT_CALLIPER,
+    RIGHT_CALLIPER,
+    BOTH_CALLIPERS
+  }
+
+  public CalliperMode getCalliperMode() {
+    return calliperMode;
+  }
+
+  public void setCalliperMode(CalliperMode calliperMode) {
+    this.calliperMode = calliperMode;
+  }
+
+  private CalliperMode calliperMode = CalliperMode.BOTH_CALLIPERS;
 
   // Items layout
   private LinearLayout itemsLayout;
@@ -98,11 +115,14 @@ public class WheelView extends View {
 
   // Recycle
   private WheelRecycle recycle = new WheelRecycle(this);
-
   // Listeners
   private List<OnWheelChangedListener> changingListeners = new LinkedList<OnWheelChangedListener>();
   private List<OnWheelScrollListener> scrollingListeners = new LinkedList<OnWheelScrollListener>();
+
   private List<OnWheelClickedListener> clickingListeners = new LinkedList<OnWheelClickedListener>();
+  private Paint coverPaint;
+
+  private Paint calliperPaint;
 
   /**
    * Constructor
@@ -442,36 +462,18 @@ public class WheelView extends View {
    * Initializes resources
    */
   private void initResourcesIfNecessary() {
-    if(coverDrawable == null) {
-      final float gradientScale = 0.05f;
-      int baseColor = getResources().getColor(R.color.midnight_medium);
-      int red = Color.red(baseColor);
-      int green = Color.green(baseColor);
-      int blue = Color.blue(baseColor);
+    if(coverPaint == null) {
+      Paint p = new Paint();
+      p.setColor(COVER_COLOR);
+      p.setStyle(Paint.Style.FILL);
+      coverPaint = p;
+    }
 
-      final int transparent = Color.argb(0, red, green, blue);
-      final int opaque = Color.argb(255, red, green, blue);
-
-      ShapeDrawable.ShaderFactory sf = new ShapeDrawable.ShaderFactory() {
-        @Override
-        public Shader resize(int width, int height) {
-          return new LinearGradient(0, 0, 0, getHeight(),
-              new int[] {
-                  opaque,
-                  opaque,
-                  transparent,
-                  opaque,
-                  opaque
-              },
-              new float[] { 0, gradientScale, 0.5f, 1.0f - gradientScale, 1.0f },
-              Shader.TileMode.REPEAT);
-        }
-      };
-      PaintDrawable p = new PaintDrawable();
-      p.setShape(new RectShape());
-      p.setShaderFactory(sf);
-
-      coverDrawable = p;
+    if(calliperPaint == null) {
+      Paint p = new Paint();
+      p.setColor(CALLIPER_PAINT);
+      p.setStyle(Paint.Style.STROKE);
+      calliperPaint = p;
     }
 
     setBackgroundResource(R.drawable.wheel_bg);
@@ -523,31 +525,42 @@ public class WheelView extends View {
 
     // TODO: make it static
     itemsLayout.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-    itemsLayout.measure(MeasureSpec.makeMeasureSpec(widthSize, MeasureSpec.UNSPECIFIED),
-        MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+    itemsLayout.measure(MeasureSpec.makeMeasureSpec(
+      widthSize, MeasureSpec.UNSPECIFIED),
+      MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
+    );
     int width = itemsLayout.getMeasuredWidth();
+    final int paddingWidth = paddingLeft + paddingRight;
 
     if(mode == MeasureSpec.EXACTLY) {
       width = widthSize;
     } else {
-      width += 2 * PADDING;
+      // Make the width the with + padding
+      Log.d("WheelView", "Adding padding: " + paddingWidth);
+      Log.d("WheelView", "Width:" + width);
+      width += paddingWidth;
+      Log.d("WheelView", " => Width:" + width);
 
-      // Check against our minimum width
+      // Cap minimum
       width = Math.max(width, getSuggestedMinimumWidth());
 
+      // Cap at measure mode maximum
       if(mode == MeasureSpec.AT_MOST && widthSize < width) {
+        Log.d("WheelView", "Measuring at most: " + widthSize + " vs our " + width);
         width = widthSize;
       }
     }
 
-    itemsLayout.measure(MeasureSpec.makeMeasureSpec(width - 2 * PADDING, MeasureSpec.EXACTLY),
-        MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+    itemsLayout.measure(MeasureSpec.makeMeasureSpec(width - paddingWidth, MeasureSpec.EXACTLY),
+      MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
 
+    Log.d("WheelView", " exit Width:" + width);
     return width;
   }
 
   @Override
   protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+    Log.d("WheelView", "onMeasure called for: " + getId());
     int widthMode = MeasureSpec.getMode(widthMeasureSpec);
     int heightMode = MeasureSpec.getMode(heightMeasureSpec);
     int widthSize = MeasureSpec.getSize(widthMeasureSpec);
@@ -583,7 +596,7 @@ public class WheelView extends View {
    * @param height the layout height
    */
   private void layout(int width, int height) {
-    int itemsWidth = width - 2 * PADDING;
+    int itemsWidth = width - (paddingLeft + paddingRight);
 
     itemsLayout.layout(0, 0, itemsWidth, height);
   }
@@ -597,6 +610,7 @@ public class WheelView extends View {
 
       drawItems(canvas);
       drawOverlay(canvas);
+      drawCalipers(canvas);
     }
   }
 
@@ -609,7 +623,7 @@ public class WheelView extends View {
     canvas.save();
 
     int top = (currentItem - firstItem) * getItemHeight() + (getItemHeight() - getHeight()) / 2;
-    canvas.translate(PADDING, -top + scrollingOffset);
+    canvas.translate(paddingLeft, -top + scrollingOffset);
 
     itemsLayout.draw(canvas);
 
@@ -626,9 +640,36 @@ public class WheelView extends View {
    * @param canvas the canvas for drawing
    */
   private void drawOverlay(Canvas canvas) {
-    int value = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, getResources().getDisplayMetrics());
-    coverDrawable.setBounds(value, 0, getWidth() - value, getHeight());
-    coverDrawable.draw(canvas);
+    final int height = getHeight();
+    final int width = getWidth();
+    final int halfHeight = getHeight() / 2;
+    final int halfItemHeight = getItemHeight() / 2;
+
+    canvas.drawRect(0, 0, width, halfHeight - halfItemHeight, coverPaint);
+    canvas.drawRect(0, halfHeight + halfItemHeight, width, height, coverPaint);
+  }
+
+  private void drawCalipers(Canvas canvas) {
+    if(calliperMode == CalliperMode.NO_CALLIPERS) {
+      return;
+    }
+
+    final int width = getWidth();
+    final int halfHeight = getHeight() / 2;
+
+    Path calliper = new Path();
+
+    if(calliperMode == CalliperMode.LEFT_CALLIPER || calliperMode == CalliperMode.BOTH_CALLIPERS) {
+      calliper.moveTo(0, halfHeight);
+      calliper.lineTo(CALLIPER_WIDTH, halfHeight);
+    }
+
+    if(calliperMode == CalliperMode.RIGHT_CALLIPER || calliperMode == CalliperMode.BOTH_CALLIPERS) {
+      calliper.moveTo(width - CALLIPER_WIDTH, halfHeight);
+      calliper.lineTo(width, halfHeight);
+    }
+
+    canvas.drawPath(calliper, calliperPaint);
   }
 
   @Override
@@ -881,7 +922,7 @@ public class WheelView extends View {
    */
   private boolean isValidItemIndex(int index) {
     return viewAdapter != null && viewAdapter.getItemsCount() > 0 &&
-        (isCyclic || index >= 0 && index < viewAdapter.getItemsCount());
+      (isCyclic || index >= 0 && index < viewAdapter.getItemsCount());
   }
 
   /**
