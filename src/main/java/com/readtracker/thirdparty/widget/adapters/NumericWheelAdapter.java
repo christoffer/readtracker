@@ -73,7 +73,12 @@ public class NumericWheelAdapter extends AbstractWheelTextAdapter {
     public CharSequence getItemText(int index) {
         if (index >= 0 && index < getItemsCount()) {
             int value = minValue + index;
-            return format != null ? String.format(format, value) : Integer.toString(value);
+          if(format != null) {
+            String processedFormat = format.replace("[s?]", (value == 1 ? "" : "s"));
+            return String.format(processedFormat, value);
+          } else {
+            return Integer.toString(value);
+          }
         }
         return null;
     }

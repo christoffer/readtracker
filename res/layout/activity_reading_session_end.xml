@@ -4,33 +4,34 @@
                 android:layout_width="fill_parent"
                 android:gravity="center_horizontal">
 
-  <include layout="@layout/_book_header" />
+  <include layout="@layout/_book_header"/>
 
   <View android:id="@+id/centerDivider"
         style="@style/thick_divider"
         android:layout_centerInParent="true"
-        android:layout_marginBottom="12dp" />
+        android:layout_marginBottom="12dp"/>
 
   <Button android:id="@+id/btnSaveReadingSession"
           style="@style/default_button"
           android:text="Save"
           android:layout_margin="6dp"
-          android:layout_alignParentBottom="true" />
+          android:layout_alignParentBottom="true"/>
 
   <!-- Ending page group -->
   <FrameLayout android:layout_height="fill_parent"
                android:layout_width="fill_parent"
                android:layout_below="@id/_bookHeader"
                android:layout_above="@id/centerDivider">
-    <include layout="@layout/_duration_picker" />
+    <include layout="@layout/_duration_picker"/>
   </FrameLayout>
 
   <FrameLayout android:layout_above="@id/btnSaveReadingSession"
                android:layout_below="@id/centerDivider"
                android:layout_height="fill_parent"
-               android:layout_width="fill_parent"
-               android:layout_weight="1">
-    <include layout="@layout/_progress_picker" />
+               android:layout_width="fill_parent">
+
+    <include layout="@layout/_progress_picker"/>
+
   </FrameLayout>
 
 </RelativeLayout>

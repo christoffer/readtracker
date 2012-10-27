@@ -23,6 +23,7 @@ import android.content.Context;
 import android.database.DataSetObserver;
 import android.graphics.*;
 import android.graphics.drawable.Drawable;
+import android.text.InputFilter;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -51,9 +52,7 @@ public class WheelView extends View {
   /**
    * Left and right padding value
    */
-  private static final int DEFAULT_PADDING = 30;
-  private int paddingLeft = DEFAULT_PADDING;
-  private int paddingRight = DEFAULT_PADDING;
+  private static final int PADDING = 30;
 
   private static final int COVER_COLOR = 0x88000000;
 
@@ -530,7 +529,7 @@ public class WheelView extends View {
       MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
     );
     int width = itemsLayout.getMeasuredWidth();
-    final int paddingWidth = paddingLeft + paddingRight;
+    final int paddingWidth = getTotalPadding();
 
     if(mode == MeasureSpec.EXACTLY) {
       width = widthSize;
@@ -556,6 +555,17 @@ public class WheelView extends View {
 
     Log.d("WheelView", " exit Width:" + width);
     return width;
+  }
+
+  private int getTotalPadding() {
+    switch(calliperMode) {
+      case RIGHT_CALLIPER:
+      case LEFT_CALLIPER:
+        return PADDING;
+      case BOTH_CALLIPERS:
+        return 2 * PADDING;
+    }
+    return 0;
   }
 
   @Override
@@ -596,7 +606,7 @@ public class WheelView extends View {
    * @param height the layout height
    */
   private void layout(int width, int height) {
-    int itemsWidth = width - (paddingLeft + paddingRight);
+    int itemsWidth = width - getTotalPadding();
 
     itemsLayout.layout(0, 0, itemsWidth, height);
   }
@@ -623,6 +633,8 @@ public class WheelView extends View {
     canvas.save();
 
     int top = (currentItem - firstItem) * getItemHeight() + (getItemHeight() - getHeight()) / 2;
+    final boolean hasLeftPadding = (calliperMode == CalliperMode.LEFT_CALLIPER || calliperMode == CalliperMode.BOTH_CALLIPERS);
+    final int paddingLeft = hasLeftPadding ? PADDING : 0;
     canvas.translate(paddingLeft, -top + scrollingOffset);
 
     itemsLayout.draw(canvas);

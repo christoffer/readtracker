@@ -40,12 +40,9 @@ public class ActivityReadingSessionEnd extends ReadTrackerActivity {
 
   private static Button mButtonSaveReadingSession;
   private static Button mButtonShowDurationPicker;
-  private static Button mButtonSetDuration;
-  private static Button mButtonCancelSetDuration;
 
   private static WheelView mWheelDurationHours;
   private static WheelView mWheelDurationMinutes;
-  private static WheelView mWheelDurationSeconds;
 
   private static SafeViewFlipper mFlipperSessionLength;
 
@@ -148,12 +145,8 @@ public class ActivityReadingSessionEnd extends ReadTrackerActivity {
     mWheelEndPercentInteger = (WheelView) findViewById(R.id.wheelEndPercentInteger);
     mWheelEndPercentFraction = (WheelView) findViewById(R.id.wheelEndPercentFraction);
 
-    mButtonSetDuration = (Button) findViewById(R.id.buttonSetDuration);
-    mButtonCancelSetDuration = (Button) findViewById(R.id.buttonCancelSetDuration);
-
     mWheelDurationHours = (WheelView) findViewById(R.id.wheelDurationHours);
     mWheelDurationMinutes = (WheelView) findViewById(R.id.wheelDurationMinutes);
-    mWheelDurationSeconds = (WheelView) findViewById(R.id.wheelDurationSeconds);
 
     mFlipperSessionLength = (SafeViewFlipper) findViewById(R.id.flipperSessionLength);
   }
@@ -161,7 +154,6 @@ public class ActivityReadingSessionEnd extends ReadTrackerActivity {
   private void updateSessionLength() {
     mSessionLengthMillis = mWheelDurationHours.getCurrentItem() * 3600;
     mSessionLengthMillis += mWheelDurationMinutes.getCurrentItem() * 60;
-    mSessionLengthMillis += mWheelDurationSeconds.getCurrentItem();
     mSessionLengthMillis *= 1000;
     mButtonShowDurationPicker.setText(Utils.shortHumanTimeFromMillis(mSessionLengthMillis));
     mFlipperSessionLength.setDisplayedChild(PAGE_DISPLAY_DURATION);
@@ -174,7 +166,6 @@ public class ActivityReadingSessionEnd extends ReadTrackerActivity {
   }
 
   private void configureWheelView(WheelView wheelView) {
-    wheelView.setInterpolator(null);
     wheelView.setVisibleItems(3);
 
     wheelView.addChangingListener(new OnWheelChangedListener() {
@@ -189,33 +180,38 @@ public class ActivityReadingSessionEnd extends ReadTrackerActivity {
   private void showDurationPicker() {
     // Lazily initialize the adapters
     boolean needInitialize = (
-        mWheelDurationHours.getViewAdapter() == null ||
-            mWheelDurationMinutes.getViewAdapter() == null ||
-            mWheelDurationSeconds.getViewAdapter() == null
+        mWheelDurationHours.getViewAdapter() == null || mWheelDurationMinutes.getViewAdapter() == null
     );
 
     if(needInitialize) {
-      NumericWheelAdapter hoursAdapter = new NumericWheelAdapter(this, 0, 48, "%sh");
-      NumericWheelAdapter minutesAdapter = new NumericWheelAdapter(this, 0, 59, "%sm");
-      NumericWheelAdapter secondsAdapter = new NumericWheelAdapter(this, 0, 59, "%ss");
-      configureWheelAdapterStyle(hoursAdapter);
-      configureWheelAdapterStyle(minutesAdapter);
-      configureWheelAdapterStyle(secondsAdapter);
+      NumericWheelAdapter hoursAdapter = createDurationWheelAdapter(48, "%s hour[s?]");
+      NumericWheelAdapter minutesAdapter = createDurationWheelAdapter(59, "%s minute[s?]");
+
+      mWheelDurationHours.setCalliperMode(WheelView.CalliperMode.LEFT_CALLIPER);
+      mWheelDurationMinutes.setCalliperMode(WheelView.CalliperMode.RIGHT_CALLIPER);
+
+      mWheelDurationHours.setVisibleItems(3);
+      mWheelDurationMinutes.setVisibleItems(3);
 
       mWheelDurationHours.setViewAdapter(hoursAdapter);
       mWheelDurationMinutes.setViewAdapter(minutesAdapter);
-      mWheelDurationSeconds.setViewAdapter(secondsAdapter);
     }
 
     mWheelDurationHours.setCurrentItem(Utils.getHoursFromMillis(mSessionLengthMillis));
     mWheelDurationMinutes.setCurrentItem(Utils.getMinutesFromMillis(mSessionLengthMillis));
-    mWheelDurationSeconds.setCurrentItem(Utils.getSecondsFromMillis(mSessionLengthMillis));
 
     mFlipperSessionLength.setDisplayedChild(PAGE_EDIT_DURATION);
   }
 
-  private void bindEvents() {
+  private NumericWheelAdapter createDurationWheelAdapter(int maxValue, String format) {
+    NumericWheelAdapter adapter = new NumericWheelAdapter(this, 0, maxValue, format);
+    configureWheelAdapterStyle(adapter);
+    adapter.setTextSize(14);
+    return adapter;
+  }
 
+
+  private void bindEvents() {
     mButtonSaveReadingSession.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View view) {
         onClickedSave();
@@ -225,19 +221,6 @@ public class ActivityReadingSessionEnd extends ReadTrackerActivity {
     mButtonShowDurationPicker.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View view) {
         showDurationPicker();
-      }
-    });
-
-    mButtonSetDuration.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View view) {
-        updateSessionLength();
-      }
-    });
-
-    mButtonCancelSetDuration.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
-        mFlipperSessionLength.setDisplayedChild(PAGE_DISPLAY_DURATION);
       }
     });
   }
