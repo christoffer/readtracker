@@ -9,10 +9,11 @@
 
   <!--suppress AndroidLintUnknownIdInLayout -->
   <LinearLayout android:layout_below="@id/_bookHeader"
-                android:layout_centerInParent="true"
+                android:layout_above="@+id/btnSaveReadingSession"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
+                android:gravity="center_vertical"
                 android:padding="12dp">
 
     <!-- duration button + container for edit duration -->
@@ -22,7 +23,7 @@
 
     <!-- divider -->
 
-    <View style="@style/thick_divider" android:layout_marginBottom="24dp" android:layout_marginTop="24dp"/>
+    <View style="@style/thick_divider" android:layout_marginBottom="24dp" android:layout_marginTop="6dp"/>
 
     <!-- ended on box -->
 
@@ -33,7 +34,7 @@
 
     <!-- divider -->
 
-    <View style="@style/thick_divider" android:layout_marginBottom="24dp" android:layout_marginTop="24dp"/>
+    <View style="@style/thick_divider" android:layout_marginBottom="6dp" android:layout_marginTop="24dp"/>
 
     <!-- finished? -->
 

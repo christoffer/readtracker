@@ -55,7 +55,7 @@ public class WheelView extends View {
    */
   private static final int PADDING = 30;
 
-  private static final int COVER_COLOR = 0x88000000;
+  private static final int COVER_COLOR = 0xCC000000;
 
   private static final int CALLIPER_PAINT = 0xffffffff;
   private static final int CALLIPER_WIDTH = 15;
@@ -627,7 +627,7 @@ public class WheelView extends View {
   private void drawDebugView(Canvas canvas) {
     Paint p = new Paint();
     p.setStyle(Paint.Style.STROKE);
-    p.setColor(0x88445566);
+    p.setColor(0x88882266);
     p.setStrokeWidth(3);
     canvas.drawRect(0, 0, getWidth(), getHeight(), p);
     drawCalipers(canvas);

@@ -169,7 +169,7 @@ public class ActivityReadingSessionEnd extends ReadTrackerActivity {
     );
 
     if(needInitialize) {
-      NumericWheelAdapter hoursAdapter = createDurationWheelAdapter(48, "%s hour[s?]");
+      NumericWheelAdapter hoursAdapter = createDurationWheelAdapter(24, "%s hour[s?]");
       NumericWheelAdapter minutesAdapter = createDurationWheelAdapter(59, "%s minute[s?]");
 
       mWheelDurationHours.setCalliperMode(WheelView.CalliperMode.LEFT_CALLIPER);
