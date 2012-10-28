@@ -3,6 +3,8 @@
 
   <!-- base colors -->
   <color name="background">#ff000000</color>
+  <color name="background_pressed">#ff171A1F</color>
+
   <color name="midnight_medium">#ffff1e20</color>
   <color name="midnight_light">#ff171c1d</color>
 
