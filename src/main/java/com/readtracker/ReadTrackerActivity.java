@@ -1,6 +1,7 @@
 package com.readtracker;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Window;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.readtracker.readmill.ReadmillApiHelper;
 import com.readtracker.value_objects.ReadTrackerUser;
@@ -21,16 +23,24 @@ public class ReadTrackerActivity extends FragmentActivity {
   protected final String TAG = this.getClass().getName();
   private ApplicationReadTracker mApplication;
 
+  private Typeface mRobotoThin;
+
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     mApplication = (ApplicationReadTracker) getApplication();
-    initActivity();
     requestWindowFeatures();
   }
 
-  private void initActivity() {
-    // setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+  /**
+   * Lazily loads the roboto thin typeface
+   * @return
+   */
+  protected Typeface getRobotoThin() {
+    if(mRobotoThin == null) {
+      mRobotoThin = Typeface.createFromAsset(getAssets(), "Roboto-Thin.ttf");
+    }
+    return mRobotoThin;
   }
 
   public final ApplicationReadTracker getApp() {
