@@ -32,6 +32,7 @@ import android.view.ViewGroup.LayoutParams;
 import android.view.animation.Interpolator;
 import android.widget.LinearLayout;
 import com.readtracker.R;
+import com.readtracker.thirdparty.widget.adapters.NumericWheelAdapter;
 import com.readtracker.thirdparty.widget.adapters.WheelViewAdapter;
 
 import java.util.LinkedList;

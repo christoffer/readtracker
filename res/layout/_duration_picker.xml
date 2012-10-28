@@ -25,23 +25,26 @@
               android:paddingRight="10dp"
               android:text="2 hours 45 minutes..."
               android:textColor="@color/text_color_secondary"
-              android:textSize="24dp" />
+              android:textSize="18dp"/>
 
     </LinearLayout>
 
     <LinearLayout android:layout_width="fill_parent"
                   android:layout_height="wrap_content"
-                  android:layout_gravity="center"
+                  android:gravity="center"
                   android:orientation="horizontal">
 
       <com.readtracker.thirdparty.widget.WheelView android:id="@+id/wheelDurationHours"
-                                                   android:layout_marginRight="0dp"
-                                                   style="@style/reading_session_wheel_view"/>
+                                                   android:minWidth="80dp"
+                                                   android:layout_height="wrap_content"
+                                                   android:layout_width="wrap_content"
+                                                   android:layout_marginRight="6dp"/>
 
       <com.readtracker.thirdparty.widget.WheelView android:id="@+id/wheelDurationMinutes"
-                                                   android:layout_marginRight="12dp"
-                                                   android:layout_marginLeft="12dp"
-                                                   style="@style/reading_session_wheel_view"/>
+                                                   android:minWidth="100dp"
+                                                   android:layout_height="wrap_content"
+                                                   android:layout_marginLeft="6dp"
+                                                   android:layout_width="wrap_content"/>
 
     </LinearLayout>
 
