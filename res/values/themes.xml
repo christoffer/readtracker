@@ -4,6 +4,6 @@
     <item name="android:windowTitleSize">0dip</item>
     <item name="android:windowTitleBackgroundStyle">@style/ReadTrackerTitle</item>
     <item name="android:windowContentOverlay">@null</item>
-    <item name="android:windowBackground">@color/midnight_medium</item>
+    <item name="android:windowBackground">@color/background</item>
   </style>
 </resources>

@@ -32,9 +32,9 @@
 
   <!-- list of reading sessions -->
   <ListView android:id="@+id/listSessions"
-            android:layout_height="fill_parent"
+            android:layout_height="0dp"
             android:layout_weight="1"
-            android:cacheColorHint="@color/midnight_medium"
+            android:cacheColorHint="@color/background"
             android:layout_width="fill_parent" />
 
 </LinearLayout>

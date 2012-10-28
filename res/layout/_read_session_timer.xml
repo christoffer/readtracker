@@ -11,17 +11,6 @@
         android:layout_height="0dp"
         android:layout_centerVertical="true" />
 
-  <com.readtracker.customviews.WaveView android:id="@+id/waveReading"
-                                        android:layout_width="fill_parent"
-                                        android:layout_height="90dp"
-                                        android:layout_marginBottom="-50dp"
-                                        android:background="@android:color/transparent"
-                                        readtracker:backgroundColor="@color/midnight_medium"
-                                        readtracker:primaryColor="@color/midnight_ultralight"
-                                        android:visibility="invisible"
-                                        readtracker:secondaryColor="@color/midnight_ultralight"
-                                        android:layout_above="@id/dummyBaseline" />
-
   <LinearLayout android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:gravity="right"
@@ -36,7 +25,7 @@
 
     <TextView android:id="@+id/textSummary"
               style="@style/reading_session_text_active"
-              android:shadowColor="@color/midnight_dark"
+              android:shadowColor="@color/background"
               android:shadowRadius="2"
               android:shadowDy="2"
               android:text="34 minutes" />

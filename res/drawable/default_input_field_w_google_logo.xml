@@ -8,7 +8,7 @@
     <shape android:shape="rectangle">
       <corners android:radius="3dp" />
       <stroke android:color="@color/midnight_dark_tint" />
-      <solid android:color="@color/midnight_dark" />
+      <solid android:color="@color/background" />
     </shape>
   </item>
 </layer-list>

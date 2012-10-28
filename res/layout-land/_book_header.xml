@@ -11,7 +11,7 @@ use #ViewBindingBookHeader for easy initialization of this layout.
               android:layout_width="fill_parent"
               android:layout_height="60dp"
               android:layout_weight="1"
-              android:background="@color/midnight_dark"
+              android:background="@color/background"
               android:padding="12dp"
               android:orientation="horizontal">
 

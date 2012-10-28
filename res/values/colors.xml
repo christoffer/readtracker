@@ -2,8 +2,8 @@
 <resources>
 
   <!-- base colors -->
-  <color name="midnight_dark">#ff0d1012</color>
-  <color name="midnight_medium">#ff181e20</color>
+  <color name="background">#ff000000</color>
+  <color name="midnight_medium">#ffff1e20</color>
   <color name="midnight_light">#ff171c1d</color>
 
   <color name="midnight_ultralight">#ff2d3538</color>

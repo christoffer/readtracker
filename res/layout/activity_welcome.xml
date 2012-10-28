@@ -4,7 +4,7 @@
               android:orientation="vertical"
               android:layout_height="fill_parent"
               android:layout_width="fill_parent"
-              android:background="@color/midnight_medium"
+              android:background="@color/background"
               android:padding="12dp">
 
   <Button android:id="@+id/buttonOffline"

@@ -20,7 +20,7 @@
             android:layout_weight="1"
             android:layout_width="fill_parent"
             android:layout_gravity="bottom"
-            android:cacheColorHint="@color/midnight_dark" />
+            android:cacheColorHint="@color/background" />
 
   <com.readtracker.thirdparty.SafeViewFlipper android:id="@+id/flipperBookSearchActions"
                                               style="@style/flipper_action_buttons">

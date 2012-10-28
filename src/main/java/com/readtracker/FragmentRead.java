@@ -46,8 +46,6 @@ public class FragmentRead extends Fragment {
   private static TextView mTextHeader;
   private static TextView mTextSummary;
 
-  private static WaveView mWaveReading;
-
   // Reading to track
   private LocalReading mLocalReading;
 
@@ -173,8 +171,6 @@ public class FragmentRead extends Fragment {
     mLayoutSessionTimer = (ViewGroup) view.findViewById(R.id.layoutSessionTimer);
     mTextHeader = (TextView) mLayoutSessionTimer.findViewById(R.id.textHeader);
     mTextSummary = (TextView) mLayoutSessionTimer.findViewById(R.id.textSummary);
-    mWaveReading = (WaveView) mLayoutSessionTimer.findViewById(R.id.waveReading);
-    Log.d(TAG, "Wave: " + mWaveReading);
     Log.d(TAG, "mLayout: " + mLayoutSessionTimer);
 
   }
@@ -270,8 +266,6 @@ public class FragmentRead extends Fragment {
 
     final Animation appearWaveform = new AlphaAnimation(0.0f, 1.0f);
     appearWaveform.setDuration(3000);
-    mWaveReading.startAnimation(appearWaveform);
-    mWaveReading.setVisibility(View.VISIBLE);
 
     disappear.setAnimationListener(new Animation.AnimationListener() {
       @Override public void onAnimationStart(Animation animation) { }
@@ -302,7 +296,6 @@ public class FragmentRead extends Fragment {
 
     ((ActivityBook) getActivity()).setDirty(true);
     mFlipperSessionControl.setDisplayedChild(PAGE_READING_CONTROLS_ACTIVE);
-    mWaveReading.setVisibility(View.VISIBLE);
   }
 
   /**
@@ -374,7 +367,6 @@ public class FragmentRead extends Fragment {
       Log.d(TAG, "Got inactive reading state");
       activatePause();
     }
-    mWaveReading.setVisibility(View.VISIBLE);
     refreshElapsedTime();
   }
 
@@ -477,7 +469,6 @@ public class FragmentRead extends Fragment {
 
   private void startTrackerUpdates() {
     stopTrackerUpdates();
-    mWaveReading.start(mTimestampLastStarted);
     mRedrawTimerTask = new RedrawTimerTask();
     //noinspection unchecked
     mRedrawTimerTask.execute();
@@ -488,7 +479,6 @@ public class FragmentRead extends Fragment {
       mRedrawTimerTask.cancel(true);
       mRedrawTimerTask = null;
     }
-    mWaveReading.stop();
   }
 
   private class RedrawTimerTask extends AsyncTask<Void, Void, Void> {

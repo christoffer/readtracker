@@ -41,7 +41,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_above="@+id/dividerBelowPageWheelLayout"
-                android:background="@color/midnight_medium"
+                android:background="@color/background"
                 android:paddingTop="20dp"
                 android:paddingBottom="20dp"
                 android:orientation="vertical"

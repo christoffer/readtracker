@@ -6,7 +6,7 @@
               android:paddingTop="10dp"
               android:paddingBottom="10dp"
               android:paddingRight="20dp"
-              android:background="@color/midnight_medium">
+              android:background="@color/background">
 
   <ImageView android:id="@+id/imageSyncDot"
              android:src="@drawable/dot_synced"
