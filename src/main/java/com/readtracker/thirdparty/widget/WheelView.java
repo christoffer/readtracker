@@ -535,17 +535,13 @@ public class WheelView extends View {
       width = widthSize;
     } else {
       // Make the width the with + padding
-      Log.d("WheelView", "Adding padding: " + paddingWidth);
-      Log.d("WheelView", "Width:" + width);
       width += paddingWidth;
-      Log.d("WheelView", " => Width:" + width);
 
       // Cap minimum
       width = Math.max(width, getSuggestedMinimumWidth());
 
       // Cap at measure mode maximum
       if(mode == MeasureSpec.AT_MOST && widthSize < width) {
-        Log.d("WheelView", "Measuring at most: " + widthSize + " vs our " + width);
         width = widthSize;
       }
     }
@@ -553,7 +549,6 @@ public class WheelView extends View {
     itemsLayout.measure(MeasureSpec.makeMeasureSpec(width - paddingWidth, MeasureSpec.EXACTLY),
       MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
 
-    Log.d("WheelView", " exit Width:" + width);
     return width;
   }
 
@@ -570,7 +565,6 @@ public class WheelView extends View {
 
   @Override
   protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-    Log.d("WheelView", "onMeasure called for: " + getId());
     int widthMode = MeasureSpec.getMode(widthMeasureSpec);
     int heightMode = MeasureSpec.getMode(heightMeasureSpec);
     int widthSize = MeasureSpec.getSize(widthMeasureSpec);
@@ -615,6 +609,11 @@ public class WheelView extends View {
   protected void onDraw(Canvas canvas) {
     super.onDraw(canvas);
 
+    if(isInEditMode()) {
+      drawDebugView(canvas);
+      return;
+    }
+
     if(viewAdapter != null && viewAdapter.getItemsCount() > 0) {
       updateView();
 
@@ -622,6 +621,15 @@ public class WheelView extends View {
       drawOverlay(canvas);
       drawCalipers(canvas);
     }
+  }
+
+  private void drawDebugView(Canvas canvas) {
+    Paint p = new Paint();
+    p.setStyle(Paint.Style.STROKE);
+    p.setColor(0x88445566);
+    p.setStrokeWidth(3);
+    canvas.drawRect(0, 0, getWidth(), getHeight(), p);
+    drawCalipers(canvas);
   }
 
   /**
