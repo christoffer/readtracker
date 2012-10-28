@@ -42,12 +42,12 @@ import com.readtracker.R;
 public class CustomPagerTabStrip extends CustomPagerTitleStrip {
   private static final String TAG = "PagerTabStrip";
 
-  private static final int INDICATOR_HEIGHT = 3; // dp
+  private static final int INDICATOR_HEIGHT = 0; // dp
   private static final int MIN_PADDING_BOTTOM = INDICATOR_HEIGHT + 3; // dp
   private static final int TAB_PADDING = 16; // dp
   private static final int TAB_SPACING = 32; // dp
   private static final int MIN_TEXT_SPACING = TAB_SPACING + TAB_PADDING * 2; // dp
-  private static final int FULL_UNDERLINE_HEIGHT = 1; // dp
+  private static final int FULL_UNDERLINE_HEIGHT = 0; // dp
   private static final int MIN_STRIP_HEIGHT = 32; // dp
 
   private int mIndicatorColor;
@@ -64,7 +64,7 @@ public class CustomPagerTabStrip extends CustomPagerTitleStrip {
 
   private int mTabAlpha = 0xFF;
 
-  private boolean mDrawFullUnderline = true;
+  private boolean mDrawFullUnderline = false;
   private boolean mDrawFullUnderlineSet = false;
   private int mFullUnderlineHeight;
 
