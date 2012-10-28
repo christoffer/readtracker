@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.readtracker.ApplicationReadTracker;
@@ -25,7 +26,7 @@ public class ViewBindingBookHeader {
    * @param activity    Activity with an included _book_header layout
    * @param localReading LocalReading to bind
    */
-  public static void bind(Activity activity, LocalReading localReading) {
+  public static void bind(final Activity activity, LocalReading localReading, boolean includeBackButton) {
     if(localReading == null) {
       Log.w(TAG, "Got NULL LocalReading – not binding views");
       return;
@@ -42,6 +43,17 @@ public class ViewBindingBookHeader {
 
     TextView textTitle = (TextView) view.findViewById(R.id.textTitle);
     TextView textAuthor = (TextView) view.findViewById(R.id.textAuthor);
+    ImageButton buttonBack = (ImageButton) view.findViewById(R.id.buttonBack);
+
+    if(includeBackButton) {
+      buttonBack.setOnClickListener(new View.OnClickListener() {
+        @Override public void onClick(View view) {
+          activity.finish();
+        }
+      });
+    } else {
+      buttonBack.setVisibility(View.GONE);
+    }
 
     textTitle.setVisibility(View.INVISIBLE);
     textAuthor.setVisibility(View.INVISIBLE);
@@ -58,5 +70,9 @@ public class ViewBindingBookHeader {
     textTitle.setVisibility(View.VISIBLE);
     textAuthor.startAnimation(appear);
     textAuthor.setVisibility(View.VISIBLE);
+  }
+
+  public static void bind(final Activity activity, LocalReading localReading) {
+    bind(activity, localReading, true);
   }
 }
