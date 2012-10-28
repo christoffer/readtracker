@@ -13,7 +13,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import com.readtracker.customviews.WaveView;
 import com.readtracker.db.LocalReading;
 import com.readtracker.interfaces.SaveLocalReadingListener;
 import com.readtracker.tasks.SaveLocalReadingTask;
@@ -527,7 +526,7 @@ public class FragmentRead extends Fragment {
     @Override public void onAnimationStart(Animation animation) {
       if(this.enabled) {
         mButtonDone.setEnabled(true);
-        mButtonDone.setBackgroundDrawable(getResources().getDrawable(R.drawable.default_button));
+        mButtonDone.setBackgroundDrawable(getResources().getDrawable(R.drawable.default_button_background));
       }
     }
 
