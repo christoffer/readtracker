@@ -13,9 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.Toast;
+import android.widget.*;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.Where;
@@ -36,7 +34,7 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
 
   private static LinearLayout mLayoutBlankState;
   private static Button mButtonSyncReadmill;
-  private static Button mButtonAddBook;
+  private static ImageButton mButtonAddBook;
   private static MenuItem mMenuReadmillSync;
   private static ViewPager mPagerHomeActivity;
 
@@ -71,6 +69,9 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
     setContentView(R.layout.activity_home);
 
     bindViews();
+
+    // Set correct font of header
+    applyRobotoThin(R.id.textHeader);
 
     mHomeFragmentAdapter = new HomeFragmentAdapter(getSupportFragmentManager(), new ArrayList<LocalReading>());
 
@@ -219,7 +220,7 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
   private void bindViews() {
     mLayoutBlankState = (LinearLayout) findViewById(R.id.readingListBlankState);
     mButtonSyncReadmill = (Button) findViewById(R.id.buttonSyncReadmill);
-    mButtonAddBook = (Button) findViewById(R.id.buttonAddBook);
+    mButtonAddBook = (ImageButton) findViewById(R.id.buttonAddBook);
     mPagerHomeActivity = (ViewPager) findViewById(R.id.pagerHomeActivity);
   }
 
@@ -268,7 +269,7 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
     }
     startService(new Intent(this, ReadmillTransferIntent.class));
 
-    Log.i(TAG, "Starting AsyncTask for Syncing Readmill Readings");
+    Log.i(TAG, "Starting ASyncTask for Syncing Readmill Readings");
     mButtonSyncReadmill.startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_out));
 
     ReadmillApiHelper api = ApplicationReadTracker.getReadmillApi();

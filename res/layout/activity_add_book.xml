@@ -10,8 +10,6 @@
                 android:scrollbars="vertical"
                 android:orientation="vertical">
 
-    <include layout="@layout/_generic_nav_header" />
-
     <LinearLayout android:layout_width="fill_parent"
                   android:layout_height="wrap_content"
                   android:padding="12dp"

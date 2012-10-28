@@ -43,6 +43,15 @@ public class ReadTrackerActivity extends FragmentActivity {
     return mRobotoThin;
   }
 
+  /**
+   * Applies the Roboto Thin font to a given text view.
+   * @param textViewId id of text view to apply roboto thin font on
+   */
+  protected void applyRobotoThin(int textViewId) {
+    TextView textView = (TextView) findViewById(textViewId);
+    textView.setTypeface(getRobotoThin());
+  }
+
   public final ApplicationReadTracker getApp() {
     return mApplication;
   }

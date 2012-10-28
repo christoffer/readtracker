@@ -9,28 +9,24 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:visibility="visible" />
+            android:visibility="visible"/>
 
   <RelativeLayout android:id="@+id/layoutActionBar"
-                  style="@style/activity_header">
+                  android:layout_width="fill_parent"
+                  android:layout_height="wrap_content">
 
-    <ImageView style="@style/activity_header_logo" />
+    <TextView android:id="@+id/textHeader"
+              style="@style/header_main_text"
+              android:text="ReadTracker"/>
 
-    <TextView android:id="@+id/textOffline"
-              android:layout_width="wrap_content"
-              android:layout_height="fill_parent"
-              android:text="Offline"
-              android:visibility="gone"
-              android:textColor="#fff"
-              android:background="#8000"
-              android:layout_alignParentRight="true"
-              android:gravity="center_vertical"
-              android:padding="6dp" />
-
-    <Button android:id="@+id/buttonAddBook"
-            style="@style/action_button"
-            android:drawableTop="@drawable/icon_add"
-            android:layout_alignParentRight="true" />
+    <!-- add reading button -->
+    <ImageButton android:id="@+id/buttonAddBook"
+                 android:layout_width="48dp"
+                 android:layout_height="48dp"
+                 android:background="@drawable/default_button_background"
+                 android:src="@drawable/icon_add"
+                 android:layout_alignParentRight="true"
+                 android:contentDescription="Add new Reading" />
 
   </RelativeLayout>
 
@@ -39,7 +35,7 @@
                                      android:layout_below="@id/layoutActionBar"
                                      android:layout_height="fill_parent">
 
-    <android.support.v4.view.CustomPagerTabStrip style="@style/pager_title" />
+    <android.support.v4.view.CustomPagerTabStrip style="@style/pager_title"/>
 
   </android.support.v4.view.ViewPager>
 
@@ -54,7 +50,7 @@
     <ImageView android:layout_width="wrap_content"
                android:layout_height="wrap_content"
                android:scaleType="fitStart"
-               android:src="@drawable/reading_list_blank" />
+               android:src="@drawable/reading_list_blank"/>
 
     <Button android:id="@+id/buttonSyncReadmill"
             style="@style/button_small"
@@ -63,7 +59,7 @@
             android:paddingBottom="10dp"
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
-            android:text="Sync books with Readmill" />
+            android:text="Sync books with Readmill"/>
 
   </LinearLayout>
 

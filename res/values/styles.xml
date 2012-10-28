@@ -238,7 +238,7 @@
   </style>
 
   <style name="thick_divider">
-    <item name="android:background">@color/background</item>
+    <item name="android:background">#ff773355</item>
     <item name="android:layout_height">2px</item>
     <item name="android:layout_width">fill_parent</item>
     <item name="android:layout_marginBottom">13dp</item>p"
@@ -308,25 +308,6 @@
     <item name="android:outAnimation">@anim/slide_down_disappear</item>
   </style>
 
-  <!-- style for a generic activity header -->
-  <style name="activity_header">
-    <item name="android:layout_height">48dp</item>
-    <item name="android:layout_width">fill_parent</item>
-    <item name="android:layout_alignParentTop">true</item>
-    <item name="android:background">@color/background</item>
-  </style>
-
-  <!-- styling of the logo in a generic header -->
-  <style name="activity_header_logo">
-    <item name="android:layout_width">wrap_content</item>
-    <item name="android:layout_height">fill_parent</item>
-    <item name="android:layout_alignParentLeft">true</item>
-    <item name="android:scaleType">centerInside</item>
-    <item name="android:layout_gravity">left</item>
-    <item name="android:layout_marginLeft">10dp</item>
-    <item name="android:src">@drawable/logo_readtracker</item>
-  </style>
-
   <style name="reading_session_text_active">
     <item name="android:textSize">40dp</item>
     <item name="android:textStyle">normal</item>
@@ -341,4 +322,19 @@
     <item name="android:textSize">24dp</item>
     <item name="android:textColor">#ff273134</item>
   </style>
+
+
+  <style name="header_main_text">
+    <item name="android:layout_width">fill_parent</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:lines">1</item>
+    <item name="android:layout_marginTop">6dp</item>
+    <item name="android:textSize">24dp</item>
+    <item name="android:paddingLeft">18dp</item>
+    <item name="android:paddingRight">18dp</item>
+    <item name="android:textColor">@color/text_color_primary</item>
+    <item name="android:gravity">center</item>
+    <item name="android:layout_centerHorizontal">true</item>
+  </style>
+
 </resources>
