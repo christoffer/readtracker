@@ -4,21 +4,14 @@
                 android:layout_height="fill_parent"
                 android:layout_width="fill_parent">
 
-  <LinearLayout android:id="@+id/layoutHeaderBookActivity"
-                android:background="@color/midnight_light"
-                android:layout_width="fill_parent"
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                android:orientation="horizontal"
-                android:layout_height="72dp">
-    <include layout="@layout/_book_activity_book_header" />
-  </LinearLayout>
+  <include layout="@layout/_book_header" android:id="@+id/layoutBookHeader"/>
 
   <!-- container for pages of the book activity -->
 
   <android.support.v4.view.ViewPager android:id="@+id/pagerBookActivity"
                                      android:layout_width="fill_parent"
                                      android:layout_height="fill_parent"
-                                     android:layout_below="@id/layoutHeaderBookActivity">
+                                     android:layout_below="@id/layoutBookHeader">
 
     <android.support.v4.view.CustomPagerTabStrip style="@style/pager_title" />
 

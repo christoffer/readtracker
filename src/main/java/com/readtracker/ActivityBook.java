@@ -5,15 +5,11 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
 import com.j256.ormlite.dao.Dao;
 import com.readtracker.customviews.ViewBindingBookHeader;
 import com.readtracker.db.LocalHighlight;
 import com.readtracker.db.LocalReading;
 import com.readtracker.db.LocalSession;
-import com.readtracker.thirdparty.SafeViewFlipper;
 import com.readtracker.value_objects.ReadingState;
 
 import java.sql.SQLException;
@@ -23,11 +19,6 @@ import java.util.ArrayList;
  * Fragmented screen for browsing and reading a book
  */
 public class ActivityBook extends ReadTrackerActivity {
-  private static Button mButtonAddHighlight;
-
-  // Toggle visibility of the add highlight button
-  private static SafeViewFlipper mFlipperActionButtons;
-
   private LocalReading mLocalReading;
 
   private BookFragmentAdapter mBookFragmentAdapter;
@@ -58,9 +49,7 @@ public class ActivityBook extends ReadTrackerActivity {
       }
     }
 
-    bindViews();
-
-    setupActionBar();
+    mViewPagerReading = (ViewPager) findViewById(R.id.pagerBookActivity);
 
     // Load information from database
     int readingId = getIntent().getExtras().getInt(IntentKeys.READING_ID);
@@ -136,18 +125,6 @@ public class ActivityBook extends ReadTrackerActivity {
     mIsDirty = dirty;
   }
 
-  private void exitToHighlightScreen() {
-    Intent intentAddHighlight = new Intent(ActivityBook.this, ActivityHighlight.class);
-    intentAddHighlight.putExtra(IntentKeys.LOCAL_READING, mLocalReading);
-    startActivityForResult(intentAddHighlight, ActivityCodes.CREATE_HIGHLIGHT);
-  }
-
-  private void bindViews() {
-    mFlipperActionButtons = (SafeViewFlipper) findViewById(R.id.flipperActionButtons);
-    mButtonAddHighlight = (Button) findViewById(R.id.buttonAddHighlight);
-    mViewPagerReading = (ViewPager) findViewById(R.id.pagerBookActivity);
-  }
-
   /**
    * Called when the local information about a reading has finished being loaded
    * from the database.
@@ -158,7 +135,7 @@ public class ActivityBook extends ReadTrackerActivity {
     Log.i(TAG, "Loaded LocalReading");
 
     if(mManualShutdown) {
-      Log.w(TAG, "Activity is shutting down - not initilizing");
+      Log.w(TAG, "Activity is shutting down - not initializing");
       return;
     }
 
@@ -179,7 +156,6 @@ public class ActivityBook extends ReadTrackerActivity {
 
     setupFragments(bundle);
 
-    mFlipperActionButtons.setVisibility(View.VISIBLE);
     Log.i(TAG, "Initialized for reading with id:" + mLocalReading.id);
   }
 
@@ -218,31 +194,6 @@ public class ActivityBook extends ReadTrackerActivity {
         break;
     }
     mViewPagerReading.setCurrentItem(page, false);
-  }
-
-  private void setupActionBar() {
-    mButtonAddHighlight.setOnClickListener(new OnClickListener() {
-      @Override
-      public void onClick(View view) { exitToHighlightScreen(); }
-    });
-
-    // Book bar + history button
-    mViewPagerReading.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-      @Override public void onPageSelected(int position) {
-        Log.i(TAG, "Selected page " + position);
-        boolean isOnHighlightPage = position == mBookFragmentAdapter.getHighlightsPageIndex();
-        int highlightButtonState = isOnHighlightPage ? 1 : 0;
-        // Show add highlight button when on highlight page, hide it when
-        // leaving for another page
-        if(mFlipperActionButtons.getDisplayedChild() != highlightButtonState) {
-          mFlipperActionButtons.setDisplayedChild(highlightButtonState);
-        }
-      }
-
-      @Override public void onPageScrollStateChanged(int i) { }
-
-      @Override public void onPageScrolled(int p, float po, int pop) { }
-    });
   }
 
   // Private

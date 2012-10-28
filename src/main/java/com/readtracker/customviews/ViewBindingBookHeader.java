@@ -42,7 +42,9 @@ public class ViewBindingBookHeader {
 
     TextView textTitle = (TextView) view.findViewById(R.id.textTitle);
     TextView textAuthor = (TextView) view.findViewById(R.id.textAuthor);
-    ImageView imageCover = (ImageView) view.findViewById(R.id.imageCover);
+
+    textTitle.setVisibility(View.INVISIBLE);
+    textAuthor.setVisibility(View.INVISIBLE);
 
     final Typeface robotoThin = ((ReadTrackerActivity) activity).getRobotoThin();
     textTitle.setTypeface(robotoThin);
@@ -51,20 +53,10 @@ public class ViewBindingBookHeader {
     textTitle.setText(localReading.title);
     textAuthor.setText(localReading.author);
 
-    if(localReading.coverURL != null) {
-      imageCover.setImageResource(android.R.drawable.ic_menu_gallery);
-      DrawableManager drawableMgr = ApplicationReadTracker.getDrawableManager();
-      if(drawableMgr != null) {
-        drawableMgr.fetchDrawableOnThread(localReading.coverURL, imageCover);
-      }
-    }
-
     Animation appear = AnimationUtils.loadAnimation(activity, R.anim.fade_in);
     textTitle.startAnimation(appear);
     textTitle.setVisibility(View.VISIBLE);
     textAuthor.startAnimation(appear);
     textAuthor.setVisibility(View.VISIBLE);
-    imageCover.startAnimation(appear);
-    imageCover.setVisibility(View.VISIBLE);
   }
 }
