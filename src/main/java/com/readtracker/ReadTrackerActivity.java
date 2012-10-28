@@ -36,7 +36,7 @@ public class ReadTrackerActivity extends FragmentActivity {
    * Lazily loads the roboto thin typeface
    * @return
    */
-  protected Typeface getRobotoThin() {
+  public Typeface getRobotoThin() {
     if(mRobotoThin == null) {
       mRobotoThin = Typeface.createFromAsset(getAssets(), "Roboto-Thin.ttf");
     }

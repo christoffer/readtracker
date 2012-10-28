@@ -1,6 +1,7 @@
 package com.readtracker.customviews;
 
 import android.app.Activity;
+import android.graphics.Typeface;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.readtracker.ApplicationReadTracker;
 import com.readtracker.R;
+import com.readtracker.ReadTrackerActivity;
 import com.readtracker.db.LocalReading;
 import com.readtracker.thirdparty.DrawableManager;
 
@@ -41,6 +43,10 @@ public class ViewBindingBookHeader {
     TextView textTitle = (TextView) view.findViewById(R.id.textTitle);
     TextView textAuthor = (TextView) view.findViewById(R.id.textAuthor);
     ImageView imageCover = (ImageView) view.findViewById(R.id.imageCover);
+
+    final Typeface robotoThin = ((ReadTrackerActivity) activity).getRobotoThin();
+    textTitle.setTypeface(robotoThin);
+    textAuthor.setTypeface(robotoThin);
 
     textTitle.setText(localReading.title);
     textAuthor.setText(localReading.author);
