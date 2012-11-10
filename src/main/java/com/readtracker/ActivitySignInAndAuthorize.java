@@ -51,7 +51,7 @@ public class ActivitySignInAndAuthorize extends ReadTrackerActivity {
 
     // Load empty page so view is not transparent
     webView.loadData("<html><body></body></html>", "text/html", "utf-8");
-    webView.setBackgroundColor(0);
+    webView.setBackgroundColor(0xff000000);
     String url = null;
 
     if(webViewAction == IntentKeys.WEB_VIEW_CREATE_ACCOUNT) {
@@ -63,7 +63,7 @@ public class ActivitySignInAndAuthorize extends ReadTrackerActivity {
     if(url != null) {
       Log.i(TAG, "Loading url: " + url);
       webView.loadUrl(url);
-      webView.setBackgroundColor(0);
+      webView.setBackgroundColor(0xff000000);
     }
 
   }
