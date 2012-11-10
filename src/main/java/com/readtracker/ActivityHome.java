@@ -1,10 +1,6 @@
 package com.readtracker;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
@@ -43,8 +39,6 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
 
   private static final int CONTEXT_MENU_DELETE = 0;
 
-  private BroadcastReceiver mNetworkStateReceiver;
-  private DataUpdateReceiver mDataUpdateReceiver;
   private ReadmillSyncAsyncTask mReadmillSyncTask;
 
   // Fragment adapter that manages the reading list fragments
@@ -93,8 +87,6 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
 
     bindEvents();
 
-    updateConnectivityState();
-
     boolean cameFromSignIn = getIntent().getBooleanExtra(IntentKeys.SIGNED_IN, false);
     if(cameFromSignIn && getCurrentUser() != null) {
       Log.d(TAG, "Fresh from sign in, doing initial sync.");
@@ -108,16 +100,13 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
     Log.d(TAG, "onPostCreate ReadingList");
 
     // This is in onPostCreate instead of onCreate to avoid issues with un-dismissible dialogs
-    // (as suggested at: http://stackoverflow.com/questions/891451/android-dismissdialog-does-not-dismiss-the-dialog)
+    // (as suggested at: http://stackoverflow.com/questions/891451/android-dialog-does-not-dismiss-the-dialog)
     refreshReadingList();
   }
 
   @Override
   protected void onDestroy() {
     super.onDestroy();
-    if(mNetworkStateReceiver != null) {
-      unregisterReceiver(mNetworkStateReceiver);
-    }
     // Abort any ongoing readmill sync
     if(mReadmillSyncTask != null) {
       mReadmillSyncTask.cancel(true);
@@ -129,17 +118,6 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
   protected void onResume() {
     super.onResume();
     Log.d(TAG, "Registering data receiver for readmill sync");
-    if(mDataUpdateReceiver == null) {
-      mDataUpdateReceiver = new DataUpdateReceiver();
-    }
-    IntentFilter intentFilter = new IntentFilter(IntentKeys.READMILL_SYNC_READINGS_COMPLETE);
-    registerReceiver(mDataUpdateReceiver, intentFilter);
-  }
-
-  @Override
-  protected void onPause() {
-    super.onPause();
-    if(mDataUpdateReceiver != null) unregisterReceiver(mDataUpdateReceiver);
   }
 
   @Override
@@ -153,8 +131,6 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
     MenuItem menuSettings = menu.add(0, MENU_SETTINGS, 3, "Settings");
     menuSettings.setTitleCondensed("Settings");
     menuSettings.setIcon(android.R.drawable.ic_menu_preferences);
-
-    updateConnectivityState();
 
     return true;
   }
@@ -189,7 +165,7 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
         // Refresh the list of readings after a session, and start a sync
         // with Readmill to send the new data
         if(requestCode == ActivityCodes.REQUEST_READING_SESSION ||
-            requestCode == ActivityCodes.REQUEST_ADD_BOOK) {
+          requestCode == ActivityCodes.REQUEST_ADD_BOOK) {
           refreshReadingList();
           sync();
         }
@@ -226,28 +202,11 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
 
   private void bindEvents() {
     mButtonAddBook.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
-        startAddBookScreen();
-      }
+      @Override public void onClick(View view) { startAddBookScreen(); }
     });
-
     mButtonSyncReadmill.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
-        sync();
-      }
+      @Override public void onClick(View view) { sync(); }
     });
-
-    mNetworkStateReceiver = new BroadcastReceiver() {
-      @Override
-      public void onReceive(Context context, Intent intent) {
-        ActivityHome.this.updateConnectivityState();
-      }
-    };
-
-    IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-    registerReceiver(mNetworkStateReceiver, filter);
   }
 
   private void startAddBookScreen() {
@@ -284,6 +243,7 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
 
   /**
    * Determines if it is appropriate to start a sync with Readmill.
+   *
    * @return true if a sync should be started, false otherwise
    */
   private boolean shouldSync() {
@@ -324,26 +284,6 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
     finish();
   }
 
-  private void removeFromDevice(LocalReading localReading) {
-    Log.d(TAG, "Removing Reading Data from device: " + localReading.title);
-    (new DeleteReadingTask()).execute(localReading);
-  }
-
-  private void onPostRemovedLocalReading(int deletedLocalReadingId) {
-    if(deletedLocalReadingId == -1) {
-      Log.i(TAG, "Nothing deleted");
-      return;
-    }
-
-    //    LocalReading deletedItem = mReadingListAdapter.getItemByLocalReadingId(deletedLocalReadingId);
-    //    if(deletedItem != null) {
-    //      ApplicationReadTracker.getDrawableManager().deletePersistedCover(deletedItem.coverURL);
-    //      mReadingListAdapter.remove(deletedItem);
-    //    } else {
-    //      Log.d(TAG, "Could not find LocalReading in list after being deleted id:" + deletedLocalReadingId);
-    //    }
-  }
-
   private void exitToActivityBook(LocalReading localReading) {
     Intent intentReadingSession = new Intent(this, ActivityBook.class);
     intentReadingSession.putExtra(IntentKeys.READING_ID, localReading.id);
@@ -382,18 +322,6 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
     getApp().clearProgressDialog();
   }
 
-  private void updateConnectivityState() {
-    if(isNetworkAvailable()) {
-      if(mButtonAddBook != null) {
-        mButtonAddBook.setVisibility(View.VISIBLE);
-      }
-    } else {
-      if(mButtonAddBook != null) {
-        mButtonAddBook.setVisibility(View.INVISIBLE);
-      }
-    }
-  }
-
   /**
    * Reloads readings for a given user
    */
@@ -416,30 +344,8 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
       }
     }
 
-    @Override
-    protected void onPostExecute(List<LocalReading> localReadings) {
+    @Override protected void onPostExecute(List<LocalReading> localReadings) {
       onFetchedReadings(localReadings);
-    }
-  }
-
-  /**
-   * Handles received messages from ReadmillTransferIntent
-   */
-  private class DataUpdateReceiver extends BroadcastReceiver {
-    @Override
-    public void onReceive(Context context, Intent intent) {
-      if(intent.getAction().equals(IntentKeys.READMILL_SYNC_READINGS_COMPLETE)) {
-        boolean syncSuccess = intent.getBooleanExtra(IntentKeys.FINISHED_WITH_SUCCESS, false);
-
-        if(syncSuccess) {
-          Toast.makeText(ActivityHome.this, "Synced!", Toast.LENGTH_SHORT).show();
-        } else {
-          Toast.makeText(ActivityHome.this, "Failed to sync with Readmill", Toast.LENGTH_LONG).show();
-          return;
-        }
-
-        refreshReadingList();
-      }
     }
   }
 
@@ -468,11 +374,5 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
       }
       return -1;
     }
-
-    @Override
-    protected void onPostExecute(Integer LocalReadingId) {
-      onPostRemovedLocalReading(LocalReadingId);
-    }
   }
-
 }
