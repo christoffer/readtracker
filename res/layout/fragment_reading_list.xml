@@ -8,6 +8,7 @@
             android:layout_height="fill_parent"
             android:layout_width="fill_parent"
             android:layout_gravity="bottom"
-            android:cacheColorHint="#0000" />
+            android:divider="@android:color/transparent"
+            android:cacheColorHint="#ff000000"/>
 
 </LinearLayout>

@@ -45,7 +45,6 @@ public class ListAdapterLocalReading extends ArrayAdapter<LocalReading> {
     TextView textAuthor;
 
     // Optional
-    TextView textEstimatedTimeLeft;
     ProgressBar progressReadingProgress;
     ImageView imageCover;
     TextView textFoundVia;
@@ -160,7 +159,6 @@ public class ListAdapterLocalReading extends ArrayAdapter<LocalReading> {
     ViewHolder viewHolder = new ViewHolder();
     viewHolder.textTitle = (TextView) view.findViewById(R.id.textTitle);
     viewHolder.textAuthor = (TextView) view.findViewById(R.id.textAuthor);
-    viewHolder.textEstimatedTimeLeft = (TextView) view.findViewById(R.id.textEstimatedTimeLeft);
     viewHolder.progressReadingProgress = (ProgressBar) view.findViewById(R.id.progressReadingProgress);
     viewHolder.imageCover = (ImageView) view.findViewById(R.id.imageCover);
     viewHolder.textFoundVia = (TextView) view.findViewById(R.id.textFoundVia);
@@ -195,10 +193,6 @@ public class ListAdapterLocalReading extends ArrayAdapter<LocalReading> {
     if(viewHolder.progressReadingProgress != null) {
       viewHolder.progressReadingProgress.setVisibility(View.VISIBLE);
       viewHolder.progressReadingProgress.setProgress(localReading.getProgressPercent());
-    }
-
-    if(viewHolder.textEstimatedTimeLeft != null) {
-      viewHolder.textEstimatedTimeLeft.setText(getEstimatedLabelText(localReading));
     }
 
     if(viewHolder.imageCover != null) {
