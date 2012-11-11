@@ -24,8 +24,8 @@
             android:layout_marginBottom="12dp"
             android:text="Franz Kafka"/>
 
-  <ProgressBar android:id="@+id/progressReadingProgress"
-               android:layout_below="@id/imageCover"
-               style="@style/progress_bar"/>
+  <com.readtracker.customviews.SegmentBar android:id="@+id/progressReadingProgress"
+                                          android:layout_below="@id/imageCover"
+                                          style="@style/progress_bar"/>
 
 </RelativeLayout>

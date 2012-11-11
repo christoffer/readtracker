@@ -7,8 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
+import com.readtracker.customviews.SegmentBar;
 import com.readtracker.db.LocalReading;
 import com.readtracker.thirdparty.DrawableManager;
 
@@ -45,7 +45,7 @@ public class ListAdapterLocalReading extends ArrayAdapter<LocalReading> {
     TextView textAuthor;
 
     // Optional
-    ProgressBar progressReadingProgress;
+    SegmentBar progressReadingProgress;
     ImageView imageCover;
     TextView textFoundVia;
   }
@@ -159,7 +159,7 @@ public class ListAdapterLocalReading extends ArrayAdapter<LocalReading> {
     ViewHolder viewHolder = new ViewHolder();
     viewHolder.textTitle = (TextView) view.findViewById(R.id.textTitle);
     viewHolder.textAuthor = (TextView) view.findViewById(R.id.textAuthor);
-    viewHolder.progressReadingProgress = (ProgressBar) view.findViewById(R.id.progressReadingProgress);
+    viewHolder.progressReadingProgress = (SegmentBar) view.findViewById(R.id.progressReadingProgress);
     viewHolder.imageCover = (ImageView) view.findViewById(R.id.imageCover);
     viewHolder.textFoundVia = (TextView) view.findViewById(R.id.textFoundVia);
     return viewHolder;
@@ -192,7 +192,7 @@ public class ListAdapterLocalReading extends ArrayAdapter<LocalReading> {
 
     if(viewHolder.progressReadingProgress != null) {
       viewHolder.progressReadingProgress.setVisibility(View.VISIBLE);
-      viewHolder.progressReadingProgress.setProgress(localReading.getProgressPercent());
+      // viewHolder.progressReadingProgress.setProgress(localReading.getProgressPercent());
     }
 
     if(viewHolder.imageCover != null) {
