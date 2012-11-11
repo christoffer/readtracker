@@ -192,7 +192,11 @@ public class ListAdapterLocalReading extends ArrayAdapter<LocalReading> {
 
     if(viewHolder.progressReadingProgress != null) {
       viewHolder.progressReadingProgress.setVisibility(View.VISIBLE);
-      // viewHolder.progressReadingProgress.setProgress(localReading.getProgressPercent());
+      float[] progressStops = localReading.getProgressStops();
+      if(progressStops == null) {
+        progressStops = new float[] {(float) localReading.progress};
+      }
+      viewHolder.progressReadingProgress.setStops(progressStops);
     }
 
     if(viewHolder.imageCover != null) {

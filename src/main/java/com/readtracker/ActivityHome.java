@@ -37,8 +37,6 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
   private static final int MENU_SYNC_BOOKS = 1;
   private static final int MENU_SETTINGS = 2;
 
-  private static final int CONTEXT_MENU_DELETE = 0;
-
   private ReadmillSyncAsyncTask mReadmillSyncTask;
 
   // Fragment adapter that manages the reading list fragments
@@ -67,6 +65,7 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
     // Set correct font of header
     applyRobotoThin(R.id.textHeader);
 
+    // Initialize the adapter with empty list of readings (populated later)
     mHomeFragmentAdapter = new HomeFragmentAdapter(getSupportFragmentManager(), new ArrayList<LocalReading>());
 
     mPagerHomeActivity.setAdapter(mHomeFragmentAdapter);
@@ -326,26 +325,45 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
    * Reloads readings for a given user
    */
   class RefreshBookListTask extends AsyncTask<Long, Void, List<LocalReading>> {
+
     @Override
     protected List<LocalReading> doInBackground(Long... readmillIds) {
-      if(readmillIds.length != 1) {
-        Log.d(TAG, "Have to receive an array with exactly one readmill user id");
-        return null;
-      }
       long readmillUserId = readmillIds[0];
       Log.d(TAG, "Fetching list of readings for user " + readmillUserId + " from database...");
+      return loadLocalReadingsForUser(readmillUserId);
+    }
+
+    @Override protected void onPostExecute(List<LocalReading> localReadings) {
+      onFetchedReadings(localReadings);
+    }
+
+    private List<LocalReading> loadLocalReadingsForUser(long readmillUserId) {
       try {
-        Dao<LocalReading, Integer> dao = ApplicationReadTracker.getReadingDao();
-        Where<LocalReading, Integer> stmt = dao.queryBuilder().where().eq(LocalReading.READMILL_USER_ID_FIELD_NAME, readmillUserId);
-        return stmt.query();
+        Dao<LocalReading, Integer> readingDao = ApplicationReadTracker.getReadingDao();
+        Dao<LocalSession, Integer> sessionDao = ApplicationReadTracker.getSessionDao();
+
+        ArrayList<LocalReading> localReadings = fetchLocalReadingsForUser(readmillUserId, readingDao);
+        return populateSessionSegments(localReadings, sessionDao);
       } catch(SQLException e) {
         Log.d(TAG, "Failed to get list of existing readings", e);
         return new ArrayList<LocalReading>();
       }
     }
 
-    @Override protected void onPostExecute(List<LocalReading> localReadings) {
-      onFetchedReadings(localReadings);
+    private ArrayList<LocalReading> fetchLocalReadingsForUser(long readmillUserId, Dao<LocalReading, Integer> dao) throws SQLException {
+      return (ArrayList<LocalReading>) dao.queryBuilder()
+        .where().eq(LocalReading.READMILL_USER_ID_FIELD_NAME, readmillUserId)
+        .query();
+    }
+
+    private List<LocalReading> populateSessionSegments(ArrayList<LocalReading> localReadings, Dao<LocalSession, Integer> sessionsDao) throws SQLException {
+      for(LocalReading localReading: localReadings) {
+        List<LocalSession> sessions = sessionsDao.queryBuilder()
+          .where().eq(LocalSession.READING_ID_FIELD_NAME, localReading.id)
+          .query();
+        localReading.setProgressStops(sessions);
+      }
+      return localReadings;
     }
   }
 

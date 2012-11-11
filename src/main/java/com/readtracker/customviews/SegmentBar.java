@@ -11,6 +11,7 @@ public class SegmentBar extends View {
   private Paint mPaint;
   private int mColor = 0xffffffff;
   private float[] mStops;
+  private static final int MIN_GAP_SIZE = 4; // px
 
   public SegmentBar(Context context) {
     this(context, null);
@@ -64,10 +65,10 @@ public class SegmentBar extends View {
   }
 
   private void drawSegment(Canvas canvas, int startX, int endX) {
-    if((endX - startX) < 1) {
+    if((endX - startX) < MIN_GAP_SIZE) {
       endX = startX;
     }
-    final RectF rect = new RectF(startX + 1.0f, 0, endX, getHeight());
+    final RectF rect = new RectF(startX + MIN_GAP_SIZE, 0, endX, getHeight());
     canvas.drawRect(rect, mPaint);
   }
 
