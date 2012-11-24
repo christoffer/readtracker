@@ -11,6 +11,7 @@ import java.util.Arrays;
 
 public class SegmentBar extends View {
   private Paint mPaint;
+  private Paint mBoundaryPaint;
   private int mColor = 0xffffffff;
   private float[] mStops;
   private static final int SEGMENT_SPACING = 2; // px
@@ -74,6 +75,12 @@ public class SegmentBar extends View {
     mPaint = new Paint();
     mPaint.setColor(mColor);
     mPaint.setStyle(Paint.Style.FILL);
+
+    mBoundaryPaint = new Paint();
+    int transparentColor = (0x22 << 24) + (mColor & 0xffffff);
+    mBoundaryPaint.setColor(transparentColor);
+    mBoundaryPaint.setStyle(Paint.Style.STROKE);
+    mBoundaryPaint.setStrokeWidth(1);
   }
 
   private void drawSegment(Canvas canvas, int startX, int endX, boolean isFirst) {
@@ -81,11 +88,12 @@ public class SegmentBar extends View {
     canvas.drawRect(rect, mPaint);
   }
 
-  private void drawTopLine(Canvas canvas) {
+  private void drawBoundaryLine(Canvas canvas) {
     int color = mPaint.getColor();
-    int transparentColor = (0x22 << 24) + (color & 0xffffff);
-    mPaint.setColor(transparentColor);
-    canvas.drawLine(0, 0, getWidth(), 0, mPaint);
+
+    final int width = getWidth() -1;
+    final int height = getHeight() - 1;
+    canvas.drawRect(0, 0, width, height, mBoundaryPaint);
     mPaint.setColor(color);
   }
 
@@ -96,7 +104,7 @@ public class SegmentBar extends View {
 
     final int width = getWidth();
     float prevSegment = 0.0f;
-    drawTopLine(canvas);
+    drawBoundaryLine(canvas);
     if(mStops.length > 0) {
       for(int i = 0, mStopsLength = mStops.length; i < mStopsLength; i++) {
         float segment = mStops[i];
