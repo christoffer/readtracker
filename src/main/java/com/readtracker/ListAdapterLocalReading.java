@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.readtracker.customviews.SegmentBar;
 import com.readtracker.db.LocalReading;
+import com.readtracker.readmill.ReadmillApiHelper;
 import com.readtracker.thirdparty.DrawableManager;
 
 import java.util.Comparator;
@@ -48,6 +49,8 @@ public class ListAdapterLocalReading extends ArrayAdapter<LocalReading> {
     SegmentBar progressReadingProgress;
     ImageView imageCover;
     TextView textFoundVia;
+    TextView textClosingRemark;
+    TextView textFinishedAt;
   }
 
   public ListAdapterLocalReading(Context context,
@@ -162,6 +165,8 @@ public class ListAdapterLocalReading extends ArrayAdapter<LocalReading> {
     viewHolder.progressReadingProgress = (SegmentBar) view.findViewById(R.id.progressReadingProgress);
     viewHolder.imageCover = (ImageView) view.findViewById(R.id.imageCover);
     viewHolder.textFoundVia = (TextView) view.findViewById(R.id.textFoundVia);
+    viewHolder.textClosingRemark = (TextView) view.findViewById(R.id.textClosingRemark);
+    viewHolder.textFinishedAt = (TextView) view.findViewById(R.id.textFinishedAt);
     return viewHolder;
   }
 
@@ -178,12 +183,11 @@ public class ListAdapterLocalReading extends ArrayAdapter<LocalReading> {
     viewHolder.textAuthor.setText(localReading.author);
 
     // Optional fields
-
     if(viewHolder.progressReadingProgress != null) {
       viewHolder.progressReadingProgress.setVisibility(View.VISIBLE);
       float[] progressStops = localReading.getProgressStops();
       if(progressStops == null) {
-        progressStops = new float[] {(float) localReading.progress};
+        progressStops = new float[]{(float) localReading.progress};
       }
       viewHolder.progressReadingProgress.setStops(progressStops);
     }
@@ -199,6 +203,28 @@ public class ListAdapterLocalReading extends ArrayAdapter<LocalReading> {
 
     if(viewHolder.textFoundVia != null) {
       viewHolder.textFoundVia.setText("Found via: " + localReading.getFoundVia());
+    }
+
+    if(viewHolder.textClosingRemark != null) {
+      final TextView closingRemark = viewHolder.textClosingRemark;
+      if(localReading.hasClosingRemark()) {
+        closingRemark.setVisibility(View.VISIBLE);
+        closingRemark.setText(localReading.readmillClosingRemark);
+      } else {
+        closingRemark.setVisibility(View.GONE);
+      }
+    }
+
+    if(viewHolder.textFinishedAt != null) {
+      if(localReading.isClosed() && localReading.locallyClosedAt > 0) {
+        final String finishedAt = Utils.humanPastDate(new Date(localReading.locallyClosedAt * 1000));
+        final String finishAction = localReading.readmillState == ReadmillApiHelper.ReadingState.ABANDONED ? "Abandoned" : "Finished";
+        final String labelText = String.format("%s %s", finishAction, finishedAt);
+        viewHolder.textFinishedAt.setText(labelText);
+        viewHolder.textFinishedAt.setVisibility(View.VISIBLE);
+      } else {
+        viewHolder.textFinishedAt.setVisibility(View.GONE);
+      }
     }
   }
 

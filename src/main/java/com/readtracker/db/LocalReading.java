@@ -127,6 +127,11 @@ public class LocalReading implements Parcelable {
     return readmillState == ReadmillApiHelper.ReadingState.READING;
   }
 
+  public boolean isClosed() {
+    return readmillState == ReadmillApiHelper.ReadingState.FINISHED ||
+      readmillState == ReadmillApiHelper.ReadingState.ABANDONED;
+  }
+
   public boolean isMeasuredInPercent() {
     return measureInPercent;
   }
