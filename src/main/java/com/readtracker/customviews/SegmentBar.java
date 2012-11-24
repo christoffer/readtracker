@@ -7,6 +7,8 @@ import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
 
+import java.util.Arrays;
+
 public class SegmentBar extends View {
   private Paint mPaint;
   private int mColor = 0xffffffff;
@@ -21,9 +23,15 @@ public class SegmentBar extends View {
     super(context, attrs);
     initResources();
     if(isInEditMode()) {
-      setStops(new float[]{
-        0.3f, 0.4f, 0.66f, 0.8f, 0.95f, 1.0f
-      });
+      // Throw in some sample segments
+      int numSegments = 3 + (int) (Math.random() * 10);
+      float[] sampleSegments = new float[numSegments];
+
+      for(int i = 0; i < numSegments; i++) {
+        sampleSegments[i] = (float) Math.random();
+      }
+      Arrays.sort(sampleSegments);
+      setStops(sampleSegments);
     }
   }
 
