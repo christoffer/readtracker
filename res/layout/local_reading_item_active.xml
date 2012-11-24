@@ -3,25 +3,36 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:padding="24dp">
+                android:paddingTop="18dp"
+                android:paddingBottom="18dp"
+                android:paddingLeft="24dp"
+                android:paddingRight="24dp">
 
   <ImageView android:id="@+id/imageCover"
-             android:layout_width="48dp"
-             android:layout_height="48dp"
-             android:background="#88459386"
+             android:layout_width="36dp"
+             android:layout_height="36dp"
              android:layout_alignParentRight="true"
-             android:contentDescription="Cover image"/>
+             android:contentDescription="Book cover"/>
 
   <TextView android:id="@+id/textTitle"
             style="@style/default_text"
-            android:layout_marginBottom="12dp"
+            android:layout_marginRight="12dp"
+            android:layout_marginBottom="1dp"
+            android:layout_toLeftOf="@id/imageCover"
+            android:layout_width="fill_parent"
+            android:singleLine="true"
+            android:textColor="@color/text_color_primary"
             android:text="Metamorphosis"/>
 
   <TextView android:id="@+id/textAuthor"
             style="@style/default_text"
+            android:layout_marginRight="12dp"
+            android:layout_marginBottom="6dp"
             android:layout_below="@id/textTitle"
+            android:layout_toLeftOf="@id/imageCover"
+            android:layout_width="fill_parent"
             android:textColor="@color/text_color_secondary"
-            android:layout_marginBottom="12dp"
+            android:singleLine="true"
             android:text="Franz Kafka"/>
 
   <com.readtracker.customviews.SegmentBar android:id="@+id/progressReadingProgress"
