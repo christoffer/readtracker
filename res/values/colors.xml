@@ -14,7 +14,7 @@
 
   <!-- base text colors -->
   <color name="text_color_primary">#fffffded</color>
-  <color name="text_color_secondary">#ff88827f</color>
+  <color name="text_color_secondary">#88fffded</color>
 
   <!-- color variations -->
   <color name="midnight_dark_tint">#ff101414</color>
