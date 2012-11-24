@@ -177,17 +177,6 @@ public class ListAdapterLocalReading extends ArrayAdapter<LocalReading> {
     viewHolder.textTitle.setText(localReading.title);
     viewHolder.textAuthor.setText(localReading.author);
 
-    // Set a more muted color for disconnected items
-    int textColor;
-    if(localReading.isConnected()) {
-      textColor = getContext().getResources().getColor(R.color.text_color_primary);
-    } else {
-      textColor = getContext().getResources().getColor(R.color.text_color_primary);
-    }
-
-    viewHolder.textTitle.setTextColor(textColor);
-    viewHolder.textAuthor.setTextColor(textColor);
-
     // Optional fields
 
     if(viewHolder.progressReadingProgress != null) {
