@@ -13,7 +13,7 @@ public class SegmentBar extends View {
   private Paint mPaint;
   private int mColor = 0xffffffff;
   private float[] mStops;
-  private static final int MIN_GAP_SIZE = 4; // px
+  private static final int SEGMENT_SPACING = 2; // px
 
   public SegmentBar(Context context) {
     this(context, null);
@@ -23,15 +23,19 @@ public class SegmentBar extends View {
     super(context, attrs);
     initResources();
     if(isInEditMode()) {
-      // Throw in some sample segments
-      int numSegments = 3 + (int) (Math.random() * 10);
-      float[] sampleSegments = new float[numSegments];
+      if(Math.random() > 0.25) {
+        // Throw in some sample segments
+        int numSegments = 3 + (int) (Math.random() * 10);
+        float[] sampleSegments = new float[numSegments];
 
-      for(int i = 0; i < numSegments; i++) {
-        sampleSegments[i] = (float) Math.random();
+        for(int i = 0; i < numSegments; i++) {
+          sampleSegments[i] = (float) Math.random();
+        }
+        Arrays.sort(sampleSegments);
+        setStops(sampleSegments);
+      } else {
+        setStops(new float[0]);
       }
-      Arrays.sort(sampleSegments);
-      setStops(sampleSegments);
     }
   }
 
@@ -72,26 +76,35 @@ public class SegmentBar extends View {
     mPaint.setStyle(Paint.Style.FILL);
   }
 
-  private void drawSegment(Canvas canvas, int startX, int endX) {
-    if((endX - startX) < MIN_GAP_SIZE) {
-      endX = startX;
-    }
-    final RectF rect = new RectF(startX + MIN_GAP_SIZE, 0, endX, getHeight());
+  private void drawSegment(Canvas canvas, int startX, int endX, boolean isFirst) {
+    final RectF rect = new RectF(startX + (isFirst ? 0 : SEGMENT_SPACING), 0, endX, getHeight());
     canvas.drawRect(rect, mPaint);
   }
 
+  private void drawTopLine(Canvas canvas) {
+    int color = mPaint.getColor();
+    int transparentColor = (0x22 << 24) + (color & 0xffffff);
+    mPaint.setColor(transparentColor);
+    canvas.drawLine(0, 0, getWidth(), 0, mPaint);
+    mPaint.setColor(color);
+  }
+
   @Override protected void onDraw(Canvas canvas) {
-    if(mStops == null || mStops.length == 0) {
+    if(mStops == null) {
       return;
     }
 
     final int width = getWidth();
     float prevSegment = 0.0f;
-    for(final float segment : mStops) {
-      final int fromX = (int) (prevSegment * width);
-      final int toX = (int) (segment * width);
-      drawSegment(canvas, fromX, toX);
-      prevSegment = segment;
+    drawTopLine(canvas);
+    if(mStops.length > 0) {
+      for(int i = 0, mStopsLength = mStops.length; i < mStopsLength; i++) {
+        float segment = mStops[i];
+        final int fromX = (int) (prevSegment * width);
+        final int toX = (int) (segment * width);
+        drawSegment(canvas, fromX, toX, (i == 0));
+        prevSegment = segment;
+      }
     }
   }
 }
