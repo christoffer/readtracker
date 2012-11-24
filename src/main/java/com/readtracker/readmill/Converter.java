@@ -50,13 +50,18 @@ public class Converter {
     localReading.readmillState = toIntegerState(source.getString("state"));
     localReading.progress = source.getDouble("progress");
     localReading.lastReadAt = localReading.readmillTouchedAt;
-    localReading.readmillClosingRemark = source.getString("closing_remark");
+
+    localReading.readmillClosingRemark = optString("closing_remark", null, source);
+
+    if(localReading.locallyClosedAt == 0) {
+      localReading.locallyClosedAt = parseISO8601ToUnix(source.getString("ended_at"));
+    }
 
     // Extract book
     localReading.readmillBookId = jsonBook.getLong("id");
-    localReading.title = jsonBook.optString("title", "Unknown title");
-    localReading.author = jsonBook.optString("author", "Unknown author");
-    localReading.coverURL = jsonBook.getString("cover_url");
+    localReading.title = optString("title", "Unknown title", jsonBook);
+    localReading.author = optString("author", "Unknown author", jsonBook);
+    localReading.coverURL = optString("cover_url", null, jsonBook);
 
     // Extract user
     localReading.readmillUserId = jsonUser.getLong("id");
@@ -115,5 +120,11 @@ public class Converter {
     if(jsonObject == null) {
       throw new JSONException("Received NULL object");
     }
+  }
+
+  // Work around the intentional JSON string bug:
+  // http://code.google.com/p/android/issues/detail?id=13830
+  private static String optString(String key, String opt, JSONObject source) throws JSONException {
+    return source.isNull(key) ? opt : source.getString(key);
   }
 }
