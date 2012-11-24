@@ -20,12 +20,12 @@
                 android:gravity="center"
                 android:layout_marginBottom="24dp"/>
 
-      <EditText android:text=""
-                android:inputType="number"
-                android:id="@+id/editPageCount"
-                style="@style/centered_number_input_field"
-                android:layout_gravity="center_horizontal"
-                android:layout_width="wrap_content"/>
+      <com.readtracker.customviews.UnderlinedEditText android:text=""
+                                                      android:inputType="number"
+                                                      android:id="@+id/editPageCount"
+                                                      style="@style/centered_number_input_field"
+                                                      android:layout_gravity="center_horizontal"
+                                                      android:layout_width="wrap_content"/>
 
     </LinearLayout>
 

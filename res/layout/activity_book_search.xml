@@ -6,32 +6,32 @@
               android:padding="12dp"
               android:orientation="vertical">
 
-  <EditText android:id="@+id/textSearch"
-            style="@style/default_input_field"
-            android:layout_width="fill_parent"
-            android:layout_gravity="top|center_horizontal"
-            android:hint="Search Google Books..."
-            android:inputType="text|textCapSentences|textAutoCorrect"
-            android:layout_marginBottom="12dp"
-            android:imeOptions="actionSearch" />
+  <com.readtracker.customviews.UnderlinedEditText android:id="@+id/textSearch"
+                                                  style="@style/default_input_field"
+                                                  android:layout_width="fill_parent"
+                                                  android:layout_gravity="top|center_horizontal"
+                                                  android:hint="Search Google Books..."
+                                                  android:inputType="text|textCapSentences|textAutoCorrect"
+                                                  android:layout_marginBottom="12dp"
+                                                  android:imeOptions="actionSearch"/>
 
   <ListView android:id="@+id/listSearchResult"
             android:layout_height="fill_parent"
             android:layout_weight="1"
             android:layout_width="fill_parent"
             android:layout_gravity="bottom"
-            android:cacheColorHint="@color/background" />
+            android:cacheColorHint="@color/background"/>
 
   <com.readtracker.thirdparty.SafeViewFlipper android:id="@+id/flipperBookSearchActions"
                                               style="@style/flipper_action_buttons">
 
     <Button android:id="@+id/buttonNew"
             android:text="New book..."
-            style="@style/default_button" />
+            style="@style/default_button"/>
 
     <Button android:id="@+id/buttonSearch"
             android:text="Search"
-            style="@style/default_button" />
+            style="@style/default_button"/>
 
   </com.readtracker.thirdparty.SafeViewFlipper>
 </LinearLayout>

@@ -51,11 +51,13 @@
   <style name="default_input_field">
     <item name="android:background">@drawable/default_input_field</item>
     <item name="android:layout_width">fill_parent</item>
-    <item name="android:layout_height">48dp</item>
+    <item name="android:layout_height">36dp</item>
     <item name="android:maxLines">1</item>
     <item name="android:minLines">1</item>
     <item name="android:paddingLeft">12dip</item>
     <item name="android:paddingRight">12dip</item>
+    <item name="android:paddingTop">3dip</item>
+    <item name="android:paddingBottom">3dip</item>
     <item name="android:textSize">16dp</item>
     <item name="android:textColor">@color/state_sensitive_text</item>
     <item name="android:textColorHint">@color/text_color_secondary</item>
