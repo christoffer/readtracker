@@ -185,6 +185,7 @@ public class LocalReading implements Parcelable {
     parcel.writeInt(readmillState);
     parcel.writeString(readmillClosingRemark);
     parcel.writeInt(measureInPercent ? 1 : 0);
+    parcel.writeInt(progressStops == null ? 0 : progressStops.length);
     parcel.writeFloatArray(progressStops);
   }
 
@@ -205,7 +206,9 @@ public class LocalReading implements Parcelable {
     readmillState = parcel.readInt();
     readmillClosingRemark = parcel.readString();
     measureInPercent = parcel.readInt() == 1;
-    parcel.readFloatArray(progressStops);
+    if(parcel.readInt() > 0) {
+      parcel.readFloatArray(progressStops);
+    }
   }
 
   @Override
