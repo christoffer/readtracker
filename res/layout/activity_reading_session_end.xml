@@ -40,17 +40,17 @@
 
     <Button style="@style/default_button"
             android:textColor="@color/text_color_secondary"
-            android:text="Finished?"/>
+            android:text="Finished?" />
 
     <!-- Ending page group -->
 
   </LinearLayout>
 
   <Button android:id="@+id/btnSaveReadingSession"
-          android:text="Save"
           style="@style/default_button"
           android:layout_alignParentBottom="true"
           android:layout_marginLeft="12dp"
-          android:layout_marginRight="12dp"/>
+          android:layout_marginRight="12dp"
+          android:text="Save" />
 
 </RelativeLayout>

@@ -1,35 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_height="fill_parent"
               android:layout_width="fill_parent"
-              android:layout_height="fill_parent">
+              android:padding="12dp"
+              android:orientation="vertical">
 
-  <!-- Flipper for switching between "Please enter page count" and reading mode -->
+  <RelativeLayout android:layout_height="fill_parent"
+                  android:layout_width="fill_parent"
+                  android:padding="12dp">
 
-  <com.readtracker.thirdparty.SafeViewFlipper android:id="@+id/flipperReadingSession"
-                                              android:layout_height="fill_parent"
-                                              android:layout_width="fill_parent"
-                                              android:layout_alignParentTop="true">
-    <!-- screen for time tracking  -->
-    <RelativeLayout android:layout_height="fill_parent"
-                    android:layout_width="fill_parent"
-                    android:padding="12dp"
-                    android:orientation="vertical">
+    <TextView android:id="@+id/textBillboard"
+              style="@style/default_text"
+              android:layout_width="fill_parent"
+              android:layout_height="wrap_content"
+              android:layout_centerInParent="true"
+              android:textSize="20dp"
+              android:text="Please add page count"
+              android:gravity="center"/>
 
-      <include android:id="@+id/layoutSessionTimer"
-               layout="@layout/_read_session_timer"
-               android:layout_weight="1"
+    <ImageView android:id="@+id/tracker"
+               android:src="@drawable/spinner_sketch"
+               android:layout_centerInParent="true"
                android:layout_width="fill_parent"
-               android:layout_height="fill_parent" />
+               android:layout_height="fill_parent"
+               android:contentDescription="spinner"
+               android:scaleType="fitCenter"/>
 
-      <!-- flipper between the start and pause/done button -->
+  </RelativeLayout>
 
-      <include layout="@layout/_reading_session_controls" />
-    </RelativeLayout>
+  <!-- flipper between the start and pause/done button -->
+  <include layout="@layout/_reading_session_controls"/>
 
-    <!-- input screen for total pages -->
-
-    <include layout="@layout/_fill_in_number_of_pages" />
-
-  </com.readtracker.thirdparty.SafeViewFlipper>
 </LinearLayout>

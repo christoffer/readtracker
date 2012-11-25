@@ -7,15 +7,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import com.readtracker.db.LocalReading;
-import com.readtracker.interfaces.SaveLocalReadingListener;
-import com.readtracker.tasks.SaveLocalReadingTask;
 import com.readtracker.thirdparty.SafeViewFlipper;
 import com.readtracker.value_objects.ReadingState;
 
@@ -25,47 +21,34 @@ import com.readtracker.value_objects.ReadingState;
 public class FragmentRead extends Fragment {
   private static final String TAG = FragmentRead.class.getName();
 
+  // Session controls
   private static Button mButtonStart;
   private static Button mButtonPause;
   private static Button mButtonDone;
-
-  private static EditText mEditPageCount;
-
-  // Flipper for showing reading setup vs. reading session
-  private static SafeViewFlipper mFlipperReadingSession;
-
-  private static TextView mTextNumberOfPages;
-  private static Button mButtonUpdatePageNumbers;
-
-  private static ViewGroup mLayoutSessionTimer;
+  private static TextView mTextBillboard;
 
   // Flipper for showing start vs. pause/done
   private static SafeViewFlipper mFlipperSessionControl;
-
-  private static TextView mTextHeader;
-  private static TextView mTextSummary;
 
   // Reading to track
   private LocalReading mLocalReading;
 
   // Timing
   private RedrawTimerTask mRedrawTimerTask;
+
   // Timestamp of when play/resume was pressed last time
   private long mTimestampLastStarted = 0;
+
   // Accumulated elapsed time, not including the time since latest timestamp
   private long mElapsed = 0;
 
   // Force reinitialize when returning from an activity that is known
-  // to cause data updates (notably, the create highlight activity)
+  // to cause data updates.
   private boolean mForceReInitialize;
 
   // Display child index for flipper session control
   private static final int PAGE_READING_CONTROLS_INACTIVE = 0;
   private static final int PAGE_READING_CONTROLS_ACTIVE = 1;
-
-  // Pages for flipper between reading session and page information entry
-  private static final int PAGE_READING_SESSION = 0;
-  private static final int PAGE_PAGE_ENTRY = 1;
 
   public static Fragment newInstance(LocalReading localReading, long elapsed) {
     Log.d(TAG, "newInstance()");
@@ -93,30 +76,22 @@ public class FragmentRead extends Fragment {
     bindViews(view);
     bindEvents();
 
-    if(mLocalReading != null) {
-      Log.d(TAG, "Loaded with local reading: " + mLocalReading.getInfo());
-      // Show the book initialization screen or the read tracker
-      if(mLocalReading.hasPageInfo()) {
-        mFlipperReadingSession.setDisplayedChild(PAGE_READING_SESSION);
-      } else {
-        String filledNumberOfPagesText = String.format(getString(R.string.please_enter_number_of_pages), mLocalReading.title);
-        mTextNumberOfPages.setText(filledNumberOfPagesText);
-        mFlipperReadingSession.setDisplayedChild(PAGE_PAGE_ENTRY);
-      }
-    } else {
-      Log.d(TAG, "Loaded without local reading");
-    }
-
     mFlipperSessionControl.setDisplayedChild(PAGE_READING_CONTROLS_INACTIVE);
 
-    // Rig for a fresh session
-    if(mLocalReading != null) {
-      if(mElapsed == 0) { // starting a read session
-        describeLastPosition(mLocalReading);
-      } else {
-        refreshElapsedTime();
-      }
+    if(mLocalReading == null) { // TODO investigate when this could happen...
+      Log.d(TAG, "Loaded without local reading");
+      return view;
     }
+
+    Log.d(TAG, "Loaded with local reading: " + mLocalReading.getInfo());
+
+    // Show the book initialization screen or the read tracker
+    if(mLocalReading.hasPageInfo()) {
+      setupTimeTracking();
+    } else {
+      setupMissingPages();
+    }
+
     return view;
   }
 
@@ -140,7 +115,7 @@ public class FragmentRead extends Fragment {
     }
 
     stopTrackerUpdates();
-    refreshElapsedTime();
+    presentTime(elapsed());
   }
 
   @Override
@@ -156,22 +131,13 @@ public class FragmentRead extends Fragment {
   }
 
   private void bindViews(View view) {
-    mFlipperReadingSession = (SafeViewFlipper) view.findViewById(R.id.flipperReadingSession);
-    mEditPageCount = (EditText) view.findViewById(R.id.editPageCount);
-    mTextNumberOfPages = (TextView) view.findViewById(R.id.textEnterNumberOfPages);
-    mButtonUpdatePageNumbers = (Button) view.findViewById(R.id.buttonUpdatePageNumbers);
-
     mButtonDone = (Button) view.findViewById(R.id.buttonDone);
     mButtonStart = (Button) view.findViewById(R.id.buttonStart);
     mButtonPause = (Button) view.findViewById(R.id.buttonPause);
 
     mFlipperSessionControl = (SafeViewFlipper) view.findViewById(R.id.flipperSessionControl);
 
-    mLayoutSessionTimer = (ViewGroup) view.findViewById(R.id.layoutSessionTimer);
-    mTextHeader = (TextView) mLayoutSessionTimer.findViewById(R.id.textHeader);
-    mTextSummary = (TextView) mLayoutSessionTimer.findViewById(R.id.textSummary);
-    Log.d(TAG, "mLayout: " + mLayoutSessionTimer);
-
+    mTextBillboard = (TextView) view.findViewById(R.id.textBillboard);
   }
 
   private void bindEvents() {
@@ -195,15 +161,15 @@ public class FragmentRead extends Fragment {
       }
     });
 
-    mButtonUpdatePageNumbers.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View view) {
-        onClickedSetPageCount();
-      }
-    });
+//    mButtonUpdatePageNumbers.setOnClickListener(new View.OnClickListener() {
+//      @Override public void onClick(View view) {
+//        onClickedSetPageCount();
+//      }
+//    });
 
-    if(!mLocalReading.hasPageInfo()) {
-      mTextNumberOfPages.setText(String.format(getString(R.string.please_enter_number_of_pages, mLocalReading.title)));
-    }
+//    if(!mLocalReading.hasPageInfo()) {
+//      mTextNumberOfPages.setText(String.format(getString(R.string.please_enter_number_of_pages, mLocalReading.title)));
+//    }
   }
 
   /* Public API */
@@ -218,6 +184,24 @@ public class FragmentRead extends Fragment {
 
   /* Private API */
 
+  private void setupTimeTracking() {
+    // Starting or continuing a reading session?
+    if(mElapsed == 0) {
+      describeLastPosition(mLocalReading);
+    } else {
+      presentTime(elapsed());
+    }
+
+    mTextBillboard.setEnabled(true);
+    mButtonStart.setText("Start");
+  }
+
+  private void setupMissingPages() {
+    mTextBillboard.setText("Please add page count");
+    mTextBillboard.setEnabled(false);
+    mButtonStart.setText("Edit book");
+  }
+
   /**
    * Updates the text header and summary to show where the user last left off.
    * Handles pages/percent and shows a special text for first session.
@@ -228,18 +212,16 @@ public class FragmentRead extends Fragment {
     boolean isFirstRead = localReading.currentPage == 0;
 
     if(isFirstRead) {
-      mTextHeader.setText("");
-      mTextSummary.setText("First read");
+      mTextBillboard.setText("First session");
       return;
     }
 
-    mTextHeader.setText("Last time you ended at");
     if(localReading.measureInPercent) {
       int currentInteger = (int) localReading.currentPage / 100;
       int currentFraction = (int) localReading.currentPage - currentInteger * 100;
-      mTextSummary.setText(String.format("%d.%d%%", currentInteger, currentFraction));
+      mTextBillboard.setText(String.format("Last at %d.%d%%", currentInteger, currentFraction));
     } else {
-      mTextSummary.setText(String.format("page %d", localReading.currentPage));
+      mTextBillboard.setText(String.format("Last on page %d", localReading.currentPage));
     }
   }
 
@@ -258,42 +240,20 @@ public class FragmentRead extends Fragment {
    */
   private void onClickedStart() {
     final Animation disappear = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_out);
-    final Animation disappearSummary = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_out);
-
     final Animation appear = AnimationUtils.loadAnimation(getActivity(), R.anim.slide_up_appear);
-    final Animation appearSummary = AnimationUtils.loadAnimation(getActivity(), R.anim.slide_up_appear);
-
-    final Animation appearWaveform = new AlphaAnimation(0.0f, 1.0f);
-    appearWaveform.setDuration(3000);
 
     disappear.setAnimationListener(new Animation.AnimationListener() {
       @Override public void onAnimationStart(Animation animation) { }
-
       @Override public void onAnimationRepeat(Animation animation) { }
-
       @Override public void onAnimationEnd(Animation animation) {
-        mTextHeader.startAnimation(appear);
-        mTextHeader.setText(getString(R.string.reading_for));
-      }
-    });
-
-    disappearSummary.setAnimationListener(new Animation.AnimationListener() {
-      @Override public void onAnimationStart(Animation animation) { }
-
-      @Override public void onAnimationRepeat(Animation animation) { }
-
-      @Override public void onAnimationEnd(Animation animation) {
-        appearSummary.setStartOffset(100);
-        mTextSummary.startAnimation(appearSummary);
         startTiming();
+        ((ActivityBook) getActivity()).setDirty(true);
+        presentTime(elapsed());
+        mTextBillboard.startAnimation(appear);
       }
     });
 
-    mTextHeader.startAnimation(disappear);
-    disappearSummary.setStartOffset(200);
-    mTextSummary.startAnimation(disappearSummary);
-
-    ((ActivityBook) getActivity()).setDirty(true);
+    mTextBillboard.startAnimation(disappear);
     mFlipperSessionControl.setDisplayedChild(PAGE_READING_CONTROLS_ACTIVE);
   }
 
@@ -366,33 +326,33 @@ public class FragmentRead extends Fragment {
       Log.d(TAG, "Got inactive reading state");
       activatePause();
     }
-    refreshElapsedTime();
+    presentTime(elapsed());
   }
 
   /**
    * Called when save has been clicked on the set number of pages dialog
    */
-  private void onClickedSetPageCount() {
-    int pageNumbers = Utils.parseInt(mEditPageCount.getText().toString(), 0);
-
-    if(pageNumbers < 1) {
-      ((ReadTrackerActivity) getActivity()).toast(getString(R.string.enter_page_count));
-      mEditPageCount.requestFocus();
-      return;
-    }
-
-    mLocalReading.totalPages = pageNumbers;
-
-    ((ActivityBook) getActivity()).onLocalReadingChanged();
-
-    SaveLocalReadingTask.save(mLocalReading, new SaveLocalReadingListener() {
-      @Override
-      public void onLocalReadingSaved(LocalReading localReading) {
-        // Flip back to active reading state
-        mFlipperReadingSession.setDisplayedChild(PAGE_READING_SESSION);
-      }
-    });
-  }
+//  private void onClickedSetPageCount() {
+//    int pageNumbers = Utils.parseInt(mEditPageCount.getText().toString(), 0);
+//
+//    if(pageNumbers < 1) {
+//      ((ReadTrackerActivity) getActivity()).toast(getString(R.string.enter_page_count));
+//      mEditPageCount.requestFocus();
+//      return;
+//    }
+//
+//    mLocalReading.totalPages = pageNumbers;
+//
+//    ((ActivityBook) getActivity()).onLocalReadingChanged();
+//
+//    SaveLocalReadingTask.save(mLocalReading, new SaveLocalReadingListener() {
+//      @Override
+//      public void onLocalReadingSaved(LocalReading localReading) {
+//        // Flip back to active reading state
+//        mFlipperReadingSession.setDisplayedChild(PAGE_READING_SESSION);
+//      }
+//    });
+//  }
 
   /**
    * Changes UI to pause mode
@@ -402,7 +362,7 @@ public class FragmentRead extends Fragment {
     Animation fadeOutHalf = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_out_half);
     fadeOutHalf.setAnimationListener(new EnableReadingControls(false));
     mButtonDone.startAnimation(fadeOutHalf);
-    mLayoutSessionTimer.startAnimation(fadeOutHalf);
+//    mLayoutSessionTimer.startAnimation(fadeOutHalf);
   }
 
   /**
@@ -413,7 +373,7 @@ public class FragmentRead extends Fragment {
     Animation fadeInHalf = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_in_half);
     fadeInHalf.setAnimationListener(new EnableReadingControls(true));
     mButtonDone.startAnimation(fadeInHalf);
-    mLayoutSessionTimer.startAnimation(fadeInHalf);
+//    mLayoutSessionTimer.startAnimation(fadeInHalf);
   }
 
   private void stopTimingAndUpdateElapsed() {
@@ -444,26 +404,24 @@ public class FragmentRead extends Fragment {
     return mElapsed + elapsedSinceTimestamp();
   }
 
-  private void refreshElapsedTime() {
-    int[] hms = Utils.convertMillisToHoursMinutesSeconds(elapsed());
-    int hours = (int) hms[0];
-    int minutes = (int) hms[1];
-    int seconds = (int) hms[2];
+  // Sets the billboard to show the elapsed time
+  private void presentTime(long milliseconds) {
+    int[] hms = Utils.convertMillisToHoursMinutesSeconds(milliseconds);
+    final int hours = hms[0];
+    final int minutes = hms[1];
 
     String summary;
     if(hours > 0) {
-      summary = String.format("%s\n%s",
-          Utils.pluralizeWithCount(hours, "hour"),
-          Utils.pluralizeWithCount(minutes, "minute")
+      summary = String.format("%s, %s",
+        Utils.pluralizeWithCount(hours, "hour"),
+        Utils.pluralizeWithCount(minutes, "minute")
       );
     } else if(minutes > 0) {
       summary = Utils.pluralizeWithCount(minutes, "minute");
     } else {
-      summary = seconds + " seconds";
+      summary = "less than a minute";
     }
-
-    mTextHeader.setText(getString(R.string.reading_for));
-    mTextSummary.setText(summary);
+    mTextBillboard.setText(summary);
   }
 
   private void startTrackerUpdates() {
@@ -501,7 +459,7 @@ public class FragmentRead extends Fragment {
 
     @Override
     protected void onProgressUpdate(Void... values) {
-      refreshElapsedTime();
+      presentTime(elapsed());
     }
   }
 
