@@ -53,10 +53,14 @@ public class DrawableManager {
   private static final String TAG = DrawableManager.class.getSimpleName();
   private static final String PACKAGE_NAME = ApplicationReadTracker.class.getPackage().getName();
   private static final String COVERS_FOLDER = "cache/covers/";
+
   private boolean mPersistDrawables = false;
+  private boolean mExternalStorageAvailable = false;
 
   public DrawableManager() {
     memoryCache = new HashMap<String, Drawable>();
+    String state = Environment.getExternalStorageState();
+    mExternalStorageAvailable = Environment.MEDIA_MOUNTED.equals(state);
   }
 
   public void persistDrawables(boolean enable) {
@@ -104,7 +108,7 @@ public class DrawableManager {
       @Override
       public void run() {
         BitmapDrawable drawable = fetchBitmapDrawable(urlString);
-        if(mPersistDrawables && drawable != null) {
+        if(mExternalStorageAvailable && mPersistDrawables && drawable != null) {
           writeBitmapDrawable(urlString, drawable);
         }
         Message message = handler.obtainMessage(1, drawable);
