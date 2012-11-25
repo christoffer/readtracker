@@ -409,6 +409,7 @@ public class FragmentRead extends Fragment {
     int[] hms = Utils.convertMillisToHoursMinutesSeconds(milliseconds);
     final int hours = hms[0];
     final int minutes = hms[1];
+    final int seconds = hms[2];
 
     String summary;
     if(hours > 0) {
@@ -418,8 +419,12 @@ public class FragmentRead extends Fragment {
       );
     } else if(minutes > 0) {
       summary = Utils.pluralizeWithCount(minutes, "minute");
+    } else if(seconds > 30) {
+      summary = "half a minute...";
+    } else if(seconds > 10) {
+      summary = "a few seconds...";
     } else {
-      summary = "less than a minute";
+      summary = "Just started...";
     }
     mTextBillboard.setText(summary);
   }
