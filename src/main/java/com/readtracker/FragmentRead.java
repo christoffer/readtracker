@@ -7,10 +7,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
+import android.view.animation.*;
 import android.widget.Button;
 import android.widget.TextView;
+import com.readtracker.customviews.PauseableSpinAnimation;
+import com.readtracker.customviews.TimeSpinner;
 import com.readtracker.db.LocalReading;
 import com.readtracker.thirdparty.SafeViewFlipper;
 import com.readtracker.value_objects.ReadingState;
@@ -25,7 +26,10 @@ public class FragmentRead extends Fragment {
   private static Button mButtonStart;
   private static Button mButtonPause;
   private static Button mButtonDone;
+
+  // Time tracking
   private static TextView mTextBillboard;
+  private static TimeSpinner mTimeSpinner;
 
   // Flipper for showing start vs. pause/done
   private static SafeViewFlipper mFlipperSessionControl;
@@ -138,6 +142,7 @@ public class FragmentRead extends Fragment {
     mFlipperSessionControl = (SafeViewFlipper) view.findViewById(R.id.flipperSessionControl);
 
     mTextBillboard = (TextView) view.findViewById(R.id.textBillboard);
+    mTimeSpinner = (TimeSpinner) view.findViewById(R.id.timespinner);
   }
 
   private void bindEvents() {
@@ -409,7 +414,6 @@ public class FragmentRead extends Fragment {
     int[] hms = Utils.convertMillisToHoursMinutesSeconds(milliseconds);
     final int hours = hms[0];
     final int minutes = hms[1];
-    final int seconds = hms[2];
 
     String summary;
     if(hours > 0) {
@@ -419,24 +423,43 @@ public class FragmentRead extends Fragment {
       );
     } else if(minutes > 0) {
       summary = Utils.pluralizeWithCount(minutes, "minute");
-    } else if(seconds > 30) {
-      summary = "half a minute...";
-    } else if(seconds > 10) {
-      summary = "a few seconds...";
     } else {
-      summary = "Just started...";
+      summary = "< 1 minute";
     }
     mTextBillboard.setText(summary);
   }
 
   private void startTrackerUpdates() {
     stopTrackerUpdates();
+
+    PauseableSpinAnimation spinAnimation = (PauseableSpinAnimation) mTimeSpinner.getAnimation();
+    if(spinAnimation == null) {
+      final float offsetX = mTimeSpinner.getWidth() / 2.0f;
+      final float offsetY = mTimeSpinner.getHeight() / 2.0f;
+      spinAnimation = new PauseableSpinAnimation(0, 360, offsetX, offsetY) {{
+        setRepeatMode(Animation.RESTART);
+        setRepeatCount(Animation.INFINITE);
+        setDuration(60 * 1000);
+        setInterpolator(new LinearInterpolator());
+        setFillAfter(true);
+      }};
+      mTimeSpinner.setAnimation(spinAnimation);
+      spinAnimation.start();
+    } else {
+      spinAnimation.resume();
+    }
+
     mRedrawTimerTask = new RedrawTimerTask();
     //noinspection unchecked
     mRedrawTimerTask.execute();
   }
 
   private void stopTrackerUpdates() {
+    PauseableSpinAnimation spinAnimation = (PauseableSpinAnimation) mTimeSpinner.getAnimation();
+    if(spinAnimation != null) {
+      spinAnimation.pause();
+    }
+
     if(mRedrawTimerTask != null) {
       mRedrawTimerTask.cancel(true);
       mRedrawTimerTask = null;
@@ -468,10 +491,6 @@ public class FragmentRead extends Fragment {
     }
   }
 
-  /**
-   * Disable/enable reading controls (pause/done) after or before their
-   * animations has completed.
-   */
   private class EnableReadingControls implements Animation.AnimationListener {
     private boolean enabled = false;
 

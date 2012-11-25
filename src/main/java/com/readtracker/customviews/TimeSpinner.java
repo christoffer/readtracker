@@ -12,6 +12,7 @@ public class TimeSpinner extends View {
 
   private int mPrimaryColor;
   private int mSecondaryColor;
+  private int mFillColor;
 
   private Paint mTickPaint;
 
@@ -25,6 +26,12 @@ public class TimeSpinner extends View {
   }
 
   @Override protected void onDraw(Canvas canvas) {
+    Paint p = new Paint();
+    p.setStyle(Paint.Style.FILL);
+    p.setColor(mFillColor);
+    float midX = getWidth() / 2.0f;
+    float midY = getHeight() / 2.0f;
+    canvas.drawCircle(midX, midY, Math.min(midX,  midY) - 35.0f, p);
     drawTicks(canvas, 60, 15, 2, 10, mSecondaryColor);
     drawTicks(canvas, 12, 25, 4, 0, mPrimaryColor);
   }
@@ -37,6 +44,8 @@ public class TimeSpinner extends View {
     hsv[1] *= 0.7f;
 
     mSecondaryColor = Color.HSVToColor(hsv);
+
+    mFillColor = Color.HSVToColor(30, hsv);
     invalidate();
   }
 
