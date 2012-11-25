@@ -18,12 +18,18 @@ public class ActivityAddBook extends ReadTrackerActivity {
 
   private static LinearLayout mLayoutConnect;
 
+  private LocalReading mLocalReading;
+
   private static EditText mEditTitle;
   private static EditText mEditAuthor;
   private static EditText mEditPageCount;
 
+  private static Button mButtonAddBook;
+
   private static ToggleButton mTogglePagesPercent;
   private static ToggleButton mTogglePublicPrivate;
+
+  private boolean mCameFromReadingSession = false;
 
   // Store the cover url from the intent that starts the activity
   private String mCoverURL;
@@ -42,15 +48,44 @@ public class ActivityAddBook extends ReadTrackerActivity {
 
     Bundle extras = getIntent().getExtras();
     if(extras != null) {
-      mEditTitle.setText(extras.getString(IntentKeys.TITLE));
-      mEditAuthor.setText(extras.getString(IntentKeys.AUTHOR));
+      LocalReading localReading = extras.getParcelable(IntentKeys.LOCAL_READING);
 
-      mCoverURL = extras.getString(IntentKeys.COVER_URL);
-
-      long pageCount = extras.getLong(IntentKeys.PAGE_COUNT, 0);
-      if(pageCount > 0) {
-        mEditPageCount.setText(Long.toString(pageCount));
+      if(localReading != null) {
+        setupEditMode(localReading);
+      } else {
+        setupCreateMode(extras);
       }
+
+      mCameFromReadingSession = extras.getBoolean(IntentKeys.FROM_READING_SESSION, false);
+    }
+  }
+  private void setupCreateMode(Bundle extras) {
+    mButtonAddBook.setText("Add");
+    mLayoutConnect.setVisibility(View.VISIBLE);
+
+    mEditTitle.setText(extras.getString(IntentKeys.TITLE));
+    mEditAuthor.setText(extras.getString(IntentKeys.AUTHOR));
+    mCoverURL = extras.getString(IntentKeys.COVER_URL);
+    setInitialPageCount(extras.getLong(IntentKeys.PAGE_COUNT, 0));
+  }
+
+  private void setupEditMode(LocalReading localReading) {
+    mButtonAddBook.setText("Save");
+    mLayoutConnect.setVisibility(View.GONE);
+
+    mLocalReading = localReading;
+
+    mEditTitle.setText(localReading.title);
+    mEditAuthor.setText(localReading.author);
+
+    long pageCount = localReading.totalPages;
+    setInitialPageCount(pageCount);
+    mCoverURL = localReading.coverURL;
+  }
+
+  private void setInitialPageCount(long pageCount) {
+    if(pageCount > 0) {
+      mEditPageCount.setText(Long.toString(pageCount));
     }
   }
 
@@ -61,11 +96,11 @@ public class ActivityAddBook extends ReadTrackerActivity {
     mEditPageCount = (EditText) findViewById(R.id.editPageCount);
     mTogglePagesPercent = (ToggleButton) findViewById(R.id.togglePagesPercent);
     mTogglePublicPrivate = (ToggleButton) findViewById(R.id.togglePublicPrivate);
+    mButtonAddBook = (Button) findViewById(R.id.buttonAddBook);
   }
 
   private void bindEvents() {
-    Button buttonAddBook = (Button) findViewById(R.id.buttonAddBook);
-    buttonAddBook.setOnClickListener(new View.OnClickListener() {
+    mButtonAddBook.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View view) {
         onAddBookClicked();
       }
@@ -91,7 +126,7 @@ public class ActivityAddBook extends ReadTrackerActivity {
       return;
     }
 
-    LocalReading localReading = new LocalReading();
+    LocalReading localReading = mLocalReading == null ? new LocalReading() : mLocalReading;
 
     localReading.title = mEditTitle.getText().toString();
     localReading.author = mEditAuthor.getText().toString();
@@ -105,9 +140,14 @@ public class ActivityAddBook extends ReadTrackerActivity {
       localReading.measureInPercent = true;
     }
 
-    boolean isPublic = mTogglePublicPrivate.isChecked();
+    final boolean isInEditMode = mLocalReading != null;
+    final boolean shouldConnect = getCurrentUser() != null && !isInEditMode;
 
-    saveOrConnectLocalReading(localReading, isPublic);
+    if(shouldConnect) {
+      saveAndConnectLocalReading(localReading, mTogglePublicPrivate.isChecked());
+    } else {
+      saveLocalReading(localReading);
+    }
   }
 
   /**
@@ -149,41 +189,40 @@ public class ActivityAddBook extends ReadTrackerActivity {
 
   private void exitToReadingSession(LocalReading localReading) {
     Intent readingSessionIntent = new Intent(this, ActivityBook.class);
-    readingSessionIntent.putExtra(IntentKeys.READING_ID, localReading.id);
-    readingSessionIntent.putExtra(IntentKeys.START_READING_SESSION, true);
-    setResult(ActivityCodes.RESULT_OK);
-    startActivity(readingSessionIntent);
+    if(!mCameFromReadingSession) {
+      readingSessionIntent.putExtra(IntentKeys.READING_ID, localReading.id);
+      readingSessionIntent.putExtra(IntentKeys.START_READING_SESSION, true);
+      startActivity(readingSessionIntent);
+      setResult(ActivityCodes.RESULT_OK);
+    } else {
+      Intent data = new Intent();
+      data.putExtra(IntentKeys.READING_ID, localReading.id);
+      setResult(ActivityCodes.RESULT_OK, data);
+    }
     finish();
   }
 
-  /**
-   * Persists a local reading to the database.
-   * The reading is also connected if the user is signed in.
-   *
-   * @param localReading Local reading to save or connect
-   * @param isPublic     Toggle for connecting as public reading if signed in
-   */
-  private void saveOrConnectLocalReading(LocalReading localReading, boolean isPublic) {
-    if(getCurrentUser() == null) {
-      getApp().showProgressDialog(this, "Saving book...");
-      SaveLocalReadingTask.save(localReading, new SaveLocalReadingListener() {
-        @Override public void onLocalReadingSaved(LocalReading localReading) {
-          getApp().clearProgressDialog();
+  private void saveAndConnectLocalReading(LocalReading localReading, boolean isPublic) {
+    getApp().showProgressDialog(this, "Connecting your book to Readmill...");
+    ConnectReadingTask.connect(localReading, isPublic, new ConnectedReadingListener() {
+      @Override public void onLocalReadingConnected(LocalReading localReading) {
+        getApp().clearProgressDialog();
+        if(localReading == null) {
+          toastLong("Could not connect with Readmill");
+        } else {
           exitToReadingSession(localReading);
         }
-      });
-    } else {
-      getApp().showProgressDialog(this, "Connecting your book to Readmill...");
-      ConnectReadingTask.connect(localReading, isPublic, new ConnectedReadingListener() {
-        @Override public void onLocalReadingConnected(LocalReading localReading) {
-          getApp().clearProgressDialog();
-          if(localReading == null) {
-            toastLong("Could not connect with Readmill");
-          } else {
-            exitToReadingSession(localReading);
-          }
-        }
-      });
-    }
+      }
+    });
+  }
+
+  private void saveLocalReading(LocalReading localReading) {
+    getApp().showProgressDialog(this, "Saving book...");
+    SaveLocalReadingTask.save(localReading, new SaveLocalReadingListener() {
+      @Override public void onLocalReadingSaved(LocalReading localReading) {
+        getApp().clearProgressDialog();
+        exitToReadingSession(localReading);
+      }
+    });
   }
 }

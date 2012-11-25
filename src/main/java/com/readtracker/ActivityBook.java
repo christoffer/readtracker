@@ -81,12 +81,23 @@ public class ActivityBook extends ReadTrackerActivity {
 
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    if(resultCode == ActivityCodes.RESULT_CANCELED) {
+      return;
+    }
+    Log.d(TAG, "onActivityResult: requestCode: " + requestCode + ", resultCode: " + resultCode);
     switch(requestCode) {
       case ActivityCodes.CREATE_PING:
         // Set result to OK to state that something was changed
         if(resultCode == RESULT_OK) {
           Log.d(TAG, "Created ping: Falling through");
           finishWithResult(ActivityCodes.RESULT_OK);
+          return;
+        }
+        break;
+      case ActivityCodes.REQUEST_EDIT_BOOK:
+        if(resultCode == RESULT_OK) {
+          int updateReadingId = data.getIntExtra(IntentKeys.READING_ID, -1);
+          reloadLocalData(updateReadingId);
         }
         break;
       case ActivityCodes.CREATE_HIGHLIGHT:
@@ -203,6 +214,13 @@ public class ActivityBook extends ReadTrackerActivity {
     intentReadingSessionEnd.putExtra(IntentKeys.LOCAL_READING, mLocalReading);
     intentReadingSessionEnd.putExtra(IntentKeys.SESSION_LENGTH_MS, elapsedMilliseconds);
     startActivityForResult(intentReadingSessionEnd, ActivityCodes.CREATE_PING);
+  }
+
+  public void exitToBookInfoScreen(LocalReading localReading) {
+    Intent intentEditBook = new Intent(this, ActivityAddBook.class);
+    intentEditBook.putExtra(IntentKeys.LOCAL_READING, localReading);
+    intentEditBook.putExtra(IntentKeys.FROM_READING_SESSION, true);
+    startActivityForResult(intentEditBook, ActivityCodes.REQUEST_EDIT_BOOK);
   }
 
   public void finishWithResult(int resultCode) {

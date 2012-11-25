@@ -20,7 +20,7 @@ use #ViewBindingBookHeader for easy initialization of this layout.
 
     <TextView android:id="@+id/textTitle"
               style="@style/header_main_text"
-              android:text="Metamorphosis"/>
+              android:maxLines="2" />
 
     <ImageButton android:id="@+id/buttonBack"
                  android:layout_alignParentLeft="true"
@@ -36,10 +36,10 @@ use #ViewBindingBookHeader for easy initialization of this layout.
   <TextView android:id="@+id/textAuthor"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
             android:layout_marginTop="0dp"
+            android:gravity="center"
             android:textSize="16dp"
             android:textColor="@color/text_color_secondary"
-            android:text="Franz Kafka"/>
+            android:maxLines="2" />
 
 </LinearLayout>

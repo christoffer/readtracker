@@ -244,6 +244,11 @@ public class FragmentRead extends Fragment {
    * Called when the start button is clicked
    */
   private void onClickedStart() {
+    if(!mLocalReading.hasPageInfo()) {
+      ((ActivityBook) getActivity()).exitToBookInfoScreen(mLocalReading);
+      return;
+    }
+
     final Animation disappear = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_out);
     final Animation appear = AnimationUtils.loadAnimation(getActivity(), R.anim.slide_up_appear);
 
