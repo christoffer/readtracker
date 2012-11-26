@@ -16,8 +16,6 @@ import com.readtracker.tasks.SaveLocalReadingTask;
 public class ActivityAddBook extends ReadTrackerActivity {
   public static final String TAG = ActivityAddBook.class.getName();
 
-  private static LinearLayout mLayoutConnect;
-
   private LocalReading mLocalReading;
 
   private static EditText mEditTitle;
@@ -43,7 +41,7 @@ public class ActivityAddBook extends ReadTrackerActivity {
     bindEvents();
 
     if(getCurrentUser() == null) {
-      mLayoutConnect.setVisibility(View.GONE);
+      mTogglePublicPrivate.setVisibility(View.GONE);
     }
 
     Bundle extras = getIntent().getExtras();
@@ -61,7 +59,7 @@ public class ActivityAddBook extends ReadTrackerActivity {
   }
   private void setupCreateMode(Bundle extras) {
     mButtonAddBook.setText("Add");
-    mLayoutConnect.setVisibility(View.VISIBLE);
+    mTogglePublicPrivate.setVisibility(View.VISIBLE);
 
     mEditTitle.setText(extras.getString(IntentKeys.TITLE));
     mEditAuthor.setText(extras.getString(IntentKeys.AUTHOR));
@@ -71,7 +69,7 @@ public class ActivityAddBook extends ReadTrackerActivity {
 
   private void setupEditMode(LocalReading localReading) {
     mButtonAddBook.setText("Save");
-    mLayoutConnect.setVisibility(View.GONE);
+    mTogglePublicPrivate.setVisibility(View.GONE);
 
     mLocalReading = localReading;
 
@@ -90,7 +88,6 @@ public class ActivityAddBook extends ReadTrackerActivity {
   }
 
   private void bindViews() {
-    mLayoutConnect = (LinearLayout) findViewById(R.id.layoutConnect);
     mEditTitle = (EditText) findViewById(R.id.editTitle);
     mEditAuthor = (EditText) findViewById(R.id.editAuthor);
     mEditPageCount = (EditText) findViewById(R.id.editPageCount);
