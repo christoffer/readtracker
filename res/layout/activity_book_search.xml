@@ -6,14 +6,14 @@
               android:padding="12dp"
               android:orientation="vertical">
 
-  <com.readtracker.customviews.UnderlinedEditText android:id="@+id/textSearch"
-                                                  style="@style/default_input_field"
-                                                  android:layout_width="fill_parent"
-                                                  android:layout_gravity="top|center_horizontal"
-                                                  android:hint="Search Google Books..."
-                                                  android:inputType="text|textCapSentences|textAutoCorrect"
-                                                  android:layout_marginBottom="12dp"
-                                                  android:imeOptions="actionSearch"/>
+  <EditText android:id="@+id/textSearch"
+            style="@style/default_input_field"
+            android:layout_width="fill_parent"
+            android:layout_gravity="top|center_horizontal"
+            android:hint="Search Google Books..."
+            android:inputType="text|textCapSentences|textAutoCorrect"
+            android:layout_marginBottom="12dp"
+            android:imeOptions="actionSearch"/>
 
   <ListView android:id="@+id/listSearchResult"
             android:layout_height="0dp"

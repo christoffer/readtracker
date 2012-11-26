@@ -21,7 +21,7 @@
                 android:gravity="center"
                 android:text="Enter number of pages for this book"/>
 
-      <com.readtracker.customviews.UnderlinedEditText
+      <EditText
           android:id="@+id/editPageCount"
           style="@style/centered_number_input_field"
           android:layout_gravity="center_horizontal"
