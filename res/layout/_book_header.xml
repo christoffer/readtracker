@@ -28,7 +28,7 @@ use #ViewBindingBookHeader for easy initialization of this layout.
                  android:layout_width="28dp"
                  android:layout_height="36dp"
                  android:layout_marginTop="4.5dp"
-                 android:background="@drawable/default_button_background"
+                 android:background="@drawable/default_toggle_button_background"
                  android:contentDescription="Navigate: back"/>
 
   </RelativeLayout>

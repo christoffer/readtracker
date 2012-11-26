@@ -513,7 +513,7 @@ public class FragmentRead extends Fragment {
     @Override public void onAnimationStart(Animation animation) {
       if(this.enabled) {
         mButtonDone.setEnabled(true);
-        mButtonDone.setBackgroundDrawable(getResources().getDrawable(R.drawable.default_button_background));
+        mButtonDone.setBackgroundDrawable(getResources().getDrawable(R.drawable.default_toggle_button_background));
       }
     }
 

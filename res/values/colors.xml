@@ -5,7 +5,6 @@
   <color name="background">#ff000000</color>
   <color name="background_pressed">#ff171A1F</color>
 
-  <color name="midnight_medium">#ffff1e20</color>
   <color name="midnight_light">#ff171c1d</color>
 
   <color name="midnight_ultralight">#ff2d3538</color>
@@ -18,11 +17,11 @@
 
   <!-- color variations -->
   <color name="midnight_dark_tint">#ff101414</color>
-  <color name="midnight_ultralight_pressed">#ff35464c</color>
   <color name="midnight_medium_disabled">#88181e20</color>
 
   <color name="text_color_primary_slightly_transparent">#ddfffded</color>
-  <color name="text_color_primary_subtle">#88fffded</color>
-  <color name="text_color_primary_disabled">#44fffded</color>
   <color name="text_color_hint">#44fffded</color>
+
+  <color name="text_color_primary_disabled">#44fffded</color>
+  <color name="text_color_secondary_disabled">#44fffded</color>
 </resources>

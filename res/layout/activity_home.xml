@@ -22,7 +22,7 @@
     <ImageButton android:id="@+id/buttonAddBook"
                  android:layout_width="48dp"
                  android:layout_height="48dp"
-                 android:background="@drawable/default_button_background"
+                 android:background="@drawable/default_toggle_button_background"
                  android:src="@drawable/icon_add"
                  android:layout_alignParentRight="true"
                  android:contentDescription="Add new Reading" />

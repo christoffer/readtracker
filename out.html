@@ -1,0 +1,1555 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/><title>Lint Report</title>
+<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Roboto"><link rel="stylesheet" type="text/css" href="out_files/hololike.css">
+<script language="javascript"> 
+<!--
+function reveal(id) {
+if (document.getElementById) {
+document.getElementById(id).style.display = 'block';
+document.getElementById(id+'Link').style.display = 'none';
+}
+}
+//--> 
+</script>
+</head>
+<body>
+<h1>Lint Report<div class="titleSeparator"></div>
+</h1>
+Check performed at Mon Nov 26 09:32:38 CET 2012.<br/>1 errors and 131 warnings found:<br/><br/><table class="overview">
+<tr><td></td><td class="categoryColumn"><a href="#Correctness">Correctness</a>
+</td></tr>
+<tr>
+<td class="countColumn">1</td><td class="issueColumn"><img border="0" align="top" src="out_files/lint-error.png" />
+<a href="#UnknownId">UnknownId</a>
+</td></tr>
+<tr>
+<td class="countColumn">16</td><td class="issueColumn"><img border="0" align="top" src="out_files/lint-warning.png" />
+<a href="#DefaultLocale">DefaultLocale</a>
+</td></tr>
+<tr>
+<td class="countColumn">1</td><td class="issueColumn"><img border="0" align="top" src="out_files/lint-warning.png" />
+<a href="#OldTargetApi">OldTargetApi</a>
+</td></tr>
+<tr>
+<td class="countColumn">1</td><td class="issueColumn"><img border="0" align="top" src="out_files/lint-warning.png" />
+<a href="#SimpleDateFormat">SimpleDateFormat</a>
+</td></tr>
+<tr>
+<td class="countColumn">31</td><td class="issueColumn"><img border="0" align="top" src="out_files/lint-warning.png" />
+<a href="#SpUsage">SpUsage</a>
+</td></tr>
+<tr>
+<td class="countColumn">1</td><td class="issueColumn"><img border="0" align="top" src="out_files/lint-warning.png" />
+<a href="#PxUsage">PxUsage</a>
+</td></tr>
+<tr><td></td><td class="categoryColumn"><a href="#Security">Security</a>
+</td></tr>
+<tr>
+<td class="countColumn">1</td><td class="issueColumn"><img border="0" align="top" src="out_files/lint-warning.png" />
+<a href="#SetJavaScriptEnabled">SetJavaScriptEnabled</a>
+</td></tr>
+<tr>
+<td class="countColumn">1</td><td class="issueColumn"><img border="0" align="top" src="out_files/lint-warning.png" />
+<a href="#AllowBackup">AllowBackup</a>
+</td></tr>
+<tr><td></td><td class="categoryColumn"><a href="#Performance">Performance</a>
+</td></tr>
+<tr>
+<td class="countColumn">1</td><td class="issueColumn"><img border="0" align="top" src="out_files/lint-warning.png" />
+<a href="#DrawAllocation">DrawAllocation</a>
+</td></tr>
+<tr>
+<td class="countColumn">3</td><td class="issueColumn"><img border="0" align="top" src="out_files/lint-warning.png" />
+<a href="#ObsoleteLayoutParam">ObsoleteLayoutParam</a>
+</td></tr>
+<tr>
+<td class="countColumn">2</td><td class="issueColumn"><img border="0" align="top" src="out_files/lint-warning.png" />
+<a href="#HandlerLeak">HandlerLeak</a>
+</td></tr>
+<tr>
+<td class="countColumn">2</td><td class="issueColumn"><img border="0" align="top" src="out_files/lint-warning.png" />
+<a href="#UseSparseArrays">UseSparseArrays</a>
+</td></tr>
+<tr>
+<td class="countColumn">2</td><td class="issueColumn"><img border="0" align="top" src="out_files/lint-warning.png" />
+<a href="#InefficientWeight">InefficientWeight</a>
+</td></tr>
+<tr>
+<td class="countColumn">3</td><td class="issueColumn"><img border="0" align="top" src="out_files/lint-warning.png" />
+<a href="#Overdraw">Overdraw</a>
+</td></tr>
+<tr>
+<td class="countColumn">5</td><td class="issueColumn"><img border="0" align="top" src="out_files/lint-warning.png" />
+<a href="#UnusedResources">UnusedResources</a>
+</td></tr>
+<tr><td></td><td class="categoryColumn"><a href="#Usability:Icons">Usability:Icons</a>
+</td></tr>
+<tr>
+<td class="countColumn">2</td><td class="issueColumn"><img border="0" align="top" src="out_files/lint-warning.png" />
+<a href="#IconDensities">IconDensities</a>
+</td></tr>
+<tr><td></td><td class="categoryColumn"><a href="#Accessibility">Accessibility</a>
+</td></tr>
+<tr>
+<td class="countColumn">4</td><td class="issueColumn"><img border="0" align="top" src="out_files/lint-warning.png" />
+<a href="#ContentDescription">ContentDescription</a>
+</td></tr>
+<tr><td></td><td class="categoryColumn"><a href="#Internationalization">Internationalization</a>
+</td></tr>
+<tr>
+<td class="countColumn">55</td><td class="issueColumn"><img border="0" align="top" src="out_files/lint-warning.png" />
+<a href="#HardcodedText">HardcodedText</a>
+</td></tr>
+<tr><td></td><td class="categoryColumn"><a href="#MissingIssues">Disabled Checks (5)</a>
+</td></tr></table>
+<br/>
+<a name="Correctness"></a>
+<div class="category"><a href="#" title="Return to top">Correctness</a><div class="categorySeparator"></div>
+</div>
+<a name="UnknownId"></a>
+<div class="issue">
+<div class="id"><a href="#" title="Return to top">UnknownId</a><div class="issueSeparator"></div>
+</div>
+<div class="warningslist">
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/edit_highlight.xml">res/layout/edit_highlight.xml</a>:43</span>: <span class="message">The id "dividerBelowPageWheelLayout" is not defined anywhere.</span><br /><pre class="errorlines">
+<span class="lineno">  40</span>                 android:visibility="gone"
+<span class="lineno">  41</span>                 android:layout_width="fill_parent"
+<span class="lineno">  42</span>                 android:layout_height="wrap_content"
+<span class="lineno">  43</span>                 <span class="errorspan">android:layout_above="@+id/dividerBelowPageWheelLayout"</span>
+<span class="lineno">  44</span>                 android:background="@color/background"
+<span class="lineno">  45</span>                 android:paddingTop="20dp"
+</pre>
+</div>
+<div class="metadata">Priority: 8 / 10<br/>
+Category: Correctness</div>
+Severity: <span class="error">Fatal</span><div class="summary">
+Explanation: Checks for id references in RelativeLayouts that are not defined elsewhere.</div>
+<div class="explanation">
+The <code>@+id/</code> syntax refers to an existing id, or creates a new one if it has not already been defined elsewhere. However, this means that if you have a typo in your reference, or if the referred view no longer exists, you do not get a warning since the id will be created on demand. This check catches errors where you have renamed an id without updating all of the references to it.
+</div>
+<br/>To suppress this error, use the issue id "UnknownId" as explained in the <a href="#SuppressInfo">Suppressing Warnings and Errors</a> section.<br/>
+</div><a name="DefaultLocale"></a>
+<div class="issue">
+<div class="id"><a href="#" title="Return to top">DefaultLocale</a><div class="issueSeparator"></div>
+</div>
+<div class="warningslist">
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./src/main/java/com/readtracker/FragmentSessions.java">src/main/java/com/readtracker/FragmentSessions.java</a>:161</span>: <span class="message">Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead</span><br /><pre class="errorlines">
+<span class="lineno"> 158</span>     final TextView textSessionCount = (TextView) layoutSessionSummary.findViewById(R.id.textSessionCount);
+<span class="lineno"> 159</span>     final TextView textTotalTime = (TextView) layoutSessionSummary.findViewById(R.id.textTotalTime);
+<span class="lineno"> 160</span> 
+<span class="lineno"> 161</span>     final String timesRead = String.<span class="errorspan">format("%d times", mLocalSessions.size());</span>
+<span class="lineno"> 162</span>     textSessionCount.setText(timesRead);
+<span class="lineno"> 163</span> 
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./src/main/java/com/readtracker/db/LocalReading.java">src/main/java/com/readtracker/db/LocalReading.java</a>:119</span>: <span class="message">Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead</span><br /><pre class="errorlines">
+<span class="lineno"> 116</span> 
+<span class="lineno"> 117</span>   @Override
+<span class="lineno"> 118</span>   public String toString() {
+<span class="lineno"> 119</span>     return String.<span class="errorspan">format("LocalReading #%d: \"%s\" by \"%s\"", id, title, author);</span>
+<span class="lineno"> 120</span>   }
+<span class="lineno"> 121</span> 
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./src/main/java/com/readtracker/db/LocalReading.java">src/main/java/com/readtracker/db/LocalReading.java</a>:123</span>: <span class="message">Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead</span><br /><pre class="errorlines">
+<span class="lineno"> 120</span>   }
+<span class="lineno"> 121</span> 
+<span class="lineno"> 122</span>   public String getInfo() {
+<span class="lineno"> 123</span>     return String.<span class="errorspan">format("LocalReading #%d \"%s\" by \"%s\" - Page (%d/%d) over %d seconds - Readmill Reading #%s, Book #%s, User #%s State %d Closing Remark '%s' - Cover '%s'", id, title, author, currentPage, totalPages, getTimeSpentSeconds(), readmillReadingId, readmillBookId, readmillUserId, readmillState, readmillClosingRemark, coverURL);</span>
+<span class="lineno"> 124</span>   }
+<span class="lineno"> 125</span> 
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./src/main/java/com/readtracker/db/LocalSession.java">src/main/java/com/readtracker/db/LocalSession.java</a>:45</span>: <span class="message">Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead</span><br /><pre class="errorlines">
+<span class="lineno">  42</span> 
+<span class="lineno">  43</span>   @Override
+<span class="lineno">  44</span>   public String toString() {
+<span class="lineno">  45</span>     return String.<span class="errorspan">format("ReadingSession: %d seconds for ReadmillReading #%d. Occurred @ %s with SessionId: %s", durationSeconds, readmillReadingId, occurredAt.toString(), sessionIdentifier);</span>
+<span class="lineno">  46</span>   }
+<span class="lineno">  47</span> 
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./src/main/java/com/readtracker/value_objects/ReadingState.java">src/main/java/com/readtracker/value_objects/ReadingState.java</a>:32</span>: <span class="message">Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead</span><br /><pre class="errorlines">
+<span class="lineno">  29</span>   public long getActiveTimestamp() { return mActiveTimestamp; }
+<span class="lineno">  30</span> 
+<span class="lineno">  31</span>   public String toString() {
+<span class="lineno">  32</span>     return String.<span class="errorspan">format("LocalReading (%s) #%d @ %d", (isActive() ? "Active, started: " + new Date(mActiveTimestamp) : "Inactive"), mLocalReadingId, mElapsedMilliseconds);</span>
+<span class="lineno">  33</span>   }
+<span class="lineno">  34</span> 
+</pre>
+<button id="DefaultLocaleDivLink" onclick="reveal('DefaultLocaleDiv');" />+ 11 More Occurrences...</button>
+<div id="DefaultLocaleDiv" style="display: none">
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./src/main/java/com/readtracker/readmill/ReadmillApiHelper.java">src/main/java/com/readtracker/readmill/ReadmillApiHelper.java</a>:54</span>: <span class="message">Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead</span><br /><pre class="errorlines">
+<span class="lineno">  51</span>   public JSONObject createReading(long readmillBookId, boolean isPublic) throws ReadmillException {
+<span class="lineno">  52</span>     Log.i(TAG, "Creating reading on Readmill for ReadmillBook with id:" + readmillBookId + " (" + (isPublic ? "public" : "private") + ")");
+<span class="lineno">  53</span> 
+<span class="lineno">  54</span>     String endpoint = String.<span class="errorspan">format("/books/%d/readings", readmillBookId);</span>
+<span class="lineno">  55</span>     RequestBuilder request = mWrapper.post(endpoint).
+<span class="lineno">  56</span>         readingPrivate(!isPublic).
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./src/main/java/com/readtracker/readmill/ReadmillApiHelper.java">src/main/java/com/readtracker/readmill/ReadmillApiHelper.java</a>:100</span>: <span class="message">Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead</span><br /><pre class="errorlines">
+<span class="lineno">  97</span>   public JSONObject createHighlight(LocalHighlight localHighlight) throws ReadmillException {
+<span class="lineno">  98</span>     Log.i(TAG, "Creating highlight on readmill for local highlight: " + localHighlight.toString());
+<span class="lineno">  99</span> 
+<span class="lineno"> 100</span>     String endpoint = String.<span class="errorspan">format("/readings/%d/highlights", localHighlight.readmillReadingId);</span>
+<span class="lineno"> 101</span>     RequestBuilder request = mWrapper.post(endpoint).
+<span class="lineno"> 102</span>         highlightContent(localHighlight.content).
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./src/main/java/com/readtracker/readmill/ReadmillApiHelper.java">src/main/java/com/readtracker/readmill/ReadmillApiHelper.java</a>:151</span>: <span class="message">Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead</span><br /><pre class="errorlines">
+<span class="lineno"> 148</span>     Log.i(TAG, "Closing reading with id " + readmillReadingId +
+<span class="lineno"> 149</span>         " with state " + state + " and closing remark " + (closingRemark == null ? "" : closingRemark));
+<span class="lineno"> 150</span> 
+<span class="lineno"> 151</span>     String endpoint = String.<span class="errorspan">format("/readings/%d", readmillReadingId);</span>
+<span class="lineno"> 152</span> 
+<span class="lineno"> 153</span>     if(state != FINISHED &amp;&amp; state != ReadingState.ABANDONED) {
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./src/main/java/com/readtracker/readmill/ReadmillApiHelper.java">src/main/java/com/readtracker/readmill/ReadmillApiHelper.java</a>:194</span>: <span class="message">Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead</span><br /><pre class="errorlines">
+<span class="lineno"> 191</span>                          Date occurredAt) throws ReadmillException {
+<span class="lineno"> 192</span>     Log.i(TAG, "Pinging reading with id " + readmillReadingId);
+<span class="lineno"> 193</span> 
+<span class="lineno"> 194</span>     String endpoint = String.<span class="errorspan">format("/readings/%d/ping", readmillReadingId);</span>
+<span class="lineno"> 195</span> 
+<span class="lineno"> 196</span>     Log.d(TAG, "PING endpoint: " + endpoint);
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./src/main/java/com/readtracker/readmill/ReadmillApiHelper.java">src/main/java/com/readtracker/readmill/ReadmillApiHelper.java</a>:245</span>: <span class="message">Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead</span><br /><pre class="errorlines">
+<span class="lineno"> 242</span>    */
+<span class="lineno"> 243</span>   public ArrayList&lt;JSONObject> getPeriodsForReadingId(long readmillReadingId) {
+<span class="lineno"> 244</span>     Log.d(TAG, "Fetching list of Readmill Reading Periods for Readmill Reading with id: " + readmillReadingId);
+<span class="lineno"> 245</span>     String endpoint = String.<span class="errorspan">format("/readings/%d/periods", readmillReadingId);</span>
+<span class="lineno"> 246</span>     RequestBuilder request = mWrapper.get(endpoint).count(100);
+<span class="lineno"> 247</span>     ArrayList&lt;JSONObject> result = new ArrayList&lt;JSONObject>();
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./src/main/java/com/readtracker/readmill/ReadmillApiHelper.java">src/main/java/com/readtracker/readmill/ReadmillApiHelper.java</a>:277</span>: <span class="message">Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead</span><br /><pre class="errorlines">
+<span class="lineno"> 274</span>     Log.d(TAG, "Fetching list of Readmill Readings for Readmill User with id: " + userId);
+<span class="lineno"> 275</span>     ArrayList&lt;JSONObject> result = new ArrayList&lt;JSONObject>();
+<span class="lineno"> 276</span> 
+<span class="lineno"> 277</span>     String endpoint = String.<span class="errorspan">format("/users/%d/readings", userId);</span>
+<span class="lineno"> 278</span>     RequestBuilder request = mWrapper.get(endpoint).count(100).states("reading,finished,abandoned");
+<span class="lineno"> 279</span> 
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./src/main/java/com/readtracker/readmill/ReadmillApiHelper.java">src/main/java/com/readtracker/readmill/ReadmillApiHelper.java</a>:305</span>: <span class="message">Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead</span><br /><pre class="errorlines">
+<span class="lineno"> 302</span> 
+<span class="lineno"> 303</span>     ArrayList&lt;JSONObject> result = new ArrayList&lt;JSONObject>();
+<span class="lineno"> 304</span> 
+<span class="lineno"> 305</span>     String endpoint = String.<span class="errorspan">format("/readings/%d/highlights", readmillReadingId);</span>
+<span class="lineno"> 306</span>     RequestBuilder request = mWrapper.get(endpoint).count(100);
+<span class="lineno"> 307</span> 
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./src/main/java/com/readtracker/readmill/ReadmillApiHelper.java">src/main/java/com/readtracker/readmill/ReadmillApiHelper.java</a>:393</span>: <span class="message">Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead</span><br /><pre class="errorlines">
+<span class="lineno"> 390</span> 
+<span class="lineno"> 391</span>     try {
+<span class="lineno"> 392</span>       Log.d(TAG, "Readmill replied with interesting reading. Attempting upgrade to 'reading'");
+<span class="lineno"> 393</span>       String endpoint = String.<span class="errorspan">format("/readings/%d", reading.getInt("id"));</span>
+<span class="lineno"> 394</span>       RequestBuilder request = mWrapper.put(endpoint).readingState("reading");
+<span class="lineno"> 395</span>       sendRequest(request, "update reading to 'reading' state", 200);
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./src/main/java/com/readtracker/Utils.java">src/main/java/com/readtracker/Utils.java</a>:67</span>: <span class="message">Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead</span><br /><pre class="errorlines">
+<span class="lineno">  64</span> 
+<span class="lineno">  65</span>   private static String _pluralized(long number, String name) {
+<span class="lineno">  66</span>     if(number == 1) {
+<span class="lineno">  67</span>       return String.<span class="errorspan">format("%d %s", number, name); // 1 hour</span>
+<span class="lineno">  68</span>     }
+<span class="lineno">  69</span>     return String.format("%d %ss", number, name); // 4 hours
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./src/main/java/com/readtracker/Utils.java">src/main/java/com/readtracker/Utils.java</a>:69</span>: <span class="message">Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead</span><br /><pre class="errorlines">
+<span class="lineno">  66</span>     if(number == 1) {
+<span class="lineno">  67</span>       return String.format("%d %s", number, name); // 1 hour
+<span class="lineno">  68</span>     }
+<span class="lineno">  69</span>     return String.<span class="errorspan">format("%d %ss", number, name); // 4 hours</span>
+<span class="lineno">  70</span>   }
+<span class="lineno">  71</span> 
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./src/main/java/com/readtracker/Utils.java">src/main/java/com/readtracker/Utils.java</a>:86</span>: <span class="message">Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead</span><br /><pre class="errorlines">
+<span class="lineno">  83</span>   }
+<span class="lineno">  84</span> 
+<span class="lineno">  85</span>   public static String pluralizeWithCount(int num, String noun) {
+<span class="lineno">  86</span>     return String.<span class="errorspan">format("%d %s", num, pluralize(num, noun));</span>
+<span class="lineno">  87</span>   }
+<span class="lineno">  88</span> 
+</pre>
+</div>
+</div>
+<div class="metadata">Priority: 6 / 10<br/>
+Category: Correctness</div>
+Severity: <span class="warning">Warning</span><div class="summary">
+Explanation: Finds calls to locale-ambiguous String manipulation methods.</div>
+<div class="explanation">
+Calling <code>String#toLowerCase()</code> or <code>#toUpperCase()</code> <b>without specifying an explicit locale</b> is a common source of bugs. The reason for that is that those methods will use the current locale on the user's device, and even though the code appears to work correctly when you are developing the app, it will fail in some locales. For example, in the Turkish locale, the uppercase replacement for <code>i</code> is <b>not</b> <code>I</code>.<br/>
+<br/>
+If you want the methods to just perform ASCII replacement, for example to convert an enum name, call <code>String#toUpperCase(Locale.US)</code> instead. If you really want to use the current locale, call <code>String#toUpperCase(Locale.getDefault())</code> instead.
+</div>
+<br/><div class="moreinfo">More info: <a href="http://developer.android.com/reference/java/util/Locale.html#default_locale">http://developer.android.com/reference/java/util/Locale.html#default_locale</a></div>
+<br/>To suppress this error, use the issue id "DefaultLocale" as explained in the <a href="#SuppressInfo">Suppressing Warnings and Errors</a> section.<br/>
+</div><a name="OldTargetApi"></a>
+<div class="issue">
+<div class="id"><a href="#" title="Return to top">OldTargetApi</a><div class="issueSeparator"></div>
+</div>
+<div class="warningslist">
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./AndroidManifest.xml">AndroidManifest.xml</a>:14</span>: <span class="message">Not targeting the latest versions of Android; compatibility modes apply. Consider testing and updating this version. Consult the android.os.Build.VERSION_CODES javadoc for details.</span><br /><pre class="errorlines">
+<span class="lineno">  11</span>                     android:normalScreens="true"
+<span class="lineno">  12</span>                     android:smallScreens="false" />
+<span class="lineno">  13</span> 
+<span class="lineno">  14</span>   <span class="errorspan">&lt;uses-sdk android:minSdkVersion="8" android:targetSdkVersion="15" /></span>
+<span class="lineno">  15</span> 
+<span class="lineno">  16</span>   &lt;application android:icon="@drawable/icon"
+</pre>
+</div>
+<div class="metadata">Priority: 6 / 10<br/>
+Category: Correctness</div>
+Severity: <span class="warning">Warning</span><div class="summary">
+Explanation: Checks that the manifest specifies a targetSdkVersion that is recent.</div>
+<div class="explanation">
+When your application runs on a version of Android that is more recent than your <code>targetSdkVersion</code> specifies that it has been tested with, various compatibility modes kick in. This ensures that your application continues to work, but it may look out of place. For example, if the <code>targetSdkVersion</code> is less than 14, your app may get an option button in the UI.<br/>
+<br/>
+To fix this issue, set the <code>targetSdkVersion</code> to the highest available value. Then test your app to make sure everything works correctly. You may want to consult the compatibility notes to see what changes apply to each version you are adding support for: <a href="http://developer.android.com/reference/android/os/Build.VERSION_CODES.html">http://developer.android.com/reference/android/os/Build.VERSION_CODES.html</a>
+</div>
+<br/><div class="moreinfo">More info: <a href="http://developer.android.com/reference/android/os/Build.VERSION_CODES.html">http://developer.android.com/reference/android/os/Build.VERSION_CODES.html</a></div>
+<br/>To suppress this error, use the issue id "OldTargetApi" as explained in the <a href="#SuppressInfo">Suppressing Warnings and Errors</a> section.<br/>
+</div><a name="SimpleDateFormat"></a>
+<div class="issue">
+<div class="id"><a href="#" title="Return to top">SimpleDateFormat</a><div class="issueSeparator"></div>
+</div>
+<div class="warningslist">
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./src/main/java/com/readtracker/readmill/ReadmillApiHelper.java">src/main/java/com/readtracker/readmill/ReadmillApiHelper.java</a>:31</span>: <span class="message">To get local formatting use getDateInstance(), getDateTimeInstance(), or getTimeInstance(), or use new SimpleDateFormat(String template, Locale locale) with for example Locale.US for ASCII dates.</span><br /><pre class="errorlines">
+<span class="lineno">  28</span>   private static final String TAG = ReadmillApiHelper.class.getSimpleName();
+<span class="lineno">  29</span> 
+<span class="lineno">  30</span>   private static final String ISO8601 = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+<span class="lineno">  31</span>   private static final <span class="errorspan">SimpleDateFormat iso8601Format = new SimpleDateFormat(ISO8601);</span>
+<span class="lineno">  32</span> 
+<span class="lineno">  33</span>   ReadmillWrapper mWrapper;
+</pre>
+</div>
+<div class="metadata">Priority: 6 / 10<br/>
+Category: Correctness</div>
+Severity: <span class="warning">Warning</span><div class="summary">
+Explanation: Using SimpleDateFormat directly without an explicit locale.</div>
+<div class="explanation">
+Almost all callers should use <code>getDateInstance()</code>, <code>getDateTimeInstance()</code>, or <code>getTimeInstance()</code> to get a ready-made instance of SimpleDateFormat suitable for the user's locale. The main reason you'd create an instance this class directly is because you need to format/parse a specific machine-readable format, in which case you almost certainly want to explicitly ask for US to ensure that you get ASCII digits (rather than, say, Arabic digits).<br/>
+<br/>
+Therefore, you should either use the form of the SimpleDateFormat constructor where you pass in an explicit locale, such as Locale.US, or use one of the get instance methods, or suppress this error if really know what you are doing.
+</div>
+<br/><div class="moreinfo">More info: <a href="http://developer.android.com/reference/java/text/SimpleDateFormat.html">http://developer.android.com/reference/java/text/SimpleDateFormat.html</a></div>
+<br/>To suppress this error, use the issue id "SimpleDateFormat" as explained in the <a href="#SuppressInfo">Suppressing Warnings and Errors</a> section.<br/>
+</div><a name="SpUsage"></a>
+<div class="issue">
+<div class="id"><a href="#" title="Return to top">SpUsage</a><div class="issueSeparator"></div>
+</div>
+<div class="warningslist">
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/_book_header.xml">res/layout/_book_header.xml</a>:41</span>: <span class="message">Should use "sp" instead of "dp" for text sizes</span><br /><pre class="errorlines">
+<span class="lineno">  38</span>             android:layout_height="wrap_content"
+<span class="lineno">  39</span>             android:layout_marginTop="0dp"
+<span class="lineno">  40</span>             android:gravity="center"
+<span class="lineno">  41</span>             <span class="errorspan">android:textSize="16dp"</span>
+<span class="lineno">  42</span>             android:textColor="@color/text_color_secondary"
+<span class="lineno">  43</span>             android:maxLines="2" />
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/_closing_remark.xml">res/layout/_closing_remark.xml</a>:8</span>: <span class="message">Should use "sp" instead of "dp" for text sizes</span><br /><pre class="errorlines">
+<span class="lineno">   5</span>           android:layout_height="wrap_content"
+<span class="lineno">   6</span>           android:layout_width="fill_parent"
+<span class="lineno">   7</span>           android:padding="20dp"
+<span class="lineno">   8</span>           <span class="errorspan">android:textSize="16dp"</span>
+<span class="lineno">   9</span>           android:lineSpacingMultiplier="1.2"
+<span class="lineno">  10</span>           android:typeface="serif"
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/_duration_picker.xml">res/layout/_duration_picker.xml</a>:28</span>: <span class="message">Should use "sp" instead of "dp" for text sizes</span><br /><pre class="errorlines">
+<span class="lineno">  25</span>               android:paddingRight="10dp"
+<span class="lineno">  26</span>               android:text="2 hours 45 minutes..."
+<span class="lineno">  27</span>               android:textColor="@color/text_color_secondary"
+<span class="lineno">  28</span>               <span class="errorspan">android:textSize="18dp"/></span>
+<span class="lineno">  29</span> 
+<span class="lineno">  30</span>     &lt;/LinearLayout>
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/_progress_picker.xml">res/layout/_progress_picker.xml</a>:20</span>: <span class="message">Should use "sp" instead of "dp" for text sizes</span><br /><pre class="errorlines">
+<span class="lineno">  17</span>     &lt;!-- ended on label -->
+<span class="lineno">  18</span>     &lt;TextView android:layout_height="wrap_content"
+<span class="lineno">  19</span>               android:layout_width="wrap_content"
+<span class="lineno">  20</span>               <span class="errorspan">android:textSize="18dp"</span>
+<span class="lineno">  21</span>               android:text="Ended on"
+<span class="lineno">  22</span>               android:layout_marginRight="24dp"
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/_progress_picker.xml">res/layout/_progress_picker.xml</a>:44</span>: <span class="message">Should use "sp" instead of "dp" for text sizes</span><br /><pre class="errorlines">
+<span class="lineno">  41</span>               android:id="@+id/textDot"
+<span class="lineno">  42</span>               android:text="."
+<span class="lineno">  43</span>               android:textColor="@color/text_color_primary"
+<span class="lineno">  44</span>               <span class="errorspan">android:textSize="20dp"/></span>
+<span class="lineno">  45</span> 
+<span class="lineno">  46</span>     &lt;com.readtracker.thirdparty.widget.WheelView android:id="@+id/wheelEndPercentFraction"
+</pre>
+<button id="SpUsageDivLink" onclick="reveal('SpUsageDiv');" />+ 26 More Occurrences...</button>
+<div id="SpUsageDiv" style="display: none">
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/_reading_session_summary.xml">res/layout/_reading_session_summary.xml</a>:17</span>: <span class="message">Should use "sp" instead of "dp" for text sizes</span><br /><pre class="errorlines">
+<span class="lineno">  14</span>             android:text="97 times"
+<span class="lineno">  15</span>             android:gravity="center"
+<span class="lineno">  16</span>             android:textStyle="bold"
+<span class="lineno">  17</span>             <span class="errorspan">android:textSize="70dp"</span>
+<span class="lineno">  18</span>             android:textColor="@color/text_color_primary" />
+<span class="lineno">  19</span> 
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/_reading_session_summary.xml">res/layout/_reading_session_summary.xml</a>:24</span>: <span class="message">Should use "sp" instead of "dp" for text sizes</span><br /><pre class="errorlines">
+<span class="lineno">  21</span>             android:layout_width="fill_parent"
+<span class="lineno">  22</span>             android:layout_height="wrap_content"
+<span class="lineno">  23</span>             android:text="2 hours 45 minutes"
+<span class="lineno">  24</span>             <span class="errorspan">android:textSize="30dp"</span>
+<span class="lineno">  25</span>             android:gravity="center"
+<span class="lineno">  26</span>             android:textColor="@color/text_color_primary" />
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/close.xml">res/layout/close.xml</a>:23</span>: <span class="message">Should use "sp" instead of "dp" for text sizes</span><br /><pre class="errorlines">
+<span class="lineno">  20</span>       &lt;TextView android:id="@+id/textFinishAction"
+<span class="lineno">  21</span>                 android:layout_width="fill_parent"
+<span class="lineno">  22</span>                 android:layout_height="wrap_content"
+<span class="lineno">  23</span>                 <span class="errorspan">android:textSize="18dp"</span>
+<span class="lineno">  24</span>                 android:textStyle="normal"
+<span class="lineno">  25</span>                 android:gravity="center"
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/close.xml">res/layout/close.xml</a>:34</span>: <span class="message">Should use "sp" instead of "dp" for text sizes</span><br /><pre class="errorlines">
+<span class="lineno">  31</span>       &lt;TextView android:id="@+id/textFinishTitle"
+<span class="lineno">  32</span>                 android:layout_width="fill_parent"
+<span class="lineno">  33</span>                 android:layout_height="wrap_content"
+<span class="lineno">  34</span>                 <span class="errorspan">android:textSize="22dp"</span>
+<span class="lineno">  35</span>                 android:textStyle="bold"
+<span class="lineno">  36</span>                 android:gravity="center"
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/close.xml">res/layout/close.xml</a>:45</span>: <span class="message">Should use "sp" instead of "dp" for text sizes</span><br /><pre class="errorlines">
+<span class="lineno">  42</span>                 android:layout_height="wrap_content"
+<span class="lineno">  43</span>                 android:layout_marginTop="10dp"
+<span class="lineno">  44</span>                 android:layout_marginBottom="30dp"
+<span class="lineno">  45</span>                 <span class="errorspan">android:textSize="14dp"</span>
+<span class="lineno">  46</span>                 android:textStyle="normal"
+<span class="lineno">  47</span>                 android:gravity="center"
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/close.xml">res/layout/close.xml</a>:61</span>: <span class="message">Should use "sp" instead of "dp" for text sizes</span><br /><pre class="errorlines">
+<span class="lineno">  58</span>                 android:text="Photography is the art that justifies atrocity: war photography, pornography, memento mori, footprints left on a landscape where the last great auk died. None of us is innocent."
+<span class="lineno">  59</span>                 android:typeface="serif"
+<span class="lineno">  60</span>                 android:textStyle="italic"
+<span class="lineno">  61</span>                 <span class="errorspan">android:textSize="16dp"</span>
+<span class="lineno">  62</span>                 android:inputType="text|textCapSentences|textAutoCorrect|textMultiLine"
+<span class="lineno">  63</span>                 android:padding="15dp" />
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/edit_highlight.xml">res/layout/edit_highlight.xml</a>:26</span>: <span class="message">Should use "sp" instead of "dp" for text sizes</span><br /><pre class="errorlines">
+<span class="lineno">  23</span>               android:text=""
+<span class="lineno">  24</span>               android:typeface="serif"
+<span class="lineno">  25</span>               android:textStyle="italic"
+<span class="lineno">  26</span>               <span class="errorspan">android:textSize="16dp"</span>
+<span class="lineno">  27</span>               android:padding="15dp"
+<span class="lineno">  28</span>               android:inputType="text|textCapSentences|textAutoCorrect|textMultiLine"
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/fragment_read.xml">res/layout/fragment_read.xml</a>:12</span>: <span class="message">Should use "sp" instead of "dp" for text sizes</span><br /><pre class="errorlines">
+<span class="lineno">   9</span>             style="@style/default_text"
+<span class="lineno">  10</span>             android:layout_width="fill_parent"
+<span class="lineno">  11</span>             android:layout_height="wrap_content"
+<span class="lineno">  12</span>             <span class="errorspan">android:textSize="20dp"</span>
+<span class="lineno">  13</span>             android:layout_centerVertical="true"
+<span class="lineno">  14</span>             android:text="Please add page count"
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/highlight_list_item.xml">res/layout/highlight_list_item.xml</a>:16</span>: <span class="message">Should use "sp" instead of "dp" for text sizes</span><br /><pre class="errorlines">
+<span class="lineno">  13</span>             android:layout_width="fill_parent"
+<span class="lineno">  14</span>             android:background="@color/text_color_primary"
+<span class="lineno">  15</span>             android:textColor="@color/midnight_light"
+<span class="lineno">  16</span>             <span class="errorspan">android:textSize="12dp"</span>
+<span class="lineno">  17</span>             android:textStyle="italic"
+<span class="lineno">  18</span>             android:typeface="serif"
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/local_reading_item_finished.xml">res/layout/local_reading_item_finished.xml</a>:45</span>: <span class="message">Should use "sp" instead of "dp" for text sizes</span><br /><pre class="errorlines">
+<span class="lineno">  42</span>             android:layout_marginTop="9dp"
+<span class="lineno">  43</span>             android:background="@drawable/quote_background"
+<span class="lineno">  44</span>             android:paddingLeft="6dp"
+<span class="lineno">  45</span>             <span class="errorspan">android:textSize="12dp"</span>
+<span class="lineno">  46</span>             android:textColor="@color/text_color_secondary"
+<span class="lineno">  47</span>             android:text="&#8211; Something something something something smething seomthjigs"
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/local_reading_item_finished.xml">res/layout/local_reading_item_finished.xml</a>:54</span>: <span class="message">Should use "sp" instead of "dp" for text sizes</span><br /><pre class="errorlines">
+<span class="lineno">  51</span>             style="@style/default_text"
+<span class="lineno">  52</span>             android:layout_below="@id/textClosingRemark"
+<span class="lineno">  53</span>             android:layout_marginTop="5dp"
+<span class="lineno">  54</span>             <span class="errorspan">android:textSize="10dp"</span>
+<span class="lineno">  55</span>             android:textColor="@color/text_color_secondary"
+<span class="lineno">  56</span>             android:text="Finished Nov 13th, 2012" />
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/local_session_item.xml">res/layout/local_session_item.xml</a>:19</span>: <span class="message">Should use "sp" instead of "dp" for text sizes</span><br /><pre class="errorlines">
+<span class="lineno">  16</span>   &lt;TextView android:id="@+id/textDuration"
+<span class="lineno">  17</span>             android:layout_width="fill_parent"
+<span class="lineno">  18</span>             android:layout_height="wrap_content"
+<span class="lineno">  19</span>             <span class="errorspan">android:textSize="12dp"</span>
+<span class="lineno">  20</span>             android:gravity="right"
+<span class="lineno">  21</span>             android:layout_centerInParent="true"
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/values/styles.xml">res/values/styles.xml</a>:6</span>: <span class="message">Should use "sp" instead of "dp" for text sizes</span><br /><pre class="errorlines">
+<span class="lineno">   3</span>   &lt;style name="default_button">
+<span class="lineno">   4</span>     &lt;item name="android:layout_width">fill_parent&lt;/item>
+<span class="lineno">   5</span>     &lt;item name="android:layout_height">48dp&lt;/item>
+<span class="lineno">   6</span>     &lt;item name="android:textSize"><span class="errorspan">18dp&lt;/item></span>
+<span class="lineno">   7</span>     &lt;item name="android:paddingLeft">24dp&lt;/item>
+<span class="lineno">   8</span>     &lt;item name="android:paddingRight">24dp&lt;/item>
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/values/styles.xml">res/values/styles.xml</a>:48</span>: <span class="message">Should use "sp" instead of "dp" for text sizes</span><br /><pre class="errorlines">
+<span class="lineno">  45</span>     &lt;item name="android:paddingTop">8dip&lt;/item>
+<span class="lineno">  46</span>     &lt;item name="android:paddingBottom">8dip&lt;/item>
+<span class="lineno">  47</span>     &lt;item name="android:textColor">@color/state_sensitive_text&lt;/item>
+<span class="lineno">  48</span>     &lt;item name="android:textSize"><span class="errorspan">16dp&lt;/item></span>
+<span class="lineno">  49</span>     &lt;item name="android:gravity">center&lt;/item>
+<span class="lineno">  50</span>   &lt;/style>
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/values/styles.xml">res/values/styles.xml</a>:63</span>: <span class="message">Should use "sp" instead of "dp" for text sizes</span><br /><pre class="errorlines">
+<span class="lineno">  60</span>     &lt;item name="android:paddingRight">12dp&lt;/item>
+<span class="lineno">  61</span>     &lt;item name="android:paddingTop">3dp&lt;/item>
+<span class="lineno">  62</span>     &lt;item name="android:paddingBottom">3dp&lt;/item>
+<span class="lineno">  63</span>     &lt;item name="android:textSize"><span class="errorspan">16dp&lt;/item></span>
+<span class="lineno">  64</span>     &lt;item name="android:textColor">@color/state_sensitive_text&lt;/item>
+<span class="lineno">  65</span>     &lt;item name="android:textColorHint">@color/text_color_hint&lt;/item>
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/values/styles.xml">res/values/styles.xml</a>:75</span>: <span class="message">Should use "sp" instead of "dp" for text sizes</span><br /><pre class="errorlines">
+<span class="lineno">  72</span>     &lt;item name="android:layout_height">wrap_content&lt;/item>
+<span class="lineno">  73</span>     &lt;item name="android:layout_width">wrap_content&lt;/item>
+<span class="lineno">  74</span>     &lt;item name="android:inputType">number&lt;/item>
+<span class="lineno">  75</span>     &lt;item name="android:textSize"><span class="errorspan">40dp&lt;/item></span>
+<span class="lineno">  76</span>     &lt;item name="android:maxLength">6&lt;/item>
+<span class="lineno">  77</span>     &lt;item name="android:paddingTop">16dp&lt;/item>
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/values/styles.xml">res/values/styles.xml</a>:140</span>: <span class="message">Should use "sp" instead of "dp" for text sizes</span><br /><pre class="errorlines">
+<span class="lineno"> 137</span>     &lt;item name="android:layout_height">wrap_content&lt;/item>
+<span class="lineno"> 138</span>     &lt;item name="android:layout_marginTop">6dp&lt;/item>
+<span class="lineno"> 139</span>     &lt;item name="android:layout_marginBottom">6dp&lt;/item>
+<span class="lineno"> 140</span>     &lt;item name="android:textSize"><span class="errorspan">14dp&lt;/item></span>
+<span class="lineno"> 141</span>     &lt;item name="android:textColor">@color/text_color_secondary&lt;/item>
+<span class="lineno"> 142</span>   &lt;/style>
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/values/styles.xml">res/values/styles.xml</a>:188</span>: <span class="message">Should use "sp" instead of "dp" for text sizes</span><br /><pre class="errorlines">
+<span class="lineno"> 185</span>     &lt;item name="android:layout_height">fill_parent&lt;/item>
+<span class="lineno"> 186</span>     &lt;item name="android:gravity">center&lt;/item>
+<span class="lineno"> 187</span>     &lt;item name="android:text">:&lt;/item>
+<span class="lineno"> 188</span>     &lt;item name="android:textSize"><span class="errorspan">50dp&lt;/item></span>
+<span class="lineno"> 189</span>     &lt;item name="android:textColor">@color/text_color_primary&lt;/item>
+<span class="lineno"> 190</span>   &lt;/style>
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/values/styles.xml">res/values/styles.xml</a>:214</span>: <span class="message">Should use "sp" instead of "dp" for text sizes</span><br /><pre class="errorlines">
+<span class="lineno"> 211</span>     &lt;item name="android:padding">6dp&lt;/item>
+<span class="lineno"> 212</span>     &lt;item name="android:background">@color/background&lt;/item>
+<span class="lineno"> 213</span>     &lt;item name="android:textColor">@color/text_color_secondary&lt;/item>
+<span class="lineno"> 214</span>     &lt;item name="android:textSize"><span class="errorspan">14dp&lt;/item></span>
+<span class="lineno"> 215</span>   &lt;/style>
+<span class="lineno"> 216</span> 
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/values/styles.xml">res/values/styles.xml</a>:229</span>: <span class="message">Should use "sp" instead of "dp" for text sizes</span><br /><pre class="errorlines">
+<span class="lineno"> 226</span>     &lt;item name="android:layout_width">wrap_content&lt;/item>
+<span class="lineno"> 227</span>     &lt;item name="android:layout_height">wrap_content&lt;/item>
+<span class="lineno"> 228</span>     &lt;item name="android:gravity">center&lt;/item>
+<span class="lineno"> 229</span>     &lt;item name="android:textSize"><span class="errorspan">40dp&lt;/item></span>
+<span class="lineno"> 230</span>     &lt;item name="android:singleLine">true&lt;/item>
+<span class="lineno"> 231</span>     &lt;item name="android:textColor">@color/text_color_primary&lt;/item>
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/values/styles.xml">res/values/styles.xml</a>:245</span>: <span class="message">Should use "sp" instead of "dp" for text sizes</span><br /><pre class="errorlines">
+<span class="lineno"> 242</span>     &lt;item name="android:layout_width">wrap_content&lt;/item>
+<span class="lineno"> 243</span>     &lt;item name="android:layout_height">wrap_content&lt;/item>
+<span class="lineno"> 244</span>     &lt;item name="android:gravity">center_vertical&lt;/item>
+<span class="lineno"> 245</span>     &lt;item name="android:textSize"><span class="errorspan">12dp&lt;/item></span>
+<span class="lineno"> 246</span>     &lt;item name="android:singleLine">true&lt;/item>
+<span class="lineno"> 247</span>     &lt;item name="android:textColor">@color/text_color_primary&lt;/item>
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/values/styles.xml">res/values/styles.xml</a>:254</span>: <span class="message">Should use "sp" instead of "dp" for text sizes</span><br /><pre class="errorlines">
+<span class="lineno"> 251</span>     &lt;item name="android:background">@color/background&lt;/item>
+<span class="lineno"> 252</span>     &lt;item name="android:layout_width">fill_parent&lt;/item>
+<span class="lineno"> 253</span>     &lt;item name="android:layout_height">wrap_content&lt;/item>
+<span class="lineno"> 254</span>     &lt;item name="android:textSize"><span class="errorspan">12dp&lt;/item></span>
+<span class="lineno"> 255</span>     &lt;item name="android:textColor">@color/text_color_primary&lt;/item>
+<span class="lineno"> 256</span>     &lt;item name="android:paddingTop">2dp&lt;/item>
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/values/styles.xml">res/values/styles.xml</a>:290</span>: <span class="message">Should use "sp" instead of "dp" for text sizes</span><br /><pre class="errorlines">
+<span class="lineno"> 287</span>   &lt;/style>
+<span class="lineno"> 288</span> 
+<span class="lineno"> 289</span>   &lt;style name="reading_session_text_active">
+<span class="lineno"> 290</span>     &lt;item name="android:textSize"><span class="errorspan">40dp&lt;/item></span>
+<span class="lineno"> 291</span>     &lt;item name="android:textStyle">normal&lt;/item>
+<span class="lineno"> 292</span>     &lt;item name="android:layout_width">wrap_content&lt;/item>
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/values/styles.xml">res/values/styles.xml</a>:300</span>: <span class="message">Should use "sp" instead of "dp" for text sizes</span><br /><pre class="errorlines">
+<span class="lineno"> 297</span>   &lt;/style>
+<span class="lineno"> 298</span> 
+<span class="lineno"> 299</span>   &lt;style name="reading_session_text_passive" parent="reading_session_text_active">
+<span class="lineno"> 300</span>     &lt;item name="android:textSize"><span class="errorspan">24dp&lt;/item></span>
+<span class="lineno"> 301</span>     &lt;item name="android:textColor">#ff273134&lt;/item>
+<span class="lineno"> 302</span>   &lt;/style>
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/values/styles.xml">res/values/styles.xml</a>:310</span>: <span class="message">Should use "sp" instead of "dp" for text sizes</span><br /><pre class="errorlines">
+<span class="lineno"> 307</span>     &lt;item name="android:layout_height">wrap_content&lt;/item>
+<span class="lineno"> 308</span>     &lt;item name="android:lines">1&lt;/item>
+<span class="lineno"> 309</span>     &lt;item name="android:layout_marginTop">6dp&lt;/item>
+<span class="lineno"> 310</span>     &lt;item name="android:textSize"><span class="errorspan">24dp&lt;/item></span>
+<span class="lineno"> 311</span>     &lt;item name="android:paddingLeft">18dp&lt;/item>
+<span class="lineno"> 312</span>     &lt;item name="android:paddingRight">18dp&lt;/item>
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/values/styles.xml">res/values/styles.xml</a>:321</span>: <span class="message">Should use "sp" instead of "dp" for text sizes</span><br /><pre class="errorlines">
+<span class="lineno"> 318</span>   &lt;!-- style for normal text usage -->
+<span class="lineno"> 319</span> 
+<span class="lineno"> 320</span>   &lt;style name="default_text">
+<span class="lineno"> 321</span>     &lt;item name="android:textSize"><span class="errorspan">14dp&lt;/item></span>
+<span class="lineno"> 322</span>     &lt;item name="android:color">@color/text_color_primary&lt;/item>
+<span class="lineno"> 323</span>     &lt;item name="android:layout_width">wrap_content&lt;/item>
+</pre>
+</div>
+</div>
+<div class="metadata">Priority: 3 / 10<br/>
+Category: Correctness</div>
+Severity: <span class="warning">Warning</span><div class="summary">
+Explanation: Looks for uses of "dp" instead of "sp" dimensions for text sizes.</div>
+<div class="explanation">
+When setting text sizes, you should normally use <code>sp</code>, or "scale-independent pixels". This is like the <code>dp</code> unit, but it is also scaled by the user's font size preference. It is recommend you use this unit when specifying font sizes, so they will be adjusted for both the screen density and the user's preference.<br/>
+<br/>
+There <b>are</b> cases where you might need to use <code>dp</code>; typically this happens when the text is in a container with a specific dp-size. This will prevent the text from spilling outside the container. Note however that this means that the user's font size settings are not respected, so consider adjusting the layout itself to be more flexible.
+</div>
+<br/><div class="moreinfo">More info: <a href="http://developer.android.com/training/multiscreen/screendensities.html">http://developer.android.com/training/multiscreen/screendensities.html</a></div>
+<br/>To suppress this error, use the issue id "SpUsage" as explained in the <a href="#SuppressInfo">Suppressing Warnings and Errors</a> section.<br/>
+</div><a name="PxUsage"></a>
+<div class="issue">
+<div class="id"><a href="#" title="Return to top">PxUsage</a><div class="issueSeparator"></div>
+</div>
+<div class="warningslist">
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/values/styles.xml">res/values/styles.xml</a>:236</span>: <span class="message">Avoid using "px" as units; use "dp" instead</span><br /><pre class="errorlines">
+<span class="lineno"> 233</span> 
+<span class="lineno"> 234</span>   &lt;style name="thick_divider">
+<span class="lineno"> 235</span>     &lt;item name="android:background">#ff773355&lt;/item>
+<span class="lineno"> 236</span>     &lt;item name="android:layout_height"><span class="errorspan">2px&lt;/item></span>
+<span class="lineno"> 237</span>     &lt;item name="android:layout_width">fill_parent&lt;/item>
+<span class="lineno"> 238</span>     &lt;item name="android:layout_marginBottom">13dp&lt;/item>p"
+</pre>
+</div>
+<div class="metadata">Note: This issue has an associated quickfix operation in Eclipse/ADT&nbsp;<img border="0" align="top" src="out_files/lint-run.png" />
+<br>
+Priority: 2 / 10<br/>
+Category: Correctness</div>
+Severity: <span class="warning">Warning</span><div class="summary">
+Explanation: Looks for use of the "px" dimension.</div>
+<div class="explanation">
+For performance reasons and to keep the code simpler, the Android system uses pixels as the standard unit for expressing dimension or coordinate values. That means that the dimensions of a view are always expressed in the code using pixels, but always based on the current screen density. For instance, if <code>myView.getWidth()</code> returns 10, the view is 10 pixels wide on the current screen, but on a device with a higher density screen, the value returned might be 15. If you use pixel values in your application code to work with bitmaps that are not pre-scaled for the current screen density, you might need to scale the pixel values that you use in your code to match the un-scaled bitmap source.
+</div>
+<br/><div class="moreinfo">More info: <a href="http://developer.android.com/guide/practices/screens_support.html#screen-independence">http://developer.android.com/guide/practices/screens_support.html#screen-independence</a></div>
+<br/>To suppress this error, use the issue id "PxUsage" as explained in the <a href="#SuppressInfo">Suppressing Warnings and Errors</a> section.<br/>
+</div>
+<a name="Security"></a>
+<div class="category"><a href="#" title="Return to top">Security</a><div class="categorySeparator"></div>
+</div>
+<a name="SetJavaScriptEnabled"></a>
+<div class="issue">
+<div class="id"><a href="#" title="Return to top">SetJavaScriptEnabled</a><div class="issueSeparator"></div>
+</div>
+<div class="warningslist">
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./src/main/java/com/readtracker/ActivitySignInAndAuthorize.java">src/main/java/com/readtracker/ActivitySignInAndAuthorize.java</a>:116</span>: <span class="message">Using setJavaScriptEnabled can introduce XSS vulnerabilities into you application, review carefully.</span><br /><pre class="errorlines">
+<span class="lineno"> 113</span> 
+<span class="lineno"> 114</span>     });
+<span class="lineno"> 115</span> 
+<span class="lineno"> 116</span>     <span class="errorspan">webView.getSettings().setJavaScriptEnabled(true);</span>
+<span class="lineno"> 117</span>     return webView;
+<span class="lineno"> 118</span>   }
+</pre>
+</div>
+<div class="metadata">Priority: 6 / 10<br/>
+Category: Security</div>
+Severity: <span class="warning">Warning</span><div class="summary">
+Explanation: Looks for invocations of android.webkit.WebSettings.setJavaScriptEnabled.</div>
+<div class="explanation">
+Your code should not invoke <code>setJavaScriptEnabled</code> if you are not sure thatyour app really requires JavaScript support.
+</div>
+<br/><div class="moreinfo">More info: <a href="http://developer.android.com/guide/practices/security.html">http://developer.android.com/guide/practices/security.html</a></div>
+<br/>To suppress this error, use the issue id "SetJavaScriptEnabled" as explained in the <a href="#SuppressInfo">Suppressing Warnings and Errors</a> section.<br/>
+</div><a name="AllowBackup"></a>
+<div class="issue">
+<div class="id"><a href="#" title="Return to top">AllowBackup</a><div class="issueSeparator"></div>
+</div>
+<div class="warningslist">
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./AndroidManifest.xml">AndroidManifest.xml</a>:16</span>: <span class="message">Should explicitly set android:allowBackup to true or false (it's true by default, and that can have some security implications for the application's data)</span><br /><pre class="errorlines">
+<span class="lineno">  13</span> 
+<span class="lineno">  14</span>   &lt;uses-sdk android:minSdkVersion="8" android:targetSdkVersion="15" />
+<span class="lineno">  15</span> 
+<span class="lineno">  16</span>   <span class="errorspan">&lt;application android:icon="@drawable/icon"</span>
+<span class="lineno">  17</span>                android:label="ReadTracker"
+<span class="lineno">  18</span>                android:name=".ApplicationReadTracker"
+</pre>
+</div>
+<div class="metadata">Note: This issue has an associated quickfix operation in Eclipse/ADT&nbsp;<img border="0" align="top" src="out_files/lint-run.png" />
+<br>
+Priority: 3 / 10<br/>
+Category: Security</div>
+Severity: <span class="warning">Warning</span><div class="summary">
+Explanation: Ensure that allowBackup is explicitly set in the application's manifest.</div>
+<div class="explanation">
+The allowBackup attribute determines if an application's data can be backed up and restored. It is documented at <a href="http://developer.android.com/reference/android/R.attr.html#allowBackup">http://developer.android.com/reference/android/R.attr.html#allowBackup</a><br/>
+<br/>
+By default, this flag is set to <code>true</code>. When this flag is set to <code>true</code>, application data can be backed up and restored by the user using <code>adb backup</code> and <code>adb restore</code>.<br/>
+<br/>
+This may have security consequences for an application. <code>adb backup</code> allows users who have enabled USB debugging to copy application data off of the device. Once backed up, all application data can be read by the user. <code>adb restore</code> allows creation of application data from a source specified by the user. Following a restore, applications should not assume that the data, file permissions, and directory permissions were created by the application itself.<br/>
+<br/>
+Setting <code>allowBackup="false"</code> opts an application out of both backup and restore.<br/>
+<br/>
+To fix this warning, decide whether your application should support backup, and explicitly set <code>android:allowBackup=(true|false)"</code>
+</div>
+<br/><div class="moreinfo">More info: <a href="http://developer.android.com/reference/android/R.attr.html#allowBackup">http://developer.android.com/reference/android/R.attr.html#allowBackup</a></div>
+<br/>To suppress this error, use the issue id "AllowBackup" as explained in the <a href="#SuppressInfo">Suppressing Warnings and Errors</a> section.<br/>
+</div>
+<a name="Performance"></a>
+<div class="category"><a href="#" title="Return to top">Performance</a><div class="categorySeparator"></div>
+</div>
+<a name="DrawAllocation"></a>
+<div class="issue">
+<div class="id"><a href="#" title="Return to top">DrawAllocation</a><div class="issueSeparator"></div>
+</div>
+<div class="warningslist">
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./src/main/java/com/readtracker/customviews/TimeSpinner.java">src/main/java/com/readtracker/customviews/TimeSpinner.java</a>:29</span>: <span class="message">Avoid object allocations during draw/layout operations (preallocate and reuse instead)</span><br /><pre class="errorlines">
+<span class="lineno">  26</span>   }
+<span class="lineno">  27</span> 
+<span class="lineno">  28</span>   @Override protected void onDraw(Canvas canvas) {
+<span class="lineno">  29</span>     Paint p = <span class="errorspan">new Paint();</span>
+<span class="lineno">  30</span>     p.setStyle(Paint.Style.FILL);
+<span class="lineno">  31</span>     p.setColor(mFillColor);
+</pre>
+</div>
+<div class="metadata">Priority: 9 / 10<br/>
+Category: Performance</div>
+Severity: <span class="warning">Warning</span><div class="summary">
+Explanation: Looks for memory allocations within drawing code.</div>
+<div class="explanation">
+You should avoid allocating objects during a drawing or layout operation. These are called frequently, so a smooth UI can be interrupted by garbage collection pauses caused by the object allocations.<br/>
+<br/>
+The way this is generally handled is to allocate the needed objects up front and to reuse them for each drawing operation.<br/>
+<br/>
+Some methods allocate memory on your behalf (such as <code>Bitmap.create</code>), and these should be handled in the same way.
+</div>
+<br/>To suppress this error, use the issue id "DrawAllocation" as explained in the <a href="#SuppressInfo">Suppressing Warnings and Errors</a> section.<br/>
+</div><a name="ObsoleteLayoutParam"></a>
+<div class="issue">
+<div class="id"><a href="#" title="Return to top">ObsoleteLayoutParam</a><div class="issueSeparator"></div>
+</div>
+<div class="warningslist">
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/_book_header.xml">res/layout/_book_header.xml</a>:13</span>: <span class="message">Invalid layout param 'layout_weight' (included from within a RelativeLayout in layout/activity_book.xml, included from within a RelativeLayout in layout/activity_reading_session_end.xml, included from within a RelativeLayout in layout/close.xml, included from within a RelativeLayout in layout/edit_highlight.xml)</span><br /><pre class="errorlines">
+<span class="lineno">  10</span>               android:id="@+id/_bookHeader"
+<span class="lineno">  11</span>               android:layout_width="fill_parent"
+<span class="lineno">  12</span>               android:layout_height="wrap_content"
+<span class="lineno">  13</span>               <span class="errorspan">android:layout_weight="1"</span>
+<span class="lineno">  14</span>               android:paddingTop="3dp"
+<span class="lineno">  15</span>               android:paddingBottom="12dp"
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/local_reading_item_interesting.xml">res/layout/local_reading_item_interesting.xml</a>:30</span>: <span class="message">Invalid layout param in a LinearLayout: layout_below</span><br /><pre class="errorlines">
+<span class="lineno">  27</span> 
+<span class="lineno">  28</span>     &lt;TextView android:id="@+id/textAuthor"
+<span class="lineno">  29</span>               style="@style/generic_label"
+<span class="lineno">  30</span>               <span class="errorspan">android:layout_below="@id/textTitle"</span>
+<span class="lineno">  31</span>               android:layout_marginTop="0dp"
+<span class="lineno">  32</span>               android:layout_marginBottom="0dp"
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/local_reading_item_interesting.xml">res/layout/local_reading_item_interesting.xml</a>:37</span>: <span class="message">Invalid layout param in a LinearLayout: layout_below</span><br /><pre class="errorlines">
+<span class="lineno">  34</span> 
+<span class="lineno">  35</span>     &lt;TextView android:id="@+id/textFoundVia"
+<span class="lineno">  36</span>               style="@style/generic_label"
+<span class="lineno">  37</span>               <span class="errorspan">android:layout_below="@id/textTitle"</span>
+<span class="lineno">  38</span>               android:layout_marginTop="0dp"
+<span class="lineno">  39</span>               android:layout_marginBottom="0dp"
+</pre>
+</div>
+<div class="metadata">Note: This issue has an associated quickfix operation in Eclipse/ADT&nbsp;<img border="0" align="top" src="out_files/lint-run.png" />
+<br>
+Priority: 6 / 10<br/>
+Category: Performance</div>
+Severity: <span class="warning">Warning</span><div class="summary">
+Explanation: Looks for layout params that are not valid for the given parent layout.</div>
+<div class="explanation">
+The given layout_param is not defined for the given layout, meaning it has no effect. This usually happens when you change the parent layout or move view code around without updating the layout params. This will cause useless attribute processing at runtime, and is misleading for others reading the layout so the parameter should be removed.
+</div>
+<br/>To suppress this error, use the issue id "ObsoleteLayoutParam" as explained in the <a href="#SuppressInfo">Suppressing Warnings and Errors</a> section.<br/>
+</div><a name="HandlerLeak"></a>
+<div class="issue">
+<div class="id"><a href="#" title="Return to top">HandlerLeak</a><div class="issueSeparator"></div>
+</div>
+<div class="warningslist">
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./src/main/java/com/readtracker/thirdparty/DrawableManager.java">src/main/java/com/readtracker/thirdparty/DrawableManager.java</a>:97</span>: <span class="message">This Handler class should be static or leaks might occur (com.readtracker.thirdparty.DrawableManager.1)</span><br /><pre class="errorlines">
+<span class="lineno">  94</span>     }
+<span class="lineno">  95</span> 
+<span class="lineno">  96</span>     // Set the image drawable on the main thread
+<span class="lineno">  97</span>     final Handler handler = new <span class="errorspan">Handler() {</span>
+<span class="lineno">  98</span>       @Override
+<span class="lineno">  99</span>       public void handleMessage(Message message) {
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./src/main/java/com/readtracker/thirdparty/widget/WheelScroller.java">src/main/java/com/readtracker/thirdparty/widget/WheelScroller.java</a>:200</span>: <span class="message">This Handler class should be static or leaks might occur (com.readtracker.thirdparty.widget.WheelScroller.2)</span><br /><pre class="errorlines">
+<span class="lineno"> 197</span>     }
+<span class="lineno"> 198</span> 
+<span class="lineno"> 199</span>     // animation handler
+<span class="lineno"> 200</span>     private Handler animationHandler = new <span class="errorspan">Handler() {</span>
+<span class="lineno"> 201</span>         public void handleMessage(Message msg) {
+<span class="lineno"> 202</span>             scroller.computeScrollOffset();
+</pre>
+</div>
+<div class="metadata">Priority: 4 / 10<br/>
+Category: Performance</div>
+Severity: <span class="warning">Warning</span><div class="summary">
+Explanation: Ensures that Handler classes do not hold on to a reference to an outer class.</div>
+<div class="explanation">
+In Android, Handler classes should be static or leaks might occur. Messages enqueued on the application thread's MessageQueue also retain their target Handler. If the Handler is an inner class, its outer class will be retained as well. To avoid leaking the outer class, declare the Handler as a static nested class with a WeakReference to its outer class.
+</div>
+<br/>To suppress this error, use the issue id "HandlerLeak" as explained in the <a href="#SuppressInfo">Suppressing Warnings and Errors</a> section.<br/>
+</div><a name="UseSparseArrays"></a>
+<div class="issue">
+<div class="id"><a href="#" title="Return to top">UseSparseArrays</a><div class="issueSeparator"></div>
+</div>
+<div class="warningslist">
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./src/main/java/com/readtracker/HomeFragmentAdapter.java">src/main/java/com/readtracker/HomeFragmentAdapter.java</a>:39</span>: <span class="message">Use new SparseArray&lt;LocalReading>(...) instead for better performance</span><br /><pre class="errorlines">
+<span class="lineno">  36</span>   private final ArrayList&lt;LocalReading> activeReadings = new ArrayList&lt;LocalReading>();
+<span class="lineno">  37</span> 
+<span class="lineno">  38</span>   // A mapping between a local reading instance (in any list) and its id
+<span class="lineno">  39</span>   private HashMap&lt;Integer, LocalReading> mLocalReadingMap = <span class="errorspan">new HashMap&lt;Integer, LocalReading>();</span>
+<span class="lineno">  40</span> 
+<span class="lineno">  41</span>   public HomeFragmentAdapter(FragmentManager fragmentManager, ArrayList&lt;LocalReading> localReadings) {
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./src/main/java/com/readtracker/ListAdapterLocalReading.java">src/main/java/com/readtracker/ListAdapterLocalReading.java</a>:40</span>: <span class="message">Use new SparseArray&lt;LocalReading>(...) instead for better performance</span><br /><pre class="errorlines">
+<span class="lineno">  37</span>   private static DrawableManager mDrawableManager;
+<span class="lineno">  38</span> 
+<span class="lineno">  39</span>   // Maps items by their Readmill reading id for fast look-ups
+<span class="lineno">  40</span>   private static HashMap&lt;Integer, LocalReading> mIdMap = <span class="errorspan">new HashMap&lt;Integer, LocalReading>();</span>
+<span class="lineno">  41</span> 
+<span class="lineno">  42</span>   // Used to cache view look-ups
+</pre>
+</div>
+<div class="metadata">Priority: 4 / 10<br/>
+Category: Performance</div>
+Severity: <span class="warning">Warning</span><div class="summary">
+Explanation: Looks for opportunities to replace HashMaps with the more efficient SparseArray.</div>
+<div class="explanation">
+For maps where the keys are of type integer, it's typically more efficient to use the Android <code>SparseArray</code> API. This check identifies scenarios where you might want to consider using <code>SparseArray</code> instead of <code>HashMap</code> for better performance.<br/>
+<br/>
+This is <b>particularly</b> useful when the value types are primitives like ints, where you can use <code>SparseIntArray</code> and avoid auto-boxing the values from <code>int</code> to <code>Integer</code>.<br/>
+<br/>
+If you need to construct a <code>HashMap</code> because you need to call an API outside of your control which requires a <code>Map</code>, you can suppress this warning using for example the <code>@SuppressLint</code> annotation.
+</div>
+<br/>To suppress this error, use the issue id "UseSparseArrays" as explained in the <a href="#SuppressInfo">Suppressing Warnings and Errors</a> section.<br/>
+</div><a name="InefficientWeight"></a>
+<div class="issue">
+<div class="id"><a href="#" title="Return to top">InefficientWeight</a><div class="issueSeparator"></div>
+</div>
+<div class="warningslist">
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/edit_highlight.xml">res/layout/edit_highlight.xml</a>:19</span>: <span class="message">Use a layout_height of 0dip instead of fill_parent for better performance</span><br /><pre class="errorlines">
+<span class="lineno">  16</span> 
+<span class="lineno">  17</span>     &lt;EditText android:id="@+id/editHighlightText"
+<span class="lineno">  18</span>               android:layout_width="fill_parent"
+<span class="lineno">  19</span>               <span class="errorspan">android:layout_height="fill_parent"</span>
+<span class="lineno">  20</span>               android:layout_weight="1"
+<span class="lineno">  21</span>               android:background="@drawable/default_input_field"
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/sign_in_and_authorize.xml">res/layout/sign_in_and_authorize.xml</a>:19</span>: <span class="message">Use a layout_width of 0dip instead of wrap_content for better performance</span><br /><pre class="errorlines">
+<span class="lineno">  16</span>                 android:background="#c000"
+<span class="lineno">  17</span>                 android:padding="3dp">
+<span class="lineno">  18</span> 
+<span class="lineno">  19</span>     &lt;TextView <span class="errorspan">android:layout_width="wrap_content"</span>
+<span class="lineno">  20</span>               android:text="Loading..."
+<span class="lineno">  21</span>               android:id="@+id/textProgressBarTitle"
+</pre>
+</div>
+<div class="metadata">Note: This issue has an associated quickfix operation in Eclipse/ADT&nbsp;<img border="0" align="top" src="out_files/lint-run.png" />
+<br>
+Priority: 3 / 10<br/>
+Category: Performance</div>
+Severity: <span class="warning">Warning</span><div class="summary">
+Explanation: Looks for inefficient weight declarations in LinearLayouts.</div>
+<div class="explanation">
+When only a single widget in a LinearLayout defines a weight, it is more efficient to assign a width/height of <code>0dp</code> to it since it will absorb all the remaining space anyway. With a declared width/height of <code>0dp</code> it does not have to measure its own size first.
+</div>
+<br/>To suppress this error, use the issue id "InefficientWeight" as explained in the <a href="#SuppressInfo">Suppressing Warnings and Errors</a> section.<br/>
+</div><a name="Overdraw"></a>
+<div class="issue">
+<div class="id"><a href="#" title="Return to top">Overdraw</a><div class="issueSeparator"></div>
+</div>
+<div class="warningslist">
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/_sync_bar.xml">res/layout/_sync_bar.xml</a>:8</span>: <span class="message">Possible overdraw: Root element paints background @color/background with a theme that also paints a background (inferred theme is @style/ReadTrackerTheme)</span><br /><pre class="errorlines">
+<span class="lineno">   5</span>               android:layout_height="wrap_content"
+<span class="lineno">   6</span>               android:orientation="vertical"
+<span class="lineno">   7</span>               android:padding="12dp"
+<span class="lineno">   8</span>               <span class="errorspan">android:background="@color/background"></span>
+<span class="lineno">   9</span> 
+<span class="lineno">  10</span>   &lt;TextView android:id="@+id/textProgressMessage"
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/activity_welcome.xml">res/layout/activity_welcome.xml</a>:7</span>: <span class="message">Possible overdraw: Root element paints background @color/background with a theme that also paints a background (inferred theme is @style/ReadTrackerTheme)</span><br /><pre class="errorlines">
+<span class="lineno">   4</span>               android:orientation="vertical"
+<span class="lineno">   5</span>               android:layout_height="fill_parent"
+<span class="lineno">   6</span>               android:layout_width="fill_parent"
+<span class="lineno">   7</span>               <span class="errorspan">android:background="@color/background"</span>
+<span class="lineno">   8</span>               android:padding="12dp">
+<span class="lineno">   9</span> 
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/sign_in_and_authorize.xml">res/layout/sign_in_and_authorize.xml</a>:8</span>: <span class="message">Possible overdraw: Root element paints background @android:color/background_dark with a theme that also paints a background (inferred theme is @style/ReadTrackerTheme)</span><br /><pre class="errorlines">
+<span class="lineno">   5</span>                 android:layout_height="fill_parent"
+<span class="lineno">   6</span>                 android:layout_width="fill_parent"
+<span class="lineno">   7</span>                 android:orientation="vertical"
+<span class="lineno">   8</span>                 <span class="errorspan">android:background="@android:color/background_dark"></span>
+<span class="lineno">   9</span> 
+<span class="lineno">  10</span>   &lt;LinearLayout android:layout_height="wrap_content"
+</pre>
+</div>
+<div class="metadata">Priority: 3 / 10<br/>
+Category: Performance</div>
+Severity: <span class="warning">Warning</span><div class="summary">
+Explanation: Looks for overdraw issues (where a view is painted only to be fully painted over)</div>
+<div class="explanation">
+If you set a background drawable on a root view, then you should use a custom theme where the theme background is null. Otherwise, the theme background will be painted first, only to have your custom background completely cover it; this is called "overdraw".<br/>
+<br/>
+NOTE: This detector relies on figuring out which layouts are associated with which activities based on scanning the Java code, and it's currently doing that using an inexact pattern matching algorithm. Therefore, it can incorrectly conclude which activity the layout is associated with and then wrongly complain that a background-theme is hidden.<br/>
+<br/>
+If you want your custom background on multiple pages, then you should consider making a custom theme with your custom background and just using that theme instead of a root element background.<br/>
+<br/>
+Of course it's possible that your custom drawable is translucent and you want it to be mixed with the background. However, you will get better performance if you pre-mix the background with your drawable and use that resulting image or color as a custom theme background instead.<br/>
+
+</div>
+<br/>To suppress this error, use the issue id "Overdraw" as explained in the <a href="#SuppressInfo">Suppressing Warnings and Errors</a> section.<br/>
+</div><a name="UnusedResources"></a>
+<div class="issue">
+<div class="id"><a href="#" title="Return to top">UnusedResources</a><div class="issueSeparator"></div>
+</div>
+<div class="warningslist">
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/values/colors.xml">res/values/colors.xml</a>:20</span>: <span class="message">The resource R.color.midnight_medium_disabled appears to be unused</span><br /><pre class="errorlines">
+<span class="lineno">  17</span> 
+<span class="lineno">  18</span>   &lt;!-- color variations -->
+<span class="lineno">  19</span>   &lt;color name="midnight_dark_tint">#ff101414&lt;/color>
+<span class="lineno">  20</span>   &lt;color <span class="errorspan">name="midnight_medium_disabled">#88181e20&lt;/color></span>
+<span class="lineno">  21</span> 
+<span class="lineno">  22</span>   &lt;color name="text_color_primary_slightly_transparent">#ddfffded&lt;/color>
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/drawable-hdpi/dot_synced.png">res/drawable-hdpi/dot_synced.png</a></span>: <img class="embedimage" align="right" src="file:///Users/christoffer/Dropbox/work/readtracker/./res/drawable-hdpi/dot_synced.png" /><span class="message">The resource R.drawable.dot_synced appears to be unused</span><br clear="right"/>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/local_reading_item_interesting.xml">res/layout/local_reading_item_interesting.xml</a></span>: <span class="message">The resource R.layout.local_reading_item_interesting appears to be unused</span><br />
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/drawable-hdpi/logo_readtracker.png">res/drawable-hdpi/logo_readtracker.png</a></span>: <img class="embedimage" align="right" src="file:///Users/christoffer/Dropbox/work/readtracker/./res/drawable-hdpi/logo_readtracker.png" /><span class="message">The resource R.drawable.logo_readtracker appears to be unused</span><br clear="right"/>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/drawable-hdpi/textfield_focused_holo_dark.9.png">res/drawable-hdpi/textfield_focused_holo_dark.9.png</a></span>: <img class="embedimage" align="right" src="file:///Users/christoffer/Dropbox/work/readtracker/./res/drawable-hdpi/textfield_focused_holo_dark.9.png" /><span class="message">The resource R.drawable.textfield_focused_holo_dark appears to be unused</span><br clear="right"/>
+</div>
+<div class="metadata">Priority: 3 / 10<br/>
+Category: Performance</div>
+Severity: <span class="warning">Warning</span><div class="summary">
+Explanation: Looks for unused resources.</div>
+<div class="explanation">
+Unused resources make applications larger and slow down builds.
+</div>
+<br/>To suppress this error, use the issue id "UnusedResources" as explained in the <a href="#SuppressInfo">Suppressing Warnings and Errors</a> section.<br/>
+</div>
+<a name="Usability:Icons"></a>
+<div class="category"><a href="#" title="Return to top">Usability:Icons</a><div class="categorySeparator"></div>
+</div>
+<a name="IconDensities"></a>
+<div class="issue">
+<div class="id"><a href="#" title="Return to top">IconDensities</a><div class="issueSeparator"></div>
+</div>
+<div class="warningslist">
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/drawable-mdpi">res/drawable-mdpi</a></span>: <span class="message">Missing the following drawables in drawable-mdpi: back_arrow_normal.png, back_arrow_pressed.png, dot_synced.png, highlights_blank.png, icon.png... (13 more)</span><br />
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/drawable-xhdpi">res/drawable-xhdpi</a></span>: <span class="message">Missing the following drawables in drawable-xhdpi: back_arrow_normal.png, back_arrow_pressed.png, dot_synced.png, highlights_blank.png, icon.png... (13 more)</span><br />
+</div>
+<div class="metadata">Priority: 4 / 10<br/>
+Category: Usability:Icons</div>
+Severity: <span class="warning">Warning</span><div class="summary">
+Explanation: Ensures that icons provide custom versions for all supported densities.</div>
+<div class="explanation">
+Icons will look best if a custom version is provided for each of the major screen density classes (low, medium, high, extra high). This lint check identifies icons which do not have complete coverage across the densities.<br/>
+<br/>
+Low density is not really used much anymore, so this check ignores the ldpi density. To force lint to include it, set the environment variable <code>ANDROID_LINT_INCLUDE_LDPI=true</code>. For more information on current density usage, see <a href="http://developer.android.com/resources/dashboard/screens.html">http://developer.android.com/resources/dashboard/screens.html</a>
+</div>
+<br/><div class="moreinfo">More info: <a href="http://developer.android.com/guide/practices/screens_support.html">http://developer.android.com/guide/practices/screens_support.html</a></div>
+<br/>To suppress this error, use the issue id "IconDensities" as explained in the <a href="#SuppressInfo">Suppressing Warnings and Errors</a> section.<br/>
+</div>
+<a name="Accessibility"></a>
+<div class="category"><a href="#" title="Return to top">Accessibility</a><div class="categorySeparator"></div>
+</div>
+<a name="ContentDescription"></a>
+<div class="issue">
+<div class="id"><a href="#" title="Return to top">ContentDescription</a><div class="issueSeparator"></div>
+</div>
+<div class="warningslist">
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/activity_home.xml">res/layout/activity_home.xml</a>:49</span>: <span class="message">[Accessibility] Missing contentDescription attribute on image</span><br /><pre class="errorlines">
+<span class="lineno">  46</span>                 android:layout_below="@id/layoutActionBar"
+<span class="lineno">  47</span>                 android:gravity="center">
+<span class="lineno">  48</span> 
+<span class="lineno">  49</span>     <span class="errorspan">&lt;ImageView android:layout_width="wrap_content"</span>
+<span class="lineno">  50</span>                android:layout_height="wrap_content"
+<span class="lineno">  51</span>                android:scaleType="fitStart"
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/fragment_highlights.xml">res/layout/fragment_highlights.xml</a>:7</span>: <span class="message">[Accessibility] Missing contentDescription attribute on image</span><br /><pre class="errorlines">
+<span class="lineno">   4</span>               android:layout_width="fill_parent"
+<span class="lineno">   5</span>               android:layout_height="fill_parent">
+<span class="lineno">   6</span> 
+<span class="lineno">   7</span>   <span class="errorspan">&lt;ImageView android:src="@drawable/highlights_blank"</span>
+<span class="lineno">   8</span>              android:id="@+id/imageHighlightsBlankState"
+<span class="lineno">   9</span>              android:layout_width="fill_parent"
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/list_item_book.xml">res/layout/list_item_book.xml</a>:12</span>: <span class="message">[Accessibility] Missing contentDescription attribute on image</span><br /><pre class="errorlines">
+<span class="lineno">   9</span>                 android:paddingRight="13dip"
+<span class="lineno">  10</span>                 android:background="@android:color/transparent">
+<span class="lineno">  11</span> 
+<span class="lineno">  12</span>   <span class="errorspan">&lt;ImageView android:id="@+id/imageCover" style="@style/cover_image" /></span>
+<span class="lineno">  13</span> 
+<span class="lineno">  14</span>   &lt;TextView android:id="@+id/textTitle"
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/local_reading_item_interesting.xml">res/layout/local_reading_item_interesting.xml</a>:12</span>: <span class="message">[Accessibility] Missing contentDescription attribute on image</span><br /><pre class="errorlines">
+<span class="lineno">   9</span>                 android:paddingLeft="13dip"
+<span class="lineno">  10</span>                 android:paddingRight="13dip">
+<span class="lineno">  11</span> 
+<span class="lineno">  12</span>   <span class="errorspan">&lt;ImageView android:id="@+id/imageCover"</span>
+<span class="lineno">  13</span>              style="@style/cover_image"
+<span class="lineno">  14</span>              android:layout_height="40dp"
+</pre>
+</div>
+<div class="metadata">Note: This issue has an associated quickfix operation in Eclipse/ADT&nbsp;<img border="0" align="top" src="out_files/lint-run.png" />
+<br>
+Priority: 3 / 10<br/>
+Category: Accessibility</div>
+Severity: <span class="warning">Warning</span><div class="summary">
+Explanation: Ensures that image widgets provide a contentDescription.</div>
+<div class="explanation">
+Non-textual widgets like ImageViews and ImageButtons should use the <code>contentDescription</code> attribute to specify a textual description of the widget such that screen readers and other accessibility tools can adequately describe the user interface.
+</div>
+<br/>To suppress this error, use the issue id "ContentDescription" as explained in the <a href="#SuppressInfo">Suppressing Warnings and Errors</a> section.<br/>
+</div>
+<a name="Internationalization"></a>
+<div class="category"><a href="#" title="Return to top">Internationalization</a><div class="categorySeparator"></div>
+</div>
+<a name="HardcodedText"></a>
+<div class="issue">
+<div class="id"><a href="#" title="Return to top">HardcodedText</a><div class="issueSeparator"></div>
+</div>
+<div class="warningslist">
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/_book_header.xml">res/layout/_book_header.xml</a>:32</span>: <span class="message">[I18N] Hardcoded string "Navigate: back", should use @string resource</span><br /><pre class="errorlines">
+<span class="lineno">  29</span>                  android:layout_height="36dp"
+<span class="lineno">  30</span>                  android:layout_marginTop="4.5dp"
+<span class="lineno">  31</span>                  android:background="@drawable/default_toggle_button_background"
+<span class="lineno">  32</span>                  <span class="errorspan">android:contentDescription="Navigate: back"/></span>
+<span class="lineno">  33</span> 
+<span class="lineno">  34</span>   &lt;/RelativeLayout>
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/_closing_remark.xml">res/layout/_closing_remark.xml</a>:12</span>: <span class="message">[I18N] Hardcoded string "Donec id elit non mi porta gravida at eget metus. Curabitur blandit tempus porttitor. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.", should use @string resource</span><br /><pre class="errorlines">
+<span class="lineno">   9</span>           android:lineSpacingMultiplier="1.2"
+<span class="lineno">  10</span>           android:typeface="serif"
+<span class="lineno">  11</span>           android:textColor="@color/text_color_primary"
+<span class="lineno">  12</span>           <span class="errorspan">android:text="Donec id elit non mi porta gravida at eget metus. Curabitur blandit tempus porttitor. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus."</span>
+<span class="lineno">  13</span>           android:textStyle="italic" />
+<span class="lineno">  14</span> 
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/_duration_picker.xml">res/layout/_duration_picker.xml</a>:26</span>: <span class="message">[I18N] Hardcoded string "2 hours 45 minutes...", should use @string resource</span><br /><pre class="errorlines">
+<span class="lineno">  23</span>               android:paddingBottom="10dp"
+<span class="lineno">  24</span>               android:paddingLeft="10dp"
+<span class="lineno">  25</span>               android:paddingRight="10dp"
+<span class="lineno">  26</span>               <span class="errorspan">android:text="2 hours 45 minutes..."</span>
+<span class="lineno">  27</span>               android:textColor="@color/text_color_secondary"
+<span class="lineno">  28</span>               android:textSize="18dp"/>
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/_progress_picker.xml">res/layout/_progress_picker.xml</a>:21</span>: <span class="message">[I18N] Hardcoded string "Ended on", should use @string resource</span><br /><pre class="errorlines">
+<span class="lineno">  18</span>     &lt;TextView android:layout_height="wrap_content"
+<span class="lineno">  19</span>               android:layout_width="wrap_content"
+<span class="lineno">  20</span>               android:textSize="18dp"
+<span class="lineno">  21</span>               <span class="errorspan">android:text="Ended on"</span>
+<span class="lineno">  22</span>               android:layout_marginRight="24dp"
+<span class="lineno">  23</span>               android:gravity="center_vertical"/>
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/_progress_picker.xml">res/layout/_progress_picker.xml</a>:42</span>: <span class="message">[I18N] Hardcoded string ".", should use @string resource</span><br /><pre class="errorlines">
+<span class="lineno">  39</span>     &lt;TextView android:layout_height="wrap_content"
+<span class="lineno">  40</span>               android:layout_width="wrap_content"
+<span class="lineno">  41</span>               android:id="@+id/textDot"
+<span class="lineno">  42</span>               <span class="errorspan">android:text="."</span>
+<span class="lineno">  43</span>               android:textColor="@color/text_color_primary"
+<span class="lineno">  44</span>               android:textSize="20dp"/>
+</pre>
+<button id="HardcodedTextDivLink" onclick="reveal('HardcodedTextDiv');" />+ 50 More Occurrences...</button>
+<div id="HardcodedTextDiv" style="display: none">
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/_reading_session_controls.xml">res/layout/_reading_session_controls.xml</a>:13</span>: <span class="message">[I18N] Hardcoded string "Start", should use @string resource</span><br /><pre class="errorlines">
+<span class="lineno">  10</span>     &lt;Button style="@style/default_button"
+<span class="lineno">  11</span>             android:id="@+id/buttonStart"
+<span class="lineno">  12</span>             android:layout_gravity="center"
+<span class="lineno">  13</span>             <span class="errorspan">android:text="Start"/></span>
+<span class="lineno">  14</span> 
+<span class="lineno">  15</span>     &lt;!-- group of pause/resume and done button -->
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/_reading_session_controls.xml">res/layout/_reading_session_controls.xml</a>:25</span>: <span class="message">[I18N] Hardcoded string "Pause", should use @string resource</span><br /><pre class="errorlines">
+<span class="lineno">  22</span>               android:id="@+id/buttonPause"
+<span class="lineno">  23</span>               android:layout_weight="1"
+<span class="lineno">  24</span>               android:layout_marginRight="6dp"
+<span class="lineno">  25</span>               <span class="errorspan">android:text="Pause"/></span>
+<span class="lineno">  26</span> 
+<span class="lineno">  27</span>       &lt;Button style="@style/default_button"
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/_reading_session_controls.xml">res/layout/_reading_session_controls.xml</a>:31</span>: <span class="message">[I18N] Hardcoded string "Done", should use @string resource</span><br /><pre class="errorlines">
+<span class="lineno">  28</span>               android:id="@+id/buttonDone"
+<span class="lineno">  29</span>               android:layout_weight="1"
+<span class="lineno">  30</span>               android:layout_marginLeft="6dp"
+<span class="lineno">  31</span>               <span class="errorspan">android:text="Done"/></span>
+<span class="lineno">  32</span> 
+<span class="lineno">  33</span>     &lt;/LinearLayout>
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/_reading_session_summary.xml">res/layout/_reading_session_summary.xml</a>:14</span>: <span class="message">[I18N] Hardcoded string "97 times", should use @string resource</span><br /><pre class="errorlines">
+<span class="lineno">  11</span>             android:minWidth="70dp"
+<span class="lineno">  12</span>             android:layout_width="fill_parent"
+<span class="lineno">  13</span>             android:layout_height="wrap_content"
+<span class="lineno">  14</span>             <span class="errorspan">android:text="97 times"</span>
+<span class="lineno">  15</span>             android:gravity="center"
+<span class="lineno">  16</span>             android:textStyle="bold"
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/_reading_session_summary.xml">res/layout/_reading_session_summary.xml</a>:23</span>: <span class="message">[I18N] Hardcoded string "2 hours 45 minutes", should use @string resource</span><br /><pre class="errorlines">
+<span class="lineno">  20</span>   &lt;TextView android:id="@+id/textTotalTime"
+<span class="lineno">  21</span>             android:layout_width="fill_parent"
+<span class="lineno">  22</span>             android:layout_height="wrap_content"
+<span class="lineno">  23</span>             <span class="errorspan">android:text="2 hours 45 minutes"</span>
+<span class="lineno">  24</span>             android:textSize="30dp"
+<span class="lineno">  25</span>             android:gravity="center"
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/activity_add_book.xml">res/layout/activity_add_book.xml</a>:18</span>: <span class="message">[I18N] Hardcoded string "Book information", should use @string resource</span><br /><pre class="errorlines">
+<span class="lineno">  15</span>               android:layout_marginTop="0dp"
+<span class="lineno">  16</span>               android:layout_marginBottom="6dp"
+<span class="lineno">  17</span>               android:textColor="@color/text_color_secondary"
+<span class="lineno">  18</span>               <span class="errorspan">android:text="Book information"/></span>
+<span class="lineno">  19</span> 
+<span class="lineno">  20</span>     &lt;EditText
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/activity_add_book.xml">res/layout/activity_add_book.xml</a>:24</span>: <span class="message">[I18N] Hardcoded string "Title", should use @string resource</span><br /><pre class="errorlines">
+<span class="lineno">  21</span>         android:id="@+id/editTitle"
+<span class="lineno">  22</span>         style="@style/default_input_field"
+<span class="lineno">  23</span>         android:layout_marginBottom="12dp"
+<span class="lineno">  24</span>         <span class="errorspan">android:hint="Title"/></span>
+<span class="lineno">  25</span> 
+<span class="lineno">  26</span>     &lt;EditText
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/activity_add_book.xml">res/layout/activity_add_book.xml</a>:30</span>: <span class="message">[I18N] Hardcoded string "Author", should use @string resource</span><br /><pre class="errorlines">
+<span class="lineno">  27</span>         android:id="@+id/editAuthor"
+<span class="lineno">  28</span>         style="@style/default_input_field"
+<span class="lineno">  29</span>         android:layout_marginBottom="12dp"
+<span class="lineno">  30</span>         <span class="errorspan">android:hint="Author"/></span>
+<span class="lineno">  31</span> 
+<span class="lineno">  32</span>     &lt;TextView android:layout_width="wrap_content"
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/activity_add_book.xml">res/layout/activity_add_book.xml</a>:37</span>: <span class="message">[I18N] Hardcoded string "Tracking", should use @string resource</span><br /><pre class="errorlines">
+<span class="lineno">  34</span>               android:layout_marginTop="24dp"
+<span class="lineno">  35</span>               android:layout_marginBottom="6dp"
+<span class="lineno">  36</span>               android:textColor="@color/text_color_secondary"
+<span class="lineno">  37</span>               <span class="errorspan">android:text="Tracking"/></span>
+<span class="lineno">  38</span> 
+<span class="lineno">  39</span>     &lt;ToggleButton android:id="@+id/togglePagesPercent"
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/activity_add_book.xml">res/layout/activity_add_book.xml</a>:61</span>: <span class="message">[I18N] Hardcoded string "000", should use @string resource</span><br /><pre class="errorlines">
+<span class="lineno">  58</span>         android:paddingLeft="24dp"
+<span class="lineno">  59</span>         android:paddingRight="24dp"
+<span class="lineno">  60</span>         android:inputType="number"
+<span class="lineno">  61</span>         <span class="errorspan">android:hint="000"</span>
+<span class="lineno">  62</span>         android:gravity="center_horizontal"
+<span class="lineno">  63</span>         android:ellipsize="end"/>
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/activity_add_book.xml">res/layout/activity_add_book.xml</a>:84</span>: <span class="message">[I18N] Hardcoded string "Add", should use @string resource</span><br /><pre class="errorlines">
+<span class="lineno">  81</span>     &lt;Button android:id="@+id/buttonAddBook"
+<span class="lineno">  82</span>             style="@style/default_button"
+<span class="lineno">  83</span>             android:layout_marginTop="24dp"
+<span class="lineno">  84</span>             <span class="errorspan">android:text="Add"/></span>
+<span class="lineno">  85</span> 
+<span class="lineno">  86</span>   &lt;/LinearLayout>
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/activity_book_search.xml">res/layout/activity_book_search.xml</a>:13</span>: <span class="message">[I18N] Hardcoded string "Search Google Books...", should use @string resource</span><br /><pre class="errorlines">
+<span class="lineno">  10</span>             style="@style/default_input_field"
+<span class="lineno">  11</span>             android:layout_width="fill_parent"
+<span class="lineno">  12</span>             android:layout_gravity="top|center_horizontal"
+<span class="lineno">  13</span>             <span class="errorspan">android:hint="Search Google Books..."</span>
+<span class="lineno">  14</span>             android:inputType="text|textCapSentences|textAutoCorrect"
+<span class="lineno">  15</span>             android:layout_marginBottom="12dp"
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/activity_book_search.xml">res/layout/activity_book_search.xml</a>:29</span>: <span class="message">[I18N] Hardcoded string "New book...", should use @string resource</span><br /><pre class="errorlines">
+<span class="lineno">  26</span>                                               style="@style/flipper_action_buttons">
+<span class="lineno">  27</span> 
+<span class="lineno">  28</span>     &lt;Button android:id="@+id/buttonNew"
+<span class="lineno">  29</span>             <span class="errorspan">android:text="New book..."</span>
+<span class="lineno">  30</span>             style="@style/default_button"/>
+<span class="lineno">  31</span> 
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/activity_book_search.xml">res/layout/activity_book_search.xml</a>:33</span>: <span class="message">[I18N] Hardcoded string "Search", should use @string resource</span><br /><pre class="errorlines">
+<span class="lineno">  30</span>             style="@style/default_button"/>
+<span class="lineno">  31</span> 
+<span class="lineno">  32</span>     &lt;Button android:id="@+id/buttonSearch"
+<span class="lineno">  33</span>             <span class="errorspan">android:text="Search"</span>
+<span class="lineno">  34</span>             style="@style/default_button"/>
+<span class="lineno">  35</span> 
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/activity_home.xml">res/layout/activity_home.xml</a>:19</span>: <span class="message">[I18N] Hardcoded string "ReadTracker", should use @string resource</span><br /><pre class="errorlines">
+<span class="lineno">  16</span> 
+<span class="lineno">  17</span>     &lt;TextView android:id="@+id/textHeader"
+<span class="lineno">  18</span>               style="@style/header_main_text"
+<span class="lineno">  19</span>               <span class="errorspan">android:text="ReadTracker"/></span>
+<span class="lineno">  20</span> 
+<span class="lineno">  21</span>     &lt;!-- add reading button -->
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/activity_home.xml">res/layout/activity_home.xml</a>:28</span>: <span class="message">[I18N] Hardcoded string "Add new Reading", should use @string resource</span><br /><pre class="errorlines">
+<span class="lineno">  25</span>                  android:background="@drawable/default_toggle_button_background"
+<span class="lineno">  26</span>                  android:src="@drawable/icon_add"
+<span class="lineno">  27</span>                  android:layout_alignParentRight="true"
+<span class="lineno">  28</span>                  <span class="errorspan">android:contentDescription="Add new Reading" /></span>
+<span class="lineno">  29</span> 
+<span class="lineno">  30</span>   &lt;/RelativeLayout>
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/activity_home.xml">res/layout/activity_home.xml</a>:61</span>: <span class="message">[I18N] Hardcoded string "Sync books with Readmill", should use @string resource</span><br /><pre class="errorlines">
+<span class="lineno">  58</span>             android:paddingBottom="10dp"
+<span class="lineno">  59</span>             android:paddingLeft="15dp"
+<span class="lineno">  60</span>             android:paddingRight="15dp"
+<span class="lineno">  61</span>             <span class="errorspan">android:text="Sync books with Readmill"/></span>
+<span class="lineno">  62</span> 
+<span class="lineno">  63</span>   &lt;/LinearLayout>
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/activity_reading_session_end.xml">res/layout/activity_reading_session_end.xml</a>:43</span>: <span class="message">[I18N] Hardcoded string "Finished?", should use @string resource</span><br /><pre class="errorlines">
+<span class="lineno">  40</span> 
+<span class="lineno">  41</span>     &lt;Button style="@style/default_button"
+<span class="lineno">  42</span>             android:textColor="@color/text_color_secondary"
+<span class="lineno">  43</span>             <span class="errorspan">android:text="Finished?" /></span>
+<span class="lineno">  44</span> 
+<span class="lineno">  45</span>     &lt;!-- Ending page group -->
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/activity_reading_session_end.xml">res/layout/activity_reading_session_end.xml</a>:54</span>: <span class="message">[I18N] Hardcoded string "Save", should use @string resource</span><br /><pre class="errorlines">
+<span class="lineno">  51</span>           android:layout_alignParentBottom="true"
+<span class="lineno">  52</span>           android:layout_marginLeft="12dp"
+<span class="lineno">  53</span>           android:layout_marginRight="12dp"
+<span class="lineno">  54</span>           <span class="errorspan">android:text="Save" /></span>
+<span class="lineno">  55</span> 
+<span class="lineno">  56</span> &lt;/RelativeLayout>
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/activity_welcome.xml">res/layout/activity_welcome.xml</a>:12</span>: <span class="message">[I18N] Hardcoded string "Use ReadTracker without Readmill", should use @string resource</span><br /><pre class="errorlines">
+<span class="lineno">   9</span> 
+<span class="lineno">  10</span>   &lt;Button android:id="@+id/buttonOffline"
+<span class="lineno">  11</span>           style="@style/button_small"
+<span class="lineno">  12</span>           <span class="errorspan">android:text="Use ReadTracker without Readmill"</span>
+<span class="lineno">  13</span>           android:layout_gravity="center_horizontal" />
+<span class="lineno">  14</span> 
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/activity_welcome.xml">res/layout/activity_welcome.xml</a>:24</span>: <span class="message">[I18N] Hardcoded string "ReadTracker Logotype", should use @string resource</span><br /><pre class="errorlines">
+<span class="lineno">  21</span>     &lt;ImageView android:layout_marginTop="12dp"
+<span class="lineno">  22</span>                android:layout_width="fill_parent"
+<span class="lineno">  23</span>                android:layout_gravity="center"
+<span class="lineno">  24</span>                <span class="errorspan">android:contentDescription="ReadTracker Logotype"</span>
+<span class="lineno">  25</span>                android:layout_height="wrap_content"
+<span class="lineno">  26</span>                android:src="@drawable/logo_timer"
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/activity_welcome.xml">res/layout/activity_welcome.xml</a>:50</span>: <span class="message">[I18N] Hardcoded string "Sign up", should use @string resource</span><br /><pre class="errorlines">
+<span class="lineno">  47</span>             style="@style/default_button"
+<span class="lineno">  48</span>             android:layout_weight="1"
+<span class="lineno">  49</span>             android:layout_marginRight="6dp"
+<span class="lineno">  50</span>             <span class="errorspan">android:text="Sign up"/></span>
+<span class="lineno">  51</span> 
+<span class="lineno">  52</span>     &lt;Button android:id="@+id/btnAuthorization"
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/activity_welcome.xml">res/layout/activity_welcome.xml</a>:56</span>: <span class="message">[I18N] Hardcoded string "Sign in", should use @string resource</span><br /><pre class="errorlines">
+<span class="lineno">  53</span>             style="@style/default_button"
+<span class="lineno">  54</span>             android:layout_marginLeft="6dp"
+<span class="lineno">  55</span>             android:layout_weight="1"
+<span class="lineno">  56</span>             <span class="errorspan">android:text="Sign in" /></span>
+<span class="lineno">  57</span> 
+<span class="lineno">  58</span>   &lt;/LinearLayout>
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/close.xml">res/layout/close.xml</a>:29</span>: <span class="message">[I18N] Hardcoded string "Finishing", should use @string resource</span><br /><pre class="errorlines">
+<span class="lineno">  26</span>                 android:textColor="@color/text_color_primary"
+<span class="lineno">  27</span>                 android:layout_marginTop="20dp"
+<span class="lineno">  28</span>                 android:layout_marginBottom="10dp"
+<span class="lineno">  29</span>                 <span class="errorspan">android:text="Finishing" /></span>
+<span class="lineno">  30</span> 
+<span class="lineno">  31</span>       &lt;TextView android:id="@+id/textFinishTitle"
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/close.xml">res/layout/close.xml</a>:38</span>: <span class="message">[I18N] Hardcoded string "Metamorphosis", should use @string resource</span><br /><pre class="errorlines">
+<span class="lineno">  35</span>                 android:textStyle="bold"
+<span class="lineno">  36</span>                 android:gravity="center"
+<span class="lineno">  37</span>                 android:textColor="@color/text_color_primary"
+<span class="lineno">  38</span>                 <span class="errorspan">android:text="Metamorphosis" /></span>
+<span class="lineno">  39</span> 
+<span class="lineno">  40</span>       &lt;TextView android:id="@+id/textFinishTime"
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/close.xml">res/layout/close.xml</a>:49</span>: <span class="message">[I18N] Hardcoded string "after 5 hours and 34 minutes", should use @string resource</span><br /><pre class="errorlines">
+<span class="lineno">  46</span>                 android:textStyle="normal"
+<span class="lineno">  47</span>                 android:gravity="center"
+<span class="lineno">  48</span>                 android:textColor="@color/text_color_primary"
+<span class="lineno">  49</span>                 <span class="errorspan">android:text="after 5 hours and 34 minutes" /></span>
+<span class="lineno">  50</span> 
+<span class="lineno">  51</span>       &lt;EditText android:id="@+id/editClosingRemark"
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/close.xml">res/layout/close.xml</a>:58</span>: <span class="message">[I18N] Hardcoded string "Photography is the art that justifies atrocity: war photography, pornography, memento mori, footprints left on a landscape where the last great auk died. None of us is innocent.", should use @string resource</span><br /><pre class="errorlines">
+<span class="lineno">  55</span>                 android:maxLines="5"
+<span class="lineno">  56</span>                 android:background="@drawable/default_input_field"
+<span class="lineno">  57</span>                 android:textColor="@color/text_color_primary"
+<span class="lineno">  58</span>                 <span class="errorspan">android:text="Photography is the art that justifies atrocity: war photography, pornography, memento mori, footprints left on a landscape where the last great auk died. None of us is innocent."</span>
+<span class="lineno">  59</span>                 android:typeface="serif"
+<span class="lineno">  60</span>                 android:textStyle="italic"
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/close.xml">res/layout/close.xml</a>:69</span>: <span class="message">[I18N] Hardcoded string "Finish", should use @string resource</span><br /><pre class="errorlines">
+<span class="lineno">  66</span>     &lt;Button android:id="@+id/buttonSubmitClosingRemark"
+<span class="lineno">  67</span>             android:layout_alignParentBottom="true"
+<span class="lineno">  68</span>             style="@style/default_button"
+<span class="lineno">  69</span>             <span class="errorspan">android:text="Finish"</span>
+<span class="lineno">  70</span>             android:layout_width="fill_parent"
+<span class="lineno">  71</span>             android:layout_height="wrap_content" />
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/edit_highlight.xml">res/layout/edit_highlight.xml</a>:52</span>: <span class="message">[I18N] Hardcoded string "What page is the highlight on?", should use @string resource</span><br /><pre class="errorlines">
+<span class="lineno">  49</span> 
+<span class="lineno">  50</span>     &lt;TextView android:layout_height="wrap_content"
+<span class="lineno">  51</span>               android:layout_width="wrap_content"
+<span class="lineno">  52</span>               <span class="errorspan">android:text="What page is the highlight on?"</span>
+<span class="lineno">  53</span>               android:lines="1"
+<span class="lineno">  54</span>               android:textSize="12sp"
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/edit_highlight.xml">res/layout/edit_highlight.xml</a>:70</span>: <span class="message">[I18N] Hardcoded string "Save", should use @string resource</span><br /><pre class="errorlines">
+<span class="lineno">  67</span> 
+<span class="lineno">  68</span>   &lt;Button android:id="@+id/btnSaveHighlight"
+<span class="lineno">  69</span>           style="@style/default_button"
+<span class="lineno">  70</span>           <span class="errorspan">android:text="Save"</span>
+<span class="lineno">  71</span>           android:layout_margin="5dp"
+<span class="lineno">  72</span>           android:layout_alignParentBottom="true" />
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/fragment_read.xml">res/layout/fragment_read.xml</a>:14</span>: <span class="message">[I18N] Hardcoded string "Please add page count", should use @string resource</span><br /><pre class="errorlines">
+<span class="lineno">  11</span>             android:layout_height="wrap_content"
+<span class="lineno">  12</span>             android:textSize="20dp"
+<span class="lineno">  13</span>             android:layout_centerVertical="true"
+<span class="lineno">  14</span>             <span class="errorspan">android:text="Please add page count"</span>
+<span class="lineno">  15</span>             android:paddingBottom="48dp"
+<span class="lineno">  16</span>             android:gravity="center"/>
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/fragment_sessions.xml">res/layout/fragment_sessions.xml</a>:11</span>: <span class="message">[I18N] Hardcoded string "End reading", should use @string resource</span><br /><pre class="errorlines">
+<span class="lineno">   8</span>   &lt;TextView style="@style/divider"
+<span class="lineno">   9</span>             android:id="@+id/dividerClosingButtons"
+<span class="lineno">  10</span>             android:visibility="gone"
+<span class="lineno">  11</span>             <span class="errorspan">android:text="End reading" /></span>
+<span class="lineno">  12</span> 
+<span class="lineno">  13</span>   &lt;LinearLayout android:id="@+id/layoutClosingButtons"
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/fragment_sessions.xml">res/layout/fragment_sessions.xml</a>:23</span>: <span class="message">[I18N] Hardcoded string "Abandon", should use @string resource</span><br /><pre class="errorlines">
+<span class="lineno">  20</span>             style="@style/default_button"
+<span class="lineno">  21</span>             android:layout_weight="1"
+<span class="lineno">  22</span>             android:layout_marginRight="6dp"
+<span class="lineno">  23</span>             <span class="errorspan">android:text="Abandon" /></span>
+<span class="lineno">  24</span> 
+<span class="lineno">  25</span>     &lt;Button android:id="@+id/buttonFinishReading"
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/fragment_sessions.xml">res/layout/fragment_sessions.xml</a>:29</span>: <span class="message">[I18N] Hardcoded string "Finish", should use @string resource</span><br /><pre class="errorlines">
+<span class="lineno">  26</span>             style="@style/default_button"
+<span class="lineno">  27</span>             android:layout_weight="1"
+<span class="lineno">  28</span>             android:layout_marginLeft="6dp"
+<span class="lineno">  29</span>             <span class="errorspan">android:text="Finish" /></span>
+<span class="lineno">  30</span> 
+<span class="lineno">  31</span>   &lt;/LinearLayout>
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/highlight_list_item.xml">res/layout/highlight_list_item.xml</a>:19</span>: <span class="message">[I18N] Hardcoded string "Somtasdfa sdfa sdfasdfasdf asdf asdf asdf asdf asdf asdf asdf ", should use @string resource</span><br /><pre class="errorlines">
+<span class="lineno">  16</span>             android:textSize="12dp"
+<span class="lineno">  17</span>             android:textStyle="italic"
+<span class="lineno">  18</span>             android:typeface="serif"
+<span class="lineno">  19</span>             <span class="errorspan">android:text="Somtasdfa sdfa sdfasdfasdf asdf asdf asdf asdf asdf asdf asdf "</span>
+<span class="lineno">  20</span>             android:singleLine="false"
+<span class="lineno">  21</span>             android:padding="10dp"
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/list_item_book.xml">res/layout/list_item_book.xml</a>:19</span>: <span class="message">[I18N] Hardcoded string "Metamorphosis", should use @string resource</span><br /><pre class="errorlines">
+<span class="lineno">  16</span>             android:singleLine="false"
+<span class="lineno">  17</span>             android:layout_width="fill_parent"
+<span class="lineno">  18</span>             android:layout_height="wrap_content"
+<span class="lineno">  19</span>             <span class="errorspan">android:text="Metamorphosis"</span>
+<span class="lineno">  20</span>             android:layout_toRightOf="@id/imageCover" />
+<span class="lineno">  21</span> 
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/list_item_book.xml">res/layout/list_item_book.xml</a>:26</span>: <span class="message">[I18N] Hardcoded string "By Franz KafkaBy Franz KafkaBy Franz KafkaBy Franz KafkaBy Franz KafkaBy Franz Kafka", should use @string resource</span><br /><pre class="errorlines">
+<span class="lineno">  23</span>             style="@style/single_line_author"
+<span class="lineno">  24</span>             android:singleLine="false"
+<span class="lineno">  25</span>             android:maxLines="2"
+<span class="lineno">  26</span>             <span class="errorspan">android:text="By Franz KafkaBy Franz KafkaBy Franz KafkaBy Franz KafkaBy Franz KafkaBy Franz Kafka"</span>
+<span class="lineno">  27</span>             android:layout_toRightOf="@id/imageCover"
+<span class="lineno">  28</span>             android:layout_below="@id/textTitle" />
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/local_reading_item_active.xml">res/layout/local_reading_item_active.xml</a>:16</span>: <span class="message">[I18N] Hardcoded string "Book cover", should use @string resource</span><br /><pre class="errorlines">
+<span class="lineno">  13</span>              android:layout_height="36dp"
+<span class="lineno">  14</span>              android:layout_alignParentRight="true"
+<span class="lineno">  15</span>              android:scaleType="centerCrop"
+<span class="lineno">  16</span>              <span class="errorspan">android:contentDescription="Book cover"/></span>
+<span class="lineno">  17</span> 
+<span class="lineno">  18</span>   &lt;TextView android:id="@+id/textTitle"
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/local_reading_item_active.xml">res/layout/local_reading_item_active.xml</a>:26</span>: <span class="message">[I18N] Hardcoded string "Metamorphosis", should use @string resource</span><br /><pre class="errorlines">
+<span class="lineno">  23</span>             android:layout_width="fill_parent"
+<span class="lineno">  24</span>             android:singleLine="true"
+<span class="lineno">  25</span>             android:textColor="@color/text_color_primary"
+<span class="lineno">  26</span>             <span class="errorspan">android:text="Metamorphosis"/></span>
+<span class="lineno">  27</span> 
+<span class="lineno">  28</span>   &lt;TextView android:id="@+id/textAuthor"
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/local_reading_item_active.xml">res/layout/local_reading_item_active.xml</a>:36</span>: <span class="message">[I18N] Hardcoded string "Franz Kafka", should use @string resource</span><br /><pre class="errorlines">
+<span class="lineno">  33</span>             android:layout_width="fill_parent"
+<span class="lineno">  34</span>             android:textColor="@color/text_color_secondary"
+<span class="lineno">  35</span>             android:singleLine="true"
+<span class="lineno">  36</span>             <span class="errorspan">android:text="Franz Kafka"/></span>
+<span class="lineno">  37</span> 
+<span class="lineno">  38</span>   &lt;com.readtracker.customviews.SegmentBar android:id="@+id/progressReadingProgress"
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/local_reading_item_finished.xml">res/layout/local_reading_item_finished.xml</a>:17</span>: <span class="message">[I18N] Hardcoded string "Book cover", should use @string resource</span><br /><pre class="errorlines">
+<span class="lineno">  14</span>              android:scaleType="centerCrop"
+<span class="lineno">  15</span>              android:layout_marginLeft="12dp"
+<span class="lineno">  16</span>              android:layout_alignParentRight="true"
+<span class="lineno">  17</span>              <span class="errorspan">android:contentDescription="Book cover" /></span>
+<span class="lineno">  18</span> 
+<span class="lineno">  19</span>     &lt;TextView android:id="@+id/textTitle"
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/local_reading_item_finished.xml">res/layout/local_reading_item_finished.xml</a>:26</span>: <span class="message">[I18N] Hardcoded string "Metamorphosis", should use @string resource</span><br /><pre class="errorlines">
+<span class="lineno">  23</span>               android:layout_marginTop="-3dp"
+<span class="lineno">  24</span>               android:singleLine="true"
+<span class="lineno">  25</span>               android:textColor="@color/text_color_primary"
+<span class="lineno">  26</span>               <span class="errorspan">android:text="Metamorphosis" /></span>
+<span class="lineno">  27</span> 
+<span class="lineno">  28</span>     &lt;TextView android:id="@+id/textAuthor"
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/local_reading_item_finished.xml">res/layout/local_reading_item_finished.xml</a>:36</span>: <span class="message">[I18N] Hardcoded string "Franz Kafka", should use @string resource</span><br /><pre class="errorlines">
+<span class="lineno">  33</span>               android:layout_marginTop="3dp"
+<span class="lineno">  34</span>               android:singleLine="true"
+<span class="lineno">  35</span>               android:textColor="@color/text_color_secondary"
+<span class="lineno">  36</span>               <span class="errorspan">android:text="Franz Kafka" /></span>
+<span class="lineno">  37</span> 
+<span class="lineno">  38</span>   &lt;TextView android:id="@+id/textClosingRemark"
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/local_reading_item_finished.xml">res/layout/local_reading_item_finished.xml</a>:47</span>: <span class="message">[I18N] Hardcoded string "&#8211; Something something something something smething seomthjigs", should use @string resource</span><br /><pre class="errorlines">
+<span class="lineno">  44</span>             android:paddingLeft="6dp"
+<span class="lineno">  45</span>             android:textSize="12dp"
+<span class="lineno">  46</span>             android:textColor="@color/text_color_secondary"
+<span class="lineno">  47</span>             <span class="errorspan">android:text="&#8211; Something something something something smething seomthjigs"</span>
+<span class="lineno">  48</span>             android:typeface="serif" />
+<span class="lineno">  49</span> 
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/local_reading_item_finished.xml">res/layout/local_reading_item_finished.xml</a>:56</span>: <span class="message">[I18N] Hardcoded string "Finished Nov 13th, 2012", should use @string resource</span><br /><pre class="errorlines">
+<span class="lineno">  53</span>             android:layout_marginTop="5dp"
+<span class="lineno">  54</span>             android:textSize="10dp"
+<span class="lineno">  55</span>             android:textColor="@color/text_color_secondary"
+<span class="lineno">  56</span>             <span class="errorspan">android:text="Finished Nov 13th, 2012" /></span>
+<span class="lineno">  57</span> 
+<span class="lineno">  58</span> &lt;/RelativeLayout>
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/local_reading_item_interesting.xml">res/layout/local_reading_item_interesting.xml</a>:26</span>: <span class="message">[I18N] Hardcoded string "Metamorphosis", should use @string resource</span><br /><pre class="errorlines">
+<span class="lineno">  23</span>               style="@style/generic_label"
+<span class="lineno">  24</span>               android:layout_marginTop="3dp"
+<span class="lineno">  25</span>               android:layout_marginBottom="0dp"
+<span class="lineno">  26</span>               <span class="errorspan">android:text="Metamorphosis" /></span>
+<span class="lineno">  27</span> 
+<span class="lineno">  28</span>     &lt;TextView android:id="@+id/textAuthor"
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/local_reading_item_interesting.xml">res/layout/local_reading_item_interesting.xml</a>:33</span>: <span class="message">[I18N] Hardcoded string "Franz Kafka", should use @string resource</span><br /><pre class="errorlines">
+<span class="lineno">  30</span>               android:layout_below="@id/textTitle"
+<span class="lineno">  31</span>               android:layout_marginTop="0dp"
+<span class="lineno">  32</span>               android:layout_marginBottom="0dp"
+<span class="lineno">  33</span>               <span class="errorspan">android:text="Franz Kafka" /></span>
+<span class="lineno">  34</span> 
+<span class="lineno">  35</span>     &lt;TextView android:id="@+id/textFoundVia"
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/local_reading_item_interesting.xml">res/layout/local_reading_item_interesting.xml</a>:40</span>: <span class="message">[I18N] Hardcoded string "Via: Christoffer Klang", should use @string resource</span><br /><pre class="errorlines">
+<span class="lineno">  37</span>               android:layout_below="@id/textTitle"
+<span class="lineno">  38</span>               android:layout_marginTop="0dp"
+<span class="lineno">  39</span>               android:layout_marginBottom="0dp"
+<span class="lineno">  40</span>               <span class="errorspan">android:text="Via: Christoffer Klang" /></span>
+<span class="lineno">  41</span> 
+<span class="lineno">  42</span>   &lt;/LinearLayout>
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/local_session_item.xml">res/layout/local_session_item.xml</a>:22</span>: <span class="message">[I18N] Hardcoded string "24 minutes", should use @string resource</span><br /><pre class="errorlines">
+<span class="lineno">  19</span>             android:textSize="12dp"
+<span class="lineno">  20</span>             android:gravity="right"
+<span class="lineno">  21</span>             android:layout_centerInParent="true"
+<span class="lineno">  22</span>             <span class="errorspan">android:text="24 minutes" /></span>
+<span class="lineno">  23</span> 
+<span class="lineno">  24</span> &lt;/RelativeLayout>
+</pre>
+<span class="location"><a href="file:///Users/christoffer/Dropbox/work/readtracker/./res/layout/sign_in_and_authorize.xml">res/layout/sign_in_and_authorize.xml</a>:20</span>: <span class="message">[I18N] Hardcoded string "Loading...", should use @string resource</span><br /><pre class="errorlines">
+<span class="lineno">  17</span>                 android:padding="3dp">
+<span class="lineno">  18</span> 
+<span class="lineno">  19</span>     &lt;TextView android:layout_width="wrap_content"
+<span class="lineno">  20</span>               <span class="errorspan">android:text="Loading..."</span>
+<span class="lineno">  21</span>               android:id="@+id/textProgressBarTitle"
+<span class="lineno">  22</span>               android:layout_height="wrap_content"
+</pre>
+</div>
+</div>
+<div class="metadata">Note: This issue has an associated quickfix operation in Eclipse/ADT&nbsp;<img border="0" align="top" src="out_files/lint-run.png" />
+<br>
+Priority: 5 / 10<br/>
+Category: Internationalization</div>
+Severity: <span class="warning">Warning</span><div class="summary">
+Explanation: Looks for hardcoded text attributes which should be converted to resource lookup.</div>
+<div class="explanation">
+Hardcoding text attributes directly in layout files is bad for several reasons:<br/>
+<br/>
+* When creating configuration variations (for example for landscape or portrait)you have to repeat the actual text (and keep it up to date when making changes)<br/>
+<br/>
+* The application cannot be translated to other languages by just adding new translations for existing string resources.
+</div>
+<br/>To suppress this error, use the issue id "HardcodedText" as explained in the <a href="#SuppressInfo">Suppressing Warnings and Errors</a> section.<br/>
+</div>
+<a name="MissingIssues"></a>
+<div class="category">Disabled Checks<div class="categorySeparator"></div>
+</div>
+The following issues were not run by lint, either because the check is not enabled by default, or because it was disabled with a command line flag or via one or more lint.xml configuration files in the project directories.
+<br/><br/>
+<a name="BackButton"></a>
+<div class="issue">
+<div class="id">BackButton<div class="issueSeparator"></div>
+</div>
+<div class="metadata">Disabled By: Default<br/>
+Priority: 6 / 10<br/>
+Category: Usability</div>
+Severity: <span class="warning">Warning</span><div class="summary">
+Explanation: Looks for Back buttons, which are not common on the Android platform.</div>
+<div class="explanation">
+According to the Android Design Guide,<br/>
+<br/>
+"Other platforms use an explicit back button with label to allow the user to navigate up the application's hierarchy. Instead, Android uses the main action bar's app icon for hierarchical navigation and the navigation bar's back button for temporal navigation."<br/>
+This check is not very sophisticated (it just looks for buttons with the label "Back"), so it is disabled by default to not trigger on common scenarios like pairs of Back/Next buttons to paginate through screens.
+</div>
+<br/><div class="moreinfo">More info: <a href="http://developer.android.com/design/patterns/pure-android.html">http://developer.android.com/design/patterns/pure-android.html</a></div>
+<br/>To suppress this error, use the issue id "BackButton" as explained in the <a href="#SuppressInfo">Suppressing Warnings and Errors</a> section.<br/>
+</div><a name="FieldGetter"></a>
+<div class="issue">
+<div class="id">FieldGetter<div class="issueSeparator"></div>
+</div>
+<div class="metadata">Disabled By: Default<br/>
+Priority: 4 / 10<br/>
+Category: Performance</div>
+Severity: <span class="warning">Warning</span><div class="summary">
+Explanation: Suggests replacing uses of getters with direct field access within a class.</div>
+<div class="explanation">
+Accessing a field within the class that defines a getter for that field is at least 3 times faster than calling the getter. For simple getters that do nothing other than return the field, you might want to just reference the local field directly instead.<br/>
+<br/>
+NOTE: As of Android 2.3 (Gingerbread), this optimization is performed automatically by Dalvik, so there is no need to change your code; this is only relevant if you are targeting older versions of Android.
+</div>
+<br/><div class="moreinfo">More info: <a href="http://developer.android.com/guide/practices/design/performance.html#internal_get_set">http://developer.android.com/guide/practices/design/performance.html#internal_get_set</a></div>
+<br/>To suppress this error, use the issue id "FieldGetter" as explained in the <a href="#SuppressInfo">Suppressing Warnings and Errors</a> section.<br/>
+</div><a name="IconExpectedSize"></a>
+<div class="issue">
+<div class="id">IconExpectedSize<div class="issueSeparator"></div>
+</div>
+<div class="metadata">Disabled By: Default<br/>
+Priority: 5 / 10<br/>
+Category: Usability:Icons</div>
+Severity: <span class="warning">Warning</span><div class="summary">
+Explanation: Ensures that launcher icons, notification icons etc have the correct size.</div>
+<div class="explanation">
+There are predefined sizes (for each density) for launcher icons. You should follow these conventions to make sure your icons fit in with the overall look of the platform.
+</div>
+<br/><div class="moreinfo">More info: <a href="http://developer.android.com/design/style/iconography.html">http://developer.android.com/design/style/iconography.html</a></div>
+<br/>To suppress this error, use the issue id "IconExpectedSize" as explained in the <a href="#SuppressInfo">Suppressing Warnings and Errors</a> section.<br/>
+</div><a name="TypographyQuotes"></a>
+<div class="issue">
+<div class="id">TypographyQuotes<div class="issueSeparator"></div>
+</div>
+<div class="metadata">Note: This issue has an associated quickfix operation in Eclipse/ADT&nbsp;<img border="0" align="top" src="out_files/lint-run.png" />
+<br>
+Disabled By: Default<br/>
+Priority: 5 / 10<br/>
+Category: Usability:Typography</div>
+Severity: <span class="warning">Warning</span><div class="summary">
+Explanation: Looks for straight quotes which can be replaced by curvy quotes.</div>
+<div class="explanation">
+Straight single quotes and double quotes, when used as a pair, can be replaced by "curvy quotes" (or directional quotes). This can make the text more readable.<br/>
+<br/>
+Note that you should never use grave accents and apostrophes to quote, `like this'.<br/>
+<br/>
+(Also note that you should not use curvy quotes for code fragments.)
+</div>
+<br/><div class="moreinfo">More info: <a href="http://en.wikipedia.org/wiki/Quotation_mark">http://en.wikipedia.org/wiki/Quotation_mark</a></div>
+<br/>To suppress this error, use the issue id "TypographyQuotes" as explained in the <a href="#SuppressInfo">Suppressing Warnings and Errors</a> section.<br/>
+</div><a name="UnusedIds"></a>
+<div class="issue">
+<div class="id">UnusedIds<div class="issueSeparator"></div>
+</div>
+<div class="metadata">Disabled By: Default<br/>
+Priority: 1 / 10<br/>
+Category: Performance</div>
+Severity: <span class="warning">Warning</span><div class="summary">
+Explanation: Looks for unused id's.</div>
+<div class="explanation">
+This resource id definition appears not to be needed since it is not referenced from anywhere. Having id definitions, even if unused, is not necessarily a bad idea since they make working on layouts and menus easier, so there is not a strong reason to delete these.
+</div>
+<br/>To suppress this error, use the issue id "UnusedIds" as explained in the <a href="#SuppressInfo">Suppressing Warnings and Errors</a> section.<br/>
+</div>
+<a name="SuppressInfo"></a>
+<div class="category">Suppressing Warnings and Errors<div class="categorySeparator"></div>
+</div>
+Lint errors can be suppressed in a variety of ways:<br/><br/>1. With a @SuppressLint annotation in the Java code<br/>2. With a tools:ignore attribute in the XML file<br/>3. With a lint.xml configuration file in the project<br/>4. With a lint.xml configuration file passed to lint via the --config flag<br/>5. With the --ignore flag passed to lint.<br/><br/>To suppress a lint warning with an annotation, add a @SuppressLint("id") annotation on the class, method or variable declaration closest to the warning instance you want to disable. The id can be one or more issue id's, such as "UnusedResources" or {"UnusedResources","UnusedIds"}, or it can be "all" to suppress all lint warnings in the given scope.<br/><br/>To suppress a lint warning in an XML file, add a tools:ignore="id" attribute on the element containing the error, or one of its surrounding elements. You also need to define the namespace for the tools prefix on the root element in your document, next to the xmlns:android declaration:<br/>* xmlns:tools="http://schemas.android.com/tools"<br/><br/>To suppress lint warnings with a configuration XML file, create a file named lint.xml and place it at the root directory of the project in which it applies. (If you use the Eclipse plugin's Lint view, you can suppress errors there via the toolbar and Eclipse will create the lint.xml file for you.).<br/><br/>The format of the lint.xml file is something like the following:<br/><br/>&lt;?xml version="1.0" encoding="UTF-8"?><br/>&lt;lint><br/>    &lt;!-- Disable this given check in this project --><br/>    &lt;issue id="IconMissingDensityFolder" severity="ignore" /><br/><br/>    &lt;!-- Ignore the ObsoleteLayoutParam issue in the given files --><br/>    &lt;issue id="ObsoleteLayoutParam"><br/>        &lt;ignore path="res/layout/activation.xml" /><br/>        &lt;ignore path="res/layout-xlarge/activation.xml" /><br/>    &lt;/issue><br/><br/>    &lt;!-- Ignore the UselessLeaf issue in the given file --><br/>    &lt;issue id="UselessLeaf"><br/>        &lt;ignore path="res/layout/main.xml" /><br/>    &lt;/issue><br/><br/>    &lt;!-- Change the severity of hardcoded strings to "error" --><br/>    &lt;issue id="HardcodedText" severity="error" /><br/>&lt;/lint><br/><br/>To suppress lint checks from the command line, pass the --ignore flag with a comma separated list of ids to be suppressed, such as:<br/>"lint --ignore UnusedResources,UselessLeaf /my/project/path"<br/>
+
+</body>
+</html>
