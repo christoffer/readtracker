@@ -27,8 +27,7 @@ public class ActivitySettings extends PreferenceActivity {
       emailPreference.setTitle(currentUser.getDisplayName());
       emailPreference.setSummary(currentUser.getEmail());
       emailPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-        @Override
-        public boolean onPreferenceClick(Preference preference) {
+        @Override public boolean onPreferenceClick(Preference preference) {
           Uri userUri = Uri.parse(currentUser.getWebURL());
           Intent browserIntent = new Intent(Intent.ACTION_VIEW, userUri);
           startActivity(browserIntent);
@@ -48,8 +47,7 @@ public class ActivitySettings extends PreferenceActivity {
     }
 
     signOutPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-      @Override
-      public boolean onPreferenceClick(Preference preference) {
+      @Override public boolean onPreferenceClick(Preference preference) {
         setResult(ActivityCodes.RESULT_SIGN_OUT);
         finish();
         return true;
