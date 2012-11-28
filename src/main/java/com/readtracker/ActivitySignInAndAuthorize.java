@@ -2,6 +2,7 @@ package com.readtracker;
 
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -42,8 +43,8 @@ public class ActivitySignInAndAuthorize extends ReadTrackerActivity {
 
     WebView webView = createWebContentView();
     RelativeLayout.LayoutParams paramsWebView = new RelativeLayout.LayoutParams(
-      LayoutParams.FILL_PARENT,
-      LayoutParams.FILL_PARENT);
+        LayoutParams.FILL_PARENT,
+        LayoutParams.FILL_PARENT);
     paramsWebView.addRule(RelativeLayout.CENTER_IN_PARENT);
     webView.setLayoutParams(paramsWebView);
 
@@ -85,7 +86,7 @@ public class ActivitySignInAndAuthorize extends ReadTrackerActivity {
           String code = uri.getQueryParameter("code");
           Log.i(TAG, "Got authorization code: " + code);
           view.setVisibility(View.INVISIBLE);
-          onAuthorization(code);
+          (new TokenExchangeAsyncTask()).execute(code);
           return false;
         }
 
@@ -117,14 +118,8 @@ public class ActivitySignInAndAuthorize extends ReadTrackerActivity {
     return webView;
   }
 
-  /**
-   * Attemt to exchange the provided authorization code for a token and update
-   * the application state.
-   *
-   * @param code the received authorization code
-   */
-  private void onAuthorization(String code) {
-    if(!readmillApi().authorize(code)) {
+  private void onTokenExchangeComplete(boolean success) {
+    if(!success) {
       Log.d(TAG, "Failed getting a token - exiting");
       toast("Authorization failed");
       setResult(RESULT_CANCELED);
@@ -134,5 +129,16 @@ public class ActivitySignInAndAuthorize extends ReadTrackerActivity {
 
     setResult(RESULT_OK);
     finish();
+  }
+
+  // Perform the actual exchange in a background thread
+  private class TokenExchangeAsyncTask extends AsyncTask<String, Void, Boolean> {
+    @Override protected Boolean doInBackground(String... args) {
+      return readmillApi().authorize(args[0]);
+    }
+
+    @Override protected void onPostExecute(Boolean success) {
+      onTokenExchangeComplete(success);
+    }
   }
 }
