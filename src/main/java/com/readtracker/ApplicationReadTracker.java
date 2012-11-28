@@ -356,15 +356,9 @@ public class ApplicationReadTracker extends Application implements TokenChangeLi
     editor.remove(KEY_CURRENT_USER);
     editor.remove(KEY_TOKEN);
     editor.commit();
-  }
 
-  /**
-   * Checks if a user is currently signed in to Readmill.
-   * This is true if a user and a token is stored in the preferences.
-   *
-   * @return True if user and token are available
-   */
-  public boolean userSignedIn() {
-    return mCurrentUser != null && mReadmillApiHelper.hasToken();
+    // Clear local state
+    mCurrentUser = null;
+    mReadmillApiHelper.setToken(null);
   }
 }
