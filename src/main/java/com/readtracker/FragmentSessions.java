@@ -1,15 +1,12 @@
 package com.readtracker;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ListView;
 import android.widget.TextView;
 import com.readtracker.db.LocalReading;
 import com.readtracker.db.LocalSession;
@@ -28,15 +25,6 @@ public class FragmentSessions extends Fragment {
   private LocalReading mLocalReading;
   private ArrayList<LocalSession> mLocalSessions;
   private ListAdapterLocalSession mLocalSessionsAdapter;
-
-  // Closing remark, recommend (should be moved)
-  private static ViewGroup mLayoutClosingButtons;
-  private static TextView mDividerClosingButtons;
-  private static Button mButtonFinishReading;
-  private static Button mButtonAbandonReading;
-
-  // List of reading sessions
-  private static ListView mListSessions;
 
   // Flag for forcing reinitialization (ignore frozen state)
   private boolean mForceReInitialize;
@@ -84,58 +72,19 @@ public class FragmentSessions extends Fragment {
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     Log.d(TAG, "onCreateView()");
     View view = inflater.inflate(R.layout.fragment_sessions, container, false);
-    bindViews(view);
-    bindEvents();
 
-    setupEndButtons();
-
-    if(mLocalReading.hasClosingRemark()) {
-      View header = inflateClosingRemark();
-      mListSessions.addHeaderView(header, null, false);
-    }
-
-    View footer = inflateSummary();
-    mListSessions.addFooterView(footer, null, false);
-
-    mLocalSessionsAdapter = new ListAdapterLocalSession(getActivity(), 0, mLocalSessions);
-    mListSessions.setAdapter(mLocalSessionsAdapter);
+//    if(mLocalReading.hasClosingRemark()) {
+//      View header = inflateClosingRemark();
+//      mListSessions.addHeaderView(header, null, false);
+//    }
+//
+//    View footer = inflateSummary();
+//    mListSessions.addFooterView(footer, null, false);
+//
+//    mLocalSessionsAdapter = new ListAdapterLocalSession(getActivity(), 0, mLocalSessions);
+//    mListSessions.setAdapter(mLocalSessionsAdapter);
 
     return view;
-  }
-
-  @Override
-  public void onActivityResult(int requestCode, int resultCode, Intent data) {
-    Log.d(TAG, "Fragment handling activity result");
-    if(requestCode == ActivityCodes.CLOSE_BOOK && resultCode == ActivityCodes.RESULT_OK) {
-      mLocalReading = (LocalReading) data.getParcelableExtra(IntentKeys.LOCAL_READING);
-      setupEndButtons();
-      ((ActivityBook) getActivity()).finishWithResult(ActivityCodes.RESULT_OK);
-    }
-  }
-
-  private void bindViews(View view) {
-    mListSessions = (ListView) view.findViewById(R.id.listSessions);
-
-    mDividerClosingButtons = (TextView) view.findViewById(R.id.dividerClosingButtons);
-    mButtonFinishReading = (Button) view.findViewById(R.id.buttonFinishReading);
-    mButtonAbandonReading = (Button) view.findViewById(R.id.buttonAbandonReading);
-    mLayoutClosingButtons = (ViewGroup) view.findViewById(R.id.layoutClosingButtons);
-  }
-
-  public void bindEvents() {
-    mButtonAbandonReading.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
-        exitToFinishBook(true);
-      }
-    });
-
-    mButtonFinishReading.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
-        exitToFinishBook(false);
-      }
-    });
   }
 
   private LayoutInflater getInflater() {
@@ -165,22 +114,5 @@ public class FragmentSessions extends Fragment {
     textTotalTime.setText(timeSpent);
 
     return layoutSessionSummary;
-  }
-
-  private void setupEndButtons() {
-    mLayoutClosingButtons.setVisibility(View.GONE);
-    mDividerClosingButtons.setVisibility(View.GONE);
-
-    if(mLocalReading.isActive()) {
-      mLayoutClosingButtons.setVisibility(View.VISIBLE);
-      mDividerClosingButtons.setVisibility(View.VISIBLE);
-    }
-  }
-
-  private void exitToFinishBook(boolean shouldAbandon) {
-    Intent intentClose = new Intent(getActivity(), ActivityClose.class);
-    intentClose.putExtra(IntentKeys.LOCAL_READING, mLocalReading);
-    intentClose.putExtra(IntentKeys.SHOULD_ABANDON, shouldAbandon);
-    startActivityForResult(intentClose, ActivityCodes.CLOSE_BOOK);
   }
 }

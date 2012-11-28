@@ -5,36 +5,9 @@
               android:orientation="vertical"
               android:layout_height="fill_parent">
 
-  <TextView style="@style/divider"
-            android:id="@+id/dividerClosingButtons"
-            android:visibility="gone"
-            android:text="End reading" />
-
-  <LinearLayout android:id="@+id/layoutClosingButtons"
-                android:layout_height="wrap_content"
-                android:layout_width="fill_parent"
-                android:padding="10dp"
-                android:orientation="horizontal">
-
-    <Button android:id="@+id/buttonAbandonReading"
-            style="@style/default_button"
-            android:layout_weight="1"
-            android:layout_marginRight="6dp"
-            android:text="Abandon" />
-
-    <Button android:id="@+id/buttonFinishReading"
-            style="@style/default_button"
-            android:layout_weight="1"
-            android:layout_marginLeft="6dp"
-            android:text="Finish" />
-
-  </LinearLayout>
-
-  <!-- list of reading sessions -->
-  <ListView android:id="@+id/listSessions"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:cacheColorHint="@color/background"
-            android:layout_width="fill_parent" />
+  <com.readtracker.customviews.SessionView android:id="@+id/sessionView"
+                                           android:layout_height="fill_parent"
+                                           android:layout_width="fill_parent"
+                                           android:padding="20dp" />
 
 </LinearLayout>
