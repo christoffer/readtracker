@@ -55,7 +55,7 @@ public class ReadmillApiHelper {
     RequestBuilder request = mWrapper.post(endpoint).
         readingPrivate(!isPublic).
         readingState("reading");
-    JSONObject response = sendRequest(request, "create reading", 200, 201);
+    JSONObject response = sendRequest(request, "create reading", 200, 201, 409); // 409 is a already existing reading – returns the reading
 
     // Unwrap
     JSONObject reading = response.optJSONObject("reading");
@@ -566,6 +566,10 @@ public class ReadmillApiHelper {
    */
   public boolean hasToken() {
     return mWrapper.getToken() != null;
+  }
+
+  public void setToken(Token token) {
+    mWrapper.setToken(token);
   }
 
   /**
