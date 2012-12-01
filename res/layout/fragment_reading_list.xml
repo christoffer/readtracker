@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="fill_parent"
-              android:layout_height="fill_parent">
+  android:layout_width="fill_parent"
+  android:layout_height="fill_parent">
 
-  <ListView android:id="@+id/listReadings"
-            android:layout_height="fill_parent"
-            android:layout_width="fill_parent"
-            android:layout_gravity="bottom"
-            android:divider="@android:color/transparent"
-            android:cacheColorHint="#ff000000"/>
+  <ListView
+    android:id="@+id/listReadings"
+    android:layout_height="fill_parent"
+    android:layout_width="fill_parent"
+    android:layout_gravity="bottom"
+    android:divider="@android:color/transparent"
+    android:cacheColorHint="#ff000000" />
 
 </LinearLayout>

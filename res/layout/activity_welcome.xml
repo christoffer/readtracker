@@ -1,59 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_height="fill_parent"
-              android:layout_width="fill_parent"
-              android:background="@color/background"
-              android:padding="12dp">
+  android:orientation="vertical"
+  android:layout_height="fill_parent"
+  android:layout_width="fill_parent"
+  android:background="@color/background"
+  android:padding="12dp">
 
-  <Button android:id="@+id/buttonOffline"
-          style="@style/button_small"
-          android:text="Use ReadTracker without Readmill"
-          android:layout_gravity="center_horizontal" />
+  <Button
+    android:id="@+id/buttonOffline"
+    style="@style/button_small"
+    android:text="Use ReadTracker without Readmill"
+    android:layout_gravity="center_horizontal" />
 
-  <LinearLayout android:layout_width="fill_parent"
-                android:layout_height="0dp"
-                android:orientation="vertical"
-                android:layout_weight="1.0"
-                android:gravity="center">
+  <LinearLayout
+    android:layout_width="fill_parent"
+    android:layout_height="0dp"
+    android:orientation="vertical"
+    android:layout_weight="1.0"
+    android:gravity="center">
 
-    <ImageView android:layout_marginTop="12dp"
-               android:layout_width="fill_parent"
-               android:layout_gravity="center"
-               android:contentDescription="ReadTracker Logotype"
-               android:layout_height="wrap_content"
-               android:src="@drawable/logo_timer"
-               android:paddingLeft="24dip"
-               android:paddingRight="24dip"
-               android:paddingBottom="12dp"
-               android:scaleType="centerInside" />
+    <ImageView
+      android:layout_marginTop="12dp"
+      android:layout_width="fill_parent"
+      android:layout_gravity="center"
+      android:contentDescription="ReadTracker Logotype"
+      android:layout_height="wrap_content"
+      android:src="@drawable/logo_timer"
+      android:paddingLeft="24dip"
+      android:paddingRight="24dip"
+      android:paddingBottom="12dp"
+      android:scaleType="centerInside" />
 
   </LinearLayout>
 
-  <View android:layout_height="1dp"
-        android:background="@color/midnight_ultralight"
-        android:layout_width="fill_parent" />
+  <View
+    android:layout_height="1dp"
+    android:background="@color/midnight_ultralight"
+    android:layout_width="fill_parent" />
 
-  <LinearLayout android:layout_height="wrap_content"
-                android:layout_width="fill_parent"
-                android:layout_gravity="bottom"
-                android:layout_marginTop="24dp"
-                android:layout_marginBottom="12dp"
-                android:gravity="center_horizontal"
-                android:orientation="horizontal">
+  <LinearLayout
+    android:layout_height="wrap_content"
+    android:layout_width="fill_parent"
+    android:layout_gravity="bottom"
+    android:layout_marginTop="24dp"
+    android:layout_marginBottom="12dp"
+    android:gravity="center_horizontal"
+    android:orientation="horizontal">
 
-    <Button android:id="@+id/btnSignUp"
-            style="@style/default_button"
-            android:layout_weight="1"
-            android:layout_marginRight="6dp"
-            android:text="Sign up"/>
+    <Button
+      android:id="@+id/btnSignUp"
+      style="@style/default_button"
+      android:layout_weight="1"
+      android:layout_marginRight="6dp"
+      android:text="Sign up" />
 
-    <Button android:id="@+id/btnAuthorization"
-            style="@style/default_button"
-            android:layout_marginLeft="6dp"
-            android:layout_weight="1"
-            android:text="Sign in" />
+    <Button
+      android:id="@+id/btnAuthorization"
+      style="@style/default_button"
+      android:layout_marginLeft="6dp"
+      android:layout_weight="1"
+      android:text="Sign in" />
 
   </LinearLayout>
 

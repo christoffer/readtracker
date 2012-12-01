@@ -1,87 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_height="fill_parent"
-            android:layout_width="fill_parent"
-            android:fillViewport="true">
+  android:layout_height="fill_parent"
+  android:layout_width="fill_parent"
+  android:fillViewport="true">
 
-  <LinearLayout android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:padding="12dp"
-                android:orientation="vertical">
+  <LinearLayout
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:padding="12dp"
+    android:orientation="vertical">
 
-    <TextView android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_marginTop="0dp"
-              android:layout_marginBottom="6dp"
-              android:textColor="@color/text_color_secondary"
-              android:text="Book information"/>
-
-    <EditText
-        android:id="@+id/editTitle"
-        style="@style/default_input_field"
-        android:layout_marginBottom="12dp"
-        android:hint="Title"/>
+    <TextView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="0dp"
+      android:layout_marginBottom="6dp"
+      android:textColor="@color/text_color_secondary"
+      android:text="Book information" />
 
     <EditText
-        android:id="@+id/editAuthor"
-        style="@style/default_input_field"
-        android:layout_marginBottom="12dp"
-        android:hint="Author"/>
-
-    <TextView android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_marginTop="24dp"
-              android:layout_marginBottom="6dp"
-              android:textColor="@color/text_color_secondary"
-              android:text="Tracking"/>
-
-    <ToggleButton android:id="@+id/togglePagesPercent"
-                  style="@style/default_toggle_button"
-                  android:paddingLeft="0dp"
-                  android:paddingRight="0dp"
-                  android:layout_width="fill_parent"
-                  android:gravity="left|center"
-                  android:drawablePadding="12dp"
-                  android:textOn="Measured by page count"
-                  android:textOff="Measured in percent only"
-                  android:checked="true"/>
+      android:id="@+id/editTitle"
+      style="@style/default_input_field"
+      android:layout_marginBottom="12dp"
+      android:hint="Title" />
 
     <EditText
-        android:id="@+id/editPageCount"
-        style="@style/centered_number_input_field"
-        android:layout_width="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="12dp"
-        android:layout_marginBottom="12dp"
-        android:layout_marginRight="6dp"
-        android:paddingLeft="24dp"
-        android:paddingRight="24dp"
-        android:inputType="number"
-        android:hint="000"
-        android:gravity="center_horizontal"
-        android:ellipsize="end"/>
+      android:id="@+id/editAuthor"
+      style="@style/default_input_field"
+      android:layout_marginBottom="12dp"
+      android:hint="Author" />
+
+    <TextView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="24dp"
+      android:layout_marginBottom="6dp"
+      android:textColor="@color/text_color_secondary"
+      android:text="Tracking" />
+
+    <ToggleButton
+      android:id="@+id/togglePagesPercent"
+      style="@style/default_toggle_button"
+      android:paddingLeft="0dp"
+      android:paddingRight="0dp"
+      android:layout_width="fill_parent"
+      android:gravity="left|center"
+      android:drawablePadding="12dp"
+      android:textOn="Measured by page count"
+      android:textOff="Measured in percent only"
+      android:checked="true" />
+
+    <EditText
+      android:id="@+id/editPageCount"
+      style="@style/centered_number_input_field"
+      android:layout_width="wrap_content"
+      android:layout_gravity="center"
+      android:layout_marginTop="12dp"
+      android:layout_marginBottom="12dp"
+      android:layout_marginRight="6dp"
+      android:paddingLeft="24dp"
+      android:paddingRight="24dp"
+      android:inputType="number"
+      android:hint="0"
+      android:gravity="center_horizontal"
+      android:ellipsize="end" />
 
     <!-- show readmill connection settings when in online mode -->
-    <ToggleButton android:id="@+id/togglePublicPrivate"
-                  style="@style/default_toggle_button"
-                  android:layout_width="fill_parent"
-                  android:paddingLeft="0dp"
-                  android:paddingRight="0dp"
-                  android:gravity="left|center"
-                  android:textOn="Show reading on Readmill"
-                  android:textOff="Hide reading on Readmill"
-                  android:checked="true"/>
+    <ToggleButton
+      android:id="@+id/togglePublicPrivate"
+      style="@style/default_toggle_button"
+      android:layout_width="fill_parent"
+      android:paddingLeft="0dp"
+      android:paddingRight="0dp"
+      android:gravity="left|center"
+      android:textOn="Show reading on Readmill"
+      android:textOff="Hide reading on Readmill"
+      android:checked="true" />
 
     <!-- spacer to push the add button to the bottom of the page but still allow small screens to scroll -->
-    <View android:layout_width="fill_parent"
-          android:layout_height="0dp"
-          android:layout_weight="1"/>
 
-    <Button android:id="@+id/buttonAddBook"
-            style="@style/default_button"
-            android:layout_marginTop="24dp"
-            android:text="Add"/>
+    <View
+      android:layout_width="fill_parent"
+      android:layout_height="0dp"
+      android:layout_weight="1" />
+
+    <Button
+      android:id="@+id/buttonAddBook"
+      style="@style/default_button"
+      android:layout_marginTop="24dp"
+      android:text="Add" />
 
   </LinearLayout>
 </ScrollView>

@@ -2,49 +2,55 @@
 
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
 
-  <com.readtracker.thirdparty.SafeViewFlipper android:id="@+id/flipperSessionLength"
-                                              android:layout_width="fill_parent"
-                                              android:layout_height="fill_parent"
-                                              android:inAnimation="@anim/slide_up_appear"
-                                              android:outAnimation="@anim/slide_down_disappear">
+  <com.readtracker.thirdparty.SafeViewFlipper
+    android:id="@+id/flipperSessionLength"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:inAnimation="@anim/slide_up_appear"
+    android:outAnimation="@anim/slide_down_disappear">
 
     <!-- Reading duration -->
-    <LinearLayout android:layout_height="fill_parent"
-                  android:layout_width="fill_parent"
-                  android:padding="6dp"
-                  android:gravity="center"
-                  android:orientation="vertical">
+    <LinearLayout
+      android:layout_height="fill_parent"
+      android:layout_width="fill_parent"
+      android:padding="6dp"
+      android:gravity="center"
+      android:orientation="vertical">
 
-      <Button android:id="@+id/buttonShowDurationPicker"
-              android:background="@android:color/transparent"
-              android:layout_height="wrap_content"
-              android:layout_width="fill_parent"
-              android:paddingTop="10dp"
-              android:paddingBottom="10dp"
-              android:paddingLeft="10dp"
-              android:paddingRight="10dp"
-              android:text="2 hours 45 minutes..."
-              android:textColor="@color/text_color_secondary"
-              android:textSize="18dp"/>
+      <Button
+        android:id="@+id/buttonShowDurationPicker"
+        android:background="@android:color/transparent"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:text="2 hours 45 minutes..."
+        android:textColor="@color/text_color_secondary"
+        android:textSize="18dp" />
 
     </LinearLayout>
 
-    <LinearLayout android:layout_width="fill_parent"
-                  android:layout_height="wrap_content"
-                  android:gravity="center"
-                  android:orientation="horizontal">
+    <LinearLayout
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content"
+      android:gravity="center"
+      android:orientation="horizontal">
 
-      <com.readtracker.thirdparty.widget.WheelView android:id="@+id/wheelDurationHours"
-                                                   android:minWidth="80dp"
-                                                   android:layout_height="wrap_content"
-                                                   android:layout_width="wrap_content"
-                                                   android:layout_marginRight="6dp"/>
+      <com.readtracker.thirdparty.widget.WheelView
+        android:id="@+id/wheelDurationHours"
+        android:minWidth="80dp"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_marginRight="6dp" />
 
-      <com.readtracker.thirdparty.widget.WheelView android:id="@+id/wheelDurationMinutes"
-                                                   android:minWidth="100dp"
-                                                   android:layout_height="wrap_content"
-                                                   android:layout_marginLeft="6dp"
-                                                   android:layout_width="wrap_content"/>
+      <com.readtracker.thirdparty.widget.WheelView
+        android:id="@+id/wheelDurationMinutes"
+        android:minWidth="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="6dp"
+        android:layout_width="wrap_content" />
 
     </LinearLayout>
 

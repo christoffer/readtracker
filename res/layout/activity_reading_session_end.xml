@@ -1,56 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_height="fill_parent"
-                android:layout_width="fill_parent"
-                android:paddingBottom="12dp"
-                android:gravity="center_horizontal">
+  android:layout_height="fill_parent"
+  android:layout_width="fill_parent"
+  android:paddingBottom="12dp"
+  android:gravity="center_horizontal">
 
-  <include layout="@layout/_book_header"/>
+  <include layout="@layout/_book_header" />
 
   <!--suppress AndroidLintUnknownIdInLayout -->
-  <LinearLayout android:layout_below="@id/_bookHeader"
-                android:layout_above="@+id/btnSaveReadingSession"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="center_vertical"
-                android:padding="12dp">
+  <LinearLayout
+    android:layout_below="@id/_bookHeader"
+    android:layout_above="@+id/btnSaveReadingSession"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center_vertical"
+    android:padding="12dp">
 
     <!-- duration button + container for edit duration -->
-    <FrameLayout android:layout_height="wrap_content" android:layout_width="fill_parent">
-      <include layout="@layout/_duration_picker"/>
+    <FrameLayout
+      android:layout_height="wrap_content"
+      android:layout_width="fill_parent">
+
+      <include layout="@layout/_duration_picker" />
     </FrameLayout>
 
     <!-- divider -->
 
-    <View style="@style/thick_divider" android:layout_marginBottom="24dp" android:layout_marginTop="6dp"/>
+    <View
+      style="@style/thick_divider"
+      android:layout_marginBottom="24dp"
+      android:layout_marginTop="6dp" />
 
     <!-- ended on box -->
 
-    <FrameLayout android:layout_height="wrap_content" android:layout_width="wrap_content"
-                 android:layout_gravity="center_horizontal">
-      <include layout="@layout/_progress_picker"/>
+    <FrameLayout
+      android:layout_height="wrap_content"
+      android:layout_width="wrap_content"
+      android:layout_gravity="center_horizontal">
+
+      <include layout="@layout/_progress_picker" />
     </FrameLayout>
 
     <!-- divider -->
 
-    <View style="@style/thick_divider" android:layout_marginBottom="6dp" android:layout_marginTop="24dp"/>
+    <View
+      style="@style/thick_divider"
+      android:layout_marginBottom="6dp"
+      android:layout_marginTop="24dp" />
 
     <!-- finished? -->
 
-    <Button style="@style/default_button"
-            android:textColor="@color/text_color_secondary"
-            android:text="Finished?" />
+    <Button
+      style="@style/default_button"
+      android:textColor="@color/text_color_secondary"
+      android:text="Finished?" />
 
     <!-- Ending page group -->
 
   </LinearLayout>
 
-  <Button android:id="@+id/btnSaveReadingSession"
-          style="@style/default_button"
-          android:layout_alignParentBottom="true"
-          android:layout_marginLeft="12dp"
-          android:layout_marginRight="12dp"
-          android:text="Save" />
+  <Button
+    android:id="@+id/btnSaveReadingSession"
+    style="@style/default_button"
+    android:layout_alignParentBottom="true"
+    android:layout_marginLeft="12dp"
+    android:layout_marginRight="12dp"
+    android:text="Save" />
 
 </RelativeLayout>

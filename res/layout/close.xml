@@ -1,74 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent">
+  android:layout_width="fill_parent"
+  android:layout_height="fill_parent">
 
   <include layout="@layout/_book_header" />
 
-  <RelativeLayout android:layout_width="wrap_content"
-                  android:layout_height="fill_parent"
-                  android:layout_below="@id/_bookHeader"
-                  android:background="@color/midnight_light"
-                  android:padding="10dp">
+  <RelativeLayout
+    android:layout_width="wrap_content"
+    android:layout_height="fill_parent"
+    android:layout_below="@id/_bookHeader"
+    android:background="@color/midnight_light"
+    android:padding="10dp">
 
-    <LinearLayout android:layout_width="fill_parent"
-                  android:layout_height="fill_parent"
-                  android:layout_alignParentTop="true"
-                  android:orientation="vertical">
+    <LinearLayout
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent"
+      android:layout_alignParentTop="true"
+      android:orientation="vertical">
 
-      <TextView android:id="@+id/textFinishAction"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:textSize="18dp"
-                android:textStyle="normal"
-                android:gravity="center"
-                android:textColor="@color/text_color_primary"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="10dp"
-                android:text="Finishing" />
+      <TextView
+        android:id="@+id/textFinishAction"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18dp"
+        android:textStyle="normal"
+        android:gravity="center"
+        android:textColor="@color/text_color_primary"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="10dp"
+        android:text="Finishing" />
 
-      <TextView android:id="@+id/textFinishTitle"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:textSize="22dp"
-                android:textStyle="bold"
-                android:gravity="center"
-                android:textColor="@color/text_color_primary"
-                android:text="Metamorphosis" />
+      <TextView
+        android:id="@+id/textFinishTitle"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textSize="22dp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:textColor="@color/text_color_primary"
+        android:text="Metamorphosis" />
 
-      <TextView android:id="@+id/textFinishTime"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="30dp"
-                android:textSize="14dp"
-                android:textStyle="normal"
-                android:gravity="center"
-                android:textColor="@color/text_color_primary"
-                android:text="after 5 hours and 34 minutes" />
+      <TextView
+        android:id="@+id/textFinishTime"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="30dp"
+        android:textSize="14dp"
+        android:textStyle="normal"
+        android:gravity="center"
+        android:textColor="@color/text_color_primary"
+        android:text="after 5 hours and 34 minutes" />
 
-      <EditText android:id="@+id/editClosingRemark"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="10dp"
-                android:maxLines="5"
-                android:background="@drawable/default_input_field"
-                android:textColor="@color/text_color_primary"
-                android:text="Photography is the art that justifies atrocity: war photography, pornography, memento mori, footprints left on a landscape where the last great auk died. None of us is innocent."
-                android:typeface="serif"
-                android:textStyle="italic"
-                android:textSize="16dp"
-                android:inputType="text|textCapSentences|textAutoCorrect|textMultiLine"
-                android:padding="15dp" />
+      <EditText
+        android:id="@+id/editClosingRemark"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="10dp"
+        android:maxLines="5"
+        android:background="@drawable/default_input_field"
+        android:textColor="@color/text_color_primary"
+        android:text="Photography is the art that justifies atrocity: war photography, pornography, memento mori, footprints left on a landscape where the last great auk died. None of us is innocent."
+        android:typeface="serif"
+        android:textStyle="italic"
+        android:textSize="16dp"
+        android:inputType="text|textCapSentences|textAutoCorrect|textMultiLine"
+        android:padding="15dp" />
     </LinearLayout>
 
-    <Button android:id="@+id/buttonSubmitClosingRemark"
-            android:layout_alignParentBottom="true"
-            style="@style/default_button"
-            android:text="Finish"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content" />
+    <Button
+      android:id="@+id/buttonSubmitClosingRemark"
+      android:layout_alignParentBottom="true"
+      style="@style/default_button"
+      android:text="Finish"
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content" />
 
   </RelativeLayout>
 

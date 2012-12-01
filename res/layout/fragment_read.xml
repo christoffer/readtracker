@@ -1,26 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_height="fill_parent"
-                android:layout_width="fill_parent"
-                android:padding="12dp">
+  android:layout_height="fill_parent"
+  android:layout_width="fill_parent"
+  android:padding="12dp">
 
-  <TextView android:id="@+id/textBillboard"
-            style="@style/default_text"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:textSize="20dp"
-            android:layout_centerVertical="true"
-            android:text="Please add page count"
-            android:paddingBottom="48dp"
-            android:gravity="center"/>
+  <TextView
+    android:id="@+id/textBillboard"
+    style="@style/default_text"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:textSize="20dp"
+    android:layout_centerVertical="true"
+    android:text="Please add page count"
+    android:paddingBottom="48dp"
+    android:gravity="center" />
 
   <com.readtracker.customviews.TimeSpinner
-      android:id="@+id/timespinner"
-      android:layout_width="fill_parent"
-      android:layout_height="fill_parent"
-      android:layout_marginBottom="48dp"/>
+    android:id="@+id/timespinner"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_marginBottom="48dp" />
 
-  <include layout="@layout/_reading_session_controls" android:layout_height="wrap_content"/>
+  <include
+    layout="@layout/_reading_session_controls"
+    android:layout_height="wrap_content" />
 
 </RelativeLayout>

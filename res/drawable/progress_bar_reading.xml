@@ -4,9 +4,9 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 
   <item android:id="@android:id/background">
-      <shape>
-        <solid android:color="#55777777" />
-      </shape>
+    <shape>
+      <solid android:color="#55777777" />
+    </shape>
   </item>
 
   <item android:id="@android:id/secondaryProgress">

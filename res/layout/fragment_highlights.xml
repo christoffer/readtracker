@@ -1,19 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="fill_parent"
-              android:layout_height="fill_parent">
+  android:layout_width="fill_parent"
+  android:layout_height="fill_parent">
 
-  <ImageView android:src="@drawable/highlights_blank"
-             android:id="@+id/imageHighlightsBlankState"
-             android:layout_width="fill_parent"
-             android:layout_height="wrap_content"
-             android:visibility="gone"
-             android:layout_gravity="center" />
+  <ImageView
+    android:src="@drawable/highlights_blank"
+    android:id="@+id/imageHighlightsBlankState"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:visibility="gone"
+    android:layout_gravity="center" />
 
-  <ListView android:id="@+id/listHighlights"
-            android:layout_width="fill_parent"
-            android:cacheColorHint="#0000"
-            android:layout_height="wrap_content" />
+  <ListView
+    android:id="@+id/listHighlights"
+    android:layout_width="fill_parent"
+    android:cacheColorHint="#0000"
+    android:layout_height="wrap_content" />
 
 </LinearLayout>

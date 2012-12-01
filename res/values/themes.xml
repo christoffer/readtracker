@@ -1,6 +1,6 @@
 <resources>
-  <style name="ReadTrackerTheme"
-         parent="android:Theme">
+
+  <style name="ReadTrackerTheme" parent="android:Theme">
     <item name="android:windowTitleSize">0dip</item>
     <item name="android:windowTitleBackgroundStyle">@style/ReadTrackerTitle</item>
     <item name="android:windowContentOverlay">@null</item>

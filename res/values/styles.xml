@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
   <style name="default_button">
     <item name="android:layout_width">fill_parent</item>
     <item name="android:layout_height">48dp</item>
@@ -149,7 +150,7 @@
     <item name="android:layout_marginRight">13dp</item>
   </style>
 
-  <style name="small_heading_text" parent="single_line_text"/>
+  <style name="small_heading_text" parent="single_line_text" />
 
   <style name="small_content_text" parent="single_line_text">
     <item name="android:textColor">@color/text_color_secondary</item>

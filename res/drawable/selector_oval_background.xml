@@ -2,8 +2,7 @@
 
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
-  <item android:state_pressed="true"
-        android:drawable="@drawable/oval_black_100" />
+  <item android:state_pressed="true" android:drawable="@drawable/oval_black_100" />
 
   <item android:drawable="@drawable/oval_black_25" />
 

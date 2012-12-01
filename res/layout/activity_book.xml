@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_height="fill_parent"
-                android:layout_width="fill_parent">
+  android:layout_height="fill_parent"
+  android:layout_width="fill_parent">
 
   <include layout="@layout/_book_header" />
 
   <!-- container for pages of the book activity -->
 
-  <android.support.v4.view.ViewPager android:id="@+id/pagerBookActivity"
-                                     android:layout_width="fill_parent"
-                                     android:layout_height="fill_parent"
-                                     android:layout_below="@id/_bookHeader">
+  <android.support.v4.view.ViewPager
+    android:id="@+id/pagerBookActivity"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_below="@id/_bookHeader">
 
     <android.support.v4.view.CustomPagerTabStrip style="@style/pager_title" />
 

@@ -8,45 +8,51 @@ while another layout can have it expand horizontally.
 
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
 
-  <LinearLayout android:id="@+id/layoutPageEntry"
-                android:layout_height="fill_parent"
-                android:layout_width="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+  <LinearLayout
+    android:id="@+id/layoutPageEntry"
+    android:layout_height="fill_parent"
+    android:layout_width="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
 
     <!-- ended on label -->
-    <TextView android:layout_height="wrap_content"
-              android:layout_width="wrap_content"
-              android:textSize="18dp"
-              android:text="Ended on"
-              android:layout_marginRight="24dp"
-              android:gravity="center_vertical"/>
+    <TextView
+      android:layout_height="wrap_content"
+      android:layout_width="wrap_content"
+      android:textSize="18dp"
+      android:text="Ended on"
+      android:layout_marginRight="24dp"
+      android:gravity="center_vertical" />
 
     <!-- simple page picker for page numbers -->
 
-    <com.readtracker.thirdparty.widget.WheelView android:id="@+id/wheelEndingPage"
-                                                 style="@style/generic_number_wheel"/>
+    <com.readtracker.thirdparty.widget.WheelView
+      android:id="@+id/wheelEndingPage"
+      style="@style/generic_number_wheel" />
 
     <!-- or a dual wheeled (heh) picker for percent integer and fraction -->
 
-    <com.readtracker.thirdparty.widget.WheelView android:id="@+id/wheelEndPercentInteger"
-                                                 android:layout_marginRight="6dp"
-                                                 android:minWidth="48dp"
-                                                 style="@style/generic_number_wheel"/>
+    <com.readtracker.thirdparty.widget.WheelView
+      android:id="@+id/wheelEndPercentInteger"
+      android:layout_marginRight="6dp"
+      android:minWidth="48dp"
+      style="@style/generic_number_wheel" />
 
     <!-- show a little dot in between the two percent wheels -->
 
-    <TextView android:layout_height="wrap_content"
-              android:layout_width="wrap_content"
-              android:id="@+id/textDot"
-              android:text="."
-              android:textColor="@color/text_color_primary"
-              android:textSize="20dp"/>
+    <TextView
+      android:layout_height="wrap_content"
+      android:layout_width="wrap_content"
+      android:id="@+id/textDot"
+      android:text="."
+      android:textColor="@color/text_color_primary"
+      android:textSize="20dp" />
 
-    <com.readtracker.thirdparty.widget.WheelView android:id="@+id/wheelEndPercentFraction"
-                                                 android:layout_marginLeft="6dp"
-                                                 android:minWidth="48dp"
-                                                 style="@style/generic_number_wheel"/>
+    <com.readtracker.thirdparty.widget.WheelView
+      android:id="@+id/wheelEndPercentFraction"
+      android:layout_marginLeft="6dp"
+      android:minWidth="48dp"
+      style="@style/generic_number_wheel" />
 
   </LinearLayout>
 
