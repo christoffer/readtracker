@@ -9,6 +9,12 @@ import android.util.TypedValue;
 import android.view.View;
 import com.readtracker.R;
 import com.readtracker.Utils;
+import com.readtracker.db.LocalSession;
+
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
 
 public class SessionView extends View {
   private int mColor = 0xff449966;
@@ -56,11 +62,7 @@ public class SessionView extends View {
 
   @Override protected void onDraw(Canvas canvas) {
     if(mNodes == null) {
-      if(isInEditMode()) {
-        generatePreviewNodes();
-      } else {
-        return;
-      }
+      return;
     }
 
     final float innerWidth = getWidth() - (getPaddingLeft() + getPaddingRight());
@@ -73,10 +75,10 @@ public class SessionView extends View {
 
       final float radius = calcRadius(node);
       final float x = Math.min(1.0f, node.progress) * innerWidth + getPaddingLeft();
-      final float y = (i + 1) * SEGMENT_HEIGHT + getPaddingTop();
+      final float y = i == 0 ? SEGMENT_HEIGHT * 0.5f : i * SEGMENT_HEIGHT + getPaddingTop();
 
       String primaryText = Utils.hoursAndMinutesFromMillis(node.durationSeconds * 1000);
-      String secondaryText = node.timeAgo;
+      String secondaryText = Utils.humanPastDate(node.occurredAt);
 
       boolean drawFlipped = node.progress > 0.5;
       drawText(canvas, x, y, radius, primaryText, secondaryText, drawFlipped);
@@ -90,9 +92,30 @@ public class SessionView extends View {
     invalidate();
   }
 
+  /**
+   * Take a list of localSessions and convert them to session nodes.
+   *
+   * @param sessions list of sessions to convert
+   */
+  public void setSessions(List<LocalSession> sessions) {
+    mNodes = new Node[sessions.size()];
+    int index = 0;
+
+    for(LocalSession session: sessions) {
+      mNodes[index++] = new Node(session);
+    }
+
+    Arrays.sort(mNodes, new Comparator<Node>() {
+      @Override public int compare(Node node1, Node node2) {
+        return (int) (node1.occurredAt.getTime() - node2.occurredAt.getTime());
+      }
+    });
+
+    invalidate();
+  }
+
   private void drawText(Canvas canvas, float x, float y, float radius, String primaryText, String secondaryText, boolean drawFlipped) {
     final float textPadding = TEXT_PADDING; // Padding between the text and the box
-    final float textPaddingNode = 2 * radius;
 
     final float primaryTextHeight = mPrimaryTextPaint.measureText("X");
     final float secondaryTextHeight = mSecondaryTextPaint.measureText("X");
@@ -104,18 +127,32 @@ public class SessionView extends View {
     final float textBoxHeight = primaryTextHeight + secondaryTextHeight + 2 * textPadding + lineHeight * primaryTextHeight; // use line height of 1.5
     RectF textBox = new RectF(0, 0, textPadding * 2 + largestTextWidth, textBoxHeight);
 
-    textBox.offset(x, y);
-
     // Let the x, y position be the rightmost edge if drawFlipped is set
     if(drawFlipped) {
-      textBox.offset(-textBox.width() - (2 * textPaddingNode), 0);
+      textBox.offset(x - radius - textPadding - textBox.width(), y);
+    } else {
+      textBox.offset(x + radius + textPadding, y);
     }
 
+    // Center box vertically
     textBox.offset(0, -textBox.height() * 0.5f);
 
     final float primaryTextTop = textBox.top + textPadding + primaryTextHeight;
-    canvas.drawText(primaryText, textBox.left + textPaddingNode + textPadding, primaryTextTop, mPrimaryTextPaint);
-    canvas.drawText(secondaryText, textBox.left + textPaddingNode + textPadding, primaryTextTop + lineHeight * primaryTextHeight + secondaryTextHeight, mSecondaryTextPaint);
+
+    float textOffset;
+
+    if(drawFlipped) {
+      textOffset = textBox.right - textPadding;
+      mPrimaryTextPaint.setTextAlign(Paint.Align.RIGHT);
+      mSecondaryTextPaint.setTextAlign(Paint.Align.RIGHT);
+    } else {
+      textOffset = textBox.left + textPadding;
+      mPrimaryTextPaint.setTextAlign(Paint.Align.LEFT);
+      mSecondaryTextPaint.setTextAlign(Paint.Align.LEFT);
+    }
+
+    canvas.drawText(primaryText, textOffset, primaryTextTop, mPrimaryTextPaint);
+    canvas.drawText(secondaryText, textOffset, primaryTextTop + lineHeight * primaryTextHeight + secondaryTextHeight, mSecondaryTextPaint);
   }
 
   private void drawLines(Canvas canvas) {
@@ -130,8 +167,7 @@ public class SessionView extends View {
       Node node = mNodes[i];
 
       final float x = Math.min(1.0f, node.progress) * innerWidth + getPaddingLeft();
-      final float y = (i + 1) * SEGMENT_HEIGHT + getPaddingTop();
-
+      final float y = i == 0 ? SEGMENT_HEIGHT * 0.5f : i * SEGMENT_HEIGHT + getPaddingTop();
 
       canvas.drawLine(lastX, lastY, x, y, mNodePaint);
 
@@ -158,6 +194,7 @@ public class SessionView extends View {
     mPrimaryTextPaint.setTextSize(convertDPtoPX(14));
     mPrimaryTextPaint.setColor(getResources().getColor(R.color.text_color_primary));
     mPrimaryTextPaint.setSubpixelText(true);
+    mPrimaryTextPaint.setAntiAlias(true);
 
     mSecondaryTextPaint = new Paint();
     mSecondaryTextPaint.setTypeface(Typeface.DEFAULT);
@@ -182,31 +219,23 @@ public class SessionView extends View {
     return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics());
   }
 
-  private void generatePreviewNodes() {
-    mNodes = new Node[]{
-      new Node(45 * 60, 0.2f, "2 weeks ago"),
-      new Node(95 * 60, 0.3f, "Yesterday"),
-      new Node(1245 * 60, 0.45f, "2 days ago"),
-      new Node(95 * 60, 1.0f, "3 months ago")
-    };
-  }
-
   private float calcRadius(Node node) {
-    final int min = 10;
-    final int max = 50;
-    final int three_hours = 60 * 60 * 5;
-    return Math.max(min, Math.min(max, node.durationSeconds / three_hours));
+    final float min = 5.0f;
+    final float max = 50.0f;
+    final float hours = (float) node.durationSeconds / (60.0f * 60.0f);
+    final float durationRelativeSize = 15.0f * hours;
+    return Math.max(min, Math.min(max, durationRelativeSize));
   }
 }
 
 class Node {
-  public Node(long durationSeconds, float progress, String timeAgo) {
-    this.durationSeconds = durationSeconds;
-    this.progress = progress;
-    this.timeAgo = timeAgo;
-  }
-
   public long durationSeconds;
   public float progress; // 0..1
-  public String timeAgo;
+  public Date occurredAt;
+
+  public Node(LocalSession localSession) {
+    this.durationSeconds = localSession.durationSeconds;
+    this.progress = (float) localSession.progress;
+    this.occurredAt = localSession.occurredAt;
+  }
 }

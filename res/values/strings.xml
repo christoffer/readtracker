@@ -6,5 +6,5 @@
 
   <string name="associate_anonymous_readings">Do you want to associate the %s existing readings on this device with your
     Readmill account?
-  </string>
+  </string><string name="asd">Spent a total of 19 hours and 45 minutes\nOver 38 reading sessions.</string>
 </resources>

@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import com.readtracker.customviews.SessionView;
 import com.readtracker.db.LocalReading;
 import com.readtracker.db.LocalSession;
 
@@ -24,7 +25,10 @@ public class FragmentSessions extends Fragment {
 
   private LocalReading mLocalReading;
   private ArrayList<LocalSession> mLocalSessions;
-  private ListAdapterLocalSession mLocalSessionsAdapter;
+
+  private static SessionView mSessionView;
+  private static TextView mTextSummary;
+  private static TextView mTextSessionCount;
 
   // Flag for forcing reinitialization (ignore frozen state)
   private boolean mForceReInitialize;
@@ -72,17 +76,23 @@ public class FragmentSessions extends Fragment {
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     Log.d(TAG, "onCreateView()");
     View view = inflater.inflate(R.layout.fragment_sessions, container, false);
+    mSessionView = (SessionView) view.findViewById(R.id.sessionView);
 
-//    if(mLocalReading.hasClosingRemark()) {
-//      View header = inflateClosingRemark();
-//      mListSessions.addHeaderView(header, null, false);
-//    }
-//
-//    View footer = inflateSummary();
-//    mListSessions.addFooterView(footer, null, false);
-//
-//    mLocalSessionsAdapter = new ListAdapterLocalSession(getActivity(), 0, mLocalSessions);
-//    mListSessions.setAdapter(mLocalSessionsAdapter);
+    mTextSummary = (TextView) view.findViewById(R.id.textSummary);
+    mTextSessionCount = (TextView) view.findViewById(R.id.textSessionCount);
+
+    if(mLocalSessions != null) {
+      mSessionView.setSessions(mLocalSessions);
+
+      final String timeSpent = String.format("%s / %d sessions",
+        Utils.hoursAndMinutesFromMillis(mLocalReading.timeSpentMillis),
+        mLocalSessions.size()
+      );
+
+      mTextSummary.setText(timeSpent);
+    } else {
+      mTextSummary.setVisibility(View.GONE);
+    }
 
     return view;
   }
@@ -92,27 +102,5 @@ public class FragmentSessions extends Fragment {
       mInflater = (LayoutInflater) getActivity().getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
     }
     return mInflater;
-  }
-
-  private View inflateClosingRemark() {
-    final TextView textClosingRemark = (TextView) getInflater().inflate(R.layout._closing_remark, null);
-    final String closingRemark = mLocalReading.readmillClosingRemark;
-    textClosingRemark.setText(closingRemark);
-    return textClosingRemark;
-  }
-
-  private View inflateSummary() {
-    final ViewGroup layoutSessionSummary = (ViewGroup) getInflater().inflate(R.layout._reading_session_summary, null);
-
-    final TextView textSessionCount = (TextView) layoutSessionSummary.findViewById(R.id.textSessionCount);
-    final TextView textTotalTime = (TextView) layoutSessionSummary.findViewById(R.id.textTotalTime);
-
-    final String timesRead = String.format("%d times", mLocalSessions.size());
-    textSessionCount.setText(timesRead);
-
-    final String timeSpent = Utils.hoursAndMinutesFromMillis(mLocalReading.timeSpentMillis);
-    textTotalTime.setText(timeSpent);
-
-    return layoutSessionSummary;
   }
 }
