@@ -53,7 +53,7 @@ class ReadingStateHandler {
     long elapsedMilliseconds = pref.getLong(KEY_ELAPSED, 0);
     long activeTimestamp = pref.getLong(KEY_ACTIVE_TIMESTAMP, 0);
 
-    if(localReadingId == -1) {
+    if(localReadingId == -1 || elapsedMilliseconds == 0) {
       Log.d(TAG, " - No reading state found");
       return null;
     }

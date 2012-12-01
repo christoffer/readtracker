@@ -114,12 +114,13 @@ public class FragmentRead extends Fragment {
     if(((ActivityBook) getActivity()).isManualShutdown()) {
       Log.d(TAG, "Parent Activity is shutting down - don't store state");
     } else {
-      Log.d(TAG, "Parent Activity not shutting down - store state");
-      ReadingStateHandler.store(mLocalReading.id, elapsed(), mTimestampLastStarted);
+      if(elapsed() > 0) {
+        Log.d(TAG, "Parent Activity not shutting down and has active state - store state");
+        ReadingStateHandler.store(mLocalReading.id, elapsed(), mTimestampLastStarted);
+      }
     }
 
     stopTrackerUpdates();
-    presentTime(elapsed());
   }
 
   @Override
@@ -165,19 +166,7 @@ public class FragmentRead extends Fragment {
         onClickedDone();
       }
     });
-
-//    mButtonUpdatePageNumbers.setOnClickListener(new View.OnClickListener() {
-//      @Override public void onClick(View view) {
-//        onClickedSetPageCount();
-//      }
-//    });
-
-//    if(!mLocalReading.hasPageInfo()) {
-//      mTextNumberOfPages.setText(String.format(getString(R.string.please_enter_number_of_pages, mLocalReading.title)));
-//    }
   }
-
-  /* Public API */
 
   private void setElapsed(long elapsed) {
     mElapsed = elapsed;
@@ -186,8 +175,6 @@ public class FragmentRead extends Fragment {
   public void setLocalReading(LocalReading localReading) {
     mLocalReading = localReading;
   }
-
-  /* Private API */
 
   private void setupTimeTracking() {
     // Starting or continuing a reading session?
@@ -340,31 +327,6 @@ public class FragmentRead extends Fragment {
   }
 
   /**
-   * Called when save has been clicked on the set number of pages dialog
-   */
-//  private void onClickedSetPageCount() {
-//    int pageNumbers = Utils.parseInt(mEditPageCount.getText().toString(), 0);
-//
-//    if(pageNumbers < 1) {
-//      ((ReadTrackerActivity) getActivity()).toast(getString(R.string.enter_page_count));
-//      mEditPageCount.requestFocus();
-//      return;
-//    }
-//
-//    mLocalReading.totalPages = pageNumbers;
-//
-//    ((ActivityBook) getActivity()).onLocalReadingChanged();
-//
-//    SaveLocalReadingTask.save(mLocalReading, new SaveLocalReadingListener() {
-//      @Override
-//      public void onLocalReadingSaved(LocalReading localReading) {
-//        // Flip back to active reading state
-//        mFlipperReadingSession.setDisplayedChild(PAGE_READING_SESSION);
-//      }
-//    });
-//  }
-
-  /**
    * Changes UI to pause mode
    */
   private void activatePause() {
@@ -372,7 +334,6 @@ public class FragmentRead extends Fragment {
     Animation fadeOutHalf = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_out_half);
     fadeOutHalf.setAnimationListener(new EnableReadingControls(false));
     mButtonDone.startAnimation(fadeOutHalf);
-//    mLayoutSessionTimer.startAnimation(fadeOutHalf);
   }
 
   /**
@@ -383,7 +344,6 @@ public class FragmentRead extends Fragment {
     Animation fadeInHalf = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_in_half);
     fadeInHalf.setAnimationListener(new EnableReadingControls(true));
     mButtonDone.startAnimation(fadeInHalf);
-//    mLayoutSessionTimer.startAnimation(fadeInHalf);
   }
 
   private void stopTimingAndUpdateElapsed() {
