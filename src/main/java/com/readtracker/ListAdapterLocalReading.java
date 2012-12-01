@@ -179,7 +179,7 @@ public class ListAdapterLocalReading extends ArrayAdapter<LocalReading> {
    */
   private void renderLocalReading(LocalReading localReading, ViewHolder viewHolder) {
     // Required fields
-    viewHolder.textTitle.setText(localReading.title);
+    viewHolder.textTitle.setText(localReading.title + " " + (localReading.getProgressStops() == null ? "NULL" : localReading.getProgressStops().length));
     viewHolder.textAuthor.setText(localReading.author);
 
     // Optional fields

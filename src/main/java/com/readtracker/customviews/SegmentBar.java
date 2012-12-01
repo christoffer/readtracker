@@ -10,11 +10,13 @@ import android.view.View;
 import java.util.Arrays;
 
 public class SegmentBar extends View {
-  private Paint mPaint;
+  private Paint mSegmentPaint;
   private Paint mBoundaryPaint;
+  private Paint mBackgroundPaint;
+
   private int mColor = 0xffffffff;
   private float[] mStops;
-  private static final int SEGMENT_SPACING = 2; // px
+  private static final int DIVIDER_WIDTH = 2; // px
 
   public SegmentBar(Context context) {
     this(context, null);
@@ -26,7 +28,7 @@ public class SegmentBar extends View {
     if(isInEditMode()) {
       if(Math.random() > 0.25) {
         // Throw in some sample segments
-        int numSegments = 3 + (int) (Math.random() * 10);
+        int numSegments = 43 + (int) (Math.random() * 10);
         float[] sampleSegments = new float[numSegments];
 
         for(int i = 0; i < numSegments; i++) {
@@ -72,29 +74,38 @@ public class SegmentBar extends View {
   // Private
 
   private void initResources() {
-    mPaint = new Paint();
-    mPaint.setColor(mColor);
-    mPaint.setStyle(Paint.Style.FILL);
+    mSegmentPaint = new Paint();
+    mSegmentPaint.setColor(mColor);
+    mSegmentPaint.setStyle(Paint.Style.FILL);
 
     mBoundaryPaint = new Paint();
     int transparentColor = (0x22 << 24) + (mColor & 0xffffff);
     mBoundaryPaint.setColor(transparentColor);
     mBoundaryPaint.setStyle(Paint.Style.STROKE);
     mBoundaryPaint.setStrokeWidth(1);
+
+    mBackgroundPaint = new Paint();
+    mBackgroundPaint.setColor(0xff000000);
+    mBackgroundPaint.setStyle(Paint.Style.FILL);
   }
 
-  private void drawSegment(Canvas canvas, int startX, int endX, boolean isFirst) {
-    final RectF rect = new RectF(startX + (isFirst ? 0 : SEGMENT_SPACING), 0, endX, getHeight());
-    canvas.drawRect(rect, mPaint);
+  private void drawSegment(Canvas canvas, float previousEnd, float segmentEnd) {
+    final RectF segmentRect = new RectF(0, 0, segmentEnd, getHeight());
+    canvas.drawRect(segmentRect, mSegmentPaint);
+    final float segmentWidth = previousEnd - segmentEnd; // Since we are going backwards through the segments
+    System.out.println(segmentWidth);
+    if(segmentWidth >= (DIVIDER_WIDTH + 1)) {
+      canvas.drawRect(segmentRect.right - DIVIDER_WIDTH, segmentRect.top, segmentRect.right, segmentRect.bottom, mBackgroundPaint);
+    }
   }
 
-  private void drawBoundaryLine(Canvas canvas) {
-    int color = mPaint.getColor();
+  private void drawOutline(Canvas canvas) {
+    int color = mSegmentPaint.getColor();
 
     final int width = getWidth() -1;
     final int height = getHeight() - 1;
     canvas.drawRect(0, 0, width, height, mBoundaryPaint);
-    mPaint.setColor(color);
+    mSegmentPaint.setColor(color);
   }
 
   @Override protected void onDraw(Canvas canvas) {
@@ -103,15 +114,16 @@ public class SegmentBar extends View {
     }
 
     final int width = getWidth();
-    float prevSegment = 0.0f;
-    drawBoundaryLine(canvas);
+    drawOutline(canvas);
     if(mStops.length > 0) {
-      for(int i = 0, mStopsLength = mStops.length; i < mStopsLength; i++) {
-        float segment = mStops[i];
-        final int fromX = (int) (prevSegment * width);
-        final int toX = (int) (segment * width);
-        drawSegment(canvas, fromX, toX, (i == 0));
-        prevSegment = segment;
+      float[] drawStops = mStops.clone();
+      Arrays.sort(drawStops);
+      float previousEnd = 0.0f;
+      for(int i = drawStops.length - 1; i >= 0; i--) {
+        final float progress = drawStops[i];
+        final float segmentEnd = progress * width;
+        drawSegment(canvas, previousEnd, segmentEnd);
+        previousEnd = segmentEnd;
       }
     }
   }

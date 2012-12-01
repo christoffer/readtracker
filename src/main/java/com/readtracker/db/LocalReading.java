@@ -2,6 +2,7 @@ package com.readtracker.db;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 import com.j256.ormlite.field.DatabaseField;
 import com.readtracker.readmill.ReadmillApiHelper;
 

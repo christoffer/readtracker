@@ -12,7 +12,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.*;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.DeleteBuilder;
-import com.j256.ormlite.stmt.Where;
 import com.readtracker.db.LocalHighlight;
 import com.readtracker.db.LocalReading;
 import com.readtracker.db.LocalSession;
@@ -343,7 +342,7 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
         Dao<LocalSession, Integer> sessionDao = ApplicationReadTracker.getSessionDao();
 
         ArrayList<LocalReading> localReadings = fetchLocalReadingsForUser(readmillUserId, readingDao);
-        return populateSessionSegments(localReadings, sessionDao);
+        return readingsWithPopulateSessionSegments(localReadings, sessionDao);
       } catch(SQLException e) {
         Log.d(TAG, "Failed to get list of existing readings", e);
         return new ArrayList<LocalReading>();
@@ -356,11 +355,21 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
         .query();
     }
 
-    private List<LocalReading> populateSessionSegments(ArrayList<LocalReading> localReadings, Dao<LocalSession, Integer> sessionsDao) throws SQLException {
+    /**
+     * Load all reading sessions for each of the given local readings, and use them to set the progress stops array on
+     * the reading.
+     *
+     * @param localReadings List of local readings to set progress stops for
+     * @param sessionsDao DAO from which to load sesions
+     * @return the given local readings, with progress stops populated
+     * @throws SQLException
+     */
+    private List<LocalReading> readingsWithPopulateSessionSegments(ArrayList<LocalReading> localReadings, Dao<LocalSession, Integer> sessionsDao) throws SQLException {
       for(LocalReading localReading: localReadings) {
         List<LocalSession> sessions = sessionsDao.queryBuilder()
           .where().eq(LocalSession.READING_ID_FIELD_NAME, localReading.id)
           .query();
+        Log.d(TAG, "Got " + sessions.size() + " sessions for " + localReading.toString());
         localReading.setProgressStops(sessions);
       }
       return localReadings;
