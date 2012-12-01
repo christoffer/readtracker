@@ -389,7 +389,7 @@ public class FragmentRead extends Fragment {
     } else if(minutes > 0) {
       summary = Utils.pluralizeWithCount(minutes, "minute");
     } else {
-      summary = "< 1 minute";
+      summary = "Tracking...";
     }
     mTextBillboard.setText(summary);
   }
