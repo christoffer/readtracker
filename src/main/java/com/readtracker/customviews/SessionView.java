@@ -3,10 +3,7 @@ package com.readtracker.customviews;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Typeface;
+import android.graphics.*;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
@@ -18,8 +15,7 @@ public class SessionView extends View {
   private Paint mNodePaint;
   private Paint mPrimaryTextPaint;
   private Paint mSecondaryTextPaint;
-
-  private int mBackgroundColor;
+  private Paint mBackgroundPaint;
 
   private Node[] mNodes;
   private static final int SEGMENT_HEIGHT = 96; // Height between each node
@@ -35,7 +31,7 @@ public class SessionView extends View {
 
   public SessionView(Context context, AttributeSet attrs, int defStyle) {
     super(context, attrs, defStyle);
-    initialize();
+    initializePaints();
   }
 
   @Override
@@ -49,7 +45,7 @@ public class SessionView extends View {
     int height = mNodes == null ? 0 : SEGMENT_HEIGHT * mNodes.length;
 
     final boolean isOverflow = specHeightMode == MeasureSpec.AT_MOST &&
-        height > specHeightSize;
+      height > specHeightSize;
 
     if(specHeightMode == MeasureSpec.EXACTLY || isOverflow) {
       height = specHeightSize;
@@ -59,76 +55,126 @@ public class SessionView extends View {
   }
 
   @Override protected void onDraw(Canvas canvas) {
-    if(mNodes == null) return;
+    if(mNodes == null) {
+      if(isInEditMode()) {
+        generatePreviewNodes();
+      } else {
+        return;
+      }
+    }
 
-    float lastX = getPaddingLeft();
-    float lastY = getPaddingTop();
-    float lastRadius = 0;
-    float textHeight = mPrimaryTextPaint.measureText("X");
+    final float innerWidth = getWidth() - (getPaddingLeft() + getPaddingRight());
+
+    // Draw lines in a separate pass since they are in the background of everything else
+    drawLines(canvas);
 
     for(int i = 0, mNodesLength = mNodes.length; i < mNodesLength; i++) {
       Node node = mNodes[i];
 
       final float radius = calcRadius(node);
-      final float textPadding = radius + TEXT_PADDING;
-
-      final float x = Math.min(1.0f, node.progress) * getWidth() + getPaddingLeft();
+      final float x = Math.min(1.0f, node.progress) * innerWidth + getPaddingLeft();
       final float y = (i + 1) * SEGMENT_HEIGHT + getPaddingTop();
 
-      canvas.drawLine(lastX, lastY, x, y, mNodePaint);
-
-      // Draw trailing nodes to allow it to cover the trailing line
-      if(i > 0) {
-        // Draw twice for the last node
-        if(i == mNodesLength - 1) {
-          drawNode(canvas, x, y, radius);
-        }
-        drawNode(canvas, lastX, lastY, lastRadius);
-      }
-
       String primaryText = Utils.hoursAndMinutesFromMillis(node.durationSeconds * 1000);
-      canvas.drawText(primaryText, x + textPadding, y, mPrimaryTextPaint);
-      canvas.drawText(node.timeAgo, x + textPadding, y + textHeight * 2.0f, mSecondaryTextPaint);
+      String secondaryText = node.timeAgo;
 
-      lastX = x;
-      lastY = y;
-      lastRadius = radius;
+      boolean drawFlipped = node.progress > 0.5;
+      drawText(canvas, x, y, radius, primaryText, secondaryText, drawFlipped);
+      drawNode(canvas, x, y, radius);
     }
   }
 
-  private void drawNode(Canvas canvas, float x, float y, float radius) {
-    mNodePaint.setColor(mColor);
-    canvas.drawCircle(x, y, radius, mNodePaint);
-    mNodePaint.setColor(0xff000000);
-    canvas.drawCircle(x, y, radius- mNodePaint.getStrokeWidth(), mNodePaint);
-    mNodePaint.setColor(mColor);
+  public void setColor(int color) {
+    mColor = color;
+    initializePaints();
+    invalidate();
   }
 
-  private void initialize() {
+  private void drawText(Canvas canvas, float x, float y, float radius, String primaryText, String secondaryText, boolean drawFlipped) {
+    final float textPadding = TEXT_PADDING; // Padding between the text and the box
+    final float textPaddingNode = 2 * radius;
+
+    final float primaryTextHeight = mPrimaryTextPaint.measureText("X");
+    final float secondaryTextHeight = mSecondaryTextPaint.measureText("X");
+
+    final float lineHeight = 1.5f;
+
+    // Calculate dimensions of the text box
+    final float largestTextWidth = Math.max(mPrimaryTextPaint.measureText(primaryText), mSecondaryTextPaint.measureText(secondaryText));
+    final float textBoxHeight = primaryTextHeight + secondaryTextHeight + 2 * textPadding + lineHeight * primaryTextHeight; // use line height of 1.5
+    RectF textBox = new RectF(0, 0, textPadding * 2 + largestTextWidth, textBoxHeight);
+
+    textBox.offset(x, y);
+
+    // Let the x, y position be the rightmost edge if drawFlipped is set
+    if(drawFlipped) {
+      textBox.offset(-textBox.width() - (2 * textPaddingNode), 0);
+    }
+
+    textBox.offset(0, -textBox.height() * 0.5f);
+
+    final float primaryTextTop = textBox.top + textPadding + primaryTextHeight;
+    canvas.drawText(primaryText, textBox.left + textPaddingNode + textPadding, primaryTextTop, mPrimaryTextPaint);
+    canvas.drawText(secondaryText, textBox.left + textPaddingNode + textPadding, primaryTextTop + lineHeight * primaryTextHeight + secondaryTextHeight, mSecondaryTextPaint);
+  }
+
+  private void drawLines(Canvas canvas) {
+    float lastX = getPaddingLeft();
+    float lastY = getPaddingTop();
+    final float innerWidth = getWidth() - (getPaddingLeft() + getPaddingRight());
+
+    int nodeColor = mNodePaint.getColor();
+    int lineColor = (0x00ffffff & nodeColor) + (0x44 << 24);
+    mNodePaint.setColor(lineColor);
+    for(int i = 0, mNodesLength = mNodes.length; i < mNodesLength; i++) {
+      Node node = mNodes[i];
+
+      final float x = Math.min(1.0f, node.progress) * innerWidth + getPaddingLeft();
+      final float y = (i + 1) * SEGMENT_HEIGHT + getPaddingTop();
+
+
+      canvas.drawLine(lastX, lastY, x, y, mNodePaint);
+
+      lastX = x;
+      lastY = y;
+    }
+    mNodePaint.setColor(nodeColor);
+  }
+
+  private void drawNode(Canvas canvas, float x, float y, float radius) {
+    canvas.drawCircle(x, y, radius, mBackgroundPaint);
+    canvas.drawCircle(x, y, radius, mNodePaint);
+  }
+
+  private void initializePaints() {
     mNodePaint = new Paint();
-    mNodePaint.setStyle(Paint.Style.FILL_AND_STROKE);
+    mNodePaint.setStyle(Paint.Style.STROKE);
     mNodePaint.setStrokeWidth(3);
     mNodePaint.setColor(mColor);
+    mNodePaint.setAntiAlias(true);
 
     mPrimaryTextPaint = new Paint();
     mPrimaryTextPaint.setTypeface(Typeface.DEFAULT);
     mPrimaryTextPaint.setTextSize(convertDPtoPX(14));
     mPrimaryTextPaint.setColor(getResources().getColor(R.color.text_color_primary));
+    mPrimaryTextPaint.setSubpixelText(true);
 
     mSecondaryTextPaint = new Paint();
     mSecondaryTextPaint.setTypeface(Typeface.DEFAULT);
     mSecondaryTextPaint.setTextSize(convertDPtoPX(12));
     mSecondaryTextPaint.setColor(getResources().getColor(R.color.text_color_secondary));
+    mSecondaryTextPaint.setSubpixelText(true);
 
-    TypedArray array = getContext().getTheme().obtainStyledAttributes(new int[] {
-        android.R.attr.colorBackground,
+    TypedArray array = getContext().getTheme().obtainStyledAttributes(new int[]{
+      android.R.attr.colorBackground,
     });
-    mBackgroundColor = 0x00ffffff & array.getColor(0, Color.BLACK);
+
+    int backgroundColor = 0xff000000 | array.getColor(0, Color.BLACK);
     array.recycle();
 
-    //    if(isInEditMode()) {
-    generatePreviewNodes();
-    //    }
+    mBackgroundPaint = new Paint();
+    mBackgroundPaint.setStyle(Paint.Style.FILL);
+    mBackgroundPaint.setColor(backgroundColor);
   }
 
   private float convertDPtoPX(int dp) {
@@ -137,10 +183,12 @@ public class SessionView extends View {
   }
 
   private void generatePreviewNodes() {
-    Node n1 = new Node(45 * 60, 0.2f, "2 weeks ago");
-    Node n2 = new Node(95 * 60, 0.5f, "1 year ago");
-    Node n3 = new Node(1245 * 60, 0.35f, "2 days ago");
-    mNodes = new Node[] { n1, n2, n3 };
+    mNodes = new Node[]{
+      new Node(45 * 60, 0.2f, "2 weeks ago"),
+      new Node(95 * 60, 0.3f, "Yesterday"),
+      new Node(1245 * 60, 0.45f, "2 days ago"),
+      new Node(95 * 60, 1.0f, "3 months ago")
+    };
   }
 
   private float calcRadius(Node node) {
