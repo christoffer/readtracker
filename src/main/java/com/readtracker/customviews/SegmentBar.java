@@ -68,7 +68,12 @@ public class SegmentBar extends View {
    * @param stops stops to draw
    */
   public void setStops(float[] stops) {
-    mStops = stops.clone();
+    if(stops == null) {
+      mStops = null;
+    } else {
+      mStops = stops.clone();
+    }
+    invalidate();
   }
 
   // Private

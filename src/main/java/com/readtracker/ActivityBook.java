@@ -289,6 +289,7 @@ public class ActivityBook extends ReadTrackerActivity {
         bundle.localReading = readingDao.queryForId(readingId);
         bundle.localSessions = getLocalSessions(readingId);
         bundle.localHighlights = getHighlights(readingId);
+        bundle.localReading.setProgressStops(bundle.localSessions);
       } catch(SQLException e) {
         Log.d(TAG, "Failed to fetch data for reading with id:" + readingId, e);
       }

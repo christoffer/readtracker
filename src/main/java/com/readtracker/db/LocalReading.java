@@ -94,11 +94,12 @@ public class LocalReading implements Parcelable {
     return timeSpentMillis / 1000;
   }
 
-  public long estimateTimeLeft() {
-    if(!isActive() || progress == 0 || timeSpentMillis == 0 || progress > 1.0f) {
+  public int estimateTimeLeft() {
+    int spentSeconds = (int) (timeSpentMillis / 1000);
+    if(!isActive() || progress == 0 || spentSeconds == 0 || progress > 1.0f) {
       return 0;
     }
-    return (long) ((timeSpentMillis / progress) - timeSpentMillis);
+    return (int) ((spentSeconds / progress) - spentSeconds);
   }
 
   /**
@@ -149,7 +150,16 @@ public class LocalReading implements Parcelable {
     return readmillClosingRemark != null && readmillClosingRemark.length() > 0;
   }
 
+  public String getClosingRemark() {
+    return hasClosingRemark() ? readmillClosingRemark : null;
+  }
+
   public void setProgressStops(final List<LocalSession> sessions) {
+    if(sessions == null) {
+      progressStops = new float[0];
+      return;
+    }
+
     progressStops = new float[sessions.size()];
     for(int i = 0, sessionsSize = sessions.size(); i < sessionsSize; i++) {
       LocalSession session = sessions.get(i);

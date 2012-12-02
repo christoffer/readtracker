@@ -1,6 +1,10 @@
 package com.readtracker;
 
 
+import android.content.Context;
+import android.content.res.Resources;
+import android.util.TypedValue;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
