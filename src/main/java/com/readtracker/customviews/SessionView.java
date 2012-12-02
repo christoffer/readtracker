@@ -101,7 +101,7 @@ public class SessionView extends View {
     mNodes = new Node[sessions.size()];
     int index = 0;
 
-    for(LocalSession session: sessions) {
+    for(LocalSession session : sessions) {
       mNodes[index++] = new Node(session);
     }
 
@@ -226,16 +226,17 @@ public class SessionView extends View {
     final float durationRelativeSize = 15.0f * hours;
     return Math.max(min, Math.min(max, durationRelativeSize));
   }
-}
 
-class Node {
-  public long durationSeconds;
-  public float progress; // 0..1
-  public Date occurredAt;
+  private class Node {
+    public long durationSeconds;
+    public float progress; // 0..1
+    public Date occurredAt;
 
-  public Node(LocalSession localSession) {
-    this.durationSeconds = localSession.durationSeconds;
-    this.progress = (float) localSession.progress;
-    this.occurredAt = localSession.occurredAt;
+    public Node(LocalSession localSession) {
+      this.durationSeconds = localSession.durationSeconds;
+      this.progress = (float) localSession.progress;
+      this.occurredAt = localSession.occurredAt;
+    }
   }
 }
+
