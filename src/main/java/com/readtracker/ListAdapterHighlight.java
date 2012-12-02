@@ -44,8 +44,24 @@ public class ListAdapterHighlight extends ArrayAdapter<ListItemHighlight> {
     }
 
     TextView textContent = (TextView) convertView.findViewById(R.id.textContent);
-    textContent.setText(item.getContent());
+    textContent.setText(item.getContent().trim());
     textContent.setTextSize(textSizeForContent(item.getContent()));
+
+    TextView textDate = (TextView) convertView.findViewById(R.id.textDate);
+
+    String metadata = Utils.humanPastDate(item.getHighlightedAt());
+    int likeCount = item.getLikeCount();
+    int commentCount = item.getCommentCount();
+
+    if(likeCount > 0) {
+      String.format(" ・ Liked by %d %S", likeCount, (likeCount == 1 ? "person" : "people"));
+    }
+
+    if(commentCount > 0) {
+      metadata += String.format(" ・ %d %s", commentCount, Utils.pluralize(commentCount, "comment"));
+    }
+
+    textDate.setText(metadata);
     return convertView;
   }
 

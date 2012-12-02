@@ -29,6 +29,14 @@ public class ListItemHighlight {
     return highlightId;
   }
 
+  public int getLikeCount() {
+    return (int) (Math.random() * 10);
+  }
+
+  public int getCommentCount() {
+    return (int) (Math.random() * 10);
+  }
+
   public Uri getPermalink() {
     try {
       return Uri.parse(permalinkUrl);
