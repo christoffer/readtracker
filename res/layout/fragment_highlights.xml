@@ -1,21 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="fill_parent"
-  android:layout_height="fill_parent">
+  android:layout_height="fill_parent"
+  android:orientation="vertical"
+  android:padding="12dp">
 
-  <ImageView
-    android:src="@drawable/highlights_blank"
-    android:id="@+id/imageHighlightsBlankState"
+  <Button
+    android:id="@+id/buttonAddHighlight"
+    style="@style/default_button"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:visibility="gone"
-    android:layout_gravity="center" />
+    android:text="Add new highlight"
+    android:layout_alignParentBottom="true" />
+
+  <TextView
+    android:id="@+id/textBlankState"
+    style="@style/text_blank_state"
+    android:text="Here you'll find your collected highlights for this book."
+    android:layout_alignParentTop="true"
+    android:layout_above="@id/buttonAddHighlight" />
 
   <ListView
     android:id="@+id/listHighlights"
     android:layout_width="fill_parent"
     android:cacheColorHint="#0000"
-    android:layout_height="wrap_content" />
+    android:layout_height="wrap_content"
+    android:layout_alignParentTop="true"
+    android:layout_above="@id/buttonAddHighlight"
+    android:layout_marginLeft="0dp"
+    android:layout_marginTop="0dp" />
 
-</LinearLayout>
+</RelativeLayout>

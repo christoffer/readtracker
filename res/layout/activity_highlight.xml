@@ -28,7 +28,8 @@
       android:textSize="16dp"
       android:padding="15dp"
       android:inputType="text|textCapSentences|textAutoCorrect|textMultiLine"
-      android:gravity="fill_horizontal" />
+      android:gravity="fill_horizontal"
+      android:hint="Type in the highlight" />
 
   </LinearLayout>
 

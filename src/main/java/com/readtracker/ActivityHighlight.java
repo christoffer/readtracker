@@ -30,7 +30,7 @@ public class ActivityHighlight extends ReadTrackerActivity {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.edit_highlight);
+    setContentView(R.layout.activity_highlight);
 
     bindViews();
     bindButtonEvents();

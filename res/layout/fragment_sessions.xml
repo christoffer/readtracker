@@ -7,16 +7,9 @@
   android:padding="12dp">
 
   <TextView
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:text="Here you'll find some things about your reading, once you've started"
+    style="@style/text_blank_state"
     android:id="@+id/textBlankState"
-    android:gravity="center"
-    android:textSize="16dp"
-    android:paddingLeft="24dp"
-    android:paddingRight="24dp"
-    android:lineSpacingMultiplier="1.5"
-    android:visibility="gone" />
+    android:text="Here you'll find some things about your reading, once you've started" />
 
   <ScrollView
     android:layout_width="fill_parent"

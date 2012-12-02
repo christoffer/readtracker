@@ -223,6 +223,12 @@ public class ActivityBook extends ReadTrackerActivity {
     startActivityForResult(intentEditBook, ActivityCodes.REQUEST_EDIT_BOOK);
   }
 
+  public void exitToCreateHighlightScreen() {
+    Intent activityAddHighlight = new Intent(this, ActivityHighlight.class);
+    activityAddHighlight.putExtra(IntentKeys.LOCAL_READING, mLocalReading);
+    startActivityForResult(activityAddHighlight, ActivityCodes.CREATE_HIGHLIGHT);
+  }
+
   public void finishWithResult(int resultCode) {
     finishWithResult(resultCode, null);
   }

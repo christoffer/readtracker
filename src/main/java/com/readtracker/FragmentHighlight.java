@@ -7,9 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.*;
-import android.widget.AdapterView;
-import android.widget.ImageView;
-import android.widget.ListView;
+import android.widget.*;
 import com.readtracker.db.LocalHighlight;
 
 import java.sql.SQLException;
@@ -21,7 +19,8 @@ public class FragmentHighlight extends Fragment {
   private static final int CONTEXT_MENU_DELETE = 0;
 
   private static ListView mListHighlights;
-  private static ImageView mImageBlankState;
+  private static TextView mTextBlankState;
+  private static Button mButtonAddHighlight;
 
   private ArrayList<LocalHighlight> mLocalHighlights;
   private ListAdapterHighlight mHighlightAdapter;
@@ -82,6 +81,13 @@ public class FragmentHighlight extends Fragment {
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_highlights, container, false);
     bindViews(view);
+
+    mButtonAddHighlight.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View view) {
+        ((ActivityBook) getActivity()).exitToCreateHighlightScreen();
+      }
+    });
+
     return view;
   }
 
@@ -93,11 +99,8 @@ public class FragmentHighlight extends Fragment {
     List<ListItemHighlight> highlightItems = itemize(mLocalHighlights);
 
     if(highlightItems.size() == 0) {
-      mImageBlankState.setVisibility(View.VISIBLE);
+      mTextBlankState.setVisibility(View.VISIBLE);
       mListHighlights.setVisibility(View.GONE);
-    } else {
-      mListHighlights.setVisibility(View.VISIBLE);
-      mImageBlankState.setVisibility(View.GONE);
     }
 
     mHighlightAdapter = new ListAdapterHighlight(getActivity(), R.layout.highlight_list_item, highlightItems);
@@ -144,8 +147,9 @@ public class FragmentHighlight extends Fragment {
   }
 
   private void bindViews(View view) {
-    mImageBlankState = (ImageView) view.findViewById(R.id.imageHighlightsBlankState);
+    mTextBlankState = (TextView) view.findViewById(R.id.textBlankState);
     mListHighlights = (ListView) view.findViewById(R.id.listHighlights);
+    mButtonAddHighlight = (Button) view.findViewById(R.id.buttonAddHighlight);
   }
 
   private List<ListItemHighlight> itemize(List<LocalHighlight> localHighlights) {
