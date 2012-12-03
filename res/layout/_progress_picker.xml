@@ -22,7 +22,8 @@ while another layout can have it expand horizontally.
       android:textSize="18dp"
       android:text="Ended on"
       android:layout_marginRight="24dp"
-      android:gravity="center_vertical" />
+      android:gravity="center_vertical"
+      android:id="@+id/textLabel" />
 
     <!-- simple page picker for page numbers -->
 

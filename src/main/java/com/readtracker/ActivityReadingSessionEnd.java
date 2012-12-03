@@ -8,14 +8,12 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
+import com.readtracker.customviews.ProgressPicker;
 import com.readtracker.customviews.ViewBindingBookHeader;
 import com.readtracker.db.LocalReading;
 import com.readtracker.db.LocalSession;
 import com.readtracker.thirdparty.SafeViewFlipper;
-import com.readtracker.thirdparty.widget.OnWheelChangedListener;
 import com.readtracker.thirdparty.widget.WheelView;
 import com.readtracker.thirdparty.widget.adapters.NumericWheelAdapter;
 
@@ -27,19 +25,16 @@ import java.util.UUID;
  * Screen for input the ending page of a reading session
  */
 public class ActivityReadingSessionEnd extends ReadTrackerActivity {
-  private static final int PAGE_DISPLAY_DURATION = 0;
+  // View flipper page for editing duration
   private static final int PAGE_EDIT_DURATION = 1;
-
-  private static WheelView mWheelEndingPage;
-
-  private static WheelView mWheelEndPercentInteger;
-  private static WheelView mWheelEndPercentFraction;
 
   private static Button mButtonSaveReadingSession;
   private static Button mButtonShowDurationPicker;
 
   private static WheelView mWheelDurationHours;
   private static WheelView mWheelDurationMinutes;
+
+  private static ProgressPicker mProgressPicker;
 
   private static SafeViewFlipper mFlipperSessionLength;
 
@@ -74,8 +69,12 @@ public class ActivityReadingSessionEnd extends ReadTrackerActivity {
 
     ViewBindingBookHeader.bind(this, mLocalReading);
 
-    initializeWheelViews(mLocalReading.isMeasuredInPercent());
-    setCurrentPage(currentPage);
+    if(mLocalReading.isMeasuredInPercent()) {
+      mProgressPicker.setupPercentMode(currentPage);
+    } else {
+      mProgressPicker.setupPagesMode(currentPage, (int) mLocalReading.totalPages);
+    }
+    mProgressPicker.setText("Ended on");
 
     Log.i(TAG, "Init for reading : " + mLocalReading.id + " with session length:" + mSessionLengthMillis);
 
@@ -90,58 +89,18 @@ public class ActivityReadingSessionEnd extends ReadTrackerActivity {
     out.putParcelable(IntentKeys.LOCAL_READING, mLocalReading);
     out.putLong(IntentKeys.SESSION_LENGTH_MS, mSessionLengthMillis);
     out.putBoolean(IntentKeys.BUTTON_ENABLED, mButtonSaveReadingSession.isEnabled());
-    out.putInt(IntentKeys.PAGE, getCurrentPage());
-    Log.d(TAG, "Current page" + mWheelEndingPage.getCurrentItem());
-  }
-
-  private void initializeWheelViews(boolean isMeasuredInPercent) {
-    if(isMeasuredInPercent) {
-      setupWheelView(mWheelEndPercentInteger, 99);
-      setupWheelView(mWheelEndPercentFraction, 99);
-
-      mWheelEndPercentInteger.setCalliperMode(WheelView.CalliperMode.LEFT_CALLIPER);
-      mWheelEndPercentFraction.setCalliperMode(WheelView.CalliperMode.RIGHT_CALLIPER);
-
-      mWheelEndingPage.setVisibility(View.GONE);
-    } else {
-      setupWheelView(mWheelEndingPage, (int) mLocalReading.totalPages);
-      mWheelEndPercentInteger.setVisibility(View.GONE);
-      mWheelEndPercentFraction.setVisibility(View.GONE);
-      findViewById(R.id.textDot).setVisibility(View.GONE);
-    }
-  }
-
-  /** Setup a wheel view with a numeric wheel adapter and the default style */
-  private void setupWheelView(WheelView wheelView, int maxNumber) {
-    NumericWheelAdapter adapter = new NumericWheelAdapter(this, 0, maxNumber);
-    configureWheelAdapterStyle(adapter);
-    wheelView.setViewAdapter(adapter);
-    configureWheelView(wheelView);
+    out.putInt(IntentKeys.PAGE, mProgressPicker.getPage());
   }
 
   private void bindViews() {
     mButtonSaveReadingSession = (Button) findViewById(R.id.btnSaveReadingSession);
     mButtonShowDurationPicker = (Button) findViewById(R.id.buttonShowDurationPicker);
 
-    // Wheel for normal pages
-    mWheelEndingPage = (WheelView) findViewById(R.id.wheelEndingPage);
-
-    // Wheel for percents
-    mWheelEndPercentInteger = (WheelView) findViewById(R.id.wheelEndPercentInteger);
-    mWheelEndPercentFraction = (WheelView) findViewById(R.id.wheelEndPercentFraction);
-
     mWheelDurationHours = (WheelView) findViewById(R.id.wheelDurationHours);
     mWheelDurationMinutes = (WheelView) findViewById(R.id.wheelDurationMinutes);
 
     mFlipperSessionLength = (SafeViewFlipper) findViewById(R.id.flipperSessionLength);
-  }
-
-  private void updateSessionLength() {
-    mSessionLengthMillis = mWheelDurationHours.getCurrentItem() * 3600;
-    mSessionLengthMillis += mWheelDurationMinutes.getCurrentItem() * 60;
-    mSessionLengthMillis *= 1000;
-    mButtonShowDurationPicker.setText(Utils.shortHumanTimeFromMillis(mSessionLengthMillis));
-    mFlipperSessionLength.setDisplayedChild(PAGE_DISPLAY_DURATION);
+    mProgressPicker = (ProgressPicker) findViewById(R.id.progressPicker);
   }
 
   private void configureWheelAdapterStyle(NumericWheelAdapter wheelAdapter) {
@@ -150,22 +109,9 @@ public class ActivityReadingSessionEnd extends ReadTrackerActivity {
     wheelAdapter.setTypeStyle(Typeface.NORMAL);
   }
 
-  private void configureWheelView(WheelView wheelView) {
-    wheelView.setVisibleItems(3);
-
-    wheelView.addChangingListener(new OnWheelChangedListener() {
-      @Override
-      public void onChanged(WheelView wheel, int oldValue, int newValue) {
-        boolean hasChanged = mLocalReading.currentPage != getCurrentPage();
-        mButtonSaveReadingSession.setEnabled(hasChanged);
-      }
-    });
-  }
-
   private void showDurationPicker() {
-    // Lazily initialize the adapters
     boolean needInitialize = (
-        mWheelDurationHours.getViewAdapter() == null || mWheelDurationMinutes.getViewAdapter() == null
+      mWheelDurationHours.getViewAdapter() == null || mWheelDurationMinutes.getViewAdapter() == null
     );
 
     if(needInitialize) {
@@ -207,21 +153,28 @@ public class ActivityReadingSessionEnd extends ReadTrackerActivity {
         showDurationPicker();
       }
     });
+
+    mProgressPicker.setOnProgressChangeListener(new ProgressPicker.OnProgressChangeListener() {
+      @Override public void onChangeProgress(int newPage) {
+        boolean hasChanged = mLocalReading.currentPage != newPage;
+        mButtonSaveReadingSession.setEnabled(hasChanged);
+      }
+    });
   }
 
   private void onClickedSave() {
-    mLocalReading.currentPage = getCurrentPage();
+    mLocalReading.currentPage = mProgressPicker.getPage();
     mLocalReading.refreshProgress();
     mLocalReading.lastReadAt = (new Date()).getTime() / 1000; // Convert to seconds
     mLocalReading.timeSpentMillis += mSessionLengthMillis;
 
     // Send off to background task
     UpdateAndCreateSession.createSession(mLocalReading, mSessionLengthMillis,
-        new UpdateAndCreateSession.OnCompleteListener() {
-          @Override public void onCompleted(LocalSession localSession) {
-            onSessionSaved(localSession);
-          }
+      new UpdateAndCreateSession.OnCompleteListener() {
+        @Override public void onCompleted(LocalSession localSession) {
+          onSessionSaved(localSession);
         }
+      }
     );
   }
 
@@ -237,39 +190,6 @@ public class ActivityReadingSessionEnd extends ReadTrackerActivity {
       alert.setMessage("Failed to save the data");
       alert.setIcon(android.R.drawable.ic_dialog_alert);
       alert.show();
-    }
-  }
-
-  /**
-   * Read current page from the wheel controls
-   *
-   * @return the current page
-   */
-  private int getCurrentPage() {
-    if(mLocalReading.isMeasuredInPercent()) {
-      int percentInteger = mWheelEndPercentInteger.getCurrentItem();
-      int percentFraction = mWheelEndPercentFraction.getCurrentItem();
-      // Concatenate 45 and 17 => 4517
-      return percentInteger * 100 + percentFraction;
-    }
-    return mWheelEndingPage.getCurrentItem();
-  }
-
-  /**
-   * Sets the wheel controls to display the current page.
-   *
-   * @param currentPage the current page to use
-   */
-  private void setCurrentPage(int currentPage) {
-    if(mLocalReading.isMeasuredInPercent()) {
-      // Split 578 => 5 and 78
-      int currentInteger = currentPage / 100;
-      int currentFraction = currentPage - currentInteger * 100;
-
-      mWheelEndPercentInteger.setCurrentItem(Math.min(99, currentInteger));
-      mWheelEndPercentFraction.setCurrentItem(Math.min(99, currentFraction));
-    } else {
-      mWheelEndingPage.setCurrentItem(currentPage);
     }
   }
 

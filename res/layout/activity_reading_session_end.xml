@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
   android:layout_height="fill_parent"
   android:layout_width="fill_parent"
   android:paddingBottom="12dp"
@@ -34,13 +35,11 @@
 
     <!-- ended on box -->
 
-    <FrameLayout
+    <com.readtracker.customviews.ProgressPicker
+      android:id="@+id/progressPicker"
       android:layout_height="wrap_content"
       android:layout_width="wrap_content"
-      android:layout_gravity="center_horizontal">
-
-      <include layout="@layout/_progress_picker" />
-    </FrameLayout>
+      android:layout_gravity="center_horizontal" />
 
     <!-- divider -->
 
