@@ -106,7 +106,11 @@ public class ReadmillSyncStatusUIHandler implements ReadmillSyncProgressListener
 
   @Override public void onSyncFailed(String message, int HTTPStatusCode) {
     Log.d(TAG, "Readmill sync failed: " + message + " with code: " + HTTPStatusCode);
-    mSyncUpdateHandler.onSyncComplete(SyncStatus.ERROR);
+    if(HTTPStatusCode == 401) {
+      mSyncUpdateHandler.onSyncComplete(SyncStatus.INVALID_TOKEN);
+    } else {
+      mSyncUpdateHandler.onSyncComplete(SyncStatus.ERROR);
+    }
   }
 
   @Override public void onReadingUpdated(LocalReading localReading) {
