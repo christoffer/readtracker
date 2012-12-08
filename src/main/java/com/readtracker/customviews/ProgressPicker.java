@@ -90,6 +90,13 @@ public class ProgressPicker extends LinearLayout {
     }
   }
 
+  public float getProgress() {
+    if(mTotalPageCount == 0) {
+      return 0.0f;
+    }
+    return (float) getPage() / (float) mTotalPageCount;
+  }
+
   private void bindViews(View root) {
     // Wheel for normal pages
     mWheelEndingPage = (WheelView) root.findViewById(R.id.wheelEndingPage);
