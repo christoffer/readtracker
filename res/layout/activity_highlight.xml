@@ -3,77 +3,47 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_height="fill_parent"
   android:layout_width="fill_parent"
+  android:padding="6dp"
   android:gravity="center_horizontal">
 
-  <include layout="@layout/_book_header" />
+  <include
+    layout="@layout/_book_header"
+    android:id="@+id/_bookHeader" />
 
-  <LinearLayout
+  <EditText
+    android:id="@+id/editHighlight"
     android:layout_width="fill_parent"
-    android:layout_height="0dp"
-    android:padding="10dp"
-    android:orientation="vertical"
+    android:layout_height="fill_parent"
+    android:layout_alignParentTop="true"
+    android:layout_above="@+id/divider"
     android:layout_below="@id/_bookHeader"
-    android:layout_above="@+id/btnSaveHighlight">
-
-    <EditText
-      android:id="@+id/editHighlightText"
-      android:layout_width="fill_parent"
-      android:layout_height="fill_parent"
-      android:layout_weight="1"
-      android:background="@drawable/default_input_field"
-      android:textColor="@color/text_color_primary"
-      android:text=""
-      android:typeface="serif"
-      android:textStyle="italic"
-      android:textSize="16dp"
-      android:padding="15dp"
-      android:inputType="text|textCapSentences|textAutoCorrect|textMultiLine"
-      android:gravity="fill_horizontal"
-      android:hint="Type in the highlight" />
-
-  </LinearLayout>
+    android:background="@drawable/default_input_field"
+    android:textColor="@color/text_color_primary"
+    android:typeface="serif"
+    android:textStyle="italic"
+    android:textSize="16dp"
+    android:padding="24dp"
+    android:inputType="text|textCapSentences|textAutoCorrect|textMultiLine"
+    android:gravity="fill_horizontal"
+    android:hint="Type in the highlight" />
 
   <View
-    android:id="@+id/dividerAbovePageWheelLayout"
+    android:id="@+id/divider"
     style="@style/thick_divider"
-    android:visibility="gone"
-    android:layout_above="@+id/pageWheelLayout"
-    android:layout_marginBottom="0dp" />
+    android:layout_marginTop="12dp"
+    android:layout_marginBottom="12dp"
+    android:layout_above="@+id/progressPicker" />
 
-  <LinearLayout
-    android:id="@+id/pageWheelLayout"
-    android:visibility="gone"
-    android:layout_width="fill_parent"
+  <com.readtracker.customviews.ProgressPicker
+    android:id="@+id/progressPicker"
+    android:layout_width="wrap_content"
+    android:layout_centerHorizontal="true"
     android:layout_height="wrap_content"
-    android:layout_above="@+id/dividerBelowPageWheelLayout"
-    android:background="@color/background"
-    android:paddingTop="20dp"
-    android:paddingBottom="20dp"
-    android:orientation="vertical"
-    android:gravity="center_horizontal">
-
-    <TextView
-      android:layout_height="wrap_content"
-      android:layout_width="wrap_content"
-      android:text="What page is the highlight on?"
-      android:lines="1"
-      android:textSize="12sp"
-      android:textColor="@color/text_color_secondary"
-      android:gravity="center_horizontal"
-      android:layout_marginBottom="30dp" />
-
-    <com.readtracker.thirdparty.widget.WheelView
-      android:id="@+id/wheelHighlightPage"
-      android:layout_marginLeft="0dp"
-      android:minHeight="50dp"
-      android:minWidth="100dp"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content" />
-
-  </LinearLayout>
+    android:layout_above="@+id/buttonSaveHighlight"
+    android:layout_marginBottom="12dp" />
 
   <Button
-    android:id="@+id/btnSaveHighlight"
+    android:id="@+id/buttonSaveHighlight"
     style="@style/default_button"
     android:text="Save"
     android:layout_margin="5dp"

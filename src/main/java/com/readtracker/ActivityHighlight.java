@@ -7,12 +7,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import com.readtracker.customviews.ProgressPicker;
 import com.readtracker.customviews.ViewBindingBookHeader;
 import com.readtracker.db.LocalHighlight;
 import com.readtracker.db.LocalReading;
 import com.readtracker.interfaces.CreateHighlightTaskListener;
 import com.readtracker.tasks.CreateHighlightAsyncTask;
-import com.readtracker.thirdparty.widget.WheelView;
 
 import java.util.Date;
 
@@ -21,9 +21,9 @@ import java.util.Date;
  */
 public class ActivityHighlight extends ReadTrackerActivity {
   private static EditText mEditHighlightText;
-  private static WheelView mWheelHighlightPage;
   private static Button mSaveHighlightButton;
-  private static ViewGroup mPageWheelLayout;
+
+  private static ProgressPicker mProgressPicker;
 
   private LocalReading mLocalReading;
 
@@ -35,37 +35,29 @@ public class ActivityHighlight extends ReadTrackerActivity {
     bindViews();
     bindButtonEvents();
 
+    int currentPage;
+
     if(savedInstanceState != null) {
       Log.d(TAG, "unfreezing state");
       mLocalReading = savedInstanceState.getParcelable(IntentKeys.LOCAL_READING);
       mEditHighlightText.setText(savedInstanceState.getString(IntentKeys.TEXT));
-      mWheelHighlightPage.setTag(savedInstanceState.getInt(IntentKeys.PAGE));
+      currentPage = savedInstanceState.getInt(IntentKeys.PAGE);
     } else {
       Bundle extras = getIntent().getExtras();
       mLocalReading = (LocalReading) extras.get(IntentKeys.LOCAL_READING);
       mEditHighlightText.setText("");
-      mWheelHighlightPage.setTag(null);
+      currentPage = (int) mLocalReading.currentPage;
     }
 
-//    if(mLocalReading.hasPageInfo()) {
-//      NumericWheelAdapter mHighlightPageAdapter = new NumericWheelAdapter(this, 0, (int) mLocalReading.totalPages);
-//      mWheelHighlightPage.setViewAdapter(mHighlightPageAdapter);
-//      if(mWheelHighlightPage.getTag() == null) {
-//        mWheelHighlightPage.setCurrentItem((int) mLocalReading.currentPage);
-//      } else {
-//        mWheelHighlightPage.setCurrentItem((Integer) mWheelHighlightPage.getTag());
-//      }
-//      mWheelHighlightPage.setInterpolator(null);
-//      mWheelHighlightPage.setVisibleItems(3);
-//      mPageWheelLayout.setVisibility(View.VISIBLE);
-//    } else {
-//      mPageWheelLayout.setVisibility(View.GONE);
-//    }
-//
-
-    // Remove page entry for now. The page picker should be extracted into a
-    // custom view at some point instead of duplicating it here.
-    mPageWheelLayout.setVisibility(View.GONE);
+    if(mLocalReading.hasPageInfo()) {
+      if(mLocalReading.isMeasuredInPercent()) {
+        mProgressPicker.setupPercentMode(currentPage);
+      } else {
+        mProgressPicker.setupPagesMode(currentPage, (int) mLocalReading.totalPages);
+      }
+    } else {
+      mProgressPicker.setVisibility(View.GONE);
+    }
 
     ViewBindingBookHeader.bind(this, mLocalReading);
   }
@@ -76,14 +68,15 @@ public class ActivityHighlight extends ReadTrackerActivity {
     Log.d(TAG, "freezing state");
     outState.putParcelable(IntentKeys.LOCAL_READING, mLocalReading);
     outState.putString(IntentKeys.TEXT, mEditHighlightText.getText().toString());
-    outState.putInt(IntentKeys.PAGE, mWheelHighlightPage.getCurrentItem());
+    if(mLocalReading.hasPageInfo()) {
+      outState.putInt(IntentKeys.PAGE, mProgressPicker.getPage());
+    }
   }
 
   private void bindViews() {
-    mEditHighlightText = (EditText) findViewById(R.id.editHighlightText);
-    mWheelHighlightPage = (WheelView) findViewById(R.id.wheelHighlightPage);
-    mSaveHighlightButton = (Button) findViewById(R.id.btnSaveHighlight);
-    mPageWheelLayout = (ViewGroup) findViewById(R.id.pageWheelLayout);
+    mEditHighlightText = (EditText) findViewById(R.id.editHighlight);
+    mSaveHighlightButton = (Button) findViewById(R.id.buttonSaveHighlight);
+    mProgressPicker = (ProgressPicker) findViewById(R.id.progressPicker);
   }
 
   private void bindButtonEvents() {
@@ -108,7 +101,7 @@ public class ActivityHighlight extends ReadTrackerActivity {
     double position = 0.0f;
 
     if(mLocalReading.hasPageInfo()) {
-      position = (double) mWheelHighlightPage.getCurrentItem() / (double) mLocalReading.totalPages;
+      position = mProgressPicker.getProgress();
     }
 
     LocalHighlight highlight = new LocalHighlight();
@@ -149,8 +142,8 @@ public class ActivityHighlight extends ReadTrackerActivity {
       return false;
     }
 
-    if(content.length() > 999) {
-      toastLong("The maximum lenght of a highlight is 999 characters. You have entered " + (content.length() - 999) + " characters to many.");
+    if(content.length() > 2000) {
+      toastLong("The highlight is " + (content.length() - 2000) + " characters to long.");
       return false;
     }
 
