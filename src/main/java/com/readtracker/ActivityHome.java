@@ -53,7 +53,7 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
 
     // Show welcome screen for first time users
     if(getApp().getFirstTimeFlag()) {
-      exitToSignInScreen();
+      signOut();
       return;
     }
 
@@ -170,8 +170,7 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
         break;
       case ActivityCodes.RESULT_SIGN_OUT:
         if(requestCode == ActivityCodes.SETTINGS) {
-          getApp().clearSettings();
-          exitToSignInScreen();
+          signOut();
         }
         break;
     }
@@ -214,6 +213,17 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
   private void exitToPreferences() {
     Intent intentSettings = new Intent(this, ActivitySettings.class);
     startActivityForResult(intentSettings, ActivityCodes.SETTINGS);
+  }
+
+  /**
+   * Sign out the current user and go to the welcome screen.
+   */
+  private void signOut() {
+    getApp().clearSettings();
+    Intent intentWelcome = new Intent(this, ActivityWelcome.class);
+    intentWelcome.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+    startActivity(intentWelcome);
+    finish();
   }
 
   /**
@@ -274,13 +284,6 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
   }
 
   // Private
-
-  private void exitToSignInScreen() {
-    Intent intentWelcome = new Intent(this, ActivityWelcome.class);
-    intentWelcome.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-    startActivity(intentWelcome);
-    finish();
-  }
 
   private void exitToActivityBook(LocalReading localReading) {
     Intent intentReadingSession = new Intent(this, ActivityBook.class);
@@ -360,7 +363,7 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
      * the reading.
      *
      * @param localReadings List of local readings to set progress stops for
-     * @param sessionsDao DAO from which to load sesions
+     * @param sessionsDao DAO from which to load sessions
      * @return the given local readings, with progress stops populated
      * @throws SQLException
      */
