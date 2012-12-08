@@ -25,6 +25,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.readtracker.helpers.ReadmillSyncStatusUIHandler.*;
+
 public class ActivityHome extends ReadTrackerActivity implements LocalReadingInteractionListener {
 
   private static LinearLayout mLayoutBlankState;
@@ -73,14 +75,20 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
     mPagerHomeActivity.setCurrentItem(mHomeFragmentAdapter.getDefaultPage());
 
     // Handler for showing sync status
-    mSyncStatusHandler = new ReadmillSyncStatusUIHandler(R.id.stub_sync_progress, this, new ReadmillSyncStatusUIHandler.SyncUpdateHandler() {
+    mSyncStatusHandler = new ReadmillSyncStatusUIHandler(R.id.stub_sync_progress, this, new SyncUpdateHandler() {
       @Override public void onReadingUpdate(LocalReading localReading) {
         mHomeFragmentAdapter.put(localReading);
       }
 
-      @Override public void onSyncComplete() {
+      @Override public void onSyncComplete(SyncStatus status) {
         toggleSyncMenuOption(true);
         mReadmillSyncTask = null;
+
+        if(status == SyncStatus.INVALID_TOKEN) {
+          toastLong("An error occurred, which requires you to sign in to Readmill again.\nSorry about that.");
+          getApp().signOut();
+          finish();
+        }
       }
     });
 

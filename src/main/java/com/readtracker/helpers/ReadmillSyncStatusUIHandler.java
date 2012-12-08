@@ -36,8 +36,17 @@ public class ReadmillSyncStatusUIHandler implements ReadmillSyncProgressListener
   private TextView mProgressMessage;
 
   /**
-   * Delegates the task of actually doing something with updated readings to
-   * a more apt handler
+   * Describes the result of a sync. A successful sync will return with SyncStatus.OK,
+   * anything else is a failure.
+   */
+  public enum SyncStatus {
+    OK,            // Successful sync
+    INVALID_TOKEN, // Provided token is invalid
+    ERROR          // General error
+  }
+
+  /**
+   * Hooks for the ActivityHome during the sync.
    */
   public interface SyncUpdateHandler {
     /**
@@ -50,7 +59,7 @@ public class ReadmillSyncStatusUIHandler implements ReadmillSyncProgressListener
     /**
      * Called when the synchronization has completed
      */
-    public void onSyncComplete();
+    public void onSyncComplete(SyncStatus status);
   }
 
   /**
@@ -81,7 +90,7 @@ public class ReadmillSyncStatusUIHandler implements ReadmillSyncProgressListener
     mProgressMessage.setText("Synchronized");
     mProgressSync.setProgress(100);
     hideSyncBar();
-    mSyncUpdateHandler.onSyncComplete();
+    mSyncUpdateHandler.onSyncComplete(SyncStatus.OK);
   }
 
   @Override public void onSyncProgress(String message, Float progress) {
@@ -95,8 +104,9 @@ public class ReadmillSyncStatusUIHandler implements ReadmillSyncProgressListener
     }
   }
 
-  @Override public void onSyncFailed(String message) {
-    Log.d(TAG, "Readmill sync failed: " + message);
+  @Override public void onSyncFailed(String message, int HTTPStatusCode) {
+    Log.d(TAG, "Readmill sync failed: " + message + " with code: " + HTTPStatusCode);
+    mSyncUpdateHandler.onSyncComplete(SyncStatus.ERROR);
   }
 
   @Override public void onReadingUpdated(LocalReading localReading) {

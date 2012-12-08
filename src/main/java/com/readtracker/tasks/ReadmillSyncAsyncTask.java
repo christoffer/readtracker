@@ -19,7 +19,10 @@ import java.util.*;
 /**
  * Syncs data for the current user with their Readmill profile.
  */
-public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressMessage, Boolean> {
+public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressMessage, Integer> {
+  private static final int STATUS_ERROR = -1;
+  private static final int STATUS_OK = 0;
+
   private static final String TAG = ReadmillSyncAsyncTask.class.getName();
   private Dao<LocalReading, Integer> mReadingDao;
   private Dao<LocalSession, Integer> mSessionDao;
@@ -35,7 +38,7 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
   }
 
   @Override
-  protected Boolean doInBackground(Long... id) {
+  protected Integer doInBackground(Long... id) {
     long readmillUserId = id[0];
 
     try {
@@ -44,18 +47,19 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
       mHighlightDao = ApplicationReadTracker.getHighlightDao();
     } catch(SQLException e) {
       Log.e(TAG, "Failed to get DAOs", e);
-      return Boolean.FALSE;
+      return STATUS_ERROR;
     }
 
     try {
       performFullSyncForUser(readmillUserId);
-      return Boolean.TRUE;
-    } catch(ReadmillException e) {
-      Log.w(TAG, "Readmill Exception while trying to sync readings", e);
-      return Boolean.FALSE;
+      return STATUS_OK;
+    } catch(ReadmillException exception) {
+      Log.w(TAG, "Readmill Exception while trying to sync readings", exception);
+      int httpStatusCode = exception.getStatusCode();
+      return httpStatusCode == -1 ? STATUS_ERROR : httpStatusCode;
     } catch(JSONException e) {
       Log.w(TAG, "Unexpected JSON received from Readmill", e);
-      return Boolean.FALSE;
+      return STATUS_ERROR;
     }
   }
 
@@ -65,9 +69,13 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
   }
 
   @Override
-  protected void onPostExecute(Boolean success) {
+  protected void onPostExecute(Integer statusCode) {
     Log.d(TAG, "onPostExecute()");
-    mProgressListener.onSyncDone();
+    if(statusCode != STATUS_OK) {
+      mProgressListener.onSyncDone();
+    } else {
+      mProgressListener.onSyncFailed("An error occurred while syncing", statusCode);
+    }
   }
 
   @Override

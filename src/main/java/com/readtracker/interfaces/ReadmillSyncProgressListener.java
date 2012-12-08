@@ -31,7 +31,7 @@ public interface ReadmillSyncProgressListener {
    *
    * @param message a message describing what went wrong
    */
-  public void onSyncFailed(String message);
+  public void onSyncFailed(String message, int HTTPStatusCode);
 
   /**
    * Called when a local reading has been added, or an existing local reading
