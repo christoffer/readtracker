@@ -56,6 +56,7 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
     } catch(ReadmillException exception) {
       Log.w(TAG, "Readmill Exception while trying to sync readings", exception);
       int httpStatusCode = exception.getStatusCode();
+      Log.d(TAG, "Finishing with status code " + httpStatusCode);
       return httpStatusCode == -1 ? STATUS_ERROR : httpStatusCode;
     } catch(JSONException e) {
       Log.w(TAG, "Unexpected JSON received from Readmill", e);
@@ -70,8 +71,8 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
 
   @Override
   protected void onPostExecute(Integer statusCode) {
-    Log.d(TAG, "onPostExecute()");
-    if(statusCode != STATUS_OK) {
+    Log.d(TAG, "onPostExecute(" + statusCode + ")");
+    if(statusCode == STATUS_OK) {
       mProgressListener.onSyncDone();
     } else {
       mProgressListener.onSyncFailed("An error occurred while syncing", statusCode);

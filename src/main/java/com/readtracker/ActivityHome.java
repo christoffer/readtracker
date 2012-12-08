@@ -81,6 +81,7 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
       }
 
       @Override public void onSyncComplete(SyncStatus status) {
+        Log.d(TAG, "Sync is complete with " + status);
         toggleSyncMenuOption(true);
         mReadmillSyncTask = null;
 

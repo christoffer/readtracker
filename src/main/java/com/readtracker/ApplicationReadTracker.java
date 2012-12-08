@@ -366,6 +366,7 @@ public class ApplicationReadTracker extends Application implements TokenChangeLi
   public void signOut() {
     clearSettings();
     Intent intentWelcome = new Intent(this, ActivityWelcome.class);
+    intentWelcome.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
     intentWelcome.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
     startActivity(intentWelcome);
   }
