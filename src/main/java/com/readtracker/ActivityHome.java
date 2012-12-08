@@ -53,7 +53,8 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
 
     // Show welcome screen for first time users
     if(getApp().getFirstTimeFlag()) {
-      signOut();
+      getApp().signOut();
+      finish();
       return;
     }
 
@@ -170,7 +171,8 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
         break;
       case ActivityCodes.RESULT_SIGN_OUT:
         if(requestCode == ActivityCodes.SETTINGS) {
-          signOut();
+          getApp().signOut();
+          finish();
         }
         break;
     }
@@ -213,17 +215,6 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
   private void exitToPreferences() {
     Intent intentSettings = new Intent(this, ActivitySettings.class);
     startActivityForResult(intentSettings, ActivityCodes.SETTINGS);
-  }
-
-  /**
-   * Sign out the current user and go to the welcome screen.
-   */
-  private void signOut() {
-    getApp().clearSettings();
-    Intent intentWelcome = new Intent(this, ActivityWelcome.class);
-    intentWelcome.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-    startActivity(intentWelcome);
-    finish();
   }
 
   /**

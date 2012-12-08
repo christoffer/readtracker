@@ -3,6 +3,7 @@ package com.readtracker;
 import android.app.Application;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
@@ -360,5 +361,12 @@ public class ApplicationReadTracker extends Application implements TokenChangeLi
     // Clear local state
     mCurrentUser = null;
     mReadmillApiHelper.setToken(null);
+  }
+
+  public void signOut() {
+    clearSettings();
+    Intent intentWelcome = new Intent(this, ActivityWelcome.class);
+    intentWelcome.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+    startActivity(intentWelcome);
   }
 }
