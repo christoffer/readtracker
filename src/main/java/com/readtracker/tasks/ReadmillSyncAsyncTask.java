@@ -61,6 +61,9 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
     } catch(JSONException e) {
       Log.w(TAG, "Unexpected JSON received from Readmill", e);
       return STATUS_ERROR;
+    } catch(SQLException e) {
+      Log.e(TAG, "Unexpected SQL error while syncing", e);
+      return STATUS_ERROR;
     }
   }
 
@@ -103,7 +106,7 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
    * @throws ReadmillException if an error occurs while communicating with Readmill
    * @throws JSONException     if the response from Readmill is not properly formatted
    */
-  private void performFullSyncForUser(long readmillUserId) throws ReadmillException, JSONException {
+  private void performFullSyncForUser(long readmillUserId) throws ReadmillException, JSONException, SQLException {
     Log.i(TAG, "Performing a full sync for user connected to readmill user id: " + readmillUserId);
 
     ArrayList<LocalReading> localReadings = getAllConnectedLocalReadingForUserId(readmillUserId);
@@ -124,7 +127,7 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
   }
 
   /**
-   * Pust a reading as a progress update message.
+   * Puts a reading as a progress update message.
    *
    * @param localReading Reading to post as progress update.
    */
@@ -143,7 +146,7 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
    * @param remoteReading Readmill Reading containing canonical metadata
    * @throws JSONException if the readmill response was not properly formatted
    */
-  private void updateLocalReading(LocalReading localReading, JSONObject remoteReading) throws JSONException {
+  private void updateLocalReading(LocalReading localReading, JSONObject remoteReading) throws JSONException, SQLException {
     Log.i(TAG, "Updating Metadata for Reading: " + localReading.readmillReadingId);
 
     JSONObject remoteBook = remoteReading.getJSONObject("book");
@@ -164,15 +167,11 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
 
     localReading.lastReadAt = Math.max(localReading.readmillTouchedAt, localReading.lastReadAt);
 
-    try {
-      mReadingDao.update(localReading);
-      syncDependentObjects(localReading, remoteReading);
-    } catch(SQLException e) {
-      Log.w(TAG, "Failed to update LocalReading", e);
-    }
+    mReadingDao.update(localReading);
+    syncDependentObjects(localReading, remoteReading);
   }
 
-  private void syncDependentObjects(LocalReading localReading, JSONObject remoteReading) throws JSONException {
+  private void syncDependentObjects(LocalReading localReading, JSONObject remoteReading) throws JSONException, SQLException {
     syncReadingSessions(localReading, remoteReading);
     syncHighlights(localReading, remoteReading);
   }
@@ -185,15 +184,10 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
    * @return the created LocalReading or null
    * @throws JSONException if the readmill response was not properly formatted
    */
-  private LocalReading createLocalReading(JSONObject remoteReading) throws JSONException {
+  private LocalReading createLocalReading(JSONObject remoteReading) throws JSONException, SQLException {
     LocalReading spawn = Converter.createLocalReadingFromReadingJSON(remoteReading);
-    try {
-      mReadingDao.create(spawn);
-      Log.i(TAG, "Created LocalReading for " + spawn.title + " with Readmill id: " + spawn.readmillReadingId);
-    } catch(SQLException e) {
-      Log.d(TAG, "Failed to create LocalReading for reading created from Readmill", e);
-      return null;
-    }
+    mReadingDao.create(spawn);
+    Log.i(TAG, "Created LocalReading for " + spawn.title + " with Readmill id: " + spawn.readmillReadingId);
     syncDependentObjects(spawn, remoteReading);
     return spawn;
   }
@@ -205,7 +199,7 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
    * @param remoteReadings Remote readings to create locally
    * @throws JSONException if the readmill response was not properly formatted
    */
-  private void pullReadings(List<JSONObject> remoteReadings) throws JSONException {
+  private void pullReadings(List<JSONObject> remoteReadings) throws JSONException, SQLException {
     int totalCount = remoteReadings.size();
     Log.d(TAG, "Pulling " + totalCount + " new readings");
     for(int currentCount = 0; currentCount < totalCount; currentCount++) {
@@ -227,7 +221,7 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
    *
    * @param localToRemoteReadingMap Map of local readings to remote readings
    */
-  private void pullChanges(Map<LocalReading, JSONObject> localToRemoteReadingMap) {
+  private void pullChanges(Map<LocalReading, JSONObject> localToRemoteReadingMap) throws SQLException {
     int totalCount = localToRemoteReadingMap.size();
     int currentCount = 0;
     Log.i(TAG, "Pulling changes for " + totalCount + " readings");
@@ -263,7 +257,7 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
    * @param remoteReadings List of remote readings
    * @throws JSONException if the response from Readmill was not correct
    */
-  private void syncLocalReadingsWithRemoteReadings(ArrayList<LocalReading> localReadings, ArrayList<JSONObject> remoteReadings) throws JSONException {
+  private void syncLocalReadingsWithRemoteReadings(ArrayList<LocalReading> localReadings, ArrayList<JSONObject> remoteReadings) throws JSONException, SQLException {
     Map<LocalReading, JSONObject> pullChangesList = new HashMap<LocalReading, JSONObject>();
     List<LocalReading> pushClosedStateList = new ArrayList<LocalReading>();
     List<JSONObject> pullReadingsList = new ArrayList<JSONObject>();
@@ -353,20 +347,22 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
    * Syncs all reading sessions between from a remote reading to a local reading
    *
    * @param localReading  LocalReading to sync reading sessions for
-   * @param remoteReading Readmill Reading for wich to get sessions
-   * @return True of the operation was successful, false otherwise
+   * @param remoteReading Readmill Reading for which to get sessions
    * @throws JSONException if the remote reading is not in the expected format
    */
-  private boolean syncReadingSessions(LocalReading localReading, JSONObject remoteReading) throws JSONException {
+  private void syncReadingSessions(LocalReading localReading, JSONObject remoteReading) throws JSONException, SQLException {
     long remoteId = remoteReading.getLong("id");
     Log.i(TAG, "Syncing reading sessions for reading with id:" + remoteId);
 
-    ArrayList<LocalSession> localSessions = getLocalSessionsForReadingId(localReading.id);
+    ArrayList<LocalSession> localSessions = (ArrayList<LocalSession>) mSessionDao.queryBuilder()
+      .where().eq(LocalSession.READING_ID_FIELD_NAME, localReading.id)
+      .query();
+
     ArrayList<JSONObject> remoteSessions = mReadmillApi.getPeriodsForReadingId(remoteId);
 
     localSessions = mergeSessions(localReading, remoteSessions, localSessions);
 
-    return updateLocalReadingFromSessions(localReading, localSessions);
+    updateLocalReadingFromSessions(localReading, localSessions);
   }
 
   /**
@@ -378,15 +374,16 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
    * @throws JSONException if the response from Readmill is not properly formatted
    */
   private boolean syncHighlights(LocalReading localReading,
-                                 JSONObject remoteReading) throws JSONException {
+                                 JSONObject remoteReading) throws JSONException, SQLException {
     long remoteId = remoteReading.getLong("id");
     Log.i(TAG, "Syncing all highlights for local reading " + localReading.toString() + " with remote reading: " + remoteId);
 
-    ArrayList<LocalHighlight> localHighlights =
-        getLocalHighlightsForRemoteReadingId(remoteId);
+    ArrayList<LocalHighlight> localHighlights = (ArrayList<LocalHighlight>) mHighlightDao.queryBuilder()
+      .where().eq(LocalHighlight.READMILL_READING_ID_FIELD_NAME, remoteId)
+      .query();
 
     ArrayList<JSONObject> remoteHighlights =
-        mReadmillApi.getHighlightsWithReadingId(remoteId);
+      mReadmillApi.getHighlightsWithReadingId(remoteId);
 
     mergeHighlights(localReading, localHighlights, remoteHighlights);
     return true;
@@ -394,47 +391,47 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
 
   /**
    * Merges a list of local highlights with a list of remote highlights.
+   * <p/>
+   * Highlights that are in the remote list but not in the local set are added to the device.
    *
    * @param localReading     LocalReading that owns the local highlights
    * @param localHighlights  list of local highlights
    * @param remoteHighlights list of remote highlights
    * @throws JSONException if the Readmill response is not properly formatted
    */
-  private void mergeHighlights(LocalReading localReading, List<LocalHighlight> localHighlights, ArrayList<JSONObject> remoteHighlights) throws JSONException {
+  private void mergeHighlights(LocalReading localReading, List<LocalHighlight> localHighlights, ArrayList<JSONObject> remoteHighlights) throws JSONException, SQLException {
     if(remoteHighlights == null || localHighlights == null) {
       Log.d(TAG, "Received NULL list - aborting");
       return;
     }
 
     Log.i(TAG, "Merging " + localHighlights.size() +
-        " local highlights with " + remoteHighlights.size() +
-        " remote highlights for reading " + localReading.id);
+      " local highlights with " + remoteHighlights.size() +
+      " remote highlights for reading " + localReading.id);
 
-    // Store all local highlights in a cache for fast existence check
-    HashSet<Long> localIds = new HashSet<Long>(localHighlights.size());
+    // Store all local highlights in a cache for fast access
+    HashMap<Long, LocalHighlight> localIds = new HashMap<Long, LocalHighlight>(localHighlights.size());
     for(LocalHighlight highlight : localHighlights) {
-      localIds.add(highlight.readmillHighlightId);
+      localIds.put(highlight.readmillHighlightId, highlight);
     }
 
     for(JSONObject remoteHighlight : remoteHighlights) {
       long remoteId = remoteHighlight.getLong("id");
-      if(!localIds.contains(remoteId)) {
+      LocalHighlight localHighlight = localIds.get(remoteId);
+      if(localHighlight == null) { // Create highlight
+
         String remoteContent = remoteHighlight.getString("content");
         Log.i(TAG, "Adding highlight: " + remoteId + " " + remoteContent);
 
-        // Create a new highlight by converting the readmill highlight
         LocalHighlight spawn = Converter.createHighlightFromReadmillJSON(remoteHighlight);
 
-        // Set attributes that are only available to ReadTracker
+        // Attributes only available to ReadTracker
         spawn.syncedAt = new Date();
         spawn.readingId = localReading.id;
 
-        try {
-          mHighlightDao.create(spawn);
-          Log.d(TAG, "   Saved Highlight: " + spawn.id);
-        } catch(SQLException ex) {
-          Log.e(TAG, "Failed to save highlight", ex);
-        }
+        mHighlightDao.create(spawn);
+        Log.d(TAG, "   Created Highlight: " + spawn.toString());
+      } else { // Update highlight
       }
     }
   }
@@ -445,19 +442,14 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
    * @param remoteUserId Remote user id to get local reading data for
    * @return the list of matched local readings
    */
-  private ArrayList<LocalReading> getAllConnectedLocalReadingForUserId(long remoteUserId) {
-    try {
-      Where<LocalReading, Integer> stmt = mReadingDao.queryBuilder().where().
-          eq(LocalReading.READMILL_USER_ID_FIELD_NAME, remoteUserId).
-          and().
-          gt(LocalReading.READMILL_READING_ID_FIELD_NAME, 0);
-      ArrayList<LocalReading> result = (ArrayList<LocalReading>) stmt.query();
-      Log.i(TAG, "Found " + result.size() + " local connected readings");
-      return result;
-    } catch(SQLException e) {
-      Log.d(TAG, "Failed to get list of existing readings", e);
-      return new ArrayList<LocalReading>();
-    }
+  private ArrayList<LocalReading> getAllConnectedLocalReadingForUserId(long remoteUserId) throws SQLException {
+    Where<LocalReading, Integer> stmt = mReadingDao.queryBuilder().where().
+      eq(LocalReading.READMILL_USER_ID_FIELD_NAME, remoteUserId).
+      and().
+      gt(LocalReading.READMILL_READING_ID_FIELD_NAME, 0);
+    ArrayList<LocalReading> result = (ArrayList<LocalReading>) stmt.query();
+    Log.i(TAG, "Found " + result.size() + " local connected readings");
+    return result;
   }
 
   /**
@@ -479,9 +471,8 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
    *
    * @param localReading LocalReading to update
    * @param sessions     A prefetched list of Reading Sessions for the given LocalReading
-   * @return True when the update was successful, false otherwise
    */
-  private boolean updateLocalReadingFromSessions(LocalReading localReading, List<LocalSession> sessions) {
+  private void updateLocalReadingFromSessions(LocalReading localReading, List<LocalSession> sessions) throws SQLException {
     long totalSpentSeconds = 0;
     LocalSession mostRecentSession = null;
 
@@ -504,14 +495,7 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
       }
     }
 
-    try {
-      mReadingDao.update(localReading);
-    } catch(SQLException e) {
-      Log.d(TAG, "Failed to update reading data for LocalReading with id: " + localReading.id, e);
-      return false;
-    }
-
-    return true;
+    mReadingDao.update(localReading);
   }
 
   /**
@@ -526,7 +510,8 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
    */
   private ArrayList<LocalSession> mergeSessions(LocalReading localReading,
                                                 ArrayList<JSONObject> remoteSessions,
-                                                List<LocalSession> localSessions) throws JSONException {
+                                                List<LocalSession> localSessions)
+    throws JSONException, SQLException {
     Log.d(TAG, "Merging " + remoteSessions.size() + " remote sessions with " + localSessions.size() + " local sessions");
 
     ArrayList<LocalSession> createdSessions = new ArrayList<LocalSession>();
@@ -538,7 +523,7 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
         String remoteSessionIdentifier = remoteSession.getString("identifier");
         Log.v(TAG, "Comparing local session-id: " + localSession.sessionIdentifier + " to remote session-id: " + remoteSessionIdentifier);
         if(localSession.sessionIdentifier != null &&
-            localSession.sessionIdentifier.equals(remoteSessionIdentifier)) {
+          localSession.sessionIdentifier.equals(remoteSessionIdentifier)) {
           foundLocal = true;
           break;
         }
@@ -551,41 +536,13 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
       spawn.readingId = localReading.id;
       spawn.syncedWithReadmill = true;
 
-      try {
-        mSessionDao.create(spawn);
-        Log.d(TAG, "Created Session");
-        createdSessions.add(spawn);
-      } catch(SQLException e) {
-        Log.d(TAG, "Failed to create session", e);
-      }
+      mSessionDao.create(spawn);
+      Log.d(TAG, "Created Session");
+      createdSessions.add(spawn);
     }
 
     createdSessions.addAll(localSessions);
     return createdSessions;
-  }
-
-  // ===========================
-  // Helpers
-  // ===========================
-
-  private ArrayList<LocalSession> getLocalSessionsForReadingId(int LocalReadingId) {
-    try {
-      return (ArrayList<LocalSession>) mSessionDao.queryBuilder().where().
-          eq(LocalSession.READING_ID_FIELD_NAME, LocalReadingId).query();
-    } catch(SQLException e) {
-      Log.w(TAG, " Failed to fetch local sessions", e);
-    }
-    return null;
-  }
-
-  private ArrayList<LocalHighlight> getLocalHighlightsForRemoteReadingId(long remoteReadingId) {
-    try {
-      return (ArrayList<LocalHighlight>) mHighlightDao.queryBuilder().where().
-          eq(LocalHighlight.READMILL_READING_ID_FIELD_NAME, remoteReadingId).query();
-    } catch(SQLException e) {
-      Log.w(TAG, " Failed to fetch local higlights", e);
-    }
-    return null;
   }
 }
 
