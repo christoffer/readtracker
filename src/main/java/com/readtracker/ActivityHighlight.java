@@ -52,9 +52,12 @@ public class ActivityHighlight extends ReadTrackerActivity {
     if(mLocalReading.hasPageInfo()) {
       if(mLocalReading.isMeasuredInPercent()) {
         mProgressPicker.setupPercentMode(currentPage);
+        mProgressPicker.setText("Position");
       } else {
         mProgressPicker.setupPagesMode(currentPage, (int) mLocalReading.totalPages);
+        mProgressPicker.setText("Page");
       }
+
     } else {
       mProgressPicker.setVisibility(View.GONE);
     }

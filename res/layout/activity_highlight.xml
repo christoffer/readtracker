@@ -25,7 +25,7 @@
     android:padding="24dp"
     android:inputType="text|textCapSentences|textAutoCorrect|textMultiLine"
     android:gravity="fill_horizontal"
-    android:hint="Type in the highlight" />
+    android:hint="Highlight text" />
 
   <View
     android:id="@+id/divider"
