@@ -76,7 +76,7 @@ public class ConnectReadingTask {
         }
 
         // Include data from Readmill
-        Converter.mergeWithJSON(localReading, jsonReading);
+        Converter.mergeLocalReadingWithJSON(localReading, jsonReading);
 
         // Store locally
         ApplicationReadTracker.getReadingDao().createOrUpdate(localReading);

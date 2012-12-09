@@ -26,7 +26,7 @@ public class Converter {
    */
   public static LocalReading createLocalReadingFromReadingJSON(JSONObject source) throws JSONException {
     LocalReading localReading = new LocalReading();
-    mergeWithJSON(localReading, source);
+    mergeLocalReadingWithJSON(localReading, source);
     return localReading;
   }
 
@@ -40,7 +40,7 @@ public class Converter {
    * @param source       source json
    * @throws org.json.JSONException if source was not in the required format
    */
-  public static void mergeWithJSON(LocalReading localReading, JSONObject source) throws JSONException {
+  public static void mergeLocalReadingWithJSON(LocalReading localReading, JSONObject source) throws JSONException {
     guardNullSource(source);
     JSONObject jsonBook = source.getJSONObject("book");
     JSONObject jsonUser = source.getJSONObject("user");
@@ -68,6 +68,29 @@ public class Converter {
   }
 
   /**
+   * Merge an instance of a LocalHighlight with a Readmill highlight JSON.
+   * <p/>
+   * The JSON must follow the format specified by:
+   * http://developer.readmill.com/api/docs/v2/get/highlights/id.html
+   *
+   * @param target The local highlight to merge with
+   * @param source the Readmill highlight data to merge in
+   * @throws JSONException if source is not in the required format
+   */
+  public static void mergeLocalHighlightWithJson(LocalHighlight target, JSONObject source) throws JSONException {
+    guardNullSource(source);
+    target.content = source.getString("content");
+    target.readmillHighlightId = source.getLong("id");
+    target.readmillReadingId = source.getJSONObject("reading").getLong("id");
+    target.readmillUserId = source.getJSONObject("user").getLong("id");
+    target.highlightedAt = parseISO8601(source.getString("highlighted_at"));
+    target.readmillPermalinkUrl = source.getString("permalink_url");
+    target.position = source.optDouble("position", 0.0);
+    target.likeCount = source.optInt("likes_count", 0);
+    target.commentCount = source.optInt("comments_count", 0);
+  }
+
+  /**
    * Creates a ReadingHighlight instance from a Readmill highlight JSON.
    * <p/>
    * The JSON must follow the format specified by:
@@ -78,18 +101,8 @@ public class Converter {
    * @throws JSONException if source was not in the required format
    */
   public static LocalHighlight createHighlightFromReadmillJSON(JSONObject source) throws JSONException {
-    guardNullSource(source);
     LocalHighlight target = new LocalHighlight();
-    target.content = source.getString("content");
-    target.readmillHighlightId = source.getLong("id");
-    target.readmillReadingId = source.getJSONObject("reading").getLong("id");
-    target.readmillUserId = source.getJSONObject("user").getLong("id");
-    target.highlightedAt = parseISO8601(source.getString("highlighted_at"));
-    target.readmillPermalinkUrl = source.getString("permalink_url");
-    target.position = source.optDouble("position", 0.0);
-    target.likeCount = source.optInt("likes_count", 0);
-    target.commentCount = source.optInt("comments_count", 0);
-
+    mergeLocalHighlightWithJson(target, source);
     return target;
   }
 
