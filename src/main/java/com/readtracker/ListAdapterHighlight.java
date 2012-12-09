@@ -21,11 +21,8 @@ public class ListAdapterHighlight extends ArrayAdapter<ListItemHighlight> {
 
   private Comparator<ListItemHighlight> mReadingHighlightComparator = new Comparator<ListItemHighlight>() {
     @Override
-    public int compare(ListItemHighlight rdA, ListItemHighlight rdB) {
-      if(rdA.getHighlightedAt().after(rdB.getHighlightedAt()))
-        return -1;
-      else
-        return 1;
+    public int compare(ListItemHighlight highlightA, ListItemHighlight highlightB) {
+      return highlightA.getHighlightedAt().after(highlightB.getHighlightedAt()) ? -1 : 1;
     }
   };
 
