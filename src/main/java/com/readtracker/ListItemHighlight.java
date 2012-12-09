@@ -13,12 +13,16 @@ public class ListItemHighlight {
   private String permalinkUrl;
   private int highlightId;
   private Date highlightedAt;
+  private int likeCount;
+  private int commentCount;
 
   public ListItemHighlight(LocalHighlight highlight) {
     content = highlight.content;
     permalinkUrl = highlight.readmillPermalinkUrl;
     highlightId = highlight.id;
     highlightedAt = highlight.highlightedAt;
+    likeCount = highlight.likeCount;
+    commentCount = highlight.commentCount;
   }
 
   public String getContent() {
@@ -30,11 +34,11 @@ public class ListItemHighlight {
   }
 
   public int getLikeCount() {
-    return (int) (Math.random() * 10);
+    return likeCount;
   }
 
   public int getCommentCount() {
-    return (int) (Math.random() * 10);
+    return commentCount;
   }
 
   public Uri getPermalink() {
