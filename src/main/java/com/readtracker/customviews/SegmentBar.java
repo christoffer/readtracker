@@ -98,7 +98,6 @@ public class SegmentBar extends View {
     final RectF segmentRect = new RectF(0, 0, segmentEnd, getHeight());
     canvas.drawRect(segmentRect, mSegmentPaint);
     final float segmentWidth = previousEnd - segmentEnd; // Since we are going backwards through the segments
-    System.out.println(segmentWidth);
     if(segmentWidth >= (DIVIDER_WIDTH + 1)) {
       canvas.drawRect(segmentRect.right - DIVIDER_WIDTH, segmentRect.top, segmentRect.right, segmentRect.bottom, mBackgroundPaint);
     }
