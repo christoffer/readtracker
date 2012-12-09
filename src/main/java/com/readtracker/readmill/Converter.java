@@ -87,6 +87,8 @@ public class Converter {
     target.highlightedAt = parseISO8601(source.getString("highlighted_at"));
     target.readmillPermalinkUrl = source.getString("permalink_url");
     target.position = source.optDouble("position", 0.0);
+    target.likeCount = source.optInt("likes_count", 0);
+    target.commentCount = source.optInt("comments_count", 0);
 
     return target;
   }
