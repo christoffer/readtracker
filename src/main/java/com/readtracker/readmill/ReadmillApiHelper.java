@@ -25,7 +25,7 @@ import static com.readtracker.readmill.ReadmillApiHelper.ReadingState.FINISHED;
  * for common tasks.
  */
 public class ReadmillApiHelper {
-  private static final String TAG = ReadmillApiHelper.class.getSimpleName();
+  private static final String TAG = ReadmillApiHelper.class.getName();
 
   private static final String ISO8601 = "yyyy-MM-dd'T'HH:mm:ss'Z'";
   private static final SimpleDateFormat iso8601Format = new SimpleDateFormat(ISO8601);
@@ -280,6 +280,7 @@ public class ReadmillApiHelper {
     JSONObject collection = null;
     try {
       collection = sendRequest(request, "fetch readings", 200);
+      Log.v(TAG, collection.toString());
       JSONArray readings = collection.getJSONArray("items");
       for(int i = 0; i < readings.length(); i++) {
         result.add(readings.getJSONObject(i).getJSONObject("reading"));
@@ -307,6 +308,7 @@ public class ReadmillApiHelper {
 
     try {
       JSONObject collection = sendRequest(request, "fetch reading highlights", 200);
+      Log.v(TAG, collection.toString());
       JSONArray highlights = collection.getJSONArray("items");
       if(highlights != null) {
         for(int i = 0; i < highlights.length(); i++) {
@@ -580,11 +582,5 @@ public class ReadmillApiHelper {
     int READING = 2;
     int FINISHED = 3;
     int ABANDONED = 4;
-  }
-
-  public static void main(String[] args) {
-    Date date = new Date();
-    System.out.println(parseISO8601ToUnix(toISO8601(date)));
-    System.out.println((long)(date.getTime() / 1000));
   }
 }

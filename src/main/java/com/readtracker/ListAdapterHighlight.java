@@ -51,7 +51,7 @@ public class ListAdapterHighlight extends ArrayAdapter<ListItemHighlight> {
     int commentCount = item.getCommentCount();
 
     if(likeCount > 0) {
-      String.format(" ・ Liked by %d %S", likeCount, (likeCount == 1 ? "person" : "people"));
+      metadata += String.format(" ・ Liked by %d %s", likeCount, (likeCount == 1 ? "person" : "people"));
     }
 
     if(commentCount > 0) {
