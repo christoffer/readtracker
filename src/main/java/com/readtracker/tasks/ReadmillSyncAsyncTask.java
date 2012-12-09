@@ -432,6 +432,11 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
         mHighlightDao.create(spawn);
         Log.d(TAG, "   Created Highlight: " + spawn.toString());
       } else { // Update highlight
+        Converter.mergeLocalHighlightWithJson(localHighlight, remoteHighlight);
+        localHighlight.syncedAt = new Date();
+
+        mHighlightDao.update(localHighlight);
+        Log.d(TAG, "   Updated Highlight: " + localHighlight.toString());
       }
     }
   }
