@@ -55,6 +55,9 @@ public class ActivityAddBook extends ReadTrackerActivity {
       }
 
       mCameFromReadingSession = extras.getBoolean(IntentKeys.FROM_READING_SESSION, false);
+      if(mCameFromReadingSession) {
+        mEditPageCount.requestFocus();
+      }
     }
   }
   private void setupCreateMode(Bundle extras) {
@@ -186,15 +189,15 @@ public class ActivityAddBook extends ReadTrackerActivity {
 
   private void exitToReadingSession(LocalReading localReading) {
     Intent readingSessionIntent = new Intent(this, ActivityBook.class);
-    if(!mCameFromReadingSession) {
+    if(mCameFromReadingSession) {
+      Intent data = new Intent();
+      data.putExtra(IntentKeys.READING_ID, localReading.id);
+      setResult(ActivityCodes.RESULT_OK, data);
+    } else {
       readingSessionIntent.putExtra(IntentKeys.READING_ID, localReading.id);
       readingSessionIntent.putExtra(IntentKeys.START_READING_SESSION, true);
       startActivity(readingSessionIntent);
       setResult(ActivityCodes.RESULT_OK);
-    } else {
-      Intent data = new Intent();
-      data.putExtra(IntentKeys.READING_ID, localReading.id);
-      setResult(ActivityCodes.RESULT_OK, data);
     }
     finish();
   }
