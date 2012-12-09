@@ -97,8 +97,8 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
 
     boolean cameFromSignIn = getIntent().getBooleanExtra(IntentKeys.SIGNED_IN, false);
     if(cameFromSignIn && getCurrentUser() != null) {
-      Log.d(TAG, "Fresh from sign in, doing initial sync.");
-      sync();
+      Log.d(TAG, "Fresh from sign in, doing initial full sync.");
+      sync(true);
     }
   }
 
@@ -149,7 +149,7 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
 
     switch(clickedId) {
       case MENU_SYNC_BOOKS:
-        sync();
+        sync(false);
         break;
       case MENU_SETTINGS:
         exitToPreferences();
@@ -175,7 +175,7 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
         if(requestCode == ActivityCodes.REQUEST_READING_SESSION ||
           requestCode == ActivityCodes.REQUEST_ADD_BOOK) {
           refreshReadingList();
-          sync();
+          sync(false);
         }
         break;
       case ActivityCodes.RESULT_SIGN_OUT:
@@ -213,7 +213,7 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
       @Override public void onClick(View view) { startAddBookScreen(); }
     });
     mButtonSyncReadmill.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View view) { sync(); }
+      @Override public void onClick(View view) { sync(false); }
     });
   }
 
@@ -227,10 +227,9 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
   }
 
   /**
-   * Initiates a full sync with Readmill.
-   * Pushes new reading sessions, readings and highlights to Readmill.
+   * Initiates a sync with Readmill.
    */
-  private void sync() {
+  private void sync(boolean fullSync) {
     if(!shouldSync()) {
       return;
     }
@@ -240,7 +239,7 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
     mButtonSyncReadmill.startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_out));
 
     ReadmillApiHelper api = ApplicationReadTracker.getReadmillApi();
-    mReadmillSyncTask = new ReadmillSyncAsyncTask(mSyncStatusHandler, api);
+    mReadmillSyncTask = new ReadmillSyncAsyncTask(mSyncStatusHandler, api, fullSync);
 
     // Prevent starting another sync while this is ongoing
     toggleSyncMenuOption(false);

@@ -28,18 +28,22 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
   private Dao<LocalSession, Integer> mSessionDao;
   private Dao<LocalHighlight, Integer> mHighlightDao;
   private ReadmillApiHelper mReadmillApi;
+  private boolean mIsFullSync = false;
 
   ReadmillSyncProgressListener mProgressListener;
 
-  public ReadmillSyncAsyncTask(ReadmillSyncProgressListener progressListener, ReadmillApiHelper readmillApi) {
+  public ReadmillSyncAsyncTask(ReadmillSyncProgressListener progressListener, ReadmillApiHelper readmillApi, boolean fullSync) {
     super();
     mProgressListener = progressListener;
     mReadmillApi = readmillApi;
+    mIsFullSync = fullSync;
   }
 
   @Override
   protected Integer doInBackground(Long... id) {
     long readmillUserId = id[0];
+
+    Log.i(TAG, "Starting " + (mIsFullSync ? "full " : "quick ") + " Readmill sync");
 
     try {
       mReadingDao = ApplicationReadTracker.getReadingDao();
@@ -51,7 +55,7 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
     }
 
     try {
-      performFullSyncForUser(readmillUserId);
+      syncUser(readmillUserId, mIsFullSync);
       return STATUS_OK;
     } catch(ReadmillException exception) {
       Log.w(TAG, "Readmill Exception while trying to sync readings", exception);
@@ -103,16 +107,17 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
    * Syncs all local and remote data for a given user.
    *
    * @param readmillUserId readmill id of user to sync data for
+   * @param fullSync   skip change detection and force update of local data
    * @throws ReadmillException if an error occurs while communicating with Readmill
    * @throws JSONException     if the response from Readmill is not properly formatted
    */
-  private void performFullSyncForUser(long readmillUserId) throws ReadmillException, JSONException, SQLException {
-    Log.i(TAG, "Performing a full sync for user connected to readmill user id: " + readmillUserId);
+  private void syncUser(long readmillUserId, boolean fullSync) throws ReadmillException, JSONException, SQLException {
+    Log.i(TAG, "Syncing user with Readmill id: " + readmillUserId);
 
     ArrayList<LocalReading> localReadings = getAllConnectedLocalReadingForUserId(readmillUserId);
     ArrayList<JSONObject> remoteReadings = getAllRemoteReadingsForUserId(readmillUserId);
 
-    syncLocalReadingsWithRemoteReadings(localReadings, remoteReadings);
+    syncLocalReadingsWithRemoteReadings(localReadings, remoteReadings, fullSync);
   }
 
   /**
@@ -257,7 +262,8 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
    * @param remoteReadings List of remote readings
    * @throws JSONException if the response from Readmill was not correct
    */
-  private void syncLocalReadingsWithRemoteReadings(ArrayList<LocalReading> localReadings, ArrayList<JSONObject> remoteReadings) throws JSONException, SQLException {
+  private void syncLocalReadingsWithRemoteReadings(ArrayList<LocalReading> localReadings, ArrayList<JSONObject> remoteReadings, boolean fullSync)
+    throws JSONException, SQLException {
     Map<LocalReading, JSONObject> pullChangesList = new HashMap<LocalReading, JSONObject>();
     List<LocalReading> pushClosedStateList = new ArrayList<LocalReading>();
     List<JSONObject> pullReadingsList = new ArrayList<JSONObject>();
@@ -286,7 +292,7 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
         if(closedLocallyButNotRemotely(localReading, remoteReading)) {
           Log.d(TAG, "Local reading has been closed, readmill id:" + remoteReadingId);
           pushClosedStateList.add(localReading);
-        } else if(remoteTouchedAt != localReading.readmillTouchedAt) {
+        } else if(fullSync || (remoteTouchedAt != localReading.readmillTouchedAt)) {
           Log.d(TAG, "Remote reading has changed, readmill id: " + remoteReadingId);
           Log.d(TAG, " - Local timestamp: " + localReading.readmillTouchedAt + " vs remote: " + remoteTouchedAt);
           pullChangesList.put(localReading, remoteReading);
