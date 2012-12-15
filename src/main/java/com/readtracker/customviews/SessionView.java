@@ -16,6 +16,9 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Draws a history of reading sessions on a time line.
+ */
 public class SessionView extends View {
   private int mColor = 0xff449966;
   private Paint mNodePaint;
@@ -201,6 +204,7 @@ public class SessionView extends View {
     mSecondaryTextPaint.setTextSize(convertDPtoPX(12));
     mSecondaryTextPaint.setColor(getResources().getColor(R.color.text_color_secondary));
     mSecondaryTextPaint.setSubpixelText(true);
+    mPrimaryTextPaint.setAntiAlias(true);
 
     TypedArray array = getContext().getTheme().obtainStyledAttributes(new int[]{
       android.R.attr.colorBackground,
