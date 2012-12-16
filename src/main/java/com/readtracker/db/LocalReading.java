@@ -1,5 +1,6 @@
 package com.readtracker.db;
 
+import android.graphics.Color;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
@@ -16,6 +17,7 @@ import java.util.List;
  * reading (like page numbers).
  */
 public class LocalReading implements Parcelable {
+  private int mColor = -1; // Cache of the calculated color for this Reading
 
   // Database Column names
 
@@ -114,6 +116,19 @@ public class LocalReading implements Parcelable {
 
   public boolean hasPageInfo() {
     return totalPages > 0;
+  }
+
+  public int getColor() {
+    if(mColor == -1) { // need recalculation
+      final String colorKey = title + author + readmillReadingId;
+      float color = 360 * (Math.abs(colorKey.hashCode()) / (float) Integer.MAX_VALUE);
+      mColor = Color.HSVToColor(new float[] {
+        color,
+        0.4f,
+        0.5f
+      });
+    }
+    return mColor;
   }
 
   @Override

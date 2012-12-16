@@ -76,6 +76,9 @@ public class ActivityReadingSessionEnd extends ReadTrackerActivity {
     }
     mProgressPicker.setText("Ended on");
 
+    findViewById(R.id.dividerTop).setBackgroundColor(mLocalReading.getColor());
+    findViewById(R.id.dividerBottom).setBackgroundColor(mLocalReading.getColor());
+
     Log.i(TAG, "Init for reading : " + mLocalReading.id + " with session length:" + mSessionLengthMillis);
 
     final String duration = Utils.shortHumanTimeFromMillis(mSessionLengthMillis);

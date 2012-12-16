@@ -2,6 +2,7 @@ package com.readtracker;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -108,6 +109,10 @@ public class FragmentHighlight extends Fragment {
     if(highlightItems.size() == 0) {
       mTextBlankState.setVisibility(View.VISIBLE);
       mListHighlights.setVisibility(View.GONE);
+    } else {
+      final int color = mLocalReading.getColor();
+      mListHighlights.setDivider(new ColorDrawable(color));
+      mListHighlights.setDividerHeight(1);
     }
 
     mHighlightAdapter = new ListAdapterHighlight(getActivity(), R.layout.highlight_list_item, highlightItems);

@@ -71,10 +71,9 @@ public class FragmentSessions extends Fragment {
 
     bindViews(view);
 
-    int color = 0xff445566; // localReading.getColor()
+    int color = mLocalReading.getColor();
 
     mSegmentBar.setColor(color);
-    Log.d(TAG, "Stops; " + mLocalReading.getProgressStops());
     mSegmentBar.setStops(mLocalReading.getProgressStops());
 
     if(mLocalSessions != null && mLocalSessions.size() > 0) {

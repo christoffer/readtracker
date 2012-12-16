@@ -190,6 +190,7 @@ public class ListAdapterLocalReading extends ArrayAdapter<LocalReading> {
         progressStops = new float[]{(float) localReading.progress};
       }
       viewHolder.progressReadingProgress.setStops(progressStops);
+      viewHolder.progressReadingProgress.setColor(localReading.getColor());
     }
 
     if(viewHolder.imageCover != null) {

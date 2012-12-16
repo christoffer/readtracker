@@ -49,6 +49,9 @@ public class ActivityHighlight extends ReadTrackerActivity {
       currentPage = (int) mLocalReading.currentPage;
     }
 
+    View divider = findViewById(R.id.divider);
+    divider.setBackgroundColor(mLocalReading.getColor());
+
     if(mLocalReading.hasPageInfo()) {
       if(mLocalReading.isMeasuredInPercent()) {
         mProgressPicker.setupPercentMode(currentPage);
@@ -57,7 +60,6 @@ public class ActivityHighlight extends ReadTrackerActivity {
         mProgressPicker.setupPagesMode(currentPage, (int) mLocalReading.totalPages);
         mProgressPicker.setText("Page");
       }
-
     } else {
       mProgressPicker.setVisibility(View.GONE);
     }

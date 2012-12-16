@@ -96,6 +96,8 @@ public class FragmentRead extends Fragment {
       setupMissingPages();
     }
 
+    mTimeSpinner.setColor(mLocalReading.getColor());
+
     return view;
   }
 

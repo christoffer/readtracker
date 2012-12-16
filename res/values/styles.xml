@@ -244,7 +244,7 @@
 
   <style name="thick_divider">
     <item name="android:background">#ff773355</item>
-    <item name="android:layout_height">2dp</item>
+    <item name="android:layout_height">1px</item>
     <item name="android:layout_width">fill_parent</item>
   </style>
 
