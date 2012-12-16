@@ -25,7 +25,6 @@ public class ActivityBook extends ReadTrackerActivity {
   private ViewPager mViewPagerReading;
 
   private boolean mIsDirty;
-  private boolean mLocalReadingDirty;
   private boolean mManualShutdown;
   private int mStartingPage;
 
@@ -68,14 +67,11 @@ public class ActivityBook extends ReadTrackerActivity {
   @Override
   public void onBackPressed() {
     if(isDirty()) {
-      // Do nothing when the session is dirty
       ReadingState readingState = mBookFragmentAdapter.getReadingState();
       finishWithResult(ActivityCodes.RESULT_CANCELED, readingState);
       toast("Pausing " + mLocalReading.title);
     } else {
-      // Maybe set the result code to trigger a reading refresh
-      int result = mLocalReadingDirty ? ActivityCodes.RESULT_OK : ActivityCodes.RESULT_CANCELED;
-      finishWithResult(result);
+      finishWithResult(ActivityCodes.RESULT_OK);
     }
   }
 
@@ -120,7 +116,7 @@ public class ActivityBook extends ReadTrackerActivity {
    * Loads local reading data for a given reading.
    * Loads the LocalReading, LocalSessions and LocalHighlights.
    *
-   * @param readingId    id of LocalReading to load data for.
+   * @param readingId id of LocalReading to load data for.
    */
   private void reloadLocalData(int readingId) {
     try {
@@ -248,14 +244,6 @@ public class ActivityBook extends ReadTrackerActivity {
   }
 
   /**
-   * Callback from fragment informing that number of pages of the Local reading
-   * has been updated.
-   */
-  public void onLocalReadingChanged() {
-    mLocalReadingDirty = true;
-  }
-
-  /**
    * Informs fragments if we are shutting down explicitly (as opposed to being
    * shutdown because activity is being sent to background or memory collected)
    *
@@ -310,9 +298,9 @@ public class ActivityBook extends ReadTrackerActivity {
 
     private ArrayList<LocalSession> getLocalSessions(int readingId) throws SQLException {
       return new ArrayList<LocalSession>(
-          sessionDao.queryBuilder()
-              .where().eq(LocalSession.READING_ID_FIELD_NAME, readingId)
-              .query()
+        sessionDao.queryBuilder()
+          .where().eq(LocalSession.READING_ID_FIELD_NAME, readingId)
+          .query()
       );
     }
 
@@ -320,10 +308,10 @@ public class ActivityBook extends ReadTrackerActivity {
       final String orderField = LocalHighlight.HIGHLIGHTED_AT_FIELD_NAME;
 
       return new ArrayList<LocalHighlight>(
-          highlightDao.queryBuilder()
-              .orderByRaw("datetime(" + orderField + ") DESC")
-              .where().eq(LocalHighlight.READING_ID_FIELD_NAME, readingId)
-              .query()
+        highlightDao.queryBuilder()
+          .orderByRaw("datetime(" + orderField + ") DESC")
+          .where().eq(LocalHighlight.READING_ID_FIELD_NAME, readingId)
+          .query()
       );
     }
   }
@@ -335,9 +323,9 @@ public class ActivityBook extends ReadTrackerActivity {
 
     public boolean isValid() {
       Log.d(TAG, "Checking validity of fetched bundle: " +
-          "LocalReading: " + (localReading == null ? "null" : localReading.id) +
-          ", readingSessions: " + (localSessions == null ? "null" : localSessions.size()) +
-          ", readingHighlights: " + (localHighlights == null ? "null" : localHighlights.size())
+        "LocalReading: " + (localReading == null ? "null" : localReading.id) +
+        ", readingSessions: " + (localSessions == null ? "null" : localSessions.size()) +
+        ", readingHighlights: " + (localHighlights == null ? "null" : localHighlights.size())
       );
       return localReading == null || localSessions == null || localHighlights == null;
     }

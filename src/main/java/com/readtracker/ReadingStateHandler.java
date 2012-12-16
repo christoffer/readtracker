@@ -32,12 +32,16 @@ class ReadingStateHandler {
    */
   public static void store(ReadingState readingState) {
     Log.d(TAG, "Storing reading state: " + (readingState == null ? "NULL" : readingState));
+    if(readingState == null) {
+      return;
+    }
+
     ApplicationReadTracker.getApplicationPreferences().
-        edit().
-        putInt(KEY_LOCAL_READING_ID, readingState.getLocalReadingId()).
-        putLong(KEY_ELAPSED, readingState.getElapsedMilliseconds()).
-        putLong(KEY_ACTIVE_TIMESTAMP, readingState.getActiveTimestamp()).
-        commit();
+      edit().
+      putInt(KEY_LOCAL_READING_ID, readingState.getLocalReadingId()).
+      putLong(KEY_ELAPSED, readingState.getElapsedMilliseconds()).
+      putLong(KEY_ACTIVE_TIMESTAMP, readingState.getActiveTimestamp()).
+      commit();
   }
 
   /**
@@ -66,10 +70,10 @@ class ReadingStateHandler {
   public static void clear() {
     Log.d(TAG, "Clearing reading state");
     ApplicationReadTracker.getApplicationPreferences().
-        edit().
-        remove(KEY_LOCAL_READING_ID).
-        remove(KEY_ELAPSED).
-        remove(KEY_ACTIVE_TIMESTAMP).
-        commit();
+      edit().
+      remove(KEY_LOCAL_READING_ID).
+      remove(KEY_ELAPSED).
+      remove(KEY_ACTIVE_TIMESTAMP).
+      commit();
   }
 }
