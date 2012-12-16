@@ -246,7 +246,7 @@ public class FragmentRead extends Fragment {
       @Override public void onAnimationRepeat(Animation animation) { }
       @Override public void onAnimationEnd(Animation animation) {
         startTiming();
-        ((ActivityBook) getActivity()).setDirty(true);
+        ((ActivityBook) getActivity()).markSessionStarted();
         presentTime(elapsed());
         mTextBillboard.startAnimation(appear);
       }
@@ -312,7 +312,7 @@ public class FragmentRead extends Fragment {
 
     // Notify to the parent activity that our data is dirty so it can store
     // the state if the user leaves the activity.
-    ((ActivityBook) getActivity()).setDirty(true);
+    ((ActivityBook) getActivity()).markSessionStarted();
 
     mFlipperSessionControl.setDisplayedChild(PAGE_READING_CONTROLS_ACTIVE);
 

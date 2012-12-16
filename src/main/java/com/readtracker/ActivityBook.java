@@ -24,7 +24,7 @@ public class ActivityBook extends ReadTrackerActivity {
   private BookFragmentAdapter mBookFragmentAdapter;
   private ViewPager mViewPagerReading;
 
-  private boolean mIsDirty;
+  private boolean mIsSessionStarted;
   private boolean mManualShutdown;
   private int mStartingPage;
 
@@ -66,7 +66,7 @@ public class ActivityBook extends ReadTrackerActivity {
 
   @Override
   public void onBackPressed() {
-    if(isDirty()) {
+    if(hasSessionStarted()) {
       ReadingState readingState = mBookFragmentAdapter.getReadingState();
       finishWithResult(ActivityCodes.RESULT_CANCELED, readingState);
       toast("Pausing " + mLocalReading.title);
@@ -85,26 +85,23 @@ public class ActivityBook extends ReadTrackerActivity {
       case ActivityCodes.CREATE_PING:
         // Set result to OK to state that something was changed
         if(resultCode == RESULT_OK) {
-          Log.d(TAG, "Created ping: Falling through");
+          Log.d(TAG, "Came back from ping creation");
           finishWithResult(ActivityCodes.RESULT_OK);
           return;
         }
         break;
       case ActivityCodes.REQUEST_EDIT_BOOK:
         if(resultCode == RESULT_OK) {
+          Log.d(TAG, "Came back from editing the book");
           int updateReadingId = data.getIntExtra(IntentKeys.READING_ID, -1);
           reloadLocalData(updateReadingId);
         }
         break;
       case ActivityCodes.CREATE_HIGHLIGHT:
         if(resultCode == RESULT_OK) {
+          Log.d(TAG, "Came back from creating a highlight");
           mStartingPage = PAGE_HIGHLIGHTS;
-          // Use a provided reading id since localReading might have been destroyed
           int updateReadingId = data.getIntExtra(IntentKeys.READING_ID, -1);
-          if(updateReadingId == -1) {
-            Log.e(TAG, "Highlight Activity did not provide LocalReading id");
-            finish();
-          }
           reloadLocalData(updateReadingId);
         }
         break;
@@ -123,14 +120,26 @@ public class ActivityBook extends ReadTrackerActivity {
       (new LoadLocalReadingAndSessionsTask()).execute(readingId);
     } catch(SQLException e) {
       Log.e(TAG, "Failed to reload local reading data", e);
-      toast("Book data corrupted");
-      finishWithResult(ActivityCodes.RESULT_CANCELED);
+      finishWithGenericError();
     }
   }
 
-  public void setDirty(boolean dirty) {
-    mIsDirty = dirty;
+  /**
+   * Sets the hasSessionStarted flag to true.
+   */
+  public void markSessionStarted() {
+    mIsSessionStarted = true;
   }
+
+  /**
+   * Returns a flag indicating if the user has started a sessions or not.
+   *
+   * @return true if a session has started.
+   */
+  private boolean hasSessionStarted() {
+    return mIsSessionStarted;
+  }
+
 
   /**
    * Called when the local information about a reading has finished being loaded
@@ -164,10 +173,6 @@ public class ActivityBook extends ReadTrackerActivity {
     setupFragments(bundle);
 
     Log.i(TAG, "Initialized for reading with id:" + mLocalReading.id);
-  }
-
-  private boolean isDirty() {
-    return mIsDirty;
   }
 
   private void setupFragments(LocalReadingBundle bundle) {
@@ -241,6 +246,11 @@ public class ActivityBook extends ReadTrackerActivity {
     mManualShutdown = true;
     ReadingStateHandler.clear();
     finish();
+  }
+
+  private void finishWithGenericError() {
+    toast("An error occurred while reading the book");
+    finishWithResult(ActivityCodes.RESULT_CANCELED);
   }
 
   /**
