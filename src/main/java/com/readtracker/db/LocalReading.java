@@ -147,7 +147,7 @@ public class LocalReading implements Parcelable {
   }
 
   public boolean hasClosingRemark() {
-    return readmillClosingRemark != null && readmillClosingRemark.length() > 0;
+    return isClosed() && (readmillClosingRemark != null && readmillClosingRemark.length() > 0);
   }
 
   public String getClosingRemark() {
