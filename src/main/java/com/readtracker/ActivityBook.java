@@ -40,11 +40,11 @@ public class ActivityBook extends ReadTrackerActivity {
 
     if(in != null) {
       Log.d(TAG, "unfreezing state");
-      mStartingPage = in.getInt(IntentKeys.STARTING_PAGE, PAGE_SESSIONS);
+      mStartingPage = in.getInt(IntentKeys.INITIAL_FRAGMENT_PAGE, PAGE_SESSIONS);
     } else {
       if(getIntent() != null) {
         Log.d(TAG, "Started from intent");
-        mStartingPage = getIntent().getIntExtra(IntentKeys.STARTING_PAGE, PAGE_READING);
+        mStartingPage = getIntent().getIntExtra(IntentKeys.INITIAL_FRAGMENT_PAGE, PAGE_READING);
       }
     }
 
@@ -60,7 +60,7 @@ public class ActivityBook extends ReadTrackerActivity {
     super.onSaveInstanceState(outState);
     Log.d(TAG, "freezing state");
     if(mViewPagerReading != null) {
-      outState.putInt(IntentKeys.STARTING_PAGE, mViewPagerReading.getCurrentItem());
+      outState.putInt(IntentKeys.INITIAL_FRAGMENT_PAGE, mViewPagerReading.getCurrentItem());
     }
   }
 

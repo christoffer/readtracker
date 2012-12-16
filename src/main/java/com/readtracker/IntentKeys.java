@@ -25,7 +25,7 @@ public class IntentKeys {
   public static final String COVER_URL = "cover-url";
   public static final String PAGE_COUNT = "page-count";
 
-  public static final String STARTING_PAGE = "starting-page";
+  public static final String INITIAL_FRAGMENT_PAGE = "starting-page";
 
   public static final String LOCAL_READING = "local-reading";
   public static final String READING_HIGHLIGHTS = "reading-highlights";

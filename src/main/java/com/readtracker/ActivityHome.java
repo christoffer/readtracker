@@ -300,9 +300,9 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
 
     // Jump to the read page directly if the local reading is ready to be read
     if(localReading.isActive()) {
-      intentReadingSession.putExtra(IntentKeys.STARTING_PAGE, ActivityBook.PAGE_READING);
+      intentReadingSession.putExtra(IntentKeys.INITIAL_FRAGMENT_PAGE, ActivityBook.PAGE_READING);
     } else {
-      intentReadingSession.putExtra(IntentKeys.STARTING_PAGE, ActivityBook.PAGE_SESSIONS);
+      intentReadingSession.putExtra(IntentKeys.INITIAL_FRAGMENT_PAGE, ActivityBook.PAGE_SESSIONS);
     }
 
     startActivityForResult(intentReadingSession, ActivityCodes.REQUEST_READING_SESSION);
