@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.*;
 import android.widget.*;
 import com.readtracker.db.LocalHighlight;
+import com.readtracker.db.LocalReading;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -22,14 +23,16 @@ public class FragmentHighlight extends Fragment {
   private static TextView mTextBlankState;
   private static Button mButtonAddHighlight;
 
+  private LocalReading mLocalReading;
   private ArrayList<LocalHighlight> mLocalHighlights;
   private ListAdapterHighlight mHighlightAdapter;
 
   private boolean mForceReinitialize = false;
 
-  public static Fragment newInstance(ArrayList<LocalHighlight> localHighlights) {
+  public static Fragment newInstance(LocalReading localReading, ArrayList<LocalHighlight> localHighlights) {
     Log.d(TAG, "newInstance() called with " + localHighlights.size() + " highlights ");
     FragmentHighlight instance = new FragmentHighlight();
+    instance.setLocalReading(localReading);
     instance.setReadingHighlights(localHighlights);
     instance.setForceInitialize(true);
     return instance;
@@ -37,6 +40,10 @@ public class FragmentHighlight extends Fragment {
 
   private void setForceInitialize(boolean forceInitialize) {
     mForceReinitialize = forceInitialize;
+  }
+
+  public void setLocalReading(LocalReading localReading) {
+    mLocalReading = localReading;
   }
 
   private void setReadingHighlights(ArrayList<LocalHighlight> localHighlights) {

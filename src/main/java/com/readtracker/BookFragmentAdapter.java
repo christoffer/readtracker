@@ -46,7 +46,7 @@ public class BookFragmentAdapter extends FragmentStatePagerAdapter {
       mFragmentReadInstance = (FragmentRead) FragmentRead.newInstance(mLocalReading, initialElapsed);
       return mFragmentReadInstance;
     } else if(position == getHighlightsPageIndex()) {
-      return FragmentHighlight.newInstance(mLocalHighlights);
+      return FragmentHighlight.newInstance(mLocalReading, mLocalHighlights);
     }
     return null;
   }
