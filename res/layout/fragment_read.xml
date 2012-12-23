@@ -16,7 +16,7 @@
     android:paddingBottom="48dp"
     android:gravity="center" />
 
-  <com.readtracker.customviews.TimeSpinner
+  <com.readtracker.custom_views.TimeSpinner
     android:id="@+id/timespinner"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"

@@ -1,4 +1,4 @@
-package com.readtracker.customviews;
+package com.readtracker.custom_views;
 
 import android.app.Activity;
 import android.graphics.Typeface;

@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import com.readtracker.customviews.SegmentBar;
+import com.readtracker.custom_views.SegmentBar;
 import com.readtracker.db.LocalReading;
 import com.readtracker.readmill.ReadmillApiHelper;
 import com.readtracker.thirdparty.DrawableManager;

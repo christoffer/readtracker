@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-import com.readtracker.customviews.SessionGraphSegment;
+import com.readtracker.custom_views.SessionGraphSegment;
 import com.readtracker.db.LocalSession;
 
 import java.util.List;

@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import com.j256.ormlite.dao.Dao;
-import com.readtracker.customviews.ViewBindingBookHeader;
+import com.readtracker.custom_views.ViewBindingBookHeader;
 import com.readtracker.db.LocalHighlight;
 import com.readtracker.db.LocalReading;
 import com.readtracker.db.LocalSession;

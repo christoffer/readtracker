@@ -6,7 +6,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import com.readtracker.customviews.ViewBindingBookHeader;
+import com.readtracker.custom_views.ViewBindingBookHeader;
 import com.readtracker.db.LocalReading;
 import com.readtracker.readmill.ReadmillApiHelper;
 import com.readtracker.interfaces.SaveLocalReadingListener;

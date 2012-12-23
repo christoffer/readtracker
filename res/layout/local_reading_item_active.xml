@@ -38,7 +38,7 @@
     android:singleLine="true"
     android:text="Franz Kafka" />
 
-  <com.readtracker.customviews.SegmentBar
+  <com.readtracker.custom_views.SegmentBar
     android:id="@+id/progressReadingProgress"
     android:layout_below="@id/imageCover"
     android:layout_marginTop="12dp"

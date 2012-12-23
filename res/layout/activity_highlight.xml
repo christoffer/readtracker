@@ -34,7 +34,7 @@
     android:layout_marginBottom="12dp"
     android:layout_above="@+id/progressPicker" />
 
-  <com.readtracker.customviews.ProgressPicker
+  <com.readtracker.custom_views.ProgressPicker
     android:id="@+id/progressPicker"
     android:layout_width="wrap_content"
     android:layout_centerHorizontal="true"
