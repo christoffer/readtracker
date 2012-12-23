@@ -1,4 +1,4 @@
-package com.readtracker.readmill;
+package com.readtracker.helpers;
 
 import com.readtracker.db.LocalHighlight;
 import com.readtracker.db.LocalReading;
@@ -6,13 +6,13 @@ import com.readtracker.db.LocalSession;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import static com.readtracker.readmill.ReadmillApiHelper.*;
+import static com.readtracker.helpers.ReadmillApiHelper.*;
 
 /**
  * Converts data from Readmill to ReadTracker and vice versa.
  */
-public class Converter {
-  public static final String TAG = Converter.class.getName();
+public class ReadmillConverter {
+  public static final String TAG = ReadmillConverter.class.getName();
 
   /**
    * Creates a LocalReading instance from a Readmill reading JSON.

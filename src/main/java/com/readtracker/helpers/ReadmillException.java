@@ -1,4 +1,4 @@
-package com.readtracker.readmill;
+package com.readtracker.helpers;
 
 /**
  * Represents a generic error that occurred while sending data to Readmill.

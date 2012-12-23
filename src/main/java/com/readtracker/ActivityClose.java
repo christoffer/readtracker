@@ -8,7 +8,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import com.readtracker.custom_views.ViewBindingBookHeader;
 import com.readtracker.db.LocalReading;
-import com.readtracker.readmill.ReadmillApiHelper;
+import com.readtracker.helpers.ReadmillApiHelper;
 import com.readtracker.interfaces.SaveLocalReadingListener;
 import com.readtracker.tasks.SaveLocalReadingTask;
 

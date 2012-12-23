@@ -17,7 +17,7 @@ import com.readtracker.db.LocalReading;
 import com.readtracker.db.LocalSession;
 import com.readtracker.helpers.ReadmillSyncStatusUIHandler;
 import com.readtracker.interfaces.LocalReadingInteractionListener;
-import com.readtracker.readmill.ReadmillApiHelper;
+import com.readtracker.helpers.ReadmillApiHelper;
 import com.readtracker.tasks.ReadmillSyncAsyncTask;
 import com.readtracker.value_objects.SessionTimer;
 

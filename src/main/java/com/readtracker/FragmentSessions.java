@@ -13,7 +13,7 @@ import com.readtracker.custom_views.SegmentBar;
 import com.readtracker.custom_views.SessionView;
 import com.readtracker.db.LocalReading;
 import com.readtracker.db.LocalSession;
-import com.readtracker.readmill.ReadmillApiHelper;
+import com.readtracker.helpers.ReadmillApiHelper;
 
 import java.util.ArrayList;
 

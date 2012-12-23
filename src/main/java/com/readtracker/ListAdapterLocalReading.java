@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.readtracker.custom_views.SegmentBar;
 import com.readtracker.db.LocalReading;
-import com.readtracker.readmill.ReadmillApiHelper;
+import com.readtracker.helpers.ReadmillApiHelper;
 import com.readtracker.thirdparty.DrawableManager;
 
 import java.util.Comparator;
@@ -18,7 +18,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.readtracker.readmill.ReadmillApiHelper.ReadingState.READING;
+import static com.readtracker.helpers.ReadmillApiHelper.ReadingState.READING;
 
 /**
  * Lists the local reading entity on the home screen with a progress bar,

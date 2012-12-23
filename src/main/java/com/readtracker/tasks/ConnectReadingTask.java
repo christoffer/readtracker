@@ -4,15 +4,15 @@ import android.os.AsyncTask;
 import android.util.Log;
 import com.readtracker.ApplicationReadTracker;
 import com.readtracker.interfaces.ConnectedReadingListener;
-import com.readtracker.readmill.Converter;
+import com.readtracker.helpers.ReadmillConverter;
 import com.readtracker.db.LocalReading;
-import com.readtracker.readmill.ReadmillException;
+import com.readtracker.helpers.ReadmillException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.sql.SQLException;
 
-import static com.readtracker.readmill.ReadmillApiHelper.dumpJSON;
+import static com.readtracker.helpers.ReadmillApiHelper.dumpJSON;
 
 /**
  * Connects a local reading to a remote reading on Readmill.
@@ -76,7 +76,7 @@ public class ConnectReadingTask {
         }
 
         // Include data from Readmill
-        Converter.mergeLocalReadingWithJSON(localReading, jsonReading);
+        ReadmillConverter.mergeLocalReadingWithJSON(localReading, jsonReading);
 
         // Store locally
         ApplicationReadTracker.getReadingDao().createOrUpdate(localReading);

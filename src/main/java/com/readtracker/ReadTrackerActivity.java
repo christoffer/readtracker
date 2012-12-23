@@ -11,7 +11,7 @@ import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.readtracker.readmill.ReadmillApiHelper;
+import com.readtracker.helpers.ReadmillApiHelper;
 import com.readtracker.value_objects.ReadTrackerUser;
 
 /**

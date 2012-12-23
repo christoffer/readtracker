@@ -17,7 +17,7 @@ import com.readtracker.db.DatabaseHelper;
 import com.readtracker.db.LocalHighlight;
 import com.readtracker.db.LocalReading;
 import com.readtracker.db.LocalSession;
-import com.readtracker.readmill.ReadmillApiHelper;
+import com.readtracker.helpers.ReadmillApiHelper;
 import com.readtracker.thirdparty.DrawableManager;
 import com.readtracker.value_objects.ReadTrackerUser;
 import org.json.JSONException;

@@ -7,9 +7,9 @@ import com.j256.ormlite.stmt.Where;
 import com.readtracker.ApplicationReadTracker;
 import com.readtracker.interfaces.ReadmillSyncProgressListener;
 import com.readtracker.db.*;
-import com.readtracker.readmill.Converter;
-import com.readtracker.readmill.ReadmillApiHelper;
-import com.readtracker.readmill.ReadmillException;
+import com.readtracker.helpers.ReadmillConverter;
+import com.readtracker.helpers.ReadmillApiHelper;
+import com.readtracker.helpers.ReadmillException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -190,7 +190,7 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
    * @throws JSONException if the readmill response was not properly formatted
    */
   private LocalReading createLocalReading(JSONObject remoteReading) throws JSONException, SQLException {
-    LocalReading spawn = Converter.createLocalReadingFromReadingJSON(remoteReading);
+    LocalReading spawn = ReadmillConverter.createLocalReadingFromReadingJSON(remoteReading);
     mReadingDao.create(spawn);
     Log.i(TAG, "Created LocalReading for " + spawn.title + " with Readmill id: " + spawn.readmillReadingId);
     syncDependentObjects(spawn, remoteReading);
@@ -429,7 +429,7 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
         String remoteContent = remoteHighlight.getString("content");
         Log.i(TAG, "Adding highlight: " + remoteId + " " + remoteContent);
 
-        LocalHighlight spawn = Converter.createHighlightFromReadmillJSON(remoteHighlight);
+        LocalHighlight spawn = ReadmillConverter.createHighlightFromReadmillJSON(remoteHighlight);
 
         // Attributes only available to ReadTracker
         spawn.syncedAt = new Date();
@@ -438,7 +438,7 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
         mHighlightDao.create(spawn);
         Log.d(TAG, "   Created Highlight: " + spawn.toString());
       } else { // Update highlight
-        Converter.mergeLocalHighlightWithJson(localHighlight, remoteHighlight);
+        ReadmillConverter.mergeLocalHighlightWithJson(localHighlight, remoteHighlight);
         localHighlight.syncedAt = new Date();
 
         mHighlightDao.update(localHighlight);
@@ -543,7 +543,7 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
       // session already available so no need to create a new one
       if(foundLocal) { continue; }
 
-      LocalSession spawn = Converter.createReadingSessionFromReadmillPeriod(remoteSession);
+      LocalSession spawn = ReadmillConverter.createReadingSessionFromReadmillPeriod(remoteSession);
       spawn.readingId = localReading.id;
       spawn.syncedWithReadmill = true;
 

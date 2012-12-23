@@ -1,4 +1,4 @@
-package com.readtracker.readmill;
+package com.readtracker.helpers;
 
 import android.util.Log;
 import com.readmill.api.ReadmillWrapper;
@@ -15,8 +15,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-import static com.readtracker.readmill.ReadmillApiHelper.ReadingState.ABANDONED;
-import static com.readtracker.readmill.ReadmillApiHelper.ReadingState.FINISHED;
+import static com.readtracker.helpers.ReadmillApiHelper.ReadingState.ABANDONED;
+import static com.readtracker.helpers.ReadmillApiHelper.ReadingState.FINISHED;
 
 /**
  * Class to bridge any interaction with the Readmill API.
