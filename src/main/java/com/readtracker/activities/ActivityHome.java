@@ -31,7 +31,6 @@ import static com.readtracker.support.ReadmillSyncStatusUIHandler.*;
 
 public class ActivityHome extends ReadTrackerActivity implements LocalReadingInteractionListener {
 
-  private static LinearLayout mLayoutBlankState;
   private static Button mButtonSyncReadmill;
   private static ImageButton mButtonAddBook;
   private static MenuItem mMenuReadmillSync;
@@ -199,12 +198,11 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
   public void onLocalReadingClicked(LocalReading localReading) {
     // Handles clicks on readings in any of the child fragments
     if(!localReading.isInteresting()) {
-      exitToActivityBook(localReading);
+      exitToActivityBook(localReading.id);
     }
   }
 
   private void bindViews() {
-    mLayoutBlankState = (LinearLayout) findViewById(R.id.readingListBlankState);
     mButtonSyncReadmill = (Button) findViewById(R.id.buttonSyncReadmill);
     mButtonAddBook = (ImageButton) findViewById(R.id.buttonAddBook);
     mPagerHomeActivity = (ViewPager) findViewById(R.id.pagerHomeActivity);
@@ -286,9 +284,9 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
 
   // Private
 
-  private void exitToActivityBook(LocalReading localReading) {
+  private void exitToActivityBook(int localReadingId) {
     Intent intentReadingSession = new Intent(this, ActivityBook.class);
-    intentReadingSession.putExtra(IntentKeys.READING_ID, localReading.id);
+    intentReadingSession.putExtra(IntentKeys.READING_ID, localReadingId);
 
     // Resume the session if going back to the previously read
     if(mActiveSessionTimer != null) {
@@ -296,12 +294,11 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
     }
 
     if(mActiveSessionTimer != null) {
-      if(mActiveSessionReadingId == localReading.id) {
-        Log.v(TAG, "Passing active state for reading " + localReading.id + ": " + mActiveSessionTimer);
+      if(mActiveSessionTimer.getLocalReadingId() == localReadingId) {
+        Log.v(TAG, "Passing active state for reading " + localReadingId + ": " + mActiveSessionTimer);
         intentReadingSession.putExtra(IntentKeys.READING_SESSION_STATE, mActiveSessionTimer);
       }
 
-      mActiveSessionReadingId = 0;
       mActiveSessionTimer = null;
     }
 
