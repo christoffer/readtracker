@@ -8,16 +8,17 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
-import com.readtracker.ApplicationReadTracker;
 import com.readtracker.R;
 import com.readtracker.ReadTrackerActivity;
 import com.readtracker.db.LocalReading;
-import com.readtracker.thirdparty.DrawableManager;
 
 public class ViewBindingBookHeader {
   private static final String TAG = ViewBindingBookHeader.class.getSimpleName();
+
+  public interface BookHeaderClickListener {
+    public void onBackButtonClick();
+  }
 
   /**
    * Helper method for the common case of binding a reading data instance
@@ -26,7 +27,7 @@ public class ViewBindingBookHeader {
    * @param activity    Activity with an included _book_header layout
    * @param localReading LocalReading to bind
    */
-  public static void bind(final Activity activity, LocalReading localReading, boolean includeBackButton) {
+  public static void bind(final Activity activity, LocalReading localReading, final BookHeaderClickListener clickListener) {
     if(localReading == null) {
       Log.w(TAG, "Got NULL LocalReading – not binding views");
       return;
@@ -45,10 +46,10 @@ public class ViewBindingBookHeader {
     TextView textAuthor = (TextView) view.findViewById(R.id.textAuthor);
     ImageButton buttonBack = (ImageButton) view.findViewById(R.id.buttonBack);
 
-    if(includeBackButton) {
+    if(clickListener != null) {
       buttonBack.setOnClickListener(new View.OnClickListener() {
         @Override public void onClick(View view) {
-          activity.finish();
+          clickListener.onBackButtonClick();
         }
       });
     } else {
@@ -72,7 +73,18 @@ public class ViewBindingBookHeader {
     textAuthor.setVisibility(View.VISIBLE);
   }
 
-  public static void bind(final Activity activity, LocalReading localReading) {
-    bind(activity, localReading, true);
+  /**
+   * Convenience method for simply finishing the activity when the back button is pressed.
+   * @param activity activity to bind to
+   * @param localReading local reading to display data for
+   * @see ViewBindingBookHeader#bind(Activity, LocalReading, BookHeaderClickListener)
+   */
+  public static void bindWithDefaultClickHandler(final Activity activity, final LocalReading localReading) {
+    BookHeaderClickListener clickListener = new BookHeaderClickListener() {
+      @Override public void onBackButtonClick() {
+        activity.finish();
+      }
+    };
+    bind(activity, localReading, clickListener);
   }
 }
