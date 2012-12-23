@@ -10,21 +10,25 @@ import java.util.Date;
  * A timing session is measured by two parts:
  * - the elapsed time, in milliseconds, up until the timer was last stopped
  * - a timestamp when the timer was last started
- *
+ * <p/>
  * The timer is considered active when a timestamp since last started is present.
  */
 public class SessionTimer implements Parcelable {
+  private int mLocalReadingId = -1;
   private long mElapsedBeforeTimestamp = 0;
-  private long mActiveTimestamp;
+  private long mActiveTimestamp = 0;
 
   public SessionTimer() {
-    mElapsedBeforeTimestamp = 0;
-    mActiveTimestamp = 0;
   }
 
   public SessionTimer(int localReadingId, long elapsedMilliseconds, long activeTimestamp) {
+    mLocalReadingId = localReadingId;
     mElapsedBeforeTimestamp = elapsedMilliseconds;
     mActiveTimestamp = activeTimestamp;
+  }
+
+  public int getLocalReadingId() {
+    return mLocalReadingId;
   }
 
   public long getElapsedBeforeTimestamp() {
@@ -58,7 +62,7 @@ public class SessionTimer implements Parcelable {
   }
 
   public String toString() {
-    return String.format("SessionTimer: Elapsed: %dms (%s)", mElapsedBeforeTimestamp, (isActive() ? "Active, started: " + new Date(mActiveTimestamp) : "Inactive"));
+    return String.format("SessionTimer for Reading#%d: Elapsed: %dms (%s)", mLocalReadingId, mElapsedBeforeTimestamp, (isActive() ? "Active, started: " + new Date(mActiveTimestamp) : "Inactive"));
   }
 
   // Parcelable interface
@@ -75,6 +79,7 @@ public class SessionTimer implements Parcelable {
   };
 
   public SessionTimer(Parcel parcel) {
+    mLocalReadingId = parcel.readInt();
     mElapsedBeforeTimestamp = parcel.readLong();
     mActiveTimestamp = parcel.readLong();
   }
@@ -82,6 +87,7 @@ public class SessionTimer implements Parcelable {
   @Override public int describeContents() { return 0; }
 
   @Override public void writeToParcel(Parcel parcel, int flags) {
+    parcel.writeInt(mLocalReadingId);
     parcel.writeLong(mElapsedBeforeTimestamp);
     parcel.writeLong(mActiveTimestamp);
   }
