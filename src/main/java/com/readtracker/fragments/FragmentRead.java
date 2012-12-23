@@ -77,6 +77,7 @@ public class FragmentRead extends Fragment {
       Log.d(TAG, "unfreeze state");
       mLocalReading = savedInstanceState.getParcelable(IntentKeys.LOCAL_READING);
     }
+    mSessionTimer = new SessionTimer();
   }
 
   @Override
