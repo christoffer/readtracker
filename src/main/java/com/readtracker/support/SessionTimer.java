@@ -53,7 +53,7 @@ public class SessionTimer implements Parcelable {
   }
 
   public long getTotalElapsed(long now) {
-    final long elapsedSinceTimestamp = isActive() ? (mActiveTimestamp - now) : 0;
+    final long elapsedSinceTimestamp = isActive() ? (now - mActiveTimestamp) : 0;
     return mElapsedBeforeTimestamp + elapsedSinceTimestamp;
   }
 
