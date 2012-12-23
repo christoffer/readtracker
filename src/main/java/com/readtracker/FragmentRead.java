@@ -38,13 +38,14 @@ public class FragmentRead extends Fragment {
   private LocalReading mLocalReading;
 
   // Timing
+  private ReadingState mReadingState;
   private RedrawTimerTask mRedrawTimerTask;
 
-  // Timestamp of when play/resume was pressed last time
-  private long mTimestampLastStarted = 0;
-
-  // Accumulated elapsed time, not including the time since latest timestamp
-  private long mElapsed = 0;
+//  // Timestamp of when play/resume was pressed last time
+//  private long mTimestampLastStarted = 0;
+//
+//  // Accumulated elapsed time, not including the time since latest timestamp
+//  private long mElapsed = 0;
 
   // Force reinitialize when returning from an activity that is known
   // to cause data updates.
@@ -116,9 +117,9 @@ public class FragmentRead extends Fragment {
     if(((ActivityBook) getActivity()).isManualShutdown()) {
       Log.d(TAG, "Parent Activity is shutting down - don't store state");
     } else {
-      if(elapsed() > 0) {
+      if(getElapsed() > 0) {
         Log.d(TAG, "Parent Activity not shutting down and has active state - store state");
-        ReadingStateHandler.store(mLocalReading.id, elapsed(), mTimestampLastStarted);
+        ReadingStateHandler.store(mReadingState);
       }
     }
 
@@ -180,12 +181,10 @@ public class FragmentRead extends Fragment {
   }
 
   private void setReadingState(ReadingState readingState) {
-    if(readingState == null) {
-      return;
+    if(readingState != null) {
+      Log.d(TAG, "Initializing from reading state: " + readingState);
     }
-    Log.d(TAG, "Initializing from reading state: " + readingState);
-    mElapsed = readingState.getElapsedMilliseconds();
-    mTimestampLastStarted = readingState.getActiveTimestamp();
+    mReadingState = readingState;
   }
 
   public void setLocalReading(LocalReading localReading) {
@@ -194,7 +193,7 @@ public class FragmentRead extends Fragment {
 
   private void setupForTimeTracking() {
     // Starting or continuing a reading session?
-    final long totalElapsed = elapsed();
+    final long totalElapsed = getElapsed();
 
     if(totalElapsed == 0) {
       describeLastPosition(mLocalReading);
@@ -240,8 +239,7 @@ public class FragmentRead extends Fragment {
    * @return the current reading state as a value object
    */
   public ReadingState getReadingState() {
-    if(mLocalReading == null) return null;
-    return new ReadingState(mLocalReading.id, elapsed(), mTimestampLastStarted);
+    return mReadingState;
   }
 
   /**
@@ -262,7 +260,7 @@ public class FragmentRead extends Fragment {
       @Override public void onAnimationEnd(Animation animation) {
         startTiming();
         ((ActivityBook) getActivity()).markSessionStarted();
-        presentTime(elapsed());
+        presentTime(getElapsed());
         mTextBillboard.startAnimation(appear);
       }
     });
@@ -275,8 +273,8 @@ public class FragmentRead extends Fragment {
    * Called when the pause button is clicked
    */
   private void onClickedPause() {
-    if(isTiming()) {
-      stopTimingAndUpdateElapsed();
+    if(mReadingState.isActive()) {
+      stopTiming();
       setupResumeMode();
     } else {
       startTiming();
@@ -288,11 +286,12 @@ public class FragmentRead extends Fragment {
    * Called when the done button is clicked
    */
   private void onClickedDone() {
-    if(isTiming()) {
+    if(mReadingState.isActive()) {
       setupResumeMode();
     }
-    stopTimingAndUpdateElapsed();
-    ((ActivityBook) getActivity()).exitToSessionEndScreen(mElapsed);
+    stopTiming();
+    final long elapsed = mReadingState.getTotalElapsed();
+    ((ActivityBook) getActivity()).exitToSessionEndScreen(elapsed);
   }
 
   // Causes the activity to reload the LocalReading
@@ -322,8 +321,7 @@ public class FragmentRead extends Fragment {
   public void restoreTimingState(ReadingState readingState) {
     Log.i(TAG, "Restoring session: " + readingState);
 
-    mTimestampLastStarted = readingState.getActiveTimestamp();
-    mElapsed = readingState.getElapsedMilliseconds();
+    mReadingState = readingState;
 
     // Notify to the parent activity that our data is dirty so it can store
     // the state (again) if the user leaves the activity.
@@ -340,7 +338,7 @@ public class FragmentRead extends Fragment {
       Log.d(TAG, "Got inactive reading state");
       setupResumeMode();
     }
-    presentTime(elapsed());
+    presentTime(getElapsed());
   }
 
   /**
@@ -373,32 +371,20 @@ public class FragmentRead extends Fragment {
     mButtonDone.startAnimation(fadeInHalf);
   }
 
-  private void stopTimingAndUpdateElapsed() {
-    mElapsed += elapsedSinceTimestamp();
-    mTimestampLastStarted = 0;
+  private void stopTiming() {
+    mReadingState.pause();
     stopTrackerUpdates();
   }
 
   private void startTiming() {
-    mTimestampLastStarted = System.currentTimeMillis();
+    mReadingState.start();
     startTrackerUpdates();
   }
 
   // Timing events
 
-  private boolean isTiming() {
-    return mTimestampLastStarted > 0;
-  }
-
-  private long elapsedSinceTimestamp() {
-    if(isTiming()) {
-      return System.currentTimeMillis() - mTimestampLastStarted;
-    }
-    return 0;
-  }
-
-  private long elapsed() {
-    return mElapsed + elapsedSinceTimestamp();
+  private long getElapsed() {
+    return mReadingState.getTotalElapsed();
   }
 
   // Sets the billboard to show the elapsed time
@@ -479,7 +465,7 @@ public class FragmentRead extends Fragment {
 
     @Override
     protected void onProgressUpdate(Void... values) {
-      presentTime(elapsed());
+      presentTime(getElapsed());
     }
   }
 
