@@ -26,7 +26,7 @@ public class ActivityBook extends ReadTrackerActivity {
 
   private boolean mIsSessionStarted;
   private boolean mManualShutdown;
-  private int mStartingPage;
+  private int mInitialPageForFragmentAdapter;
 
   // Fragment pages
   public static final int PAGE_SESSIONS = 0;
@@ -40,11 +40,11 @@ public class ActivityBook extends ReadTrackerActivity {
 
     if(in != null) {
       Log.d(TAG, "unfreezing state");
-      mStartingPage = in.getInt(IntentKeys.INITIAL_FRAGMENT_PAGE, PAGE_SESSIONS);
+      mInitialPageForFragmentAdapter = in.getInt(IntentKeys.INITIAL_FRAGMENT_PAGE, PAGE_SESSIONS);
     } else {
       if(getIntent() != null) {
         Log.d(TAG, "Started from intent");
-        mStartingPage = getIntent().getIntExtra(IntentKeys.INITIAL_FRAGMENT_PAGE, PAGE_READING);
+        mInitialPageForFragmentAdapter = getIntent().getIntExtra(IntentKeys.INITIAL_FRAGMENT_PAGE, PAGE_READING);
       }
     }
 
@@ -100,7 +100,7 @@ public class ActivityBook extends ReadTrackerActivity {
       case ActivityCodes.CREATE_HIGHLIGHT:
         if(resultCode == RESULT_OK) {
           Log.d(TAG, "Came back from creating a highlight");
-          mStartingPage = PAGE_HIGHLIGHTS;
+          mInitialPageForFragmentAdapter = PAGE_HIGHLIGHTS;
           int updateReadingId = data.getIntExtra(IntentKeys.READING_ID, -1);
           reloadLocalData(updateReadingId);
         }
@@ -188,13 +188,14 @@ public class ActivityBook extends ReadTrackerActivity {
     }
 
     ReadingState activeReadingState = getIntent().getExtras().getParcelable(IntentKeys.READING_SESSION_STATE);
+    Log.d(TAG, "Received reading session state " + activeReadingState);
     mBookFragmentAdapter.setReadingState(activeReadingState);
 
     mViewPagerReading.setAdapter(mBookFragmentAdapter);
     mViewPagerReading.setOffscreenPageLimit(2);
 
     int page = 0;
-    switch(mStartingPage) {
+    switch(mInitialPageForFragmentAdapter) {
       case PAGE_SESSIONS:
         page = mBookFragmentAdapter.getSessionsPageIndex();
         break;
