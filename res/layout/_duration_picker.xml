@@ -2,7 +2,7 @@
 
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
 
-  <com.readtracker.thirdparty.SafeViewFlipper
+  <com.readtracker_beta.thirdparty.SafeViewFlipper
     android:id="@+id/flipperSessionLength"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
@@ -38,14 +38,14 @@
       android:gravity="center"
       android:orientation="horizontal">
 
-      <com.readtracker.thirdparty.widget.WheelView
+      <com.readtracker_beta.thirdparty.widget.WheelView
         android:id="@+id/wheelDurationHours"
         android:minWidth="80dp"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:layout_marginRight="6dp" />
 
-      <com.readtracker.thirdparty.widget.WheelView
+      <com.readtracker_beta.thirdparty.widget.WheelView
         android:id="@+id/wheelDurationMinutes"
         android:minWidth="100dp"
         android:layout_height="wrap_content"
@@ -54,6 +54,6 @@
 
     </LinearLayout>
 
-  </com.readtracker.thirdparty.SafeViewFlipper>
+  </com.readtracker_beta.thirdparty.SafeViewFlipper>
 
 </merge>

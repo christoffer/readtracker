@@ -2,7 +2,7 @@
 
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
 
-  <com.readtracker.thirdparty.SafeViewFlipper
+  <com.readtracker_beta.thirdparty.SafeViewFlipper
     android:id="@+id/flipperSessionControl"
     style="@style/flipper_action_buttons"
     android:layout_alignParentBottom="true">
@@ -38,5 +38,5 @@
 
     </LinearLayout>
 
-  </com.readtracker.thirdparty.SafeViewFlipper>
+  </com.readtracker_beta.thirdparty.SafeViewFlipper>
 </merge>

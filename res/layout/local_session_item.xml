@@ -8,7 +8,7 @@
 
   <!-- todo replace with actual custom view -->
 
-  <com.readtracker.custom_views.SessionGraphSegment
+  <com.readtracker_beta.custom_views.SessionGraphSegment
     android:id="@+id/sessionGraphSegment"
     android:layout_width="fill_parent"
     android:layout_centerInParent="true"

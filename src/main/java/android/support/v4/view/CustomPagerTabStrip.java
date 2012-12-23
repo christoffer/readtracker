@@ -25,7 +25,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
-import com.readtracker.R;
+import com.readtracker_beta.R;
 
 /**
  * PagerTabStrip is an interactive indicator of the current, next,
