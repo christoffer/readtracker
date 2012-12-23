@@ -307,13 +307,6 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
       mActiveSessionTimer = null;
     }
 
-    // Jump to the read page directly if the local reading is ready to be read
-    if(localReading.isActive()) {
-      intentReadingSession.putExtra(IntentKeys.INITIAL_FRAGMENT_PAGE, ActivityBook.PAGE_READING);
-    } else {
-      intentReadingSession.putExtra(IntentKeys.INITIAL_FRAGMENT_PAGE, ActivityBook.PAGE_SESSIONS);
-    }
-
     startActivityForResult(intentReadingSession, ActivityCodes.REQUEST_READING_SESSION);
   }
 

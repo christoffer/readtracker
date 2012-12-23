@@ -21,6 +21,12 @@ import java.util.ArrayList;
  * Fragmented screen for browsing and reading a book
  */
 public class ActivityBook extends ReadTrackerActivity {
+  // Fragment pages
+  public static final int PAGE_UNSPECIFIED = -1;
+  public static final int PAGE_SESSIONS = 0;
+  public static final int PAGE_READING = 1;
+  public static final int PAGE_HIGHLIGHTS = 2;
+
   private LocalReading mLocalReading;
 
   private BookFragmentAdapter mBookFragmentAdapter;
@@ -28,12 +34,7 @@ public class ActivityBook extends ReadTrackerActivity {
 
   private boolean mIsSessionStarted;
   private boolean mManualShutdown;
-  private int mInitialPageForFragmentAdapter;
-
-  // Fragment pages
-  public static final int PAGE_SESSIONS = 0;
-  public static final int PAGE_READING = 1;
-  public static final int PAGE_HIGHLIGHTS = 2;
+  private int mInitialPageForFragmentAdapter = PAGE_UNSPECIFIED;
 
   public void onCreate(Bundle in) {
     super.onCreate(in);
@@ -43,11 +44,6 @@ public class ActivityBook extends ReadTrackerActivity {
     if(in != null) {
       Log.d(TAG, "unfreezing state");
       mInitialPageForFragmentAdapter = in.getInt(IntentKeys.INITIAL_FRAGMENT_PAGE, PAGE_SESSIONS);
-    } else {
-      if(getIntent() != null) {
-        Log.d(TAG, "Started from intent");
-        mInitialPageForFragmentAdapter = getIntent().getIntExtra(IntentKeys.INITIAL_FRAGMENT_PAGE, PAGE_READING);
-      }
     }
 
     mViewPagerReading = (ViewPager) findViewById(R.id.pagerBookActivity);
@@ -89,6 +85,7 @@ public class ActivityBook extends ReadTrackerActivity {
       case ActivityCodes.REQUEST_EDIT_BOOK:
         if(resultCode == RESULT_OK) {
           Log.d(TAG, "Came back from editing the book");
+          mInitialPageForFragmentAdapter = PAGE_READING;
           int updateReadingId = data.getIntExtra(IntentKeys.READING_ID, -1);
           reloadLocalData(updateReadingId);
         }
@@ -170,6 +167,14 @@ public class ActivityBook extends ReadTrackerActivity {
       }
     });
 
+    if(mInitialPageForFragmentAdapter == PAGE_UNSPECIFIED) {
+      if(mLocalReading.isActive()) {
+        mInitialPageForFragmentAdapter = PAGE_READING;
+      } else {
+        mInitialPageForFragmentAdapter = PAGE_SESSIONS;
+      }
+    }
+
     setupFragments(bundle);
 
     Log.i(TAG, "Initialized for reading with id:" + mLocalReading.id);
@@ -198,6 +203,7 @@ public class ActivityBook extends ReadTrackerActivity {
 
     int page = 0;
     switch(mInitialPageForFragmentAdapter) {
+      case PAGE_UNSPECIFIED:
       case PAGE_SESSIONS:
         page = mBookFragmentAdapter.getSessionsPageIndex();
         break;
