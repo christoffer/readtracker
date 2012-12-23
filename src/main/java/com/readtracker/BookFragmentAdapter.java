@@ -14,7 +14,6 @@ import java.util.ArrayList;
  * Handles the fragments for the book activity
  */
 public class BookFragmentAdapter extends FragmentStatePagerAdapter {
-  private static final String TAG = BookFragmentAdapter.class.getName();
   private boolean mBrowseMode;
 
   private FragmentRead mFragmentReadInstance;
@@ -42,8 +41,7 @@ public class BookFragmentAdapter extends FragmentStatePagerAdapter {
     } else if(position == getReadingPageIndex()) {
       // Keep a reference to the FragmentRead since we want the ability to
       // interrogate for the current session state
-      long initialElapsed = mReadingState == null ? 0 : mReadingState.getElapsedMilliseconds();
-      mFragmentReadInstance = (FragmentRead) FragmentRead.newInstance(mLocalReading, initialElapsed);
+      mFragmentReadInstance = (FragmentRead) FragmentRead.newInstance(mLocalReading, mReadingState);
       return mFragmentReadInstance;
     } else if(position == getHighlightsPageIndex()) {
       return FragmentHighlight.newInstance(mLocalReading, mLocalHighlights);

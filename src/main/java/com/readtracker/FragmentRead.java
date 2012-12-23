@@ -54,10 +54,10 @@ public class FragmentRead extends Fragment {
   private static final int PAGE_READING_CONTROLS_INACTIVE = 0;
   private static final int PAGE_READING_CONTROLS_ACTIVE = 1;
 
-  public static Fragment newInstance(LocalReading localReading, long elapsed) {
+  public static Fragment newInstance(LocalReading localReading, ReadingState initialReadingState) {
     Log.d(TAG, "newInstance()");
     FragmentRead instance = new FragmentRead();
-    instance.setElapsed(elapsed);
+    instance.setReadingState(initialReadingState);
     instance.setLocalReading(localReading);
     instance.setForceReinitialize(true);
     return instance;
@@ -83,17 +83,17 @@ public class FragmentRead extends Fragment {
     mFlipperSessionControl.setDisplayedChild(PAGE_READING_CONTROLS_INACTIVE);
 
     if(mLocalReading == null) { // TODO investigate when this could happen...
-      Log.d(TAG, "Loaded without local reading");
+      Log.w(TAG, "Loaded without local reading");
       return view;
     }
 
-    Log.d(TAG, "Loaded with local reading: " + mLocalReading.getInfo());
+    Log.i(TAG, "Loaded with local reading: " + mLocalReading.getInfo());
 
     // Show the book initialization screen or the read tracker
     if(mLocalReading.hasPageInfo()) {
-      setupTimeTracking();
+      setupForTimeTracking();
     } else {
-      setupMissingPages();
+      setupForMissingPages();
     }
 
     mTimeSpinner.setColor(mLocalReading.getColor());
@@ -128,11 +128,10 @@ public class FragmentRead extends Fragment {
   @Override
   public void onResume() {
     super.onResume();
-    Log.d(TAG, "onResume()");
+    Log.d(TAG, "onResume() with " + (mForceReInitialize ? "forced" : "non-forced") + " initialize");
     if(!mForceReInitialize) {
       loadTimingState();
     } else {
-      Log.d(TAG, "Skipping loading of stored session due to forced initialize");
       mForceReInitialize = false; // avoid re-init when bringing an instance back into focus
     }
   }
@@ -170,27 +169,34 @@ public class FragmentRead extends Fragment {
     });
   }
 
-  private void setElapsed(long elapsed) {
-    mElapsed = elapsed;
+  private void setReadingState(ReadingState readingState) {
+    if(readingState == null) {
+      return;
+    }
+    Log.d(TAG, "Initializing from reading state: " + readingState);
+    mElapsed = readingState.getElapsedMilliseconds();
+    mTimestampLastStarted = readingState.getActiveTimestamp();
   }
 
   public void setLocalReading(LocalReading localReading) {
     mLocalReading = localReading;
   }
 
-  private void setupTimeTracking() {
+  private void setupForTimeTracking() {
     // Starting or continuing a reading session?
-    if(mElapsed == 0) {
+    final long totalElapsed = elapsed();
+
+    if(totalElapsed == 0) {
       describeLastPosition(mLocalReading);
     } else {
-      presentTime(elapsed());
+      presentTime(totalElapsed);
     }
 
     mTextBillboard.setEnabled(true);
     mButtonStart.setText("Start");
   }
 
-  private void setupMissingPages() {
+  private void setupForMissingPages() {
     mTextBillboard.setText("Please add page count");
     mTextBillboard.setEnabled(false);
     mButtonStart.setText("Edit book");
@@ -311,14 +317,14 @@ public class FragmentRead extends Fragment {
     mElapsed = readingState.getElapsedMilliseconds();
 
     // Notify to the parent activity that our data is dirty so it can store
-    // the state if the user leaves the activity.
+    // the state (again) if the user leaves the activity.
     ((ActivityBook) getActivity()).markSessionStarted();
 
     mFlipperSessionControl.setDisplayedChild(PAGE_READING_CONTROLS_ACTIVE);
 
     // Check if we should automatically start the timer
     if(readingState.isActive()) {
-      Log.d(TAG, "Got active reading state, starting timer");
+      Log.d(TAG, "Got active reading state");
       deactivatePause();
       startTrackerUpdates();
     } else {
