@@ -12,7 +12,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import com.readtracker.IntentKeys;
 import com.readtracker.R;
-import com.readtracker.support.ReadingStateHandler;
+import com.readtracker.support.SessionTimerStore;
 import com.readtracker.support.Utils;
 import com.readtracker.activities.ActivityBook;
 import com.readtracker.custom_views.PauseableSpinAnimation;
@@ -124,7 +124,7 @@ public class FragmentRead extends Fragment {
     } else {
       if(getElapsed() > 0) {
         Log.d(TAG, "Parent Activity not shutting down and has active state - store state");
-        ReadingStateHandler.store(mSessionTimer);
+        SessionTimerStore.store(mSessionTimer);
       }
     }
 
@@ -312,7 +312,7 @@ public class FragmentRead extends Fragment {
    */
   private void loadTimingState() {
     Log.d(TAG, "Loading stored timing state");
-    final SessionTimer sessionTimer = ReadingStateHandler.load();
+    final SessionTimer sessionTimer = SessionTimerStore.load();
 
     if(sessionTimer == null) {
       Log.d(TAG, "... Not found");

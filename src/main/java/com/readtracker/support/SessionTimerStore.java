@@ -5,25 +5,14 @@ import android.util.Log;
 import com.readtracker.ApplicationReadTracker;
 
 /**
- * Handles storing and loading of a temporary reading state
+ * Handles storing and loading of a session timer
  */
-public class ReadingStateHandler {
+public class SessionTimerStore {
   public static final String KEY_ACTIVE_TIMESTAMP = "reading-state-handler-is-active";
   public static final String KEY_ELAPSED = "reading-state-handler-elapsed";
   public static final String KEY_LOCAL_READING_ID = "reading-state-handler-local-reading-id";
 
-  private static final String TAG = ReadingStateHandler.class.getName();
-
-  /**
-   * Stores the given reading state in preferences.
-   *
-   * @param localReadingId      the id of the LocalReading of the session
-   * @param elapsedMilliseconds the elapsed time in ms
-   * @param activeTimestamp     timestamp since last started timing
-   */
-  public static void store(int localReadingId, long elapsedMilliseconds, long activeTimestamp) {
-    store(new SessionTimer(localReadingId, elapsedMilliseconds, activeTimestamp));
-  }
+  private static final String TAG = SessionTimerStore.class.getName();
 
   /**
    * Stores the given reading state in preferences.

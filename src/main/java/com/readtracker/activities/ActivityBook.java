@@ -11,7 +11,7 @@ import com.readtracker.db.LocalHighlight;
 import com.readtracker.db.LocalReading;
 import com.readtracker.db.LocalSession;
 import com.readtracker.fragments.BookFragmentAdapter;
-import com.readtracker.support.ReadingStateHandler;
+import com.readtracker.support.SessionTimerStore;
 import com.readtracker.support.SessionTimer;
 
 import java.sql.SQLException;
@@ -263,7 +263,7 @@ public class ActivityBook extends ReadTrackerActivity {
       setResult(resultCode, resultIntent);
     }
     mManualShutdown = true;
-    ReadingStateHandler.clear();
+    SessionTimerStore.clear();
     finish();
   }
 
