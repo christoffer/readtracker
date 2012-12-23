@@ -237,6 +237,7 @@ public class ActivityBook extends ReadTrackerActivity {
   public void exitToHomeScreen() {
     if(hasSessionStarted()) {
       ReadingState readingState = mBookFragmentAdapter.getReadingState();
+      readingState.pause();
       finishWithResult(ActivityCodes.RESULT_CANCELED, readingState);
       toast("Pausing " + mLocalReading.title);
     } else {
