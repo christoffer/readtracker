@@ -39,7 +39,7 @@ class ReadingStateHandler {
     ApplicationReadTracker.getApplicationPreferences().
       edit().
       putInt(KEY_LOCAL_READING_ID, readingState.getLocalReadingId()).
-      putLong(KEY_ELAPSED, readingState.getElapsedMilliseconds()).
+      putLong(KEY_ELAPSED, readingState.getElapsedBeforeTimestamp()).
       putLong(KEY_ACTIVE_TIMESTAMP, readingState.getActiveTimestamp()).
       commit();
   }

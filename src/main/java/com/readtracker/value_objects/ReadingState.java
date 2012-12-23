@@ -6,30 +6,60 @@ import android.os.Parcelable;
 import java.util.Date;
 
 /**
- * Represents a current reading of a local reading.
- * Used to pass state between ActivityHome and ActivityBook
+ * Represents a current timing session.
+ * A timing session is measured by two parts:
+ * - the elapsed time, in milliseconds, up until the timer was last stopped
+ * - a timestamp when the timer was last started
+ *
+ * The timer is considered active when a timestamp since last started is present.
  */
 public class ReadingState implements Parcelable {
   private int mLocalReadingId = 0;
-  private long mElapsedMilliseconds = 0;
+  private long mElapsedBeforeTimestamp = 0;
   private long mActiveTimestamp;
 
   public ReadingState(int localReadingId, long elapsedMilliseconds, long activeTimestamp) {
     mLocalReadingId = localReadingId;
-    mElapsedMilliseconds = elapsedMilliseconds;
+    mElapsedBeforeTimestamp = elapsedMilliseconds;
     mActiveTimestamp = activeTimestamp;
   }
 
-  public int getLocalReadingId() { return mLocalReadingId; }
+  public int getLocalReadingId() {
+    return mLocalReadingId;
+  }
 
-  public long getElapsedMilliseconds() { return mElapsedMilliseconds; }
+  public long getElapsedBeforeTimestamp() {
+    return mElapsedBeforeTimestamp;
+  }
 
-  public boolean isActive() { return mActiveTimestamp > 0; }
+  public long getActiveTimestamp() {
+    return mActiveTimestamp;
+  }
 
-  public long getActiveTimestamp() { return mActiveTimestamp; }
+  /**
+   * Indicate if the timing is active or not
+   *
+   * @return true if active, false otherwise
+   */
+  public boolean isActive() {
+    return mActiveTimestamp > 0;
+  }
+
+  /**
+   * Get the total elapsed time, including any time passed since the
+   * active timestamp.
+   */
+  public long getTotalElapsed() {
+    return getTotalElapsed(System.currentTimeMillis());
+  }
+
+  public long getTotalElapsed(long now) {
+    final long elapsedSinceTimestamp = isActive() ? (mActiveTimestamp - now) : 0;
+    return mElapsedBeforeTimestamp + elapsedSinceTimestamp;
+  }
 
   public String toString() {
-    return String.format("LocalReading (%s) #%d @ %d", (isActive() ? "Active, started: " + new Date(mActiveTimestamp) : "Inactive"), mLocalReadingId, mElapsedMilliseconds);
+    return String.format("LocalReading (%s) #%d @ %d", (isActive() ? "Active, started: " + new Date(mActiveTimestamp) : "Inactive"), mLocalReadingId, mElapsedBeforeTimestamp);
   }
 
   // Parcelable interface
@@ -47,7 +77,7 @@ public class ReadingState implements Parcelable {
 
   public ReadingState(Parcel parcel) {
     mLocalReadingId = parcel.readInt();
-    mElapsedMilliseconds = parcel.readLong();
+    mElapsedBeforeTimestamp = parcel.readLong();
     mActiveTimestamp = parcel.readLong();
   }
 
@@ -55,7 +85,7 @@ public class ReadingState implements Parcelable {
 
   @Override public void writeToParcel(Parcel parcel, int flags) {
     parcel.writeInt(mLocalReadingId);
-    parcel.writeLong(mElapsedMilliseconds);
+    parcel.writeLong(mElapsedBeforeTimestamp);
     parcel.writeLong(mActiveTimestamp);
   }
 
@@ -70,10 +100,21 @@ public class ReadingState implements Parcelable {
    * Pauses the reading state.
    */
   public void pause(long now) {
-    if(mActiveTimestamp != 0) {
+    if(isActive()) {
       final long elapsedSinceTimeStamp = now - mActiveTimestamp;
-      mElapsedMilliseconds += elapsedSinceTimeStamp;
+      mElapsedBeforeTimestamp += elapsedSinceTimeStamp;
       mActiveTimestamp = 0;
     }
+  }
+
+  /**
+   * Start timing
+   */
+  public void start() {
+    start(System.currentTimeMillis());
+  }
+
+  public void start(long now) {
+    mActiveTimestamp = now;
   }
 }
