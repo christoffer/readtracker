@@ -66,13 +66,7 @@ public class ActivityBook extends ReadTrackerActivity {
 
   @Override
   public void onBackPressed() {
-    if(hasSessionStarted()) {
-      ReadingState readingState = mBookFragmentAdapter.getReadingState();
-      finishWithResult(ActivityCodes.RESULT_CANCELED, readingState);
-      toast("Pausing " + mLocalReading.title);
-    } else {
-      finishWithResult(ActivityCodes.RESULT_OK);
-    }
+    exitToHomeScreen();
   }
 
   @Override
@@ -102,7 +96,7 @@ public class ActivityBook extends ReadTrackerActivity {
           Log.d(TAG, "Came back from creating a highlight");
           mInitialPageForFragmentAdapter = PAGE_HIGHLIGHTS;
           int updateReadingId = data.getIntExtra(IntentKeys.READING_ID, -1);
-          reloadLocalData(updateReadingId);
+          reloadLocalData(updateReadingId); // TODO optimally we should only reload the highlights here
         }
         break;
     }
@@ -168,7 +162,11 @@ public class ActivityBook extends ReadTrackerActivity {
     Log.d(TAG, "Got " + localSessions.size() + " reading sessions and " + localHighlights.size() + " highlights");
 
     // Book info
-    ViewBindingBookHeader.bind(this, mLocalReading);
+    ViewBindingBookHeader.bind(this, mLocalReading, new ViewBindingBookHeader.BookHeaderClickListener() {
+      @Override public void onBackButtonClick() {
+        exitToHomeScreen();
+      }
+    });
 
     setupFragments(bundle);
 
@@ -192,6 +190,8 @@ public class ActivityBook extends ReadTrackerActivity {
     mBookFragmentAdapter.setReadingState(activeReadingState);
 
     mViewPagerReading.setAdapter(mBookFragmentAdapter);
+    // The default for off-screen page limit is 1, which means that the session/highlight view
+    // is unloaded when going away from the center (reading) page.
     mViewPagerReading.setOffscreenPageLimit(2);
 
     int page = 0;
@@ -229,6 +229,19 @@ public class ActivityBook extends ReadTrackerActivity {
     Intent activityAddHighlight = new Intent(this, ActivityHighlight.class);
     activityAddHighlight.putExtra(IntentKeys.LOCAL_READING, mLocalReading);
     startActivityForResult(activityAddHighlight, ActivityCodes.CREATE_HIGHLIGHT);
+  }
+
+  /**
+   * Exits to the home activity with correct result information.
+   */
+  public void exitToHomeScreen() {
+    if(hasSessionStarted()) {
+      ReadingState readingState = mBookFragmentAdapter.getReadingState();
+      finishWithResult(ActivityCodes.RESULT_CANCELED, readingState);
+      toast("Pausing " + mLocalReading.title);
+    } else {
+      finishWithResult(ActivityCodes.RESULT_OK);
+    }
   }
 
   public void finishWithResult(int resultCode) {
