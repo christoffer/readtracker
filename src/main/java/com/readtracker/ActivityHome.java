@@ -19,7 +19,7 @@ import com.readtracker.helpers.ReadmillSyncStatusUIHandler;
 import com.readtracker.interfaces.LocalReadingInteractionListener;
 import com.readtracker.readmill.ReadmillApiHelper;
 import com.readtracker.tasks.ReadmillSyncAsyncTask;
-import com.readtracker.value_objects.ReadingState;
+import com.readtracker.value_objects.SessionTimer;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -47,7 +47,7 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
   private ReadmillSyncStatusUIHandler mSyncStatusHandler;
 
   // Keep a reference to the active session so the user can go back to it
-  private static ReadingState mActiveReadingState;
+  private static SessionTimer mActiveSessionTimer;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -166,7 +166,7 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
       case ActivityCodes.RESULT_CANCELED:
         // Save the canceled reading state so the user can get back to it
         if(data != null) {
-          mActiveReadingState = data.getParcelableExtra(IntentKeys.READING_SESSION_STATE);
+          mActiveSessionTimer = data.getParcelableExtra(IntentKeys.READING_SESSION_STATE);
         }
         break;
       case ActivityCodes.RESULT_OK:
@@ -289,13 +289,13 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
     intentReadingSession.putExtra(IntentKeys.READING_ID, localReading.id);
 
     // Resume the session if going back to the previously read
-    if(mActiveReadingState != null) {
-      Log.d(TAG, "Has Active Reading state: " + mActiveReadingState);
+    if(mActiveSessionTimer != null) {
+      Log.d(TAG, "Has Active Reading state: " + mActiveSessionTimer);
     }
 
-    if(mActiveReadingState != null && mActiveReadingState.getLocalReadingId() == localReading.id) {
-      Log.d(TAG, "Passing active state for reading " + localReading.id + ": " + mActiveReadingState);
-      intentReadingSession.putExtra(IntentKeys.READING_SESSION_STATE, mActiveReadingState);
+    if(mActiveSessionTimer != null && mActiveSessionTimer.getLocalReadingId() == localReading.id) {
+      Log.d(TAG, "Passing active state for reading " + localReading.id + ": " + mActiveSessionTimer);
+      intentReadingSession.putExtra(IntentKeys.READING_SESSION_STATE, mActiveSessionTimer);
     }
 
     // Jump to the read page directly if the local reading is ready to be read

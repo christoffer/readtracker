@@ -14,7 +14,7 @@ import com.readtracker.customviews.PauseableSpinAnimation;
 import com.readtracker.customviews.TimeSpinner;
 import com.readtracker.db.LocalReading;
 import com.readtracker.thirdparty.SafeViewFlipper;
-import com.readtracker.value_objects.ReadingState;
+import com.readtracker.value_objects.SessionTimer;
 
 /**
  * Fragment for managing a reading session
@@ -38,7 +38,7 @@ public class FragmentRead extends Fragment {
   private LocalReading mLocalReading;
 
   // Timing
-  private ReadingState mReadingState;
+  private SessionTimer mSessionTimer;
   private RedrawTimerTask mRedrawTimerTask;
 
 //  // Timestamp of when play/resume was pressed last time
@@ -55,10 +55,10 @@ public class FragmentRead extends Fragment {
   private static final int FLIPPER_PAGE_START_BUTTON = 0;
   private static final int FLIPPER_PAGE_READING_BUTTONS = 1;
 
-  public static Fragment newInstance(LocalReading localReading, ReadingState initialReadingState) {
+  public static Fragment newInstance(LocalReading localReading, SessionTimer initialSessionTimer) {
     Log.d(TAG, "newInstance()");
     FragmentRead instance = new FragmentRead();
-    instance.setReadingState(initialReadingState);
+    instance.setReadingState(initialSessionTimer);
     instance.setLocalReading(localReading);
     instance.setForceReinitialize(true);
     return instance;
@@ -119,7 +119,7 @@ public class FragmentRead extends Fragment {
     } else {
       if(getElapsed() > 0) {
         Log.d(TAG, "Parent Activity not shutting down and has active state - store state");
-        ReadingStateHandler.store(mReadingState);
+        ReadingStateHandler.store(mSessionTimer);
       }
     }
 
@@ -180,11 +180,11 @@ public class FragmentRead extends Fragment {
     }
   }
 
-  private void setReadingState(ReadingState readingState) {
-    if(readingState != null) {
-      Log.d(TAG, "Initializing from reading state: " + readingState);
+  private void setReadingState(SessionTimer sessionTimer) {
+    if(sessionTimer != null) {
+      Log.d(TAG, "Initializing from reading state: " + sessionTimer);
     }
-    mReadingState = readingState;
+    mSessionTimer = sessionTimer;
   }
 
   public void setLocalReading(LocalReading localReading) {
@@ -238,8 +238,8 @@ public class FragmentRead extends Fragment {
    *
    * @return the current reading state as a value object
    */
-  public ReadingState getReadingState() {
-    return mReadingState;
+  public SessionTimer getReadingState() {
+    return mSessionTimer;
   }
 
   /**
@@ -273,7 +273,7 @@ public class FragmentRead extends Fragment {
    * Called when the pause button is clicked
    */
   private void onClickedPause() {
-    if(mReadingState.isActive()) {
+    if(mSessionTimer.isActive()) {
       stopTiming();
       setupResumeMode();
     } else {
@@ -286,11 +286,11 @@ public class FragmentRead extends Fragment {
    * Called when the done button is clicked
    */
   private void onClickedDone() {
-    if(mReadingState.isActive()) {
+    if(mSessionTimer.isActive()) {
       setupResumeMode();
     }
     stopTiming();
-    final long elapsed = mReadingState.getTotalElapsed();
+    final long elapsed = mSessionTimer.getTotalElapsed();
     ((ActivityBook) getActivity()).exitToSessionEndScreen(elapsed);
   }
 
@@ -304,24 +304,24 @@ public class FragmentRead extends Fragment {
    */
   private void loadTimingState() {
     Log.d(TAG, "Loading stored timing state");
-    final ReadingState readingState = ReadingStateHandler.load();
+    final SessionTimer sessionTimer = ReadingStateHandler.load();
 
-    if(readingState == null) {
+    if(sessionTimer == null) {
       Log.d(TAG, "... Not found");
     } else {
-      restoreTimingState(readingState);
+      restoreTimingState(sessionTimer);
     }
   }
 
   /**
    * Restores the current timing state to a given one
    *
-   * @param readingState The reading state to restore to
+   * @param sessionTimer The reading state to restore to
    */
-  public void restoreTimingState(ReadingState readingState) {
-    Log.i(TAG, "Restoring session: " + readingState);
+  public void restoreTimingState(SessionTimer sessionTimer) {
+    Log.i(TAG, "Restoring session: " + sessionTimer);
 
-    mReadingState = readingState;
+    mSessionTimer = sessionTimer;
 
     // Notify to the parent activity that our data is dirty so it can store
     // the state (again) if the user leaves the activity.
@@ -330,7 +330,7 @@ public class FragmentRead extends Fragment {
     mFlipperSessionControl.setDisplayedChild(FLIPPER_PAGE_READING_BUTTONS);
 
     // Check if we should automatically start the timer
-    if(readingState.isActive()) {
+    if(sessionTimer.isActive()) {
       Log.d(TAG, "Got active reading state");
       setupPauseMode();
       startTrackerUpdates();
@@ -372,19 +372,19 @@ public class FragmentRead extends Fragment {
   }
 
   private void stopTiming() {
-    mReadingState.pause();
+    mSessionTimer.pause();
     stopTrackerUpdates();
   }
 
   private void startTiming() {
-    mReadingState.start();
+    mSessionTimer.start();
     startTrackerUpdates();
   }
 
   // Timing events
 
   private long getElapsed() {
-    return mReadingState.getTotalElapsed();
+    return mSessionTimer.getTotalElapsed();
   }
 
   // Sets the billboard to show the elapsed time

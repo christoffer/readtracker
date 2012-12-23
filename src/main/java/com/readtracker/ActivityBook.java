@@ -10,7 +10,7 @@ import com.readtracker.customviews.ViewBindingBookHeader;
 import com.readtracker.db.LocalHighlight;
 import com.readtracker.db.LocalReading;
 import com.readtracker.db.LocalSession;
-import com.readtracker.value_objects.ReadingState;
+import com.readtracker.value_objects.SessionTimer;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -185,9 +185,9 @@ public class ActivityBook extends ReadTrackerActivity {
       mBookFragmentAdapter.setBrowserMode(browserMode);
     }
 
-    ReadingState activeReadingState = getIntent().getExtras().getParcelable(IntentKeys.READING_SESSION_STATE);
-    Log.d(TAG, "Received reading session state " + activeReadingState);
-    mBookFragmentAdapter.setReadingState(activeReadingState);
+    SessionTimer activeSessionTimer = getIntent().getExtras().getParcelable(IntentKeys.READING_SESSION_STATE);
+    Log.d(TAG, "Received reading session state " + activeSessionTimer);
+    mBookFragmentAdapter.setReadingState(activeSessionTimer);
 
     mViewPagerReading.setAdapter(mBookFragmentAdapter);
     // The default for off-screen page limit is 1, which means that the session/highlight view
@@ -236,9 +236,9 @@ public class ActivityBook extends ReadTrackerActivity {
    */
   public void exitToHomeScreen() {
     if(hasSessionStarted()) {
-      ReadingState readingState = mBookFragmentAdapter.getReadingState();
-      readingState.pause();
-      finishWithResult(ActivityCodes.RESULT_CANCELED, readingState);
+      SessionTimer sessionTimer = mBookFragmentAdapter.getReadingState();
+      sessionTimer.pause();
+      finishWithResult(ActivityCodes.RESULT_CANCELED, sessionTimer);
       toast("Pausing " + mLocalReading.title);
     } else {
       finishWithResult(ActivityCodes.RESULT_OK);
@@ -249,13 +249,13 @@ public class ActivityBook extends ReadTrackerActivity {
     finishWithResult(resultCode, null);
   }
 
-  public void finishWithResult(int resultCode, ReadingState readingState) {
-    if(readingState == null) {
+  public void finishWithResult(int resultCode, SessionTimer sessionTimer) {
+    if(sessionTimer == null) {
       setResult(resultCode);
     } else {
-      Log.d(TAG, "Finishing with result and reading state: " + readingState.toString());
+      Log.d(TAG, "Finishing with result and reading state: " + sessionTimer.toString());
       Intent resultIntent = new Intent();
-      resultIntent.putExtra(IntentKeys.READING_SESSION_STATE, readingState);
+      resultIntent.putExtra(IntentKeys.READING_SESSION_STATE, sessionTimer);
       setResult(resultCode, resultIntent);
     }
     mManualShutdown = true;

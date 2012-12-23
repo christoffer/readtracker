@@ -13,12 +13,12 @@ import java.util.Date;
  *
  * The timer is considered active when a timestamp since last started is present.
  */
-public class ReadingState implements Parcelable {
+public class SessionTimer implements Parcelable {
   private int mLocalReadingId = 0;
   private long mElapsedBeforeTimestamp = 0;
   private long mActiveTimestamp;
 
-  public ReadingState(int localReadingId, long elapsedMilliseconds, long activeTimestamp) {
+  public SessionTimer(int localReadingId, long elapsedMilliseconds, long activeTimestamp) {
     mLocalReadingId = localReadingId;
     mElapsedBeforeTimestamp = elapsedMilliseconds;
     mActiveTimestamp = activeTimestamp;
@@ -64,18 +64,18 @@ public class ReadingState implements Parcelable {
 
   // Parcelable interface
 
-  public static Parcelable.Creator<ReadingState> CREATOR = new Parcelable.Creator<ReadingState>() {
+  public static Parcelable.Creator<SessionTimer> CREATOR = new Parcelable.Creator<SessionTimer>() {
     @Override
-    public ReadingState createFromParcel(Parcel parcel) {
-      return new ReadingState(parcel);
+    public SessionTimer createFromParcel(Parcel parcel) {
+      return new SessionTimer(parcel);
     }
 
-    @Override public ReadingState[] newArray(int size) {
-      return new ReadingState[size];
+    @Override public SessionTimer[] newArray(int size) {
+      return new SessionTimer[size];
     }
   };
 
-  public ReadingState(Parcel parcel) {
+  public SessionTimer(Parcel parcel) {
     mLocalReadingId = parcel.readInt();
     mElapsedBeforeTimestamp = parcel.readLong();
     mActiveTimestamp = parcel.readLong();

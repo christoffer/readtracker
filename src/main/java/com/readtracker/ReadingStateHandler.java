@@ -2,7 +2,7 @@ package com.readtracker;
 
 import android.content.SharedPreferences;
 import android.util.Log;
-import com.readtracker.value_objects.ReadingState;
+import com.readtracker.value_objects.SessionTimer;
 
 /**
  * Handles storing and loading of a temporary reading state
@@ -22,34 +22,34 @@ class ReadingStateHandler {
    * @param activeTimestamp     timestamp since last started timing
    */
   public static void store(int localReadingId, long elapsedMilliseconds, long activeTimestamp) {
-    store(new ReadingState(localReadingId, elapsedMilliseconds, activeTimestamp));
+    store(new SessionTimer(localReadingId, elapsedMilliseconds, activeTimestamp));
   }
 
   /**
    * Stores the given reading state in preferences.
    *
-   * @param readingState reading state to store
+   * @param sessionTimer reading state to store
    */
-  public static void store(ReadingState readingState) {
-    Log.d(TAG, "Storing reading state: " + (readingState == null ? "NULL" : readingState));
-    if(readingState == null) {
+  public static void store(SessionTimer sessionTimer) {
+    Log.d(TAG, "Storing reading state: " + (sessionTimer == null ? "NULL" : sessionTimer));
+    if(sessionTimer == null) {
       return;
     }
 
     ApplicationReadTracker.getApplicationPreferences().
       edit().
-      putInt(KEY_LOCAL_READING_ID, readingState.getLocalReadingId()).
-      putLong(KEY_ELAPSED, readingState.getElapsedBeforeTimestamp()).
-      putLong(KEY_ACTIVE_TIMESTAMP, readingState.getActiveTimestamp()).
+      putInt(KEY_LOCAL_READING_ID, sessionTimer.getLocalReadingId()).
+      putLong(KEY_ELAPSED, sessionTimer.getElapsedBeforeTimestamp()).
+      putLong(KEY_ACTIVE_TIMESTAMP, sessionTimer.getActiveTimestamp()).
       commit();
   }
 
   /**
-   * Loads a previously stored ReadingState
+   * Loads a previously stored SessionTimer
    *
-   * @return the ReadingState or null
+   * @return the SessionTimer or null
    */
-  public static ReadingState load() {
+  public static SessionTimer load() {
     Log.d(TAG, "Loading reading state");
     SharedPreferences pref = ApplicationReadTracker.getApplicationPreferences();
 
@@ -62,9 +62,9 @@ class ReadingStateHandler {
       return null;
     }
 
-    ReadingState readingState = new ReadingState(localReadingId, elapsedMilliseconds, activeTimestamp);
-    Log.d(TAG, " - Found reading state: " + readingState);
-    return readingState;
+    SessionTimer sessionTimer = new SessionTimer(localReadingId, elapsedMilliseconds, activeTimestamp);
+    Log.d(TAG, " - Found reading state: " + sessionTimer);
+    return sessionTimer;
   }
 
   public static void clear() {
