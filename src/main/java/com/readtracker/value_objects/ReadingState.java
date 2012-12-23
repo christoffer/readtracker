@@ -51,11 +51,29 @@ public class ReadingState implements Parcelable {
     mActiveTimestamp = parcel.readLong();
   }
 
+  @Override public int describeContents() { return 0; }
+
   @Override public void writeToParcel(Parcel parcel, int flags) {
     parcel.writeInt(mLocalReadingId);
     parcel.writeLong(mElapsedMilliseconds);
     parcel.writeLong(mActiveTimestamp);
   }
 
-  @Override public int describeContents() { return 0; }
+  /**
+   * Pauses the reading state.
+   */
+  public void pause() {
+    pause(System.currentTimeMillis());
+  }
+
+  /**
+   * Pauses the reading state.
+   */
+  public void pause(long now) {
+    if(mActiveTimestamp != 0) {
+      final long elapsedSinceTimeStamp = now - mActiveTimestamp;
+      mElapsedMilliseconds += elapsedSinceTimeStamp;
+      mActiveTimestamp = 0;
+    }
+  }
 }
