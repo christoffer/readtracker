@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import com.readtracker.customviews.ProgressPicker;
@@ -64,7 +63,7 @@ public class ActivityHighlight extends ReadTrackerActivity {
       mProgressPicker.setVisibility(View.GONE);
     }
 
-    ViewBindingBookHeader.bind(this, mLocalReading);
+    ViewBindingBookHeader.bindWithDefaultClickHandler(this, mLocalReading);
   }
 
   @Override

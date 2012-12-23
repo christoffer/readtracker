@@ -61,7 +61,7 @@ public class ActivityClose extends ReadTrackerActivity {
     String buttonText = mIsAbandon ? "Abandon" : "Finish";
     String readingTime = Utils.longHumanTimeFromMillis(mLocalReading.timeSpentMillis);
 
-    ViewBindingBookHeader.bind(this, mLocalReading);
+    ViewBindingBookHeader.bindWithDefaultClickHandler(this, mLocalReading);
 
     mTextFinishAction.setText(actionText);
     mTextFinishTitle.setText(mLocalReading.title);

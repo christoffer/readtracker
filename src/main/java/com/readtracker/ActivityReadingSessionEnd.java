@@ -67,7 +67,7 @@ public class ActivityReadingSessionEnd extends ReadTrackerActivity {
       currentPage = (int) mLocalReading.currentPage;
     }
 
-    ViewBindingBookHeader.bind(this, mLocalReading);
+    ViewBindingBookHeader.bindWithDefaultClickHandler(this, mLocalReading);
 
     if(mLocalReading.isMeasuredInPercent()) {
       mProgressPicker.setupPercentMode(currentPage);
