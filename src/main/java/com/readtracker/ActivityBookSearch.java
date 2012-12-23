@@ -98,7 +98,7 @@ public class ActivityBookSearch extends ReadTrackerActivity {
     mEditTextSearch.setOnEditorActionListener(new OnEditorActionListener() {
       @Override
       public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
-        if(actionId == EditorInfo.IME_ACTION_SEARCH || Helpers.isDoneAction(actionId, keyEvent)) {
+        if(actionId == EditorInfo.IME_ACTION_SEARCH || isDoneAction(actionId, keyEvent)) {
           mEditTextSearch.setEnabled(false);
           search(mEditTextSearch.getText().toString());
           return true;
@@ -145,6 +145,13 @@ public class ActivityBookSearch extends ReadTrackerActivity {
     mButtonSearch.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View view) { onSearchClicked(); }
     });
+  }
+
+  private boolean isDoneAction(int actionId, KeyEvent event) {
+    boolean isActionEnter = event != null
+      && event.getAction() == KeyEvent.ACTION_DOWN
+      && event.getKeyCode() == KeyEvent.KEYCODE_ENTER;
+    return actionId == EditorInfo.IME_ACTION_DONE || isActionEnter;
   }
 
   /**
