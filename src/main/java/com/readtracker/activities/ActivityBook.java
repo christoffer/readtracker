@@ -265,7 +265,6 @@ public class ActivityBook extends ReadTrackerActivity {
       Log.v(TAG, String.format("Finishing with reading id: %d and session timer: %s", localReadingId, sessionTimer.toString()));
       Intent resultIntent = new Intent();
       resultIntent.putExtra(IntentKeys.READING_SESSION_STATE, sessionTimer);
-      resultIntent.putExtra(IntentKeys.READING_SESSION_READING_ID, localReadingId);
       setResult(resultCode, resultIntent);
     }
     mManualShutdown = true;

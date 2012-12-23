@@ -39,5 +39,4 @@ public class IntentKeys {
   public static final String READING_SESSION_STATE = "reading-session-state";
   public static final String RESOURCE_ID = "resource-id";
   public static final String FROM_READING_SESSION = "from-reading-session";
-  public static final String READING_SESSION_READING_ID = "reading-session-reading-id";
 }

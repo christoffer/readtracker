@@ -50,7 +50,6 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
 
   // Keep a reference to the active session so the user can go back to it
   private static SessionTimer mActiveSessionTimer;
-  private static int mActiveSessionReadingId = -1;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -170,7 +169,6 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
         // Save the canceled reading state so the user can get back to it
         if(data != null) {
           mActiveSessionTimer = data.getParcelableExtra(IntentKeys.READING_SESSION_STATE);
-          mActiveSessionReadingId = data.getIntExtra(IntentKeys.READING_SESSION_READING_ID, -1);
         }
         break;
       case ActivityCodes.RESULT_OK:
