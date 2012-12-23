@@ -14,18 +14,17 @@ import java.util.Date;
  * The timer is considered active when a timestamp since last started is present.
  */
 public class SessionTimer implements Parcelable {
-  private int mLocalReadingId = 0;
   private long mElapsedBeforeTimestamp = 0;
   private long mActiveTimestamp;
 
-  public SessionTimer(int localReadingId, long elapsedMilliseconds, long activeTimestamp) {
-    mLocalReadingId = localReadingId;
-    mElapsedBeforeTimestamp = elapsedMilliseconds;
-    mActiveTimestamp = activeTimestamp;
+  public SessionTimer() {
+    mElapsedBeforeTimestamp = 0;
+    mActiveTimestamp = 0;
   }
 
-  public int getLocalReadingId() {
-    return mLocalReadingId;
+  public SessionTimer(int localReadingId, long elapsedMilliseconds, long activeTimestamp) {
+    mElapsedBeforeTimestamp = elapsedMilliseconds;
+    mActiveTimestamp = activeTimestamp;
   }
 
   public long getElapsedBeforeTimestamp() {
@@ -59,7 +58,7 @@ public class SessionTimer implements Parcelable {
   }
 
   public String toString() {
-    return String.format("LocalReading (%s) #%d @ %d", (isActive() ? "Active, started: " + new Date(mActiveTimestamp) : "Inactive"), mLocalReadingId, mElapsedBeforeTimestamp);
+    return String.format("SessionTimer: Elapsed: %dms (%s)", mElapsedBeforeTimestamp, (isActive() ? "Active, started: " + new Date(mActiveTimestamp) : "Inactive"));
   }
 
   // Parcelable interface
@@ -76,7 +75,6 @@ public class SessionTimer implements Parcelable {
   };
 
   public SessionTimer(Parcel parcel) {
-    mLocalReadingId = parcel.readInt();
     mElapsedBeforeTimestamp = parcel.readLong();
     mActiveTimestamp = parcel.readLong();
   }
@@ -84,7 +82,6 @@ public class SessionTimer implements Parcelable {
   @Override public int describeContents() { return 0; }
 
   @Override public void writeToParcel(Parcel parcel, int flags) {
-    parcel.writeInt(mLocalReadingId);
     parcel.writeLong(mElapsedBeforeTimestamp);
     parcel.writeLong(mActiveTimestamp);
   }

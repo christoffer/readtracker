@@ -50,6 +50,7 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
 
   // Keep a reference to the active session so the user can go back to it
   private static SessionTimer mActiveSessionTimer;
+  private static int mActiveSessionReadingId = -1;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -169,6 +170,7 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
         // Save the canceled reading state so the user can get back to it
         if(data != null) {
           mActiveSessionTimer = data.getParcelableExtra(IntentKeys.READING_SESSION_STATE);
+          mActiveSessionReadingId = data.getIntExtra(IntentKeys.READING_SESSION_READING_ID, -1);
         }
         break;
       case ActivityCodes.RESULT_OK:
@@ -295,9 +297,14 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
       Log.d(TAG, "Has Active Reading state: " + mActiveSessionTimer);
     }
 
-    if(mActiveSessionTimer != null && mActiveSessionTimer.getLocalReadingId() == localReading.id) {
-      Log.d(TAG, "Passing active state for reading " + localReading.id + ": " + mActiveSessionTimer);
-      intentReadingSession.putExtra(IntentKeys.READING_SESSION_STATE, mActiveSessionTimer);
+    if(mActiveSessionTimer != null) {
+      if(mActiveSessionReadingId == localReading.id) {
+        Log.v(TAG, "Passing active state for reading " + localReading.id + ": " + mActiveSessionTimer);
+        intentReadingSession.putExtra(IntentKeys.READING_SESSION_STATE, mActiveSessionTimer);
+      }
+
+      mActiveSessionReadingId = 0;
+      mActiveSessionTimer = null;
     }
 
     // Jump to the read page directly if the local reading is ready to be read

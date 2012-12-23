@@ -63,7 +63,7 @@ public class FragmentRead extends Fragment {
   public static Fragment newInstance(LocalReading localReading, SessionTimer initialSessionTimer) {
     Log.d(TAG, "newInstance()");
     FragmentRead instance = new FragmentRead();
-    instance.setReadingState(initialSessionTimer);
+    instance.setSessionTimer(initialSessionTimer);
     instance.setLocalReading(localReading);
     instance.setForceReinitialize(true);
     return instance;
@@ -77,7 +77,6 @@ public class FragmentRead extends Fragment {
       Log.d(TAG, "unfreeze state");
       mLocalReading = savedInstanceState.getParcelable(IntentKeys.LOCAL_READING);
     }
-    mSessionTimer = new SessionTimer();
   }
 
   @Override
@@ -186,11 +185,14 @@ public class FragmentRead extends Fragment {
     }
   }
 
-  private void setReadingState(SessionTimer sessionTimer) {
-    if(sessionTimer != null) {
-      Log.d(TAG, "Initializing from reading state: " + sessionTimer);
+  private void setSessionTimer(SessionTimer sessionTimer) {
+    if(sessionTimer == null) {
+      Log.v(TAG, "Initializing with new session timer");
+      mSessionTimer = new SessionTimer();
+    } else {
+      Log.v(TAG, String.format("Initializing with existing session timer: %s", sessionTimer));
+      mSessionTimer = sessionTimer;
     }
-    mSessionTimer = sessionTimer;
   }
 
   public void setLocalReading(LocalReading localReading) {

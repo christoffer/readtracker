@@ -240,7 +240,7 @@ public class ActivityBook extends ReadTrackerActivity {
     if(hasSessionStarted()) {
       SessionTimer sessionTimer = mBookFragmentAdapter.getReadingState();
       sessionTimer.pause();
-      finishWithResult(ActivityCodes.RESULT_CANCELED, sessionTimer);
+      finishWithResult(ActivityCodes.RESULT_CANCELED, mLocalReading.id, sessionTimer);
       toast("Pausing " + mLocalReading.title);
     } else {
       finishWithResult(ActivityCodes.RESULT_OK);
@@ -248,16 +248,18 @@ public class ActivityBook extends ReadTrackerActivity {
   }
 
   public void finishWithResult(int resultCode) {
-    finishWithResult(resultCode, null);
+    finishWithResult(resultCode, -1, null);
   }
 
-  public void finishWithResult(int resultCode, SessionTimer sessionTimer) {
-    if(sessionTimer == null) {
+  public void finishWithResult(int resultCode, int localReadingId, SessionTimer sessionTimer) {
+    if(localReadingId < 1 || sessionTimer == null) {
+      Log.v(TAG, "Finishing without extra information");
       setResult(resultCode);
     } else {
-      Log.d(TAG, "Finishing with result and reading state: " + sessionTimer.toString());
+      Log.v(TAG, String.format("Finishing with reading id: %d and session timer: %s", localReadingId, sessionTimer.toString()));
       Intent resultIntent = new Intent();
       resultIntent.putExtra(IntentKeys.READING_SESSION_STATE, sessionTimer);
+      resultIntent.putExtra(IntentKeys.READING_SESSION_READING_ID, localReadingId);
       setResult(resultCode, resultIntent);
     }
     mManualShutdown = true;
