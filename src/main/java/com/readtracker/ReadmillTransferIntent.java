@@ -7,8 +7,8 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.Where;
 import com.readtracker.db.LocalHighlight;
 import com.readtracker.db.LocalSession;
-import com.readtracker.helpers.ReadmillApiHelper;
-import com.readtracker.helpers.ReadmillException;
+import com.readtracker.support.ReadmillApiHelper;
+import com.readtracker.support.ReadmillException;
 import org.json.JSONObject;
 
 import java.sql.SQLException;

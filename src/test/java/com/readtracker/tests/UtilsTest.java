@@ -1,6 +1,6 @@
 package com.readtracker.tests;
 
-import com.readtracker.Utils;
+import com.readtracker.support.Utils;
 import org.junit.Test;
 
 import java.util.Date;

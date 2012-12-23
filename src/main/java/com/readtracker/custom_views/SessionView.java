@@ -8,7 +8,7 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
 import com.readtracker.R;
-import com.readtracker.Utils;
+import com.readtracker.support.Utils;
 import com.readtracker.db.LocalSession;
 
 import java.util.Arrays;

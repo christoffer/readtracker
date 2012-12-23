@@ -7,9 +7,9 @@ import com.j256.ormlite.stmt.Where;
 import com.readtracker.ApplicationReadTracker;
 import com.readtracker.interfaces.ReadmillSyncProgressListener;
 import com.readtracker.db.*;
-import com.readtracker.helpers.ReadmillConverter;
-import com.readtracker.helpers.ReadmillApiHelper;
-import com.readtracker.helpers.ReadmillException;
+import com.readtracker.support.ReadmillConverter;
+import com.readtracker.support.ReadmillApiHelper;
+import com.readtracker.support.ReadmillException;
 import org.json.JSONException;
 import org.json.JSONObject;
 

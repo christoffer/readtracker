@@ -10,6 +10,7 @@ public class PauseableSpinAnimation extends RotateAnimation {
   public PauseableSpinAnimation(float fromDegrees, float toDegrees, float pivotX, float pivotY) {
     super(fromDegrees, toDegrees, pivotX, pivotY);
   }
+
   @Override public boolean getTransformation(long currentTime, Transformation outTransformation) {
     if(mPaused && mElapsedAtPause == 0) {
       mElapsedAtPause = currentTime - getStartTime();

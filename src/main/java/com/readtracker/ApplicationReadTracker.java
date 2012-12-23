@@ -13,13 +13,14 @@ import com.readmill.api.Environment;
 import com.readmill.api.ReadmillWrapper;
 import com.readmill.api.Token;
 import com.readmill.api.TokenChangeListener;
+import com.readtracker.activities.ActivityWelcome;
 import com.readtracker.db.DatabaseHelper;
 import com.readtracker.db.LocalHighlight;
 import com.readtracker.db.LocalReading;
 import com.readtracker.db.LocalSession;
-import com.readtracker.helpers.ReadmillApiHelper;
+import com.readtracker.support.ReadmillApiHelper;
 import com.readtracker.thirdparty.DrawableManager;
-import com.readtracker.value_objects.ReadTrackerUser;
+import com.readtracker.support.ReadTrackerUser;
 import org.json.JSONException;
 import org.json.JSONObject;
 

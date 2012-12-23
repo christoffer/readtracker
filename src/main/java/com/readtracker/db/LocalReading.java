@@ -4,7 +4,7 @@ import android.graphics.Color;
 import android.os.Parcel;
 import android.os.Parcelable;
 import com.j256.ormlite.field.DatabaseField;
-import com.readtracker.helpers.ReadmillApiHelper;
+import com.readtracker.support.ReadmillApiHelper;
 
 import java.util.List;
 
