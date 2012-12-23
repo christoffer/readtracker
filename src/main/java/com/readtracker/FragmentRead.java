@@ -51,8 +51,8 @@ public class FragmentRead extends Fragment {
   private boolean mForceReInitialize;
 
   // Display child index for flipper session control
-  private static final int PAGE_READING_CONTROLS_INACTIVE = 0;
-  private static final int PAGE_READING_CONTROLS_ACTIVE = 1;
+  private static final int FLIPPER_PAGE_START_BUTTON = 0;
+  private static final int FLIPPER_PAGE_READING_BUTTONS = 1;
 
   public static Fragment newInstance(LocalReading localReading, ReadingState initialReadingState) {
     Log.d(TAG, "newInstance()");
@@ -80,7 +80,7 @@ public class FragmentRead extends Fragment {
     bindViews(view);
     bindEvents();
 
-    mFlipperSessionControl.setDisplayedChild(PAGE_READING_CONTROLS_INACTIVE);
+    mFlipperSessionControl.setDisplayedChild(FLIPPER_PAGE_START_BUTTON);
 
     if(mLocalReading == null) { // TODO investigate when this could happen...
       Log.w(TAG, "Loaded without local reading");
@@ -169,6 +169,16 @@ public class FragmentRead extends Fragment {
     });
   }
 
+  /**
+   * Flips the button view flipper to the given page.
+   * Does not change if the given page is already active (to avoid re-activating animations).
+   */
+  private void flipToButtonPage(int page) {
+    if(mFlipperSessionControl.getDisplayedChild() != page) {
+      mFlipperSessionControl.setDisplayedChild(page);
+    }
+  }
+
   private void setReadingState(ReadingState readingState) {
     if(readingState == null) {
       return;
@@ -188,12 +198,11 @@ public class FragmentRead extends Fragment {
 
     if(totalElapsed == 0) {
       describeLastPosition(mLocalReading);
+      setupStartMode();
     } else {
       presentTime(totalElapsed);
+      setupResumeMode();
     }
-
-    mTextBillboard.setEnabled(true);
-    mButtonStart.setText("Start");
   }
 
   private void setupForMissingPages() {
@@ -259,7 +268,7 @@ public class FragmentRead extends Fragment {
     });
 
     mTextBillboard.startAnimation(disappear);
-    mFlipperSessionControl.setDisplayedChild(PAGE_READING_CONTROLS_ACTIVE);
+    mFlipperSessionControl.setDisplayedChild(FLIPPER_PAGE_READING_BUTTONS);
   }
 
   /**
@@ -268,10 +277,10 @@ public class FragmentRead extends Fragment {
   private void onClickedPause() {
     if(isTiming()) {
       stopTimingAndUpdateElapsed();
-      activatePause();
+      setupResumeMode();
     } else {
       startTiming();
-      deactivatePause();
+      setupPauseMode();
     }
   }
 
@@ -280,7 +289,7 @@ public class FragmentRead extends Fragment {
    */
   private void onClickedDone() {
     if(isTiming()) {
-      activatePause();
+      setupResumeMode();
     }
     stopTimingAndUpdateElapsed();
     ((ActivityBook) getActivity()).exitToSessionEndScreen(mElapsed);
@@ -320,25 +329,34 @@ public class FragmentRead extends Fragment {
     // the state (again) if the user leaves the activity.
     ((ActivityBook) getActivity()).markSessionStarted();
 
-    mFlipperSessionControl.setDisplayedChild(PAGE_READING_CONTROLS_ACTIVE);
+    mFlipperSessionControl.setDisplayedChild(FLIPPER_PAGE_READING_BUTTONS);
 
     // Check if we should automatically start the timer
     if(readingState.isActive()) {
       Log.d(TAG, "Got active reading state");
-      deactivatePause();
+      setupPauseMode();
       startTrackerUpdates();
     } else {
       Log.d(TAG, "Got inactive reading state");
-      activatePause();
+      setupResumeMode();
     }
     presentTime(elapsed());
   }
 
   /**
+   * Changes UI to start mode
+   */
+  private void setupStartMode() {
+    mButtonStart.setText("Start");
+    flipToButtonPage(FLIPPER_PAGE_START_BUTTON);
+  }
+
+  /**
    * Changes UI to pause mode
    */
-  private void activatePause() {
+  private void setupResumeMode() {
     mButtonPause.setText("Resume");
+    flipToButtonPage(FLIPPER_PAGE_READING_BUTTONS);
     Animation fadeOutHalf = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_out_half);
     fadeOutHalf.setAnimationListener(new EnableReadingControls(false));
     mButtonDone.startAnimation(fadeOutHalf);
@@ -347,8 +365,9 @@ public class FragmentRead extends Fragment {
   /**
    * Changes UI to resumed mode
    */
-  private void deactivatePause() {
+  private void setupPauseMode() {
     mButtonPause.setText("Pause");
+    flipToButtonPage(FLIPPER_PAGE_READING_BUTTONS);
     Animation fadeInHalf = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_in_half);
     fadeInHalf.setAnimationListener(new EnableReadingControls(true));
     mButtonDone.startAnimation(fadeInHalf);
