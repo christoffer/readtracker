@@ -197,7 +197,6 @@ public class ActivityAddBook extends ReadTrackerActivity {
       setResult(ActivityCodes.RESULT_OK, data);
     } else {
       readingSessionIntent.putExtra(IntentKeys.READING_ID, localReading.id);
-      readingSessionIntent.putExtra(IntentKeys.START_READING_SESSION, true);
       startActivity(readingSessionIntent);
       setResult(ActivityCodes.RESULT_OK);
     }

@@ -6,7 +6,6 @@ public class IntentKeys {
   public static final String SESSION_LENGTH_MS = "session-length";
 
   public static final String WEB_VIEW_ACTION = "webview-action";
-  public static final String START_READING_SESSION = "start-reading-session";
 
   public static final String READMILL_TRANSFER_COMPLETE = "readmill-transfer-complete";
   public static final String READMILL_SYNC_READINGS_COMPLETE = "readmill-sync-readings-complete";
