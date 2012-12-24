@@ -219,6 +219,7 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
   }
 
   private void startAddBookScreen() {
+    mActiveSessionTimer = null; // Clear any paused sessions
     startActivityForResult(new Intent(this, ActivityBookSearch.class), ActivityCodes.REQUEST_ADD_BOOK);
   }
 
