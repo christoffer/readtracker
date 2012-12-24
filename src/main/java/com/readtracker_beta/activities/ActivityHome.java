@@ -9,25 +9,28 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AnimationUtils;
-import android.widget.*;
+import android.widget.Button;
+import android.widget.ImageButton;
 import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.stmt.DeleteBuilder;
-import com.readtracker_beta.*;
-import com.readtracker_beta.db.LocalHighlight;
+import com.readtracker_beta.ApplicationReadTracker;
+import com.readtracker_beta.IntentKeys;
+import com.readtracker_beta.R;
+import com.readtracker_beta.ReadmillTransferIntent;
 import com.readtracker_beta.db.LocalReading;
 import com.readtracker_beta.db.LocalSession;
 import com.readtracker_beta.fragments.HomeFragmentAdapter;
-import com.readtracker_beta.support.ReadmillSyncStatusUIHandler;
 import com.readtracker_beta.interfaces.LocalReadingInteractionListener;
 import com.readtracker_beta.support.ReadmillApiHelper;
-import com.readtracker_beta.tasks.ReadmillSyncAsyncTask;
+import com.readtracker_beta.support.ReadmillSyncStatusUIHandler;
 import com.readtracker_beta.support.SessionTimer;
+import com.readtracker_beta.tasks.ReadmillSyncAsyncTask;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.readtracker_beta.support.ReadmillSyncStatusUIHandler.*;
+import static com.readtracker_beta.support.ReadmillSyncStatusUIHandler.SyncStatus;
+import static com.readtracker_beta.support.ReadmillSyncStatusUIHandler.SyncUpdateHandler;
 
 public class ActivityHome extends ReadTrackerActivity implements LocalReadingInteractionListener {
 
@@ -370,33 +373,6 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
         localReading.setProgressStops(sessions);
       }
       return localReadings;
-    }
-  }
-
-  private class DeleteReadingTask extends AsyncTask<LocalReading, Void, Integer> {
-
-    @Override
-    protected Integer doInBackground(LocalReading... localReadings) {
-      LocalReading localReading = localReadings[0];
-      Log.d(TAG, "Attempting to delete " + localReading.toString());
-      try {
-        Log.i(TAG, "Deleting reading periods for reading " + localReading.id);
-        DeleteBuilder<LocalSession, Integer> queryBuilderReadings = ApplicationReadTracker.getSessionDao().deleteBuilder();
-        queryBuilderReadings.where().eq(LocalSession.READING_ID_FIELD_NAME, localReading.id);
-        ApplicationReadTracker.getSessionDao().delete(queryBuilderReadings.prepare());
-        Log.i(TAG, "Deleting reading data with id: " + localReading.id);
-
-        Log.i(TAG, "Deleting reading highlight for reading " + localReading.id);
-        DeleteBuilder<LocalHighlight, Integer> queryBuilderHighlights = ApplicationReadTracker.getHighlightDao().deleteBuilder();
-        queryBuilderHighlights.where().eq(LocalHighlight.READING_ID_FIELD_NAME, localReading.id);
-        ApplicationReadTracker.getHighlightDao().delete(queryBuilderHighlights.prepare());
-
-        ApplicationReadTracker.getReadingDao().delete(localReading);
-        return localReading.id;
-      } catch(SQLException e) {
-        Log.d(TAG, "Failed to remove reading data from device", e);
-      }
-      return -1;
     }
   }
 }
