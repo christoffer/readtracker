@@ -289,12 +289,8 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
     Intent intentReadingSession = new Intent(this, ActivityBook.class);
     intentReadingSession.putExtra(IntentKeys.READING_ID, localReadingId);
 
-    // Resume the session if going back to the previously read
     if(mActiveSessionTimer != null) {
       Log.d(TAG, "Has Active Reading state: " + mActiveSessionTimer);
-    }
-
-    if(mActiveSessionTimer != null) {
       if(mActiveSessionTimer.getLocalReadingId() == localReadingId) {
         Log.v(TAG, "Passing active state for reading " + localReadingId + ": " + mActiveSessionTimer);
         intentReadingSession.putExtra(IntentKeys.READING_SESSION_STATE, mActiveSessionTimer);
