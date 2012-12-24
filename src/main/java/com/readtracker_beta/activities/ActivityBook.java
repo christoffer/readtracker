@@ -32,7 +32,6 @@ public class ActivityBook extends ReadTrackerActivity {
   private BookFragmentAdapter mBookFragmentAdapter;
   private ViewPager mViewPagerReading;
 
-  private boolean mIsSessionStarted;
   private boolean mManualShutdown;
   private int mInitialPageForFragmentAdapter = PAGE_UNSPECIFIED;
 
@@ -116,23 +115,6 @@ public class ActivityBook extends ReadTrackerActivity {
       finishWithGenericError();
     }
   }
-
-  /**
-   * Sets the hasSessionStarted flag to true.
-   */
-  public void markSessionStarted() {
-    mIsSessionStarted = true;
-  }
-
-  /**
-   * Returns a flag indicating if the user has started a sessions or not.
-   *
-   * @return true if a session has started.
-   */
-  private boolean hasSessionStarted() {
-    return mIsSessionStarted;
-  }
-
 
   /**
    * Called when the local information about a reading has finished being loaded
@@ -243,8 +225,9 @@ public class ActivityBook extends ReadTrackerActivity {
    * Exits to the home activity with correct result information.
    */
   public void exitToHomeScreen() {
-    if(hasSessionStarted()) {
-      SessionTimer sessionTimer = mBookFragmentAdapter.getReadingState();
+    SessionTimer currentSession = mBookFragmentAdapter.getSessionTimer();
+    if(currentSession.getTotalElapsed() > 0) {
+      SessionTimer sessionTimer = mBookFragmentAdapter.getSessionTimer();
       sessionTimer.pause();
       finishWithResult(ActivityCodes.RESULT_CANCELED, mLocalReading.id, sessionTimer);
       toast("Pausing " + mLocalReading.title);

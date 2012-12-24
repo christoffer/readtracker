@@ -18,9 +18,6 @@ public class SessionTimer implements Parcelable {
   private long mElapsedBeforeTimestamp = 0;
   private long mActiveTimestamp = 0;
 
-  public SessionTimer() {
-  }
-
   public SessionTimer(int localReadingId, long elapsedMilliseconds, long activeTimestamp) {
     mLocalReadingId = localReadingId;
     mElapsedBeforeTimestamp = elapsedMilliseconds;

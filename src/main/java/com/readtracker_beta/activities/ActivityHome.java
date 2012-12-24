@@ -168,6 +168,7 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
         // Save the canceled reading state so the user can get back to it
         if(data != null) {
           mActiveSessionTimer = data.getParcelableExtra(IntentKeys.READING_SESSION_STATE);
+          Log.v(TAG, "Cancelled with session timer: " + mActiveSessionTimer);
         }
         break;
       case ActivityCodes.RESULT_OK:

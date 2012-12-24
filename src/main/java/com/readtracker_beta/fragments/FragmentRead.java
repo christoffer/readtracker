@@ -63,7 +63,7 @@ public class FragmentRead extends Fragment {
   public static Fragment newInstance(LocalReading localReading, SessionTimer initialSessionTimer) {
     Log.d(TAG, "newInstance()");
     FragmentRead instance = new FragmentRead();
-    instance.setSessionTimer(initialSessionTimer);
+    instance.setSessionTimer(localReading.id, initialSessionTimer);
     instance.setLocalReading(localReading);
     instance.setForceReinitialize(true);
     return instance;
@@ -185,10 +185,10 @@ public class FragmentRead extends Fragment {
     }
   }
 
-  private void setSessionTimer(SessionTimer sessionTimer) {
+  private void setSessionTimer(int localReadingId, SessionTimer sessionTimer) {
     if(sessionTimer == null) {
       Log.v(TAG, "Initializing with new session timer");
-      mSessionTimer = new SessionTimer();
+      mSessionTimer = new SessionTimer(localReadingId, 0, 0);
     } else {
       Log.v(TAG, String.format("Initializing with existing session timer: %s", sessionTimer));
       mSessionTimer = sessionTimer;
@@ -267,7 +267,6 @@ public class FragmentRead extends Fragment {
       @Override public void onAnimationRepeat(Animation animation) { }
       @Override public void onAnimationEnd(Animation animation) {
         startTiming();
-        ((ActivityBook) getActivity()).markSessionStarted();
         presentTime(getElapsed());
         mTextBillboard.startAnimation(appear);
       }
@@ -330,10 +329,6 @@ public class FragmentRead extends Fragment {
     Log.i(TAG, "Restoring session: " + sessionTimer);
 
     mSessionTimer = sessionTimer;
-
-    // Notify to the parent activity that our data is dirty so it can store
-    // the state (again) if the user leaves the activity.
-    ((ActivityBook) getActivity()).markSessionStarted();
 
     mFlipperSessionControl.setDisplayedChild(FLIPPER_PAGE_READING_BUTTONS);
 
