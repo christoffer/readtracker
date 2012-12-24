@@ -228,7 +228,7 @@ public class ActivityBook extends ReadTrackerActivity {
     SessionTimer currentSession = mBookFragmentAdapter.getSessionTimer();
     if(currentSession.getTotalElapsed() > 0) {
       SessionTimer sessionTimer = mBookFragmentAdapter.getSessionTimer();
-      sessionTimer.pause();
+      sessionTimer.stop();
       finishWithResult(ActivityCodes.RESULT_CANCELED, mLocalReading.id, sessionTimer);
       toast("Pausing " + mLocalReading.title);
     } else {

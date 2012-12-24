@@ -2,6 +2,7 @@ package com.readtracker_beta.support;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import com.readtracker_beta.interfaces.SessionTimerEventListener;
 
 import java.util.Date;
 
@@ -17,11 +18,16 @@ public class SessionTimer implements Parcelable {
   private int mLocalReadingId = -1;
   private long mElapsedBeforeTimestamp = 0;
   private long mActiveTimestamp = 0;
+  private SessionTimerEventListener mListener;
 
   public SessionTimer(int localReadingId, long elapsedMilliseconds, long activeTimestamp) {
     mLocalReadingId = localReadingId;
     mElapsedBeforeTimestamp = elapsedMilliseconds;
     mActiveTimestamp = activeTimestamp;
+  }
+
+  public SessionTimer(int localReadingId) {
+    this(localReadingId, 0, 0);
   }
 
   public int getLocalReadingId() {
@@ -34,6 +40,10 @@ public class SessionTimer implements Parcelable {
 
   public long getActiveTimestamp() {
     return mActiveTimestamp;
+  }
+
+  public void setEventListener(SessionTimerEventListener listener) {
+    mListener = listener;
   }
 
   /**
@@ -92,18 +102,22 @@ public class SessionTimer implements Parcelable {
   /**
    * Pauses the reading state.
    */
-  public void pause() {
-    pause(System.currentTimeMillis());
+  public void stop() {
+    stop(System.currentTimeMillis());
   }
 
   /**
    * Pauses the reading state.
    */
-  public void pause(long now) {
+  public void stop(long now) {
     if(isActive()) {
       final long elapsedSinceTimeStamp = now - mActiveTimestamp;
       mElapsedBeforeTimestamp += elapsedSinceTimeStamp;
       mActiveTimestamp = 0;
+    }
+
+    if(mListener != null) {
+      mListener.onStopped();
     }
   }
 
@@ -116,5 +130,23 @@ public class SessionTimer implements Parcelable {
 
   public void start(long now) {
     mActiveTimestamp = now;
+    if(mListener != null) {
+      mListener.onStarted();
+    }
+  }
+
+  /**
+   * Pause/resume
+   */
+  public void togglePause() {
+    togglePause(System.currentTimeMillis());
+  }
+
+  public void togglePause(long now) {
+    if(isActive()) {
+      stop(now);
+    } else {
+      start(now);
+    }
   }
 }

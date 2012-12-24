@@ -7,11 +7,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.animation.*;
 import android.widget.Button;
 import android.widget.TextView;
 import com.readtracker_beta.IntentKeys;
 import com.readtracker_beta.R;
+import com.readtracker_beta.interfaces.SessionTimerEventListener;
 import com.readtracker_beta.support.SessionTimerStore;
 import com.readtracker_beta.support.Utils;
 import com.readtracker_beta.activities.ActivityBook;
@@ -36,7 +38,7 @@ public class FragmentRead extends Fragment {
   private static TextView mTextBillboard;
   private static TimeSpinner mTimeSpinner;
 
-  // Flipper for showing start vs. pause/done
+  // Flipper for showing start vs. stop/done
   private static SafeViewFlipper mFlipperSessionControl;
 
   // Reading to track
@@ -63,7 +65,11 @@ public class FragmentRead extends Fragment {
   public static Fragment newInstance(LocalReading localReading, SessionTimer initialSessionTimer) {
     Log.d(TAG, "newInstance()");
     FragmentRead instance = new FragmentRead();
-    instance.setSessionTimer(localReading.id, initialSessionTimer);
+    if(initialSessionTimer == null) {
+      Log.v(TAG, "Initializing with new session timer");
+      initialSessionTimer = new SessionTimer(localReading.id);
+    }
+    instance.setSessionTimer(initialSessionTimer);
     instance.setLocalReading(localReading);
     instance.setForceReinitialize(true);
     return instance;
@@ -76,6 +82,8 @@ public class FragmentRead extends Fragment {
     if(savedInstanceState != null && !mForceReInitialize) {
       Log.d(TAG, "unfreeze state");
       mLocalReading = savedInstanceState.getParcelable(IntentKeys.LOCAL_READING);
+      SessionTimer sessionTimer = savedInstanceState.getParcelable(IntentKeys.SESSION_TIMER);
+      setSessionTimer(sessionTimer);
     }
   }
 
@@ -112,6 +120,7 @@ public class FragmentRead extends Fragment {
     super.onSaveInstanceState(outState);
     Log.d(TAG, "freezing state");
     outState.putParcelable(IntentKeys.LOCAL_READING, mLocalReading);
+    outState.putParcelable(IntentKeys.SESSION_TIMER, mSessionTimer);
   }
 
   @Override
@@ -136,7 +145,15 @@ public class FragmentRead extends Fragment {
     super.onResume();
     Log.d(TAG, "onResume() with " + (mForceReInitialize ? "forced" : "non-forced") + " initialize");
     if(!mForceReInitialize) {
-      loadTimingState();
+      Log.d(TAG, "Loading stored timing state");
+      SessionTimer storedSessionTimer = SessionTimerStore.load();
+
+      if(storedSessionTimer == null) {
+        Log.d(TAG, "... Not found");
+      } else {
+        setSessionTimer(storedSessionTimer);
+        restoreTimingState(storedSessionTimer);
+      }
     } else {
       mForceReInitialize = false; // avoid re-init when bringing an instance back into focus
     }
@@ -158,7 +175,7 @@ public class FragmentRead extends Fragment {
 
     mButtonPause.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View view) {
-        onClickedPause();
+        onClickedPauseResume();
       }
     });
 
@@ -173,6 +190,39 @@ public class FragmentRead extends Fragment {
         onClickedDone();
       }
     });
+
+    // The spinner animation depends on knowledge of the size of the time tracker
+    // widget since it pivots around the center of it.
+    // This seems to be the most reliant way of knowing what that dimension is available.
+    ViewTreeObserver obs = mTimeSpinner.getViewTreeObserver();
+    obs.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+      @Override public void onGlobalLayout() {
+        if(mTimeSpinner.getWidth() == 0) {
+          return; // width not available yet
+        }
+        PauseableSpinAnimation spinAnimation = (PauseableSpinAnimation) mTimeSpinner.getAnimation();
+        if(spinAnimation == null) {
+          final float offsetX = mTimeSpinner.getWidth() / 2.0f;
+          final float offsetY = mTimeSpinner.getHeight() / 2.0f;
+
+          spinAnimation = new PauseableSpinAnimation(0, 360, offsetX, offsetY) {{
+            setRepeatMode(Animation.RESTART);
+            setRepeatCount(Animation.INFINITE);
+            setDuration(60 * 1000);
+            setInterpolator(new LinearInterpolator());
+            setFillAfter(true);
+          }};
+
+          mTimeSpinner.setAnimation(spinAnimation);
+        }
+
+        if(mSessionTimer.isActive()) {
+          spinAnimation.start();
+        } else {
+          spinAnimation.pause();
+        }
+      }
+    });
   }
 
   /**
@@ -185,14 +235,21 @@ public class FragmentRead extends Fragment {
     }
   }
 
-  private void setSessionTimer(int localReadingId, SessionTimer sessionTimer) {
-    if(sessionTimer == null) {
-      Log.v(TAG, "Initializing with new session timer");
-      mSessionTimer = new SessionTimer(localReadingId, 0, 0);
-    } else {
-      Log.v(TAG, String.format("Initializing with existing session timer: %s", sessionTimer));
-      mSessionTimer = sessionTimer;
-    }
+  private void setSessionTimer(SessionTimer sessionTimer) {
+    Log.v(TAG, "Setting session timer: " + sessionTimer);
+
+    sessionTimer.setEventListener(new SessionTimerEventListener() {
+      @Override public void onStarted() {
+        startTrackerUpdates();
+        setupPauseMode();
+      }
+      @Override public void onStopped() {
+        stopTrackerUpdates();
+        setupResumeMode();
+      }
+    });
+
+    mSessionTimer = sessionTimer;
   }
 
   public void setLocalReading(LocalReading localReading) {
@@ -246,7 +303,7 @@ public class FragmentRead extends Fragment {
    *
    * @return the current reading state as a value object
    */
-  public SessionTimer getReadingState() {
+  public SessionTimer getSessionTimer() {
     return mSessionTimer;
   }
 
@@ -254,6 +311,7 @@ public class FragmentRead extends Fragment {
    * Called when the start button is clicked
    */
   private void onClickedStart() {
+    // Handle clicking "Edit book"
     if(!mLocalReading.hasPageInfo()) {
       ((ActivityBook) getActivity()).exitToBookInfoScreen(mLocalReading);
       return;
@@ -266,7 +324,7 @@ public class FragmentRead extends Fragment {
       @Override public void onAnimationStart(Animation animation) { }
       @Override public void onAnimationRepeat(Animation animation) { }
       @Override public void onAnimationEnd(Animation animation) {
-        startTiming();
+        mSessionTimer.start();
         presentTime(getElapsed());
         mTextBillboard.startAnimation(appear);
       }
@@ -279,24 +337,15 @@ public class FragmentRead extends Fragment {
   /**
    * Called when the pause button is clicked
    */
-  private void onClickedPause() {
-    if(mSessionTimer.isActive()) {
-      stopTiming();
-      setupResumeMode();
-    } else {
-      startTiming();
-      setupPauseMode();
-    }
+  private void onClickedPauseResume() {
+    mSessionTimer.togglePause();
   }
 
   /**
    * Called when the done button is clicked
    */
   private void onClickedDone() {
-    if(mSessionTimer.isActive()) {
-      setupResumeMode();
-    }
-    stopTiming();
+    mSessionTimer.stop();
     final long elapsed = mSessionTimer.getTotalElapsed();
     ((ActivityBook) getActivity()).exitToSessionEndScreen(elapsed);
   }
@@ -307,28 +356,12 @@ public class FragmentRead extends Fragment {
   }
 
   /**
-   * Loads and restores a timing state from preferences
-   */
-  private void loadTimingState() {
-    Log.d(TAG, "Loading stored timing state");
-    final SessionTimer sessionTimer = SessionTimerStore.load();
-
-    if(sessionTimer == null) {
-      Log.d(TAG, "... Not found");
-    } else {
-      restoreTimingState(sessionTimer);
-    }
-  }
-
-  /**
    * Restores the current timing state to a given one
    *
    * @param sessionTimer The reading state to restore to
    */
   public void restoreTimingState(SessionTimer sessionTimer) {
     Log.i(TAG, "Restoring session: " + sessionTimer);
-
-    mSessionTimer = sessionTimer;
 
     mFlipperSessionControl.setDisplayedChild(FLIPPER_PAGE_READING_BUTTONS);
 
@@ -341,6 +374,7 @@ public class FragmentRead extends Fragment {
       Log.d(TAG, "Got inactive reading state");
       setupResumeMode();
     }
+
     presentTime(getElapsed());
   }
 
@@ -374,16 +408,6 @@ public class FragmentRead extends Fragment {
     mButtonDone.startAnimation(fadeInHalf);
   }
 
-  private void stopTiming() {
-    mSessionTimer.pause();
-    stopTrackerUpdates();
-  }
-
-  private void startTiming() {
-    mSessionTimer.start();
-    startTrackerUpdates();
-  }
-
   // Timing events
 
   private long getElapsed() {
@@ -414,19 +438,7 @@ public class FragmentRead extends Fragment {
     stopTrackerUpdates();
 
     PauseableSpinAnimation spinAnimation = (PauseableSpinAnimation) mTimeSpinner.getAnimation();
-    if(spinAnimation == null) {
-      final float offsetX = mTimeSpinner.getWidth() / 2.0f;
-      final float offsetY = mTimeSpinner.getHeight() / 2.0f;
-      spinAnimation = new PauseableSpinAnimation(0, 360, offsetX, offsetY) {{
-        setRepeatMode(Animation.RESTART);
-        setRepeatCount(Animation.INFINITE);
-        setDuration(60 * 1000);
-        setInterpolator(new LinearInterpolator());
-        setFillAfter(true);
-      }};
-      mTimeSpinner.setAnimation(spinAnimation);
-      spinAnimation.start();
-    } else {
+    if(spinAnimation != null) {
       spinAnimation.resume();
     }
 
@@ -441,6 +453,7 @@ public class FragmentRead extends Fragment {
       spinAnimation.pause();
     }
 
+    // Clear out the redraw timer
     if(mRedrawTimerTask != null) {
       mRedrawTimerTask.cancel(true);
       mRedrawTimerTask = null;
