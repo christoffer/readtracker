@@ -14,7 +14,7 @@
   <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="15" />
 
   <application android:icon="@drawable/icon"
-               android:label="ReadTracker"
+               android:label="ReadTrackerBeta"
                android:name=".ApplicationReadTracker"
                android:theme="@style/ReadTrackerTheme">
 
