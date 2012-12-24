@@ -38,7 +38,7 @@ public class SessionTimerStore {
    * @return the SessionTimer or null
    */
   public static SessionTimer load() {
-    Log.d(TAG, "Loading reading state");
+    Log.v(TAG, "Loading reading state");
     SharedPreferences pref = ApplicationReadTracker.getApplicationPreferences();
 
     int localReadingId = pref.getInt(KEY_LOCAL_READING_ID, -1);
@@ -46,17 +46,17 @@ public class SessionTimerStore {
     long activeTimestamp = pref.getLong(KEY_ACTIVE_TIMESTAMP, 0);
 
     if(localReadingId == -1 || elapsedMilliseconds == 0) {
-      Log.d(TAG, " - No reading state found");
+      Log.v(TAG, " - No reading state found");
       return null;
     }
 
     SessionTimer sessionTimer = new SessionTimer(localReadingId, elapsedMilliseconds, activeTimestamp);
-    Log.d(TAG, " - Found reading state: " + sessionTimer);
+    Log.v(TAG, " - Found reading state: " + sessionTimer);
     return sessionTimer;
   }
 
   public static void clear() {
-    Log.d(TAG, "Clearing reading state");
+    Log.v(TAG, "Clearing reading state");
     ApplicationReadTracker.getApplicationPreferences().
       edit().
       remove(KEY_LOCAL_READING_ID).
