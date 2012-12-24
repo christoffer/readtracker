@@ -238,6 +238,7 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
     if(!shouldSync()) {
       return;
     }
+
     startService(new Intent(this, ReadmillTransferIntent.class));
 
     Log.i(TAG, "Starting ASyncTask for Syncing Readmill Readings");
@@ -360,12 +361,12 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
      * the reading.
      *
      * @param localReadings List of local readings to set progress stops for
-     * @param sessionsDao DAO from which to load sessions
+     * @param sessionsDao   DAO from which to load sessions
      * @return the given local readings, with progress stops populated
      * @throws SQLException
      */
     private List<LocalReading> readingsWithPopulateSessionSegments(ArrayList<LocalReading> localReadings, Dao<LocalSession, Integer> sessionsDao) throws SQLException {
-      for(LocalReading localReading: localReadings) {
+      for(LocalReading localReading : localReadings) {
         List<LocalSession> sessions = sessionsDao.queryBuilder()
           .where().eq(LocalSession.READING_ID_FIELD_NAME, localReading.id)
           .query();

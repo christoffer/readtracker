@@ -27,6 +27,7 @@ public class SessionTimerStore {
 
     ApplicationReadTracker.getApplicationPreferences().
       edit().
+      putInt(KEY_LOCAL_READING_ID, sessionTimer.getLocalReadingId()).
       putLong(KEY_ELAPSED, sessionTimer.getElapsedBeforeTimestamp()).
       putLong(KEY_ACTIVE_TIMESTAMP, sessionTimer.getActiveTimestamp()).
       commit();
@@ -45,7 +46,7 @@ public class SessionTimerStore {
     long elapsedMilliseconds = pref.getLong(KEY_ELAPSED, 0);
     long activeTimestamp = pref.getLong(KEY_ACTIVE_TIMESTAMP, 0);
 
-    if(localReadingId == -1 || elapsedMilliseconds == 0) {
+    if(localReadingId == -1 || (elapsedMilliseconds == 0 && activeTimestamp == 0)) {
       Log.v(TAG, " - No reading state found");
       return null;
     }
