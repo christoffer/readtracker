@@ -9,7 +9,7 @@ import com.readtracker_beta.R;
 /**
  * Generic WebView for viewing any web url.
  */
-public class ActivityWebView extends Activity {
+public class InAppBrowserActivity extends Activity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);

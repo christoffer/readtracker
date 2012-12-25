@@ -1,4 +1,4 @@
-package com.readtracker_beta.list_adapters;
+package com.readtracker_beta.adapters;
 
 import android.net.Uri;
 import com.readtracker_beta.db.LocalHighlight;
@@ -8,7 +8,7 @@ import java.util.Date;
 /**
  * Shows a local highlight
  */
-public class ListItemHighlight {
+public class HighlightItem {
   private String content;
   private String permalinkUrl;
   private int highlightId;
@@ -16,7 +16,7 @@ public class ListItemHighlight {
   private int likeCount;
   private int commentCount;
 
-  public ListItemHighlight(LocalHighlight highlight) {
+  public HighlightItem(LocalHighlight highlight) {
     content = highlight.content;
     permalinkUrl = highlight.readmillPermalinkUrl;
     highlightId = highlight.id;

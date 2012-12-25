@@ -19,13 +19,13 @@
                android:theme="@style/ReadTrackerTheme">
 
     <activity android:label="ReadTracker"
-              android:name=".activities.ActivityWelcome" />
+              android:name=".activities.WelcomeActivity" />
 
-    <activity android:name=".activities.ActivitySignInAndAuthorize" />
+    <activity android:name=".activities.OAuthActivity" />
 
-    <activity android:name=".activities.ActivityClose" />
+    <activity android:name=".activities.CloseActivity" />
 
-    <activity android:name=".activities.ActivityHome">
+    <activity android:name=".activities.HomeActivity">
 
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
@@ -34,24 +34,24 @@
 
     </activity>
 
-    <activity android:name=".activities.ActivityBookSearch" />
+    <activity android:name=".activities.BookSearchActivity" />
 
-    <activity android:name=".activities.ActivityBook" />
+    <activity android:name=".activities.BookActivity" />
 
-    <activity android:name=".activities.ActivityReadingSessionEnd"
+    <activity android:name=".activities.ProgressActivity"
               android:windowSoftInputMode="adjustPan" />
 
     <service android:name=".ReadmillTransferIntent" />
 
-    <activity android:name=".activities.ActivityAddBook"
+    <activity android:name=".activities.AddBookActivity"
               android:noHistory="true"
               android:windowSoftInputMode="adjustPan" />
 
-    <activity android:name=".activities.ActivitySettings" />
+    <activity android:name=".activities.SettingsActivity" />
 
-    <activity android:name=".activities.ActivityWebView" />
+    <activity android:name=".activities.InAppBrowserActivity" />
 
-    <activity android:name=".activities.ActivityHighlight" />
+    <activity android:name=".activities.HighlightActivity" />
 
   </application>
 

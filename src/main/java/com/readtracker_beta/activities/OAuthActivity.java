@@ -18,7 +18,7 @@ import com.readtracker_beta.R;
 /**
  * Screen for signing in to Readmill through a web interface
  */
-public class ActivitySignInAndAuthorize extends ReadTrackerActivity {
+public class OAuthActivity extends ReadTrackerActivity {
   private static LinearLayout mLayoutProgressBar;
 
   @Override
@@ -108,7 +108,7 @@ public class ActivitySignInAndAuthorize extends ReadTrackerActivity {
       }
 
       private void setProgressVisible(boolean shouldBeVisible) {
-        LinearLayout layout = ActivitySignInAndAuthorize.mLayoutProgressBar;
+        LinearLayout layout = OAuthActivity.mLayoutProgressBar;
         if(layout != null) {
           layout.setVisibility(shouldBeVisible ? View.VISIBLE : View.GONE);
         }

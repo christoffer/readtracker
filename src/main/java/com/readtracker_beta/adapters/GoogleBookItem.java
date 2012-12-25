@@ -1,18 +1,18 @@
-package com.readtracker_beta.list_adapters;
+package com.readtracker_beta.adapters;
 
 import com.readtracker_beta.support.GoogleBook;
 
 /**
  * Shows a GoogleBook search result
  */
-public class ListItemGoogleBook extends ListItemBook {
+public class GoogleBookItem extends BookItem {
   public GoogleBook googleBook = null;
 
-  public ListItemGoogleBook(String title, String author) {
+  public GoogleBookItem(String title, String author) {
     super(title, author, null);
   }
 
-  public ListItemGoogleBook(GoogleBook googleBook) {
+  public GoogleBookItem(GoogleBook googleBook) {
     this(googleBook.getTitle(), googleBook.getAuthor());
     this.googleBook = googleBook;
     coverURL = googleBook.getCoverURL();

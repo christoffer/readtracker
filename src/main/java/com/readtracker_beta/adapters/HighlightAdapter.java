@@ -1,4 +1,4 @@
-package com.readtracker_beta.list_adapters;
+package com.readtracker_beta.adapters;
 
 import android.app.Activity;
 import android.content.Context;
@@ -17,18 +17,18 @@ import java.util.List;
 /**
  * Shows a list of highlights
  */
-public class ListAdapterHighlight extends ArrayAdapter<ListItemHighlight> {
+public class HighlightAdapter extends ArrayAdapter<HighlightItem> {
 
   private LayoutInflater mInflater;
 
-  private Comparator<ListItemHighlight> mReadingHighlightComparator = new Comparator<ListItemHighlight>() {
+  private Comparator<HighlightItem> mReadingHighlightComparator = new Comparator<HighlightItem>() {
     @Override
-    public int compare(ListItemHighlight highlightA, ListItemHighlight highlightB) {
+    public int compare(HighlightItem highlightA, HighlightItem highlightB) {
       return highlightA.getHighlightedAt().after(highlightB.getHighlightedAt()) ? -1 : 1;
     }
   };
 
-  public ListAdapterHighlight(Context context, int textViewResourceId, List<ListItemHighlight> highlights) {
+  public HighlightAdapter(Context context, int textViewResourceId, List<HighlightItem> highlights) {
     super(context, textViewResourceId, highlights);
     sort(mReadingHighlightComparator);
     mInflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
@@ -36,7 +36,7 @@ public class ListAdapterHighlight extends ArrayAdapter<ListItemHighlight> {
 
   @Override
   public View getView(int position, View convertView, ViewGroup parent) {
-    ListItemHighlight item = getItem(position);
+    HighlightItem item = getItem(position);
 
     if(convertView == null) {
       convertView = mInflater.inflate(R.layout.highlight_list_item, null);
@@ -79,7 +79,7 @@ public class ListAdapterHighlight extends ArrayAdapter<ListItemHighlight> {
   }
 
   @Override
-  public void add(ListItemHighlight object) {
+  public void add(HighlightItem object) {
     super.add(object);
     sort(mReadingHighlightComparator);
   }

@@ -15,9 +15,9 @@ import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.TextView.OnEditorActionListener;
 import com.readtracker_beta.*;
-import com.readtracker_beta.list_adapters.ListAdapterBook;
-import com.readtracker_beta.list_adapters.ListItemBook;
-import com.readtracker_beta.list_adapters.ListItemGoogleBook;
+import com.readtracker_beta.adapters.BookAdapter;
+import com.readtracker_beta.adapters.BookItem;
+import com.readtracker_beta.adapters.GoogleBookItem;
 import com.readtracker_beta.thirdparty.SafeViewFlipper;
 import com.readtracker_beta.support.GoogleBook;
 import com.readtracker_beta.support.GoogleBookSearch;
@@ -28,7 +28,7 @@ import java.util.ArrayList;
 /**
  * Screen for searching for books on Google Books
  */
-public class ActivityBookSearch extends ReadTrackerActivity {
+public class BookSearchActivity extends ReadTrackerActivity {
   private static ListView mListSearchResults;
   private static EditText mEditTextSearch;
 
@@ -37,7 +37,7 @@ public class ActivityBookSearch extends ReadTrackerActivity {
   private static Button mButtonNew;
   private static Button mButtonSearch;
 
-  private static ListAdapterBook mListAdapterBookSearch;
+  private static BookAdapter mBookSearchAdapter;
   private static InputMethodManager mInputMethodManager;
 
   // Indices of flipper pages
@@ -51,8 +51,8 @@ public class ActivityBookSearch extends ReadTrackerActivity {
 
     bindViews();
 
-    mListAdapterBookSearch = new ListAdapterBook(this, R.layout.list_item_book, R.id.textTitle, new ArrayList<ListItemBook>());
-    mListSearchResults.setAdapter(mListAdapterBookSearch);
+    mBookSearchAdapter = new BookAdapter(this, R.layout.list_item_book, R.id.textTitle, new ArrayList<BookItem>());
+    mListSearchResults.setAdapter(mBookSearchAdapter);
 
     // Suggest that the soft input keyboard is visible at once
     mInputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -63,7 +63,7 @@ public class ActivityBookSearch extends ReadTrackerActivity {
 
   @Override
   protected void onDestroy() {
-    mListAdapterBookSearch.cleanUpDrawables(); // recycles images in drawable manager
+    mBookSearchAdapter.cleanUpDrawables(); // recycles images in drawable manager
     super.onDestroy();
   }
 
@@ -136,7 +136,7 @@ public class ActivityBookSearch extends ReadTrackerActivity {
     mListSearchResults.setOnItemClickListener(new OnItemClickListener() {
       @Override
       public void onItemClick(AdapterView parent, View view, int position, long id) {
-        ListItemBook clickedBook = mListAdapterBookSearch.getItem(position);
+        BookItem clickedBook = mBookSearchAdapter.getItem(position);
         exitToBookInit(clickedBook.title, clickedBook.author, clickedBook.coverURL, clickedBook.pageCount);
       }
     });
@@ -179,7 +179,7 @@ public class ActivityBookSearch extends ReadTrackerActivity {
    */
   private void search(String query) {
     // TODO replace with a spinner in the text editor field
-    getApp().showProgressDialog(ActivityBookSearch.this, "Searching...");
+    getApp().showProgressDialog(BookSearchActivity.this, "Searching...");
     (new BookSearchTask()).execute(query);
   }
 
@@ -192,7 +192,7 @@ public class ActivityBookSearch extends ReadTrackerActivity {
    * @param pageCount number of pages in the book (Use -1 if not available)
    */
   private void exitToBookInit(String title, String author, String coverURL, Long pageCount) {
-    Intent intent = new Intent(this, ActivityAddBook.class);
+    Intent intent = new Intent(this, AddBookActivity.class);
     intent.putExtra(IntentKeys.TITLE, title);
     intent.putExtra(IntentKeys.AUTHOR, author);
     intent.putExtra(IntentKeys.COVER_URL, coverURL);
@@ -205,14 +205,14 @@ public class ActivityBookSearch extends ReadTrackerActivity {
    * new book
    */
   public void exitToBookInitForNewBook() {
-    Intent intent = new Intent(this, ActivityAddBook.class);
+    Intent intent = new Intent(this, AddBookActivity.class);
     startActivityForResult(intent, ActivityCodes.REQUEST_ADD_BOOK);
   }
 
   public void setSearchResults(ArrayList<GoogleBook> foundBooks) {
     getApp().clearProgressDialog();
     mEditTextSearch.setEnabled(true);
-    mListAdapterBookSearch.clear();
+    mBookSearchAdapter.clear();
 
     if(foundBooks == null) {
       Log.d(TAG, "Book search result was null");
@@ -224,7 +224,7 @@ public class ActivityBookSearch extends ReadTrackerActivity {
 
     if(foundBooks.size() > 0) {
       for(GoogleBook book : foundBooks) {
-        mListAdapterBookSearch.add(new ListItemGoogleBook(book));
+        mBookSearchAdapter.add(new GoogleBookItem(book));
       }
       mInputMethodManager.hideSoftInputFromWindow(mEditTextSearch.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
     }

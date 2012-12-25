@@ -13,7 +13,7 @@ import com.readmill.api.Environment;
 import com.readmill.api.ReadmillWrapper;
 import com.readmill.api.Token;
 import com.readmill.api.TokenChangeListener;
-import com.readtracker_beta.activities.ActivityWelcome;
+import com.readtracker_beta.activities.WelcomeActivity;
 import com.readtracker_beta.db.DatabaseHelper;
 import com.readtracker_beta.db.LocalHighlight;
 import com.readtracker_beta.db.LocalReading;
@@ -366,7 +366,7 @@ public class ApplicationReadTracker extends Application implements TokenChangeLi
 
   public void signOut() {
     clearSettings();
-    Intent intentWelcome = new Intent(this, ActivityWelcome.class);
+    Intent intentWelcome = new Intent(this, WelcomeActivity.class);
     intentWelcome.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
     intentWelcome.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
     startActivity(intentWelcome);

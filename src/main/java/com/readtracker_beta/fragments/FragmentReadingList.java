@@ -11,9 +11,9 @@ import android.widget.ListView;
 import com.readtracker_beta.ApplicationReadTracker;
 import com.readtracker_beta.IntentKeys;
 import com.readtracker_beta.R;
+import com.readtracker_beta.adapters.LocalReadingAdapter;
 import com.readtracker_beta.db.LocalReading;
 import com.readtracker_beta.interfaces.LocalReadingInteractionListener;
-import com.readtracker_beta.list_adapters.ListAdapterLocalReading;
 
 import java.util.ArrayList;
 
@@ -26,11 +26,9 @@ import java.util.ArrayList;
  * @see LocalReadingInteractionListener
  */
 public class FragmentReadingList extends Fragment {
-  private static final String TAG = FragmentReadingList.class.getName();
-
   private final ArrayList<LocalReading> localReadings = new ArrayList<LocalReading>();
   private ListView listReadings;
-  private ListAdapterLocalReading listAdapterReadings;
+  private LocalReadingAdapter listAdapterReadings;
   private int itemLayoutResourceId;
   private LocalReadingInteractionListener interactionListener;
 
@@ -85,7 +83,7 @@ public class FragmentReadingList extends Fragment {
   public void onActivityCreated(Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
 
-    listAdapterReadings = new ListAdapterLocalReading(
+    listAdapterReadings = new LocalReadingAdapter(
         getActivity(),
         itemLayoutResourceId,
         R.id.textTitle,

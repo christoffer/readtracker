@@ -32,7 +32,7 @@ import java.util.List;
 import static com.readtracker_beta.support.ReadmillSyncStatusUIHandler.SyncStatus;
 import static com.readtracker_beta.support.ReadmillSyncStatusUIHandler.SyncUpdateHandler;
 
-public class ActivityHome extends ReadTrackerActivity implements LocalReadingInteractionListener {
+public class HomeActivity extends ReadTrackerActivity implements LocalReadingInteractionListener {
 
   private static Button mButtonSyncReadmill;
   private static ImageButton mButtonAddBook;
@@ -194,7 +194,7 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
 
   @Override
   public boolean onSearchRequested() {
-    startActivityForResult(new Intent(this, ActivityBookSearch.class), ActivityCodes.REQUEST_ADD_BOOK);
+    startActivityForResult(new Intent(this, BookSearchActivity.class), ActivityCodes.REQUEST_ADD_BOOK);
     return true;
   }
 
@@ -223,11 +223,11 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
 
   private void startAddBookScreen() {
     mActiveSessionTimer = null; // Clear any paused sessions
-    startActivityForResult(new Intent(this, ActivityBookSearch.class), ActivityCodes.REQUEST_ADD_BOOK);
+    startActivityForResult(new Intent(this, BookSearchActivity.class), ActivityCodes.REQUEST_ADD_BOOK);
   }
 
   private void exitToPreferences() {
-    Intent intentSettings = new Intent(this, ActivitySettings.class);
+    Intent intentSettings = new Intent(this, SettingsActivity.class);
     startActivityForResult(intentSettings, ActivityCodes.SETTINGS);
   }
 
@@ -291,7 +291,7 @@ public class ActivityHome extends ReadTrackerActivity implements LocalReadingInt
   // Private
 
   private void exitToActivityBook(int localReadingId) {
-    Intent intentReadingSession = new Intent(this, ActivityBook.class);
+    Intent intentReadingSession = new Intent(this, BookActivity.class);
     intentReadingSession.putExtra(IntentKeys.READING_ID, localReadingId);
 
     if(mActiveSessionTimer != null) {

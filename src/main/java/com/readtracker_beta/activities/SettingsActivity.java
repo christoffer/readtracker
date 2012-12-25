@@ -12,7 +12,7 @@ import com.readtracker_beta.R;
 import com.readtracker_beta.SettingsKeys;
 import com.readtracker_beta.support.ReadTrackerUser;
 
-public class ActivitySettings extends PreferenceActivity {
+public class SettingsActivity extends PreferenceActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -69,7 +69,7 @@ public class ActivitySettings extends PreferenceActivity {
     legalPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
       @Override
       public boolean onPreferenceClick(Preference preference) {
-        Intent intentWebView = new Intent(ActivitySettings.this, ActivityWebView.class);
+        Intent intentWebView = new Intent(SettingsActivity.this, InAppBrowserActivity.class);
         intentWebView.putExtra(IntentKeys.WEB_VIEW_URL, "file:///android_asset/legal.html");
         startActivity(intentWebView);
         return true;

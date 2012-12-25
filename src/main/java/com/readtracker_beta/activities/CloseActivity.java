@@ -19,7 +19,7 @@ import java.util.Date;
 /**
  * Screen for finishing a book with an optional closing remark
  */
-public class ActivityClose extends ReadTrackerActivity {
+public class CloseActivity extends ReadTrackerActivity {
   private static boolean mIsAbandon;
   private static LocalReading mLocalReading;
 

@@ -46,7 +46,7 @@ public class ReadmillSyncStatusUIHandler implements ReadmillSyncProgressListener
   }
 
   /**
-   * Hooks for the ActivityHome during the sync.
+   * Hooks for the HomeActivity during the sync.
    */
   public interface SyncUpdateHandler {
     /**
@@ -125,7 +125,7 @@ public class ReadmillSyncStatusUIHandler implements ReadmillSyncProgressListener
    */
   private void inflateSyncBar() {
     if(mLayoutSyncProgress == null) {
-      mLayoutSyncProgress = (LinearLayout) ((ViewStub) mParentActivity.findViewById(R.id.stub_sync_progress)).inflate();
+      mLayoutSyncProgress = (LinearLayout) ((ViewStub) mParentActivity.findViewById(mStubResourceId)).inflate();
       mLayoutSyncProgress.bringToFront();
       mProgressSync = (ProgressBar) mLayoutSyncProgress.findViewById(R.id.progressProgress);
       mProgressMessage = (TextView) mLayoutSyncProgress.findViewById(R.id.textProgressMessage);

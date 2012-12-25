@@ -12,11 +12,11 @@ import android.widget.*;
 import com.readtracker_beta.ApplicationReadTracker;
 import com.readtracker_beta.IntentKeys;
 import com.readtracker_beta.R;
-import com.readtracker_beta.activities.ActivityBook;
+import com.readtracker_beta.activities.BookActivity;
+import com.readtracker_beta.adapters.HighlightItem;
 import com.readtracker_beta.db.LocalHighlight;
 import com.readtracker_beta.db.LocalReading;
-import com.readtracker_beta.list_adapters.ListAdapterHighlight;
-import com.readtracker_beta.list_adapters.ListItemHighlight;
+import com.readtracker_beta.adapters.HighlightAdapter;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ public class FragmentHighlight extends Fragment {
 
   private LocalReading mLocalReading;
   private ArrayList<LocalHighlight> mLocalHighlights;
-  private ListAdapterHighlight mHighlightAdapter;
+  private HighlightAdapter mHighlightAdapter;
 
   private boolean mForceReinitialize = false;
 
@@ -98,7 +98,7 @@ public class FragmentHighlight extends Fragment {
 
     mButtonAddHighlight.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View view) {
-        ((ActivityBook) getActivity()).exitToCreateHighlightScreen();
+        ((BookActivity) getActivity()).exitToCreateHighlightScreen();
       }
     });
 
@@ -110,7 +110,7 @@ public class FragmentHighlight extends Fragment {
     super.onActivityCreated(savedInstanceState);
     Log.d(TAG, "onActivityCreated()");
 
-    List<ListItemHighlight> highlightItems = itemize(mLocalHighlights);
+    List<HighlightItem> highlightItems = itemize(mLocalHighlights);
 
     if(highlightItems.size() == 0) {
       mTextBlankState.setVisibility(View.VISIBLE);
@@ -121,12 +121,12 @@ public class FragmentHighlight extends Fragment {
       mListHighlights.setDividerHeight(1);
     }
 
-    mHighlightAdapter = new ListAdapterHighlight(getActivity(), R.layout.highlight_list_item, highlightItems);
+    mHighlightAdapter = new HighlightAdapter(getActivity(), R.layout.highlight_list_item, highlightItems);
     mListHighlights.setAdapter(mHighlightAdapter);
     mListHighlights.setOnItemClickListener(new AdapterView.OnItemClickListener() {
       @Override
       public void onItemClick(AdapterView<?> adapterView, View view, int position, long itemId) {
-        ListItemHighlight highlightItem = mHighlightAdapter.getItem(position);
+        HighlightItem highlightItem = mHighlightAdapter.getItem(position);
         if(highlightItem.getPermalink() != null) {
           Intent browserIntent = new Intent(Intent.ACTION_VIEW, highlightItem.getPermalink());
           startActivity(browserIntent);
@@ -140,7 +140,7 @@ public class FragmentHighlight extends Fragment {
   @Override
   public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
     int position = ((AdapterView.AdapterContextMenuInfo) menuInfo).position;
-    ListItemHighlight readingItem = mHighlightAdapter.getItem(position);
+    HighlightItem readingItem = mHighlightAdapter.getItem(position);
 
     MenuItem menuItem = menu.add(Menu.NONE, CONTEXT_MENU_DELETE, Menu.NONE, "Remove from device");
     menuItem.setIcon(android.R.drawable.ic_menu_delete);
@@ -155,12 +155,12 @@ public class FragmentHighlight extends Fragment {
   @Override
   public boolean onContextItemSelected(MenuItem item) {
     AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-    ListItemHighlight readingItem = mHighlightAdapter.getItem(info.position);
+    HighlightItem readingItem = mHighlightAdapter.getItem(info.position);
     removeFromDevice(readingItem);
     return true;
   }
 
-  private void removeFromDevice(ListItemHighlight item) {
+  private void removeFromDevice(HighlightItem item) {
     (new DeleteHighlightFromDeviceTask()).execute(item);
   }
 
@@ -170,28 +170,28 @@ public class FragmentHighlight extends Fragment {
     mButtonAddHighlight = (Button) view.findViewById(R.id.buttonAddHighlight);
   }
 
-  private List<ListItemHighlight> itemize(List<LocalHighlight> localHighlights) {
+  private List<HighlightItem> itemize(List<LocalHighlight> localHighlights) {
     if(localHighlights == null) {
-      return new ArrayList<ListItemHighlight>();
+      return new ArrayList<HighlightItem>();
     }
 
     Log.d(TAG, "Itemizing " + localHighlights.size() + " reading highlights");
 
-    ArrayList<ListItemHighlight> items = new ArrayList<ListItemHighlight>(localHighlights.size());
+    ArrayList<HighlightItem> items = new ArrayList<HighlightItem>(localHighlights.size());
     for(LocalHighlight localHighlight : localHighlights) {
-      items.add(new ListItemHighlight(localHighlight));
+      items.add(new HighlightItem(localHighlight));
     }
     return items;
   }
 
-  private void onItemRemoved(ListItemHighlight deletedItem) {
+  private void onItemRemoved(HighlightItem deletedItem) {
     mHighlightAdapter.remove(deletedItem);
   }
 
-  private class DeleteHighlightFromDeviceTask extends AsyncTask<ListItemHighlight, Void, ListItemHighlight> {
+  private class DeleteHighlightFromDeviceTask extends AsyncTask<HighlightItem, Void, HighlightItem> {
 
     @Override
-    protected ListItemHighlight doInBackground(ListItemHighlight... items) {
+    protected HighlightItem doInBackground(HighlightItem... items) {
       try {
         List<Integer> ids = new ArrayList<Integer>(1);
         ids.add(items[0].getId());
@@ -204,7 +204,7 @@ public class FragmentHighlight extends Fragment {
     }
 
     @Override
-    protected void onPostExecute(ListItemHighlight deletedItem) {
+    protected void onPostExecute(HighlightItem deletedItem) {
       onItemRemoved(deletedItem);
     }
   }

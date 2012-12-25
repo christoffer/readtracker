@@ -24,7 +24,7 @@ import java.util.ArrayList;
 /**
  * Splash screen that lets a user sign in or sign up to Readmill
  */
-public class ActivityWelcome extends ReadTrackerActivity {
+public class WelcomeActivity extends ReadTrackerActivity {
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -82,14 +82,14 @@ public class ActivityWelcome extends ReadTrackerActivity {
 
   private void onSignInClicked() {
     Log.d(TAG, "clicked Sign in");
-    Intent intentWebView = new Intent(this, ActivitySignInAndAuthorize.class);
+    Intent intentWebView = new Intent(this, OAuthActivity.class);
     intentWebView.putExtra(IntentKeys.WEB_VIEW_ACTION, IntentKeys.WEB_VIEW_SIGN_IN_AND_AUTHORIZE);
     startActivityForResult(intentWebView, ActivityCodes.REQUEST_SIGN_IN);
   }
 
   private void onCreateAccountClicked() {
     Log.d(TAG, "clicked Create Account");
-    Intent intentWebView = new Intent(this, ActivitySignInAndAuthorize.class);
+    Intent intentWebView = new Intent(this, OAuthActivity.class);
     intentWebView.putExtra(IntentKeys.WEB_VIEW_ACTION, IntentKeys.WEB_VIEW_CREATE_ACCOUNT);
     startActivityForResult(intentWebView, ActivityCodes.REQUEST_CREATE_ACCOUNT);
   }
@@ -132,7 +132,7 @@ public class ActivityWelcome extends ReadTrackerActivity {
 
   private void exitToHomeScreen() {
     getApp().removeFirstTimeFlag();
-    Intent intentWelcome = new Intent(this, ActivityHome.class);
+    Intent intentWelcome = new Intent(this, HomeActivity.class);
     intentWelcome.putExtra(IntentKeys.SIGNED_IN, true);
     startActivity(intentWelcome);
     finish();
@@ -163,7 +163,7 @@ public class ActivityWelcome extends ReadTrackerActivity {
     }
 
     @Override protected void onPostExecute(Void aVoid) {
-      ActivityWelcome.this.exitToHomeScreen();
+      WelcomeActivity.this.exitToHomeScreen();
     }
   }
 
@@ -188,7 +188,7 @@ public class ActivityWelcome extends ReadTrackerActivity {
     }
 
     @Override protected void onPostExecute(Integer count) {
-      ActivityWelcome.this.onCheckAnonymousReadings(count);
+      WelcomeActivity.this.onCheckAnonymousReadings(count);
     }
   }
 }

@@ -20,7 +20,7 @@ import java.util.ArrayList;
 /**
  * Fragmented screen for browsing and reading a book
  */
-public class ActivityBook extends ReadTrackerActivity {
+public class BookActivity extends ReadTrackerActivity {
   // Fragment pages
   public static final int PAGE_UNSPECIFIED = -1;
   public static final int PAGE_SESSIONS = 0;
@@ -202,21 +202,21 @@ public class ActivityBook extends ReadTrackerActivity {
   // Private
 
   public void exitToSessionEndScreen(long elapsedMilliseconds) {
-    Intent intentReadingSessionEnd = new Intent(this, ActivityReadingSessionEnd.class);
+    Intent intentReadingSessionEnd = new Intent(this, ProgressActivity.class);
     intentReadingSessionEnd.putExtra(IntentKeys.LOCAL_READING, mLocalReading);
     intentReadingSessionEnd.putExtra(IntentKeys.SESSION_LENGTH_MS, elapsedMilliseconds);
     startActivityForResult(intentReadingSessionEnd, ActivityCodes.CREATE_PING);
   }
 
   public void exitToBookInfoScreen(LocalReading localReading) {
-    Intent intentEditBook = new Intent(this, ActivityAddBook.class);
+    Intent intentEditBook = new Intent(this, AddBookActivity.class);
     intentEditBook.putExtra(IntentKeys.LOCAL_READING, localReading);
     intentEditBook.putExtra(IntentKeys.FROM_READING_SESSION, true);
     startActivityForResult(intentEditBook, ActivityCodes.REQUEST_EDIT_BOOK);
   }
 
   public void exitToCreateHighlightScreen() {
-    Intent activityAddHighlight = new Intent(this, ActivityHighlight.class);
+    Intent activityAddHighlight = new Intent(this, HighlightActivity.class);
     activityAddHighlight.putExtra(IntentKeys.LOCAL_READING, mLocalReading);
     startActivityForResult(activityAddHighlight, ActivityCodes.CREATE_HIGHLIGHT);
   }

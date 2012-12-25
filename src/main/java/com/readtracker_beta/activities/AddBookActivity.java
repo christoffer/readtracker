@@ -15,8 +15,8 @@ import com.readtracker_beta.tasks.SaveLocalReadingTask;
 /**
  * Screen for adding a new book manually
  */
-public class ActivityAddBook extends ReadTrackerActivity {
-  public static final String TAG = ActivityAddBook.class.getName();
+public class AddBookActivity extends ReadTrackerActivity {
+  public static final String TAG = AddBookActivity.class.getName();
 
   private LocalReading mLocalReading;
 
@@ -190,7 +190,7 @@ public class ActivityAddBook extends ReadTrackerActivity {
   }
 
   private void exitToReadingSession(LocalReading localReading) {
-    Intent readingSessionIntent = new Intent(this, ActivityBook.class);
+    Intent readingSessionIntent = new Intent(this, BookActivity.class);
     if(mCameFromReadingSession) {
       Intent data = new Intent();
       data.putExtra(IntentKeys.READING_ID, localReading.id);

@@ -1,4 +1,4 @@
-package com.readtracker_beta.list_adapters;
+package com.readtracker_beta.adapters;
 
 import android.app.Activity;
 import android.content.Context;
@@ -16,7 +16,7 @@ import java.util.List;
  * <p/>
  * Shows title, author and optionally a cover.
  */
-public class ListAdapterBook extends ArrayAdapter<ListItemBook> {
+public class BookAdapter extends ArrayAdapter<BookItem> {
   protected static final String TAG = null;
   protected static LayoutInflater mInflater;
   protected static DrawableManager mDrawableManager = new DrawableManager();
@@ -30,7 +30,7 @@ public class ListAdapterBook extends ArrayAdapter<ListItemBook> {
     public ImageView imageCover;
   }
 
-  public ListAdapterBook(Context context, int resource, int textViewResourceId, List<ListItemBook> books) {
+  public BookAdapter(Context context, int resource, int textViewResourceId, List<BookItem> books) {
     super(context, resource, textViewResourceId, books);
     mInflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
   }
@@ -41,7 +41,7 @@ public class ListAdapterBook extends ArrayAdapter<ListItemBook> {
 
   @Override
   public View getView(int position, View convertView, ViewGroup parent) {
-    final ListItemBook item = getItem(position);
+    final BookItem item = getItem(position);
     final ViewHolder viewHolder;
 
     // Inflate the view of it's not yet initialized

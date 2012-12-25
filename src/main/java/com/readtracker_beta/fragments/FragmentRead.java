@@ -13,10 +13,10 @@ import android.widget.Button;
 import android.widget.TextView;
 import com.readtracker_beta.IntentKeys;
 import com.readtracker_beta.R;
+import com.readtracker_beta.activities.BookActivity;
 import com.readtracker_beta.interfaces.SessionTimerEventListener;
 import com.readtracker_beta.support.SessionTimerStore;
 import com.readtracker_beta.support.Utils;
-import com.readtracker_beta.activities.ActivityBook;
 import com.readtracker_beta.custom_views.PauseableSpinAnimation;
 import com.readtracker_beta.custom_views.TimeSpinner;
 import com.readtracker_beta.db.LocalReading;
@@ -128,7 +128,7 @@ public class FragmentRead extends Fragment {
     super.onPause();
     Log.d(TAG, "onPause()");
 
-    if(((ActivityBook) getActivity()).isManualShutdown()) {
+    if(((BookActivity) getActivity()).isManualShutdown()) {
       Log.d(TAG, "Parent Activity is shutting down - don't store state");
     } else {
       if(getElapsed() > 0) {
@@ -313,7 +313,7 @@ public class FragmentRead extends Fragment {
   private void onClickedStart() {
     // Handle clicking "Edit book"
     if(!mLocalReading.hasPageInfo()) {
-      ((ActivityBook) getActivity()).exitToBookInfoScreen(mLocalReading);
+      ((BookActivity) getActivity()).exitToBookInfoScreen(mLocalReading);
       return;
     }
 
@@ -347,7 +347,7 @@ public class FragmentRead extends Fragment {
   private void onClickedDone() {
     mSessionTimer.stop();
     final long elapsed = mSessionTimer.getTotalElapsed();
-    ((ActivityBook) getActivity()).exitToSessionEndScreen(elapsed);
+    ((BookActivity) getActivity()).exitToSessionEndScreen(elapsed);
   }
 
   // Causes the activity to reload the LocalReading

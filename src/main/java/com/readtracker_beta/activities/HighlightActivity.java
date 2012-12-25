@@ -20,7 +20,7 @@ import java.util.Date;
 /**
  * Screen for adding a highlight
  */
-public class ActivityHighlight extends ReadTrackerActivity {
+public class HighlightActivity extends ReadTrackerActivity {
   private static EditText mEditHighlightText;
   private static Button mSaveHighlightButton;
 

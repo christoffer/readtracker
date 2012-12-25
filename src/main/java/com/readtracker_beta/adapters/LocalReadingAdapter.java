@@ -1,4 +1,4 @@
-package com.readtracker_beta.list_adapters;
+package com.readtracker_beta.adapters;
 
 import android.app.Activity;
 import android.content.Context;
@@ -26,9 +26,7 @@ import static com.readtracker_beta.support.ReadmillApiHelper.ReadingState.READIN
  * Lists the local reading entity on the home screen with a progress bar,
  * connected state indicator etc.
  */
-public class ListAdapterLocalReading extends ArrayAdapter<LocalReading> {
-  private static final String TAG = ListAdapterLocalReading.class.getName();
-
+public class LocalReadingAdapter extends ArrayAdapter<LocalReading> {
   // Inflater for new views
   private static LayoutInflater mInflater;
 
@@ -55,11 +53,11 @@ public class ListAdapterLocalReading extends ArrayAdapter<LocalReading> {
     TextView textFinishedAt;
   }
 
-  public ListAdapterLocalReading(Context context,
-                                 int resource,
-                                 int textViewResourceId,
-                                 DrawableManager drawableMgr,
-                                 List<LocalReading> localReadings) {
+  public LocalReadingAdapter(Context context,
+                             int resource,
+                             int textViewResourceId,
+                             DrawableManager drawableMgr,
+                             List<LocalReading> localReadings) {
     super(context, resource, textViewResourceId, localReadings);
     mLayoutResource = resource;
     for(LocalReading localReading : localReadings) {
@@ -131,30 +129,6 @@ public class ListAdapterLocalReading extends ArrayAdapter<LocalReading> {
   }
 
   /**
-   * Adds a local reading to the list. If an item with the same Readmill id
-   * already exists, the current item is updated to be the given local reading.
-   *
-   * @param localReading local reading to add or update
-   */
-  public void addOrUpdate(LocalReading localReading) {
-    LocalReading existingItem = mIdMap.get(localReading.id);
-    if(existingItem != null && getPosition(existingItem) > -1) {
-      remove(existingItem);
-    }
-    add(localReading);
-  }
-
-  /**
-   * Get an item by LocalReading id look-up
-   *
-   * @param localReadingId id to look up
-   * @return the found item or null if not found
-   */
-  public LocalReading getItemByLocalReadingId(int localReadingId) {
-    return mIdMap.get(localReadingId);
-  }
-
-  /**
    * Creates a view holder for the given view
    *
    * @param view View to create view holder for
@@ -177,7 +151,6 @@ public class ListAdapterLocalReading extends ArrayAdapter<LocalReading> {
    *
    * @param localReading reading to render
    * @param viewHolder   view holder instance to populate
-   * @return the rendered view
    */
   private void renderLocalReading(LocalReading localReading, ViewHolder viewHolder) {
     // Required fields
@@ -229,28 +202,5 @@ public class ListAdapterLocalReading extends ArrayAdapter<LocalReading> {
         viewHolder.textFinishedAt.setVisibility(View.GONE);
       }
     }
-  }
-
-  private String getEstimatedLabelText(LocalReading localReading) {
-    if(localReading.timeSpentMillis == 0) {
-      return "No time spent";
-    }
-
-    if(localReading.isActive()) {
-      if(localReading.estimateTimeLeft() == 0) {
-        return "Need more data";
-      }
-      String lastRead = "";
-      if(localReading.lastReadAt > 0) {
-        lastRead = Utils.humanPastDate(new Date(localReading.lastReadAt * 1000));
-        if(lastRead.length() > 0) {
-          lastRead = ". Last read " + lastRead;
-        }
-      }
-      String percent = localReading.getProgressPercent() + "%";
-      return String.format("Reached %s%s", percent, lastRead);
-    }
-
-    return "Spent " + Utils.longHumanTimeFromMillis(localReading.timeSpentMillis);
   }
 }

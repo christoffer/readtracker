@@ -3,7 +3,7 @@ package com.readtracker_beta.fragments;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import com.readtracker_beta.activities.ActivityBook;
+import com.readtracker_beta.activities.BookActivity;
 import com.readtracker_beta.db.LocalHighlight;
 import com.readtracker_beta.db.LocalReading;
 import com.readtracker_beta.db.LocalSession;
@@ -24,12 +24,12 @@ public class BookFragmentAdapter extends FragmentStatePagerAdapter {
   private ArrayList<LocalHighlight> mLocalHighlights;
   private SessionTimer mSessionTimer;
 
-  public BookFragmentAdapter(FragmentManager fm, ActivityBook.LocalReadingBundle bundle) {
+  public BookFragmentAdapter(FragmentManager fm, BookActivity.LocalReadingBundle bundle) {
     super(fm);
     setBundle(bundle);
   }
 
-  public void setBundle(ActivityBook.LocalReadingBundle bundle) {
+  public void setBundle(BookActivity.LocalReadingBundle bundle) {
     mLocalReading = bundle.localReading;
     mLocalSessions = bundle.localSessions;
     mLocalHighlights = bundle.localHighlights;
