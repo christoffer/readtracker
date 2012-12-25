@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_height="fill_parent"
+  android:layout_width="fill_parent"
+  android:padding="12dp">
+
+  <include layout="@layout/_book_header" />
+
+  <EditText
+    android:id="@+id/editCLosingRemark"
+    style="@style/free_text_input"
+    android:layout_below="@id/_bookHeader"
+    android:layout_above="@+id/toggleRecommend"
+    android:hint="What did you think of the book?" />
+
+  <ToggleButton
+    android:id="@+id/toggleRecommend"
+    style="@style/default_toggle_button"
+    android:layout_above="@+id/buttonFinish"
+    android:textOff="Don't recommend"
+    android:textOn="Recommend on Readmill"
+    />
+
+  <Button
+    android:id="@+id/buttonFinish"
+    style="@style/default_button"
+    android:layout_alignParentBottom="true"
+    android:text="Finish" />w
+
+</RelativeLayout>
