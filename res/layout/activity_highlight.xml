@@ -12,19 +12,10 @@
 
   <EditText
     android:id="@+id/editHighlight"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    style="@style/free_text_input"
     android:layout_alignParentTop="true"
     android:layout_above="@+id/divider"
     android:layout_below="@id/_bookHeader"
-    android:background="@drawable/default_input_field"
-    android:textColor="@color/text_color_primary"
-    android:typeface="serif"
-    android:textStyle="italic"
-    android:textSize="16dp"
-    android:padding="24dp"
-    android:inputType="text|textCapSentences|textAutoCorrect|textMultiLine"
-    android:gravity="fill_horizontal"
     android:hint="Highlight text" />
 
   <View
