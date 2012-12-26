@@ -4,6 +4,10 @@
 
   <string name="enter_page_count">Please enter the number of pages</string>
 
+  <!-- For Switch Backport compability -->
+  <string name="textOn">ON</string>
+  <string name="textOff">OFF</string>
+
   <string name="associate_anonymous_readings">Do you want to associate the %s existing readings on this device with your
     Readmill account?
   </string><string name="asd">Spent a total of 19 hours and 45 minutes\nOver 38 reading sessions.</string>
