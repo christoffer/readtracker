@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res/com.readtracker_beta"
+
   android:layout_height="fill_parent"
   android:layout_width="fill_parent"
   android:fillViewport="true">
@@ -31,25 +34,33 @@
       android:layout_marginBottom="12dp"
       android:hint="Author" />
 
-    <TextView
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_marginTop="24dp"
-      android:layout_marginBottom="6dp"
-      android:textColor="@color/text_color_secondary"
-      android:text="Tracking" />
-
-    <ToggleButton
-      android:id="@+id/togglePagesPercent"
-      style="@style/default_toggle_button"
-      android:paddingLeft="0dp"
-      android:paddingRight="0dp"
+    <RelativeLayout
       android:layout_width="fill_parent"
-      android:gravity="left|center"
-      android:drawablePadding="12dp"
-      android:textOn="Measured by page count"
-      android:textOff="Measured in percent only"
-      android:checked="true" />
+      android:layout_height="wrap_content"
+      android:gravity="center_vertical"
+      android:layout_marginTop="24dp"
+      android:layout_marginBottom="6dp">
+
+      <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:textColor="@color/text_color_secondary"
+        android:text="Tracking"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true" />
+
+      <com.readtracker_beta.thirdparty.views.Switch
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/togglePagesPercent"
+        app:textOn="Pages"
+        app:textOff="Percent"
+        android:checked="true"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true" />
+
+    </RelativeLayout>
 
     <EditText
       android:id="@+id/editPageCount"
@@ -67,18 +78,37 @@
       android:ellipsize="end" />
 
     <!-- show readmill connection settings when in online mode -->
-    <ToggleButton
-      android:id="@+id/togglePublicPrivate"
-      style="@style/default_toggle_button"
-      android:layout_width="fill_parent"
-      android:paddingLeft="0dp"
-      android:paddingRight="0dp"
-      android:gravity="left|center"
-      android:textOn="Show reading on Readmill"
-      android:textOff="Hide reading on Readmill"
-      android:checked="true" />
 
-    <!-- spacer to push the add button to the bottom of the page but still allow small screens to scroll -->
+    <RelativeLayout
+      android:id="@+id/layoutReadmill"
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content"
+      android:gravity="center_vertical"
+      android:layout_marginTop="24dp"
+      android:layout_marginBottom="6dp"
+      >
+
+      <TextView
+        android:text="Readmill profile page"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        />
+
+      <com.readtracker_beta.thirdparty.views.Switch
+        android:id="@+id/togglePublicPrivate"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        app:textOn="Visible"
+        app:textOff="Hidden"
+        android:checked="true" />
+
+      <!-- spacer to push the add button to the bottom of the page but still allow small screens to scroll -->
+
+    </RelativeLayout>
 
     <View
       android:layout_width="fill_parent"

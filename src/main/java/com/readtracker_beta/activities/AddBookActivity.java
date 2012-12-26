@@ -11,6 +11,7 @@ import com.readtracker_beta.interfaces.SaveLocalReadingListener;
 import com.readtracker_beta.tasks.ConnectReadingTask;
 import com.readtracker_beta.interfaces.ConnectedReadingListener;
 import com.readtracker_beta.tasks.SaveLocalReadingTask;
+import com.readtracker_beta.thirdparty.views.Switch;
 
 /**
  * Screen for adding a new book manually
@@ -26,8 +27,8 @@ public class AddBookActivity extends ReadTrackerActivity {
 
   private static Button mButtonAddBook;
 
-  private static ToggleButton mTogglePagesPercent;
-  private static ToggleButton mTogglePublicPrivate;
+  private static Switch mSwitchPagesPercent;
+  private static Switch mSwitchPublicPrivate;
 
   private boolean mCameFromReadingSession = false;
 
@@ -43,7 +44,8 @@ public class AddBookActivity extends ReadTrackerActivity {
     bindEvents();
 
     if(getCurrentUser() == null) {
-      mTogglePublicPrivate.setVisibility(View.GONE);
+      // No Readmill connection setup, hide related settings
+      findViewById(R.id.layoutReadmill).setVisibility(View.GONE);
     }
 
     Bundle extras = getIntent().getExtras();
@@ -62,9 +64,41 @@ public class AddBookActivity extends ReadTrackerActivity {
       }
     }
   }
+
+  private void bindViews() {
+    mEditTitle = (EditText) findViewById(R.id.editTitle);
+    mEditAuthor = (EditText) findViewById(R.id.editAuthor);
+    mEditPageCount = (EditText) findViewById(R.id.editPageCount);
+    mSwitchPagesPercent = (Switch) findViewById(R.id.togglePagesPercent);
+    mSwitchPublicPrivate = (Switch) findViewById(R.id.togglePublicPrivate);
+    mButtonAddBook = (Button) findViewById(R.id.buttonAddBook);
+  }
+
+  private void bindEvents() {
+    mButtonAddBook.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View view) {
+        onAddBookClicked();
+      }
+    });
+
+    mSwitchPagesPercent.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+      @Override
+      public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
+        mEditPageCount.setEnabled(checked);
+        String rememberedValue = (String) mEditPageCount.getTag();
+        if(checked && rememberedValue != null) {
+          mEditPageCount.setText(rememberedValue);
+        } else {
+          mEditPageCount.setTag(mEditPageCount.getText().toString());
+          mEditPageCount.setText("100.00%");
+        }
+      }
+    });
+  }
+
   private void setupCreateMode(Bundle extras) {
     mButtonAddBook.setText("Add");
-    mTogglePublicPrivate.setVisibility(View.VISIBLE);
+    mSwitchPublicPrivate.setVisibility(View.VISIBLE);
 
     mEditTitle.setText(extras.getString(IntentKeys.TITLE));
     mEditAuthor.setText(extras.getString(IntentKeys.AUTHOR));
@@ -74,7 +108,7 @@ public class AddBookActivity extends ReadTrackerActivity {
 
   private void setupEditMode(LocalReading localReading) {
     mButtonAddBook.setText("Save");
-    mTogglePublicPrivate.setVisibility(View.GONE);
+    mSwitchPublicPrivate.setVisibility(View.GONE);
 
     mLocalReading = localReading;
 
@@ -92,37 +126,6 @@ public class AddBookActivity extends ReadTrackerActivity {
     }
   }
 
-  private void bindViews() {
-    mEditTitle = (EditText) findViewById(R.id.editTitle);
-    mEditAuthor = (EditText) findViewById(R.id.editAuthor);
-    mEditPageCount = (EditText) findViewById(R.id.editPageCount);
-    mTogglePagesPercent = (ToggleButton) findViewById(R.id.togglePagesPercent);
-    mTogglePublicPrivate = (ToggleButton) findViewById(R.id.togglePublicPrivate);
-    mButtonAddBook = (Button) findViewById(R.id.buttonAddBook);
-  }
-
-  private void bindEvents() {
-    mButtonAddBook.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View view) {
-        onAddBookClicked();
-      }
-    });
-
-    mTogglePagesPercent.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-      @Override
-      public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
-        mEditPageCount.setEnabled(checked);
-        String rememberedValue = (String) mEditPageCount.getTag();
-        if(checked && rememberedValue != null) {
-          mEditPageCount.setText(rememberedValue);
-        } else {
-          mEditPageCount.setTag(mEditPageCount.getText().toString());
-          mEditPageCount.setText("100.00%");
-        }
-      }
-    });
-  }
-
   private void onAddBookClicked() {
     if(!validateFields()) {
       return;
@@ -134,7 +137,7 @@ public class AddBookActivity extends ReadTrackerActivity {
     localReading.author = mEditAuthor.getText().toString();
     localReading.coverURL = mCoverURL;
 
-    if(mTogglePagesPercent.isChecked()) {
+    if(mSwitchPagesPercent.isChecked()) {
       localReading.totalPages = Integer.parseInt(mEditPageCount.getText().toString());
       localReading.measureInPercent = false;
     } else {
@@ -143,10 +146,12 @@ public class AddBookActivity extends ReadTrackerActivity {
     }
 
     final boolean isInEditMode = mLocalReading != null;
-    final boolean shouldConnect = getCurrentUser() != null && !isInEditMode;
+    final boolean shouldConnectToReadmill = getCurrentUser() != null && !isInEditMode;
 
-    if(shouldConnect) {
-      saveAndConnectLocalReading(localReading, mTogglePublicPrivate.isChecked());
+    if(shouldConnectToReadmill) {
+      // TODO this should really be saveLocalReading(localReading) + ReadmillApi.connectBook(...)
+      final boolean connectAsPublic = mSwitchPublicPrivate.isChecked();
+      saveAndConnectLocalReading(localReading, connectAsPublic);
     } else {
       saveLocalReading(localReading);
     }
@@ -171,7 +176,7 @@ public class AddBookActivity extends ReadTrackerActivity {
     }
 
     // Validate a reasonable amount of page numbers
-    if(mTogglePagesPercent.isChecked()) {
+    if(mSwitchPagesPercent.isChecked()) {
       int pageCount = 0;
 
       try {
