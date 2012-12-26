@@ -25,7 +25,7 @@ import java.util.UUID;
 /**
  * Screen for input the ending page of a reading session
  */
-public class ProgressActivity extends ReadTrackerActivity {
+public class EndSessionActivity extends ReadTrackerActivity {
   // View flipper page for editing duration
   private static final int PAGE_EDIT_DURATION = 1;
 
