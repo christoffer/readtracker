@@ -41,6 +41,8 @@ public class LocalReading implements Parcelable {
   public static final String READMILL_STATE_FIELD_NAME = "rm_state";
   public static final String READMILL_CLOSING_REMARK = "rm_closing_remark";
 
+  public static final String READMILL_RECOMMENDED = "rm_recommended";
+
 
   // Database => Member bindings
 
@@ -68,6 +70,7 @@ public class LocalReading implements Parcelable {
   @DatabaseField(columnName = READMILL_CLOSING_REMARK) public String readmillClosingRemark = "";
 
   @DatabaseField(columnName = LOCALLY_CLOSED_AT_FIELD_NAME) public long locallyClosedAt;
+  @DatabaseField(columnName = READMILL_RECOMMENDED) public boolean recommended = false;
 
   // Virtual attributes
 
@@ -101,6 +104,11 @@ public class LocalReading implements Parcelable {
       return 0;
     }
     return (int) ((spentSeconds / progress) - spentSeconds);
+  }
+
+  public void setCurrentPage(long currentPage) {
+    this.currentPage = currentPage;
+    refreshProgress();
   }
 
   /**
