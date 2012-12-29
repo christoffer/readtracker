@@ -32,7 +32,7 @@ import java.util.List;
 import static com.readtracker_beta.support.ReadmillSyncStatusUIHandler.SyncStatus;
 import static com.readtracker_beta.support.ReadmillSyncStatusUIHandler.SyncUpdateHandler;
 
-public class HomeActivity extends ReadTrackerActivity implements LocalReadingInteractionListener {
+public class HomeActivity extends ReadTrackerActivity {
 
   private static Button mButtonSyncReadmill;
   private static ImageButton mButtonAddBook;
@@ -198,14 +198,6 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
     return true;
   }
 
-  @Override
-  public void onLocalReadingClicked(LocalReading localReading) {
-    // Handles clicks on readings in any of the child fragments
-    if(!localReading.isInteresting()) {
-      exitToActivityBook(localReading.id);
-    }
-  }
-
   private void bindViews() {
     mButtonSyncReadmill = (Button) findViewById(R.id.buttonSyncReadmill);
     mButtonAddBook = (ImageButton) findViewById(R.id.buttonAddBook);
@@ -214,21 +206,17 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
 
   private void bindEvents() {
     mButtonAddBook.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View view) { startAddBookScreen(); }
+      @Override public void onClick(View view) { exitToBookSearch(); }
     });
     mButtonSyncReadmill.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View view) { sync(false); }
     });
-  }
 
-  private void startAddBookScreen() {
-    mActiveSessionTimer = null; // Clear any paused sessions
-    startActivityForResult(new Intent(this, BookSearchActivity.class), ActivityCodes.REQUEST_ADD_BOOK);
-  }
-
-  private void exitToPreferences() {
-    Intent intentSettings = new Intent(this, SettingsActivity.class);
-    startActivityForResult(intentSettings, ActivityCodes.SETTINGS);
+    mHomeFragmentAdapter.setLocalReadingInteractionListener(new LocalReadingInteractionListener() {
+      @Override public void onLocalReadingClicked(LocalReading localReading) {
+        exitToActivityBook(localReading.id);
+      }
+    });
   }
 
   /**
@@ -289,6 +277,16 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
   }
 
   // Private
+
+  private void exitToBookSearch() {
+    mActiveSessionTimer = null; // Clear any paused sessions
+    startActivityForResult(new Intent(this, BookSearchActivity.class), ActivityCodes.REQUEST_ADD_BOOK);
+  }
+
+  private void exitToPreferences() {
+    Intent intentSettings = new Intent(this, SettingsActivity.class);
+    startActivityForResult(intentSettings, ActivityCodes.SETTINGS);
+  }
 
   private void exitToActivityBook(int localReadingId) {
     Intent intentReadingSession = new Intent(this, BookActivity.class);

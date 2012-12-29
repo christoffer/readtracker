@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.ViewGroup;
 import com.readtracker_beta.R;
 import com.readtracker_beta.db.LocalReading;
+import com.readtracker_beta.interfaces.LocalReadingInteractionListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,7 +17,7 @@ import java.util.List;
  * Managers a set of local readings and partitions them into two states:
  * finished and active.
  */
-public class HomeFragmentAdapter extends FragmentStatePagerAdapter {
+public class HomeFragmentAdapter extends FragmentStatePagerAdapter implements LocalReadingInteractionListener {
   private static final String TAG = HomeFragmentAdapter.class.getName();
 
 
@@ -38,6 +39,7 @@ public class HomeFragmentAdapter extends FragmentStatePagerAdapter {
 
   // A mapping between a local reading instance (in any list) and its id
   private HashMap<Integer, LocalReading> mLocalReadingMap = new HashMap<Integer, LocalReading>();
+  private LocalReadingInteractionListener mLocalReadingInteractionListener;
 
   public HomeFragmentAdapter(FragmentManager fragmentManager, ArrayList<LocalReading> localReadings) {
     super(fragmentManager);
@@ -69,6 +71,7 @@ public class HomeFragmentAdapter extends FragmentStatePagerAdapter {
     // Keep a reference to the active fragment around so we can update it later
     if(fragment != null) {
       fragments[position] = fragment;
+      fragment.setInteractionListener(this);
       return fragment;
     }
 
@@ -194,4 +197,19 @@ public class HomeFragmentAdapter extends FragmentStatePagerAdapter {
   public LocalReading getLocalReadingById(int localReadingId) {
     return mLocalReadingMap.get(localReadingId);
   }
+
+  public void setLocalReadingInteractionListener(LocalReadingInteractionListener listener) {
+    mLocalReadingInteractionListener = listener;
+  }
+
+  /**
+   * Pass on events from the local reading lists to any potential listeners
+   * @param localReading clicked local reading
+   */
+  @Override public void onLocalReadingClicked(LocalReading localReading) {
+    if(mLocalReadingInteractionListener != null) {
+      mLocalReadingInteractionListener.onLocalReadingClicked(localReading);
+    }
+  }
+
 }
