@@ -53,8 +53,8 @@ public class ReadmillApiHelper {
 
     String endpoint = String.format("/books/%d/readings", readmillBookId);
     RequestBuilder request = mWrapper.post(endpoint).
-        readingPrivate(!isPublic).
-        readingState("reading");
+      readingPrivate(!isPublic).
+      readingState("reading");
     JSONObject response = sendRequest(request, "create reading", 200, 201, 409); // 409 is a already existing reading – returns the reading
 
     // Unwrap
@@ -99,14 +99,14 @@ public class ReadmillApiHelper {
 
     String endpoint = String.format("/readings/%d/highlights", localHighlight.readmillReadingId);
     RequestBuilder request = mWrapper.post(endpoint).
-        highlightContent(localHighlight.content).
-        highlightLocators(_buildLocator(localHighlight)).
-        highlightHighlightedAt(localHighlight.highlightedAt);
+      highlightContent(localHighlight.content).
+      highlightLocators(_buildLocator(localHighlight)).
+      highlightHighlightedAt(localHighlight.highlightedAt);
 
     JSONObject remoteHighlight = null;
     try {
       remoteHighlight = sendRequest(request, "create a highlight", 200, 201).
-          getJSONObject("highlight");
+        getJSONObject("highlight");
       Log.i(TAG, "Created remote highlight with id: " + remoteHighlight.getLong("id"));
       return remoteHighlight;
     } catch(JSONException e) {
@@ -146,7 +146,7 @@ public class ReadmillApiHelper {
    */
   public boolean closeReading(long readmillReadingId, int state, String closingRemark) {
     Log.i(TAG, "Closing reading with id " + readmillReadingId +
-        " with state " + state + " and closing remark " + (closingRemark == null ? "" : closingRemark));
+      " with state " + state + " and closing remark " + (closingRemark == null ? "" : closingRemark));
 
     String endpoint = String.format("/readings/%d", readmillReadingId);
 
@@ -167,6 +167,16 @@ public class ReadmillApiHelper {
       Log.w(TAG, "Failed to update Reading", e);
       return false;
     }
+  }
+
+  /**
+   * Deletes a reading on Readmill by id.
+   *
+   * @param readmillReadingId Readmill ID of reading to delete.
+   * @return true if the reading was deleted, false otherwise.
+   */
+  public boolean deleteReading(long readmillReadingId) {
+    return false;
   }
 
   /**
@@ -196,10 +206,10 @@ public class ReadmillApiHelper {
     Log.d(TAG, "PING endpoint: " + endpoint);
 
     RequestBuilder request = mWrapper.post(endpoint).
-        pingDuration(durationSeconds).
-        pingProgress(progress).
-        pingIdentifier(sessionIdentifier).
-        pingOccurredAt(occurredAt);
+      pingDuration(durationSeconds).
+      pingProgress(progress).
+      pingIdentifier(sessionIdentifier).
+      pingOccurredAt(occurredAt);
 
     sendRequest(request, "create reading", 201);
   }
