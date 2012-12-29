@@ -249,10 +249,12 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
 
   /**
    * Goes through the list of local readings and remote readings and divides
-   * them into three buckets:
+   * them into these buckets:
    * - Items that have local changes that should be pushed
    * - Items that have remote changes that should be pulled
    * - Items that does not exist locally and should be created
+   * - Items that have been deleted locally and should be deleted remotely
+   * - Items that maybe have become orphans (deleted remotely but not locally)
    * <p/>
    * Note that this sync currently does not handle deleting of readings well.
    * A locally deleted reading will be recreated on the next sync from the
@@ -267,10 +269,35 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
     Map<LocalReading, JSONObject> pullChangesList = new HashMap<LocalReading, JSONObject>();
     List<LocalReading> pushClosedStateList = new ArrayList<LocalReading>();
     List<JSONObject> pullReadingsList = new ArrayList<JSONObject>();
+    List<LocalReading> readingsToDelete = new ArrayList<LocalReading>();
+    List<LocalReading> maybeOrphans = new ArrayList<LocalReading>();
+
     Log.i(TAG, "Performing a sync between " + localReadings.size() + " local readings and " + remoteReadings.size() + " remote readings");
 
+    // Check for orphaned local readings. That is readings that have been connected,
+    // but are now deleted on the server.
+    for(LocalReading localReading : localReadings) {
+      if(!localReading.isConnected()) {
+        // Unconnected readings can't be orphans
+        continue;
+      }
+
+      boolean remoteFound = false;
+      for(JSONObject remoteReading : remoteReadings) {
+        final long remoteReadingId = remoteReading.getLong("id");
+        if(remoteReadingId == localReading.readmillReadingId) {
+          remoteFound = true;
+          break;
+        }
+      }
+
+      if(!remoteFound) {
+        maybeOrphans.add(localReading);
+      }
+    }
+
     for(JSONObject remoteReading : remoteReadings) {
-      long remoteReadingId = remoteReading.getLong("id");
+      final long remoteReadingId = remoteReading.getLong("id");
       Log.d(TAG, "Looking for a local reading matching remote id: " + remoteReadingId);
 
       if(isCancelled()) { return; }
@@ -289,7 +316,10 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
         // Resolve sync
         long remoteTouchedAt = ReadmillApiHelper.parseISO8601ToUnix(remoteReading.getString("touched_at"));
 
-        if(closedLocallyButNotRemotely(localReading, remoteReading)) {
+        if(localReading.deletedByUser) {
+          Log.d(TAG, "Local reading has been deleted: " + localReading.readmillReadingId);
+          readingsToDelete.add(localReading);
+        } else if(closedLocallyButNotRemotely(localReading, remoteReading)) {
           Log.d(TAG, "Local reading has been closed, readmill id:" + remoteReadingId);
           pushClosedStateList.add(localReading);
         } else if(fullSync || (remoteTouchedAt != localReading.readmillTouchedAt)) {
@@ -309,10 +339,43 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
       }
     }
 
-    // TODO Handle deleted readings (need a deleted at on the reading for that)
+    confirmAndDeleteOrphans(maybeOrphans);
+    pushDeletions(readingsToDelete);
     pushClosedStates(pushClosedStateList);
     pullChanges(pullChangesList);
     pullReadings(pullReadingsList);
+  }
+
+  /**
+   * Delete local readings after being confirmed as orphans.
+   * Confirming a reading as orphan is done by verifying that the Readmill server
+   * responds with a 404 for the given reading.
+   */
+  private void confirmAndDeleteOrphans(List<LocalReading> maybeOrphanLocalReadings) throws SQLException {
+    for(LocalReading localReading : maybeOrphanLocalReadings) {
+      if(verifyReadingNotOnReadmill(localReading.readmillReadingId)) {
+        Log.v(TAG, "Verified reading not on Readmill: " + localReading);
+        mReadingDao.delete(localReading);
+      } else {
+        Log.v(TAG, "Could not verify that reading is not readmill: " + localReading);
+      }
+    }
+  }
+
+  /**
+   * Delete the remote and the local reading.
+   * @param localReadings Local readings to delete
+   */
+  private void pushDeletions(List<LocalReading> localReadings) throws SQLException {
+    Log.d(TAG, "Deleting " + localReadings.size() + " local and remote readings");
+    for(LocalReading localReading : localReadings) {
+      Log.v(TAG, "Delete Readmill Reading with id: " + localReading.readmillReadingId);
+      boolean deleted = mReadmillApi.deleteReading(localReading.readmillReadingId);
+      if(deleted) {
+        Log.v(TAG, "Reading deleted on Readmill. Deleting locally: " + localReading);
+        mReadingDao.delete(localReading);
+      }
+    }
   }
 
   /*
@@ -329,6 +392,18 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
       postProgressUpdateMessage("Updating " + localReading.title, currentCount++, totalCount - 1);
       mReadmillApi.closeReading(localReading.readmillReadingId, localReading.readmillState, localReading.readmillClosingRemark);
     }
+  }
+
+  /**
+   * Sends a request to readmill for the given ID and asserts that the response is a 404,
+   * and is in fact coming from Readmill (to avoid airport proxy hijacking etc).
+   *
+   * @param readingId Readmill id to verify
+   * @return true if Readmill does not have a reading with the given ID.
+   */
+  private boolean verifyReadingNotOnReadmill(long readingId) {
+    // TODO implement
+    return false;
   }
 
   /**
