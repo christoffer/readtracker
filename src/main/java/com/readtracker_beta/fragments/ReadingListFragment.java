@@ -113,7 +113,7 @@ public class ReadingListFragment extends ListFragment {
     Log.v(TAG, "Setting list of local readings to list with size: " + (localReadings == null ? "NULL" : localReadings.size()));
 
     if(this.localReadings == null) {
-      this.localReadings = new ArrayList<LocalReading>(localReadings.size());
+      this.localReadings = new ArrayList<LocalReading>();
     } else {
       this.localReadings.clear();
     }
