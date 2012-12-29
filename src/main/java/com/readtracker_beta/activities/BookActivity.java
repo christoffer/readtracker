@@ -97,6 +97,13 @@ public class BookActivity extends ReadTrackerActivity {
           reloadLocalData(updateReadingId); // TODO optimally we should only reload the highlights here
         }
         break;
+      case ActivityCodes.REQUEST_CHANGE_BOOK_SETTINGS:
+        if(resultCode == ActivityCodes.RESULT_OK) {
+          // Something changed
+          reloadLocalData(data.getIntExtra(IntentKeys.READING_ID, -1));
+        } else if(resultCode == ActivityCodes.RESULT_DELETED_BOOK) {
+          finishWithResult(ActivityCodes.RESULT_OK); // finish with success to have the home screen reload
+        }
     }
     super.onActivityResult(requestCode, resultCode, data);
   }
@@ -235,6 +242,12 @@ public class BookActivity extends ReadTrackerActivity {
     } else {
       finishWithResult(ActivityCodes.RESULT_OK);
     }
+  }
+
+  public void exitToBookSettings() {
+    Intent bookSettings = new Intent(this, BookSettingsActivity.class);
+    bookSettings.putExtra(IntentKeys.LOCAL_READING, mLocalReading);
+    startActivityForResult(bookSettings, ActivityCodes.REQUEST_CHANGE_BOOK_SETTINGS);
   }
 
   public void finishWithResult(int resultCode) {

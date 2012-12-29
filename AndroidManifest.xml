@@ -49,6 +49,8 @@
 
     <activity android:name=".activities.SettingsActivity" />
 
+    <activity android:name=".activities.BookSettingsActivity" />
+
     <activity android:name=".activities.InAppBrowserActivity" />
 
     <activity android:name=".activities.HighlightActivity" />

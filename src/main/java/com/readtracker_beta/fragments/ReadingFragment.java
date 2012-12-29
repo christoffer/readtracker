@@ -1,5 +1,6 @@
 package com.readtracker_beta.fragments;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,10 +11,12 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.*;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import com.readtracker_beta.IntentKeys;
 import com.readtracker_beta.R;
 import com.readtracker_beta.activities.BookActivity;
+import com.readtracker_beta.activities.BookSettingsActivity;
 import com.readtracker_beta.interfaces.SessionTimerEventListener;
 import com.readtracker_beta.support.SessionTimerStore;
 import com.readtracker_beta.support.Utils;
@@ -33,6 +36,7 @@ public class ReadingFragment extends Fragment {
   private static Button mButtonStart;
   private static Button mButtonPause;
   private static Button mButtonDone;
+  private static ImageButton mButtonBookSettings;
 
   // Time tracking
   private static TextView mTextBillboard;
@@ -61,6 +65,7 @@ public class ReadingFragment extends Fragment {
   // Display child index for flipper session control
   private static final int FLIPPER_PAGE_START_BUTTON = 0;
   private static final int FLIPPER_PAGE_READING_BUTTONS = 1;
+
 
   public static Fragment newInstance(LocalReading localReading, SessionTimer initialSessionTimer) {
     Log.d(TAG, "newInstance()");
@@ -168,6 +173,8 @@ public class ReadingFragment extends Fragment {
 
     mTextBillboard = (TextView) view.findViewById(R.id.textBillboard);
     mTimeSpinner = (TimeSpinner) view.findViewById(R.id.timespinner);
+
+    mButtonBookSettings = (ImageButton) view.findViewById(R.id.buttonBookSettings);
   }
 
   private void bindEvents() {
@@ -188,6 +195,12 @@ public class ReadingFragment extends Fragment {
     mButtonDone.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View view) {
         onClickedDone();
+      }
+    });
+
+    mButtonBookSettings.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View view) {
+        ((BookActivity) getActivity()).exitToBookSettings();
       }
     });
 

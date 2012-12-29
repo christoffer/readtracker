@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+  <PreferenceCategory android:title="Social">
+    <CheckBoxPreference
+      android:title="Visible on Readmill"
+      android:summary="Let others view your progress on your Readmill profile."
+      android:checked="true"
+      android:key="readmill.privacy" />
+
+    <CheckBoxPreference
+      android:title="Sharing"
+      android:summary="Share highlights and progress to third party services like Twitter and Facebook."
+      android:checked="true"
+      android:key="readmill.sharing" />
+
+  </PreferenceCategory>
+
+  <PreferenceCategory android:title="Other">
+
+    <Preference
+      android:title="Delete book"
+      android:summary="Remove book from your device and/or Readmill profile."
+      android:key="other.delete_book" />
+
+  </PreferenceCategory>
+
+
+</PreferenceScreen>

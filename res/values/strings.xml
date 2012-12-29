@@ -11,4 +11,7 @@
   <string name="associate_anonymous_readings">Do you want to associate the %s existing readings on this device with your
     Readmill account?
   </string><string name="asd">Spent a total of 19 hours and 45 minutes\nOver 38 reading sessions.</string>
+
+  <string name="delete_reading_connected">This will DELETE the book, both from your device AND from your Readmill profile.\n\nAll related data such as highlights and progress will also be delete.\n\nThere is NO WAY to restore it.</string>
+  <string name="delete_reading_unconnected">This will DELETE the book from your device.\n\nAll related data such as highlights and progress will also be delete.\n\nThere is NO WAY to restore it.</string>
 </resources>
