@@ -2,6 +2,7 @@ package com.readtracker_beta.adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +28,8 @@ import static com.readtracker_beta.support.ReadmillApiHelper.ReadingState.READIN
  * connected state indicator etc.
  */
 public class LocalReadingAdapter extends ArrayAdapter<LocalReading> {
+  private static final String TAG = LocalReadingAdapter.class.getName();
+
   // Inflater for new views
   private static LayoutInflater mInflater;
 
@@ -59,10 +62,15 @@ public class LocalReadingAdapter extends ArrayAdapter<LocalReading> {
                              DrawableManager drawableMgr,
                              List<LocalReading> localReadings) {
     super(context, resource, textViewResourceId, localReadings);
+    Log.d(TAG, "Creating adapter with set of " + (localReadings == null ? "NULL" : localReadings.size()) + " local readings");
     mLayoutResource = resource;
-    for(LocalReading localReading : localReadings) {
-      mIdMap.put(localReading.id, localReading);
+
+    if(localReadings != null) {
+      for(LocalReading localReading : localReadings) {
+        mIdMap.put(localReading.id, localReading);
+      }
     }
+
     mInflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
     mDrawableManager = drawableMgr;
   }
@@ -106,6 +114,7 @@ public class LocalReadingAdapter extends ArrayAdapter<LocalReading> {
 
   @Override
   public void add(LocalReading localReading) {
+    Log.v(TAG, "Adding local Reading: " + localReading);
     super.add(localReading);
     mIdMap.put(localReading.id, localReading);
     sort(mLocalReadingComparator);
@@ -126,6 +135,13 @@ public class LocalReadingAdapter extends ArrayAdapter<LocalReading> {
   public void remove(LocalReading localReading) {
     super.remove(localReading);
     mIdMap.remove(localReading.id);
+  }
+
+  /**
+   * Sort the list with the default sort order (state / freshness)
+   */
+  public void sort() {
+    sort(mLocalReadingComparator);
   }
 
   /**
@@ -162,7 +178,7 @@ public class LocalReadingAdapter extends ArrayAdapter<LocalReading> {
       viewHolder.progressReadingProgress.setVisibility(View.VISIBLE);
       float[] progressStops = localReading.getProgressStops();
       if(progressStops == null) {
-        progressStops = new float[]{(float) localReading.progress};
+        progressStops = new float[]{ (float) localReading.progress };
       }
       viewHolder.progressReadingProgress.setStops(progressStops);
       viewHolder.progressReadingProgress.setColor(localReading.getColor());
