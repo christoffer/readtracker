@@ -3,6 +3,7 @@ package com.readtracker_beta.fragments;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +17,9 @@ import com.readtracker_beta.adapters.LocalReadingAdapter;
 import com.readtracker_beta.db.LocalReading;
 import com.readtracker_beta.interfaces.LocalReadingInteractionListener;
 
-import java.util.ArrayList;
+import java.util.*;
+
+import static com.readtracker_beta.support.ReadmillApiHelper.ReadingState.READING;
 
 /**
  * Fragment for rendering a list of LocalReadings.
@@ -26,35 +29,32 @@ import java.util.ArrayList;
  *
  * @see LocalReadingInteractionListener
  */
-public class ReadingListFragment extends Fragment {
+public class ReadingListFragment extends ListFragment {
   private static final String TAG = ReadingListFragment.class.getName();
-  private final ArrayList<LocalReading> localReadings = new ArrayList<LocalReading>();
-  private ListView listReadings;
   private LocalReadingAdapter listAdapterReadings;
   private int itemLayoutResourceId;
   private LocalReadingInteractionListener interactionListener;
+  private ArrayList<LocalReading> localReadings;
+
+  private Comparator<LocalReading> mLocalReadingComparator = new Comparator<LocalReading>() {
+    @Override
+    public int compare(LocalReading readingA, LocalReading readingB) {
+      // Sort readings freshest to stalest
+      return (int) (readingB.lastReadAt - readingA.lastReadAt);
+    }
+  };
 
   /**
    * Creates a new instance of the fragment
    *
-   * @param localReadings        a reference to the readings to manage
    * @param itemLayoutResourceId resource id of layout to use for rendering readings
    * @return the new instance
    */
   public static ReadingListFragment newInstance(ArrayList<LocalReading> localReadings, int itemLayoutResourceId) {
     ReadingListFragment instance = new ReadingListFragment();
-    instance.setLocalReadings(localReadings);
     instance.setItemLayoutResourceId(itemLayoutResourceId);
+    instance.setLocalReadings(localReadings);
     return instance;
-  }
-
-  @Override public void onAttach(Activity activity) {
-    super.onAttach(activity);
-    try {
-      interactionListener = (LocalReadingInteractionListener) activity;
-    } catch(ClassCastException ex) {
-      throw new ClassCastException("Parent activity must implement " + LocalReadingInteractionListener.class.getName());
-    }
   }
 
   @Override
@@ -77,7 +77,6 @@ public class ReadingListFragment extends Fragment {
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_reading_list, container, false);
-    bindViews(view);
     return view;
   }
 
@@ -86,30 +85,21 @@ public class ReadingListFragment extends Fragment {
     super.onActivityCreated(savedInstanceState);
 
     listAdapterReadings = new LocalReadingAdapter(
-        getActivity(),
-        itemLayoutResourceId,
-        R.id.textTitle,
-        ApplicationReadTracker.getDrawableManager(),
-        localReadings
+      getActivity(),
+      itemLayoutResourceId,
+      R.id.textTitle,
+      ApplicationReadTracker.getDrawableManager(),
+      localReadings
     );
 
-    listReadings.setAdapter(listAdapterReadings);
-    listReadings.setVisibility(View.VISIBLE);
-
-    // Pass on clicked readings to the potential listener
-    listReadings.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-      @Override
-      public void onItemClick(AdapterView parent, View view, int position, long id) {
-        LocalReading clickedReading = (LocalReading) listReadings.getItemAtPosition(position);
-        if(interactionListener != null) {
-          interactionListener.onLocalReadingClicked(clickedReading);
-        }
-      }
-    });
+    setListAdapter(listAdapterReadings);
   }
 
-  private void bindViews(View view) {
-    listReadings = (ListView) view.findViewById(R.id.listReadings);
+  @Override public void onListItemClick(ListView listView, View clickedView, int position, long id) {
+    LocalReading clickedReading = (LocalReading) listView.getItemAtPosition(position);
+    if(interactionListener != null) {
+      interactionListener.onLocalReadingClicked(clickedReading);
+    }
   }
 
   /**
@@ -121,13 +111,22 @@ public class ReadingListFragment extends Fragment {
    */
   public void setLocalReadings(ArrayList<LocalReading> localReadings) {
     Log.v(TAG, "Setting list of local readings to list with size: " + (localReadings == null ? "NULL" : localReadings.size()));
-    this.localReadings.clear();
+
+    if(this.localReadings == null) {
+      this.localReadings = new ArrayList<LocalReading>(localReadings.size());
+    } else {
+      this.localReadings.clear();
+    }
+
     this.localReadings.addAll(localReadings);
+    Collections.sort(this.localReadings, mLocalReadingComparator);
+
     if(listAdapterReadings != null) {
-      listAdapterReadings.sort();
       listAdapterReadings.notifyDataSetChanged();
     }
   }
+
+  // TODO Add public void addLocalReading(LocalReading localReading) {}
 
   /**
    * Sets the layout resource to use for rendering this lists readings
@@ -136,5 +135,9 @@ public class ReadingListFragment extends Fragment {
    */
   public void setItemLayoutResourceId(int resourceId) {
     this.itemLayoutResourceId = resourceId;
+  }
+
+  public void setInteractionListener(HomeFragmentAdapter listener) {
+    interactionListener = listener;
   }
 }

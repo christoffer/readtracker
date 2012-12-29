@@ -16,16 +16,15 @@ import com.readtracker_beta.db.LocalReading;
 import com.readtracker_beta.support.ReadmillApiHelper;
 import com.readtracker_beta.thirdparty.DrawableManager;
 
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 import static com.readtracker_beta.support.ReadmillApiHelper.ReadingState.READING;
 
 /**
  * Lists the local reading entity on the home screen with a progress bar,
  * connected state indicator etc.
+ *
+ * The list of local readings is managed from the fragment adapter.
  */
 public class LocalReadingAdapter extends ArrayAdapter<LocalReading> {
   private static final String TAG = LocalReadingAdapter.class.getName();
@@ -38,9 +37,6 @@ public class LocalReadingAdapter extends ArrayAdapter<LocalReading> {
 
   // Drawable manager used for getting or downloading covers
   private static DrawableManager mDrawableManager;
-
-  // Maps items by their Readmill reading id for fast look-ups
-  private static HashMap<Integer, LocalReading> mIdMap = new HashMap<Integer, LocalReading>();
 
   // Used to cache view look-ups
   class ViewHolder {
@@ -62,37 +58,13 @@ public class LocalReadingAdapter extends ArrayAdapter<LocalReading> {
                              DrawableManager drawableMgr,
                              List<LocalReading> localReadings) {
     super(context, resource, textViewResourceId, localReadings);
+
     Log.d(TAG, "Creating adapter with set of " + (localReadings == null ? "NULL" : localReadings.size()) + " local readings");
     mLayoutResource = resource;
-
-    if(localReadings != null) {
-      for(LocalReading localReading : localReadings) {
-        mIdMap.put(localReading.id, localReading);
-      }
-    }
 
     mInflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
     mDrawableManager = drawableMgr;
   }
-
-  /**
-   * Compare two LocalReading:s by their state or freshness.
-   * <p/>
-   * A is bigger than B if A is reading and B is not.
-   * B is bigger than A if B is reading and A is not.
-   * <p/>
-   * Otherwise they are compared by when they were last read.
-   */
-  private Comparator<LocalReading> mLocalReadingComparator = new Comparator<LocalReading>() {
-    @Override
-    public int compare(LocalReading rdA, LocalReading rdB) {
-      if(rdA.readmillState == READING && rdB.readmillState != READING)
-        return -1;
-      if(rdB.readmillState == READING && rdA.readmillState != READING)
-        return 1;
-      return (int) (rdB.lastReadAt - rdA.lastReadAt); // newest to oldest
-    }
-  };
 
   @Override
   public View getView(int position, View convertView, ViewGroup parent) {
@@ -110,38 +82,6 @@ public class LocalReadingAdapter extends ArrayAdapter<LocalReading> {
 
     renderLocalReading(localReading, holder);
     return view;
-  }
-
-  @Override
-  public void add(LocalReading localReading) {
-    Log.v(TAG, "Adding local Reading: " + localReading);
-    super.add(localReading);
-    mIdMap.put(localReading.id, localReading);
-    sort(mLocalReadingComparator);
-  }
-
-  @Override
-  public void insert(LocalReading localReading, int index) {
-    add(localReading);
-  }
-
-  @Override
-  public void clear() {
-    super.clear();
-    mIdMap.clear();
-  }
-
-  @Override
-  public void remove(LocalReading localReading) {
-    super.remove(localReading);
-    mIdMap.remove(localReading.id);
-  }
-
-  /**
-   * Sort the list with the default sort order (state / freshness)
-   */
-  public void sort() {
-    sort(mLocalReadingComparator);
   }
 
   /**
