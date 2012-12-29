@@ -11,6 +11,8 @@ import com.readtracker_beta.IntentKeys;
 import com.readtracker_beta.R;
 import com.readtracker_beta.SettingsKeys;
 import com.readtracker_beta.db.LocalReading;
+import com.readtracker_beta.interfaces.SaveLocalReadingListener;
+import com.readtracker_beta.tasks.SaveLocalReadingTask;
 
 public class BookSettingsActivity extends PreferenceActivity {
   private static final String TAG = BookSettingsActivity.class.getName();
@@ -62,6 +64,16 @@ public class BookSettingsActivity extends PreferenceActivity {
     Toast.makeText(this, "Not yet implemented", Toast.LENGTH_SHORT).show();
   }
 
+  private void toastDeleted(boolean isConnected) {
+    String message = "Book deleted.";
+
+    if(isConnected) {
+      message += " Changes to Readmill will be applied on next sync.";
+    }
+
+    Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+  }
+
   private void showConfirmDeleteDialog() {
     AlertDialog.Builder builder = new AlertDialog.Builder(this);
     builder.setTitle("Delete book and all data?");
@@ -87,5 +99,10 @@ public class BookSettingsActivity extends PreferenceActivity {
 
   private void deleteReading() {
     mLocalReading.deletedByUser = true;
+    SaveLocalReadingTask.save(mLocalReading, new SaveLocalReadingListener() {
+      @Override public void onLocalReadingSaved(LocalReading localReading) {
+        toastDeleted(localReading.isConnected());
+      }
+    });
   }
 }

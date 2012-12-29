@@ -351,6 +351,7 @@ public class HomeActivity extends ReadTrackerActivity {
     private ArrayList<LocalReading> fetchLocalReadingsForUser(long readmillUserId, Dao<LocalReading, Integer> dao) throws SQLException {
       return (ArrayList<LocalReading>) dao.queryBuilder()
         .where().eq(LocalReading.READMILL_USER_ID_FIELD_NAME, readmillUserId)
+        .and().eq(LocalReading.DELETED_BY_USER_FIELD_NAME, false)
         .query();
     }
 
