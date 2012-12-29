@@ -43,6 +43,7 @@ public class LocalReading implements Parcelable {
 
   public static final String READMILL_RECOMMENDED = "rm_recommended";
 
+  public static final String DELETED_BY_USER_FIELD_NAME = "user_deleted";
 
   // Database => Member bindings
 
@@ -70,7 +71,10 @@ public class LocalReading implements Parcelable {
   @DatabaseField(columnName = READMILL_CLOSING_REMARK) public String readmillClosingRemark = "";
 
   @DatabaseField(columnName = LOCALLY_CLOSED_AT_FIELD_NAME) public long locallyClosedAt;
+
   @DatabaseField(columnName = READMILL_RECOMMENDED) public boolean recommended = false;
+
+  @DatabaseField(columnName = DELETED_BY_USER_FIELD_NAME) public boolean deletedByUser = false;
 
   // Virtual attributes
 
@@ -140,7 +144,13 @@ public class LocalReading implements Parcelable {
 
   @Override
   public String toString() {
-    return String.format("LocalReading #%d: \"%s\" by \"%s\"", id, title, author);
+    final String info = String.format("LocalReading #%d: \"%s\" by \"%s\"", id, title, author);
+
+    if(deletedByUser) {
+      return "[Deleted] " + info;
+    }
+
+    return info;
   }
 
   public String getInfo() {

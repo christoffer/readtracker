@@ -19,7 +19,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
   }
 
   public static final String DATABASE_NAME = "readtracker_beta.db";
-  public static final int DATABASE_VERSION = 7;
+  public static final int DATABASE_VERSION = 8;
   private static final String TAG = DatabaseHelper.class.getName();
 
   private Dao<LocalReading, Integer> readingDao = null;
@@ -86,6 +86,10 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
       }
       if(runningVersion == 6) {
         _upgradeToVersion7(db, connectionSource);
+        runningVersion++;
+      }
+      if(runningVersion == 7) {
+        _upgradeToVersion8(db, connectionSource);
         runningVersion++;
       }
       Log.d(TAG, "Ended on running version: " + runningVersion);
@@ -208,5 +212,10 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     db.execSQL("ALTER TABLE LocalHighlight ADD COLUMN " + LocalHighlight.COMMENT_COUNT_FIELD_NAME + " INTEGER NOT NULL DEFAULT 0;");
     db.execSQL("ALTER TABLE LocalHighlight ADD COLUMN " + LocalHighlight.LIKE_COUNT_FIELD_NAME + " INTEGER NOT NULL DEFAULT 0;");
     db.execSQL("ALTER TABLE LocalReading ADD COLUMN " + LocalReading.READMILL_RECOMMENDED + " INTEGER NOT NULL DEFAULT 0;");
+  }
+
+  private void _upgradeToVersion8(SQLiteDatabase db, ConnectionSource connectionSource) {
+    Log.i(TAG, "Running database upgrade 8");
+    db.execSQL("ALTER TABLE LocalReading ADD COLUMN " + LocalReading.DELETED_BY_USER_FIELD_NAME + " INTEGER NOT NULL DEFAULT 0;");
   }
 }
