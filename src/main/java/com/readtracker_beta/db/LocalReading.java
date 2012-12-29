@@ -129,7 +129,7 @@ public class LocalReading implements Parcelable {
     if(mColor == -1) { // need recalculation
       final String colorKey = title + author + readmillReadingId;
       float color = 360 * (Math.abs(colorKey.hashCode()) / (float) Integer.MAX_VALUE);
-      mColor = Color.HSVToColor(new float[] {
+      mColor = Color.HSVToColor(new float[]{
         color,
         0.4f,
         0.5f

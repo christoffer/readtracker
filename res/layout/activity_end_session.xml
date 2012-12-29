@@ -8,7 +8,6 @@
 
   <include layout="@layout/_book_header" />
 
-  <!--suppress AndroidLintUnknownIdInLayout -->
   <LinearLayout
     android:layout_below="@id/_bookHeader"
     android:layout_above="@+id/btnSaveReadingSession"
@@ -53,9 +52,10 @@
     <!-- finished? -->
 
     <Button
+      android:id="@+id/buttonFinish"
       style="@style/default_button"
       android:textColor="@color/text_color_secondary"
-      android:text="Finished?" />
+      android:text="Finish book" />
 
     <!-- Ending page group -->
 

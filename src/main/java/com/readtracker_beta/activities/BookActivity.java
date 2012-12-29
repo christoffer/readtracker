@@ -144,7 +144,8 @@ public class BookActivity extends ReadTrackerActivity {
 
     // Book info
     ViewBindingBookHeader.bind(this, mLocalReading, new ViewBindingBookHeader.BookHeaderClickListener() {
-      @Override public void onBackButtonClick() {
+      @Override
+      public void onBackButtonClick() {
         exitToHomeScreen();
       }
     });
@@ -202,7 +203,7 @@ public class BookActivity extends ReadTrackerActivity {
   // Private
 
   public void exitToSessionEndScreen(long elapsedMilliseconds) {
-    Intent intentReadingSessionEnd = new Intent(this, ProgressActivity.class);
+    Intent intentReadingSessionEnd = new Intent(this, EndSessionActivity.class);
     intentReadingSessionEnd.putExtra(IntentKeys.LOCAL_READING, mLocalReading);
     intentReadingSessionEnd.putExtra(IntentKeys.SESSION_LENGTH_MS, elapsedMilliseconds);
     startActivityForResult(intentReadingSessionEnd, ActivityCodes.CREATE_PING);
@@ -229,7 +230,7 @@ public class BookActivity extends ReadTrackerActivity {
     if(currentSession.getTotalElapsed() > 0) {
       SessionTimer sessionTimer = mBookFragmentAdapter.getSessionTimer();
       sessionTimer.stop();
-      finishWithResult(ActivityCodes.RESULT_CANCELED, mLocalReading.id, sessionTimer);
+      finishWithResultAndPausedSession(ActivityCodes.RESULT_CANCELED, mLocalReading.id, sessionTimer);
       toast("Pausing " + mLocalReading.title);
     } else {
       finishWithResult(ActivityCodes.RESULT_OK);
@@ -237,19 +238,20 @@ public class BookActivity extends ReadTrackerActivity {
   }
 
   public void finishWithResult(int resultCode) {
-    finishWithResult(resultCode, -1, null);
+    setResult(resultCode);
+    shutdown();
   }
 
-  public void finishWithResult(int resultCode, int localReadingId, SessionTimer sessionTimer) {
-    if(localReadingId < 1 || sessionTimer == null) {
-      Log.v(TAG, "Finishing without extra information");
-      setResult(resultCode);
-    } else {
-      Log.v(TAG, String.format("Finishing with reading id: %d and session timer: %s", localReadingId, sessionTimer.toString()));
-      Intent resultIntent = new Intent();
-      resultIntent.putExtra(IntentKeys.READING_SESSION_STATE, sessionTimer);
-      setResult(resultCode, resultIntent);
-    }
+  public void finishWithResultAndPausedSession(int resultCode, int localReadingId, SessionTimer sessionTimer) {
+    Log.v(TAG, String.format("Finishing with reading id: %d and session timer: %s", localReadingId, sessionTimer.toString()));
+    Intent resultIntent = new Intent();
+    resultIntent.putExtra(IntentKeys.READING_SESSION_STATE, sessionTimer);
+    setResult(resultCode, resultIntent);
+    shutdown();
+  }
+
+  private void shutdown() {
+    Log.v(TAG, "Shutting down");
     mManualShutdown = true;
     SessionTimerStore.clear();
     finish();

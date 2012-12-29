@@ -1,7 +1,5 @@
 package com.readtracker_beta.activities;
 
-import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
@@ -31,6 +29,7 @@ public class EndSessionActivity extends ReadTrackerActivity {
 
   private static Button mButtonSaveReadingSession;
   private static Button mButtonShowDurationPicker;
+  private static Button mButtonFinish;
 
   private static WheelView mWheelDurationHours;
   private static WheelView mWheelDurationMinutes;
@@ -47,25 +46,25 @@ public class EndSessionActivity extends ReadTrackerActivity {
     super.onCreate(in);
     Log.i(TAG, "onCreate");
 
-    setContentView(R.layout.activity_reading_session_end);
+    setContentView(R.layout.activity_end_session);
 
     bindViews();
     bindEvents();
 
     int currentPage;
-    if(in != null) {
+    if(in == null) {
+      Bundle extras = getIntent().getExtras();
+      mSessionLengthMillis = extras.getLong(IntentKeys.SESSION_LENGTH_MS);
+      mLocalReading = extras.getParcelable(IntentKeys.LOCAL_READING);
+      mButtonSaveReadingSession.setEnabled(false);
+      currentPage = (int) mLocalReading.currentPage;
+    } else {
       Log.i(TAG, "unfreezing state");
       mLocalReading = in.getParcelable(IntentKeys.LOCAL_READING);
       mSessionLengthMillis = in.getLong(IntentKeys.SESSION_LENGTH_MS);
       boolean buttonEnabled = in.getBoolean(IntentKeys.BUTTON_ENABLED);
       mButtonSaveReadingSession.setEnabled(buttonEnabled);
       currentPage = in.getInt(IntentKeys.PAGE);
-    } else {
-      Bundle extras = getIntent().getExtras();
-      mSessionLengthMillis = extras.getLong(IntentKeys.SESSION_LENGTH_MS);
-      mLocalReading = extras.getParcelable(IntentKeys.LOCAL_READING);
-      mButtonSaveReadingSession.setEnabled(false);
-      currentPage = (int) mLocalReading.currentPage;
     }
 
     ViewBindingBookHeader.bindWithDefaultClickHandler(this, mLocalReading);
@@ -96,6 +95,25 @@ public class EndSessionActivity extends ReadTrackerActivity {
     out.putInt(IntentKeys.PAGE, mProgressPicker.getPage());
   }
 
+  @Override
+  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    switch(requestCode) {
+      case ActivityCodes.REQUEST_FINISH_READING:
+        if(resultCode == ActivityCodes.RESULT_OK) {
+          // User finished the reading, fall through
+          Log.v(TAG, "Reading was finished, exit with success");
+          mLocalReading = data.getExtras().getParcelable(IntentKeys.LOCAL_READING);
+          final long page = mLocalReading.totalPages;
+          saveSessionAndExit(page);
+        } else {
+          // User cancelled the finish
+          Log.v(TAG, "Reading was not finished. Ignoring.");
+          return;
+        }
+        break;
+    }
+  }
+
   private void bindViews() {
     mButtonSaveReadingSession = (Button) findViewById(R.id.btnSaveReadingSession);
     mButtonShowDurationPicker = (Button) findViewById(R.id.buttonShowDurationPicker);
@@ -105,6 +123,41 @@ public class EndSessionActivity extends ReadTrackerActivity {
 
     mFlipperSessionLength = (SafeViewFlipper) findViewById(R.id.flipperSessionLength);
     mProgressPicker = (ProgressPicker) findViewById(R.id.progressPicker);
+
+    mButtonFinish = (Button) findViewById(R.id.buttonFinish);
+  }
+
+
+  private void bindEvents() {
+    mButtonSaveReadingSession.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        final long page = mProgressPicker.getPage();
+        saveSessionAndExit(page);
+      }
+    });
+
+    mButtonShowDurationPicker.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        showDurationPicker();
+      }
+    });
+
+    mButtonFinish.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        exitToFinishReading(mLocalReading);
+      }
+    });
+
+    mProgressPicker.setOnProgressChangeListener(new ProgressPicker.OnProgressChangeListener() {
+      @Override
+      public void onChangeProgress(int newPage) {
+        boolean hasChanged = mLocalReading.currentPage != newPage;
+        mButtonSaveReadingSession.setEnabled(hasChanged);
+      }
+    });
   }
 
   private void configureWheelAdapterStyle(NumericWheelAdapter wheelAdapter) {
@@ -145,37 +198,28 @@ public class EndSessionActivity extends ReadTrackerActivity {
     return adapter;
   }
 
-  private void bindEvents() {
-    mButtonSaveReadingSession.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View view) {
-        onClickedSave();
-      }
-    });
-
-    mButtonShowDurationPicker.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View view) {
-        showDurationPicker();
-      }
-    });
-
-    mProgressPicker.setOnProgressChangeListener(new ProgressPicker.OnProgressChangeListener() {
-      @Override public void onChangeProgress(int newPage) {
-        boolean hasChanged = mLocalReading.currentPage != newPage;
-        mButtonSaveReadingSession.setEnabled(hasChanged);
-      }
-    });
+  /**
+   * Start the FinishBookActivity with the current reading and await the result.
+   *
+   * @param localReading The current local reading to finish.
+   */
+  private void exitToFinishReading(LocalReading localReading) {
+    Intent finishActivity = new Intent(this, FinishBookActivity.class);
+    finishActivity.putExtra(IntentKeys.LOCAL_READING, localReading);
+    startActivityForResult(finishActivity, ActivityCodes.REQUEST_FINISH_READING);
   }
 
-  private void onClickedSave() {
-    mLocalReading.currentPage = mProgressPicker.getPage();
-    mLocalReading.refreshProgress();
+  private void saveSessionAndExit(long page) {
+    final long durationMillis = mSessionLengthMillis;
+
+    mLocalReading.setCurrentPage(page);
     mLocalReading.lastReadAt = (new Date()).getTime() / 1000; // Convert to seconds
-    mLocalReading.timeSpentMillis += mSessionLengthMillis;
 
     // Send off to background task
-    UpdateAndCreateSession.createSession(mLocalReading, mSessionLengthMillis,
+    UpdateAndCreateSession.createSession(mLocalReading, durationMillis,
       new UpdateAndCreateSession.OnCompleteListener() {
-        @Override public void onCompleted(LocalSession localSession) {
+        @Override
+        public void onCompleted(LocalSession localSession) {
           onSessionSaved(localSession);
         }
       }
@@ -184,17 +228,15 @@ public class EndSessionActivity extends ReadTrackerActivity {
 
   private void onSessionSaved(LocalSession localSession) {
     Log.i(TAG, "onSessionSaved: " + localSession);
-    if(localSession != null) {
-      Log.i(TAG, "Saved locally, initializing process of queued pings...");
-      startService(new Intent(this, ReadmillTransferIntent.class));
-      setResult(RESULT_OK);
-      finish();
-    } else {
-      Builder alert = new AlertDialog.Builder(this);
-      alert.setMessage("Failed to save the data");
-      alert.setIcon(android.R.drawable.ic_dialog_alert);
-      alert.show();
+    if(localSession == null) {
+      toastLong("An error occurred while saving your data.");
+      return;
     }
+
+    Log.i(TAG, "Saved locally, initializing process of queued pings...");
+    startService(new Intent(this, ReadmillTransferIntent.class));
+    setResult(RESULT_OK);
+    finish();
   }
 
   // --------------------------------------------------------------------
@@ -228,7 +270,7 @@ public class EndSessionActivity extends ReadTrackerActivity {
       Log.i(TAG, "Saving reading with id " + mLocalReading.id);
       LocalSession newSession = generateReadingSession(mLocalReading, mSessionLength);
       Log.d(TAG, "Created session: " + newSession);
-      boolean success = updateLocalReading(mLocalReading) && saveReadingSession(newSession);
+      boolean success = updateLocalReading(mLocalReading, mSessionLength) && saveReadingSession(newSession);
       return success ? newSession : null;
     }
 
@@ -246,9 +288,10 @@ public class EndSessionActivity extends ReadTrackerActivity {
       }};
     }
 
-    private boolean updateLocalReading(LocalReading localReading) {
-      Log.i(TAG, "Updating LocalReading: " + localReading.id);
+    private boolean updateLocalReading(LocalReading localReading, long addedDurationMillis) {
+      Log.i(TAG, "Updating LocalReading: " + localReading.id + ", adding: " + addedDurationMillis + " milliseconds to time spent");
       try {
+        localReading.timeSpentMillis += addedDurationMillis;
         ApplicationReadTracker.getReadingDao().update(localReading);
         return true;
       } catch(SQLException e) {

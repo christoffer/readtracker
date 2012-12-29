@@ -91,7 +91,7 @@ public class BookFragmentAdapter extends FragmentStatePagerAdapter {
     if(mFragmentReadInstance != null) {
       return mFragmentReadInstance.getSessionTimer();
     }
-    return null;
+    return new SessionTimer(mLocalReading.id);
   }
 
   /**

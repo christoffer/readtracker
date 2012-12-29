@@ -83,7 +83,12 @@ public class CloseActivity extends ReadTrackerActivity {
         ReadmillApiHelper.ReadingState.FINISHED;
 
     mLocalReading.locallyClosedAt = (new Date()).getTime();
-
+    (new SaveLocalReadingTask(new SaveLocalReadingListener() {
+      @Override
+      public void onLocalReadingSaved(LocalReading localReading) {
+        postLocalReadingSaved(localReading);
+      }
+    })).execute(mLocalReading);
     saveLocalReading();
   }
 

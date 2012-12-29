@@ -15,4 +15,5 @@ class ActivityCodes {
   public static final int REQUEST_CREATE_ACCOUNT = 6;
   public static final int REQUEST_SIGN_IN = 7;
   public static final int REQUEST_EDIT_BOOK = 8;
+  public static final int REQUEST_FINISH_READING = 9;
 }

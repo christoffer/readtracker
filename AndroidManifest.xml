@@ -23,7 +23,7 @@
 
     <activity android:name=".activities.OAuthActivity" />
 
-    <activity android:name=".activities.CloseActivity" />
+    <activity android:name=".activities.FinishBookActivity" />
 
     <activity android:name=".activities.HomeActivity">
 
@@ -38,7 +38,7 @@
 
     <activity android:name=".activities.BookActivity" />
 
-    <activity android:name=".activities.ProgressActivity"
+    <activity android:name=".activities.EndSessionActivity"
               android:windowSoftInputMode="adjustPan" />
 
     <service android:name=".ReadmillTransferIntent" />
