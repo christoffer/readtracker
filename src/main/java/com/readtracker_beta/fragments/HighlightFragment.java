@@ -22,8 +22,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FragmentHighlight extends Fragment {
-  private static final String TAG = FragmentHighlight.class.getName();
+public class HighlightFragment extends Fragment {
+  private static final String TAG = HighlightFragment.class.getName();
   private static final int CONTEXT_MENU_DELETE = 0;
 
   private static ListView mListHighlights;
@@ -38,7 +38,7 @@ public class FragmentHighlight extends Fragment {
 
   public static Fragment newInstance(LocalReading localReading, ArrayList<LocalHighlight> localHighlights) {
     Log.d(TAG, "newInstance() called with " + localHighlights.size() + " highlights ");
-    FragmentHighlight instance = new FragmentHighlight();
+    HighlightFragment instance = new HighlightFragment();
     instance.setLocalReading(localReading);
     instance.setReadingHighlights(localHighlights);
     instance.setForceInitialize(true);

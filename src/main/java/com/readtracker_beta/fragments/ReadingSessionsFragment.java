@@ -23,8 +23,8 @@ import java.util.ArrayList;
 /**
  * Fragment for showing a reading history of a book
  */
-public class FragmentSessions extends Fragment {
-  private static final String TAG = FragmentSessions.class.getName();
+public class ReadingSessionsFragment extends Fragment {
+  private static final String TAG = ReadingSessionsFragment.class.getName();
 
   private LocalReading mLocalReading;
   private ArrayList<LocalSession> mLocalSessions;
@@ -42,7 +42,7 @@ public class FragmentSessions extends Fragment {
 
   public static Fragment newInstance(LocalReading localReading, ArrayList<LocalSession> localSessions) {
     Log.d(TAG, "newInstance()");
-    FragmentSessions instance = new FragmentSessions();
+    ReadingSessionsFragment instance = new ReadingSessionsFragment();
     instance.setLocalReading(localReading);
     instance.setReadingSessions(localSessions);
     instance.setForceReinitialize(true);

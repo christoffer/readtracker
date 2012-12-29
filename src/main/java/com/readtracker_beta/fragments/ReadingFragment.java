@@ -26,8 +26,8 @@ import com.readtracker_beta.support.SessionTimer;
 /**
  * Fragment for managing a reading session
  */
-public class FragmentRead extends Fragment {
-  private static final String TAG = FragmentRead.class.getName();
+public class ReadingFragment extends Fragment {
+  private static final String TAG = ReadingFragment.class.getName();
 
   // Session controls
   private static Button mButtonStart;
@@ -64,7 +64,7 @@ public class FragmentRead extends Fragment {
 
   public static Fragment newInstance(LocalReading localReading, SessionTimer initialSessionTimer) {
     Log.d(TAG, "newInstance()");
-    FragmentRead instance = new FragmentRead();
+    ReadingFragment instance = new ReadingFragment();
     if(initialSessionTimer == null) {
       Log.v(TAG, "Initializing with new session timer");
       initialSessionTimer = new SessionTimer(localReading.id);

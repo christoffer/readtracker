@@ -30,7 +30,7 @@ public class HomeFragmentAdapter extends FragmentStatePagerAdapter {
 
   // Keep references to current fragments to allow updating them when the
   // list of local readings changes
-  private FragmentReadingList[] fragments = new FragmentReadingList[NUM_PAGES];
+  private ReadingListFragment[] fragments = new ReadingListFragment[NUM_PAGES];
 
   // Bucket local readings on state
   private final ArrayList<LocalReading> finishedReadings = new ArrayList<LocalReading>();
@@ -58,12 +58,12 @@ public class HomeFragmentAdapter extends FragmentStatePagerAdapter {
   }
 
   @Override public Fragment getItem(int position) {
-    FragmentReadingList fragment = null;
+    ReadingListFragment fragment = null;
 
     if(position == FRAGMENT_FINISHED) {
-      fragment = FragmentReadingList.newInstance(finishedReadings, R.layout.local_reading_item_finished);
+      fragment = ReadingListFragment.newInstance(finishedReadings, R.layout.local_reading_item_finished);
     } else if(position == FRAGMENT_ACTIVE) {
-      fragment = FragmentReadingList.newInstance(activeReadings, R.layout.local_reading_item_active);
+      fragment = ReadingListFragment.newInstance(activeReadings, R.layout.local_reading_item_active);
     }
 
     // Keep a reference to the active fragment around so we can update it later

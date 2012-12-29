@@ -17,7 +17,7 @@ import java.util.ArrayList;
 public class BookFragmentAdapter extends FragmentStatePagerAdapter {
   private boolean mBrowseMode;
 
-  private FragmentRead mFragmentReadInstance;
+  private ReadingFragment mReadingFragmentInstance;
 
   private LocalReading mLocalReading;
   private ArrayList<LocalSession> mLocalSessions;
@@ -38,14 +38,14 @@ public class BookFragmentAdapter extends FragmentStatePagerAdapter {
   @Override
   public Fragment getItem(int position) {
     if(position == getSessionsPageIndex()) {
-      return FragmentSessions.newInstance(mLocalReading, mLocalSessions);
+      return ReadingSessionsFragment.newInstance(mLocalReading, mLocalSessions);
     } else if(position == getReadingPageIndex()) {
-      // Keep a reference to the FragmentRead since we want the ability to
+      // Keep a reference to the ReadingFragment since we want the ability to
       // interrogate for the current session state
-      mFragmentReadInstance = (FragmentRead) FragmentRead.newInstance(mLocalReading, mSessionTimer);
-      return mFragmentReadInstance;
+      mReadingFragmentInstance = (ReadingFragment) ReadingFragment.newInstance(mLocalReading, mSessionTimer);
+      return mReadingFragmentInstance;
     } else if(position == getHighlightsPageIndex()) {
-      return FragmentHighlight.newInstance(mLocalReading, mLocalHighlights);
+      return HighlightFragment.newInstance(mLocalReading, mLocalHighlights);
     }
     return null;
   }
@@ -88,8 +88,8 @@ public class BookFragmentAdapter extends FragmentStatePagerAdapter {
    * @return the current reading state as a value object or null
    */
   public SessionTimer getSessionTimer() {
-    if(mFragmentReadInstance != null) {
-      return mFragmentReadInstance.getSessionTimer();
+    if(mReadingFragmentInstance != null) {
+      return mReadingFragmentInstance.getSessionTimer();
     }
     return new SessionTimer(mLocalReading.id);
   }

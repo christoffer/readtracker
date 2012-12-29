@@ -3,6 +3,7 @@ package com.readtracker_beta.fragments;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +26,8 @@ import java.util.ArrayList;
  *
  * @see LocalReadingInteractionListener
  */
-public class FragmentReadingList extends Fragment {
+public class ReadingListFragment extends Fragment {
+  private static final String TAG = ReadingListFragment.class.getName();
   private final ArrayList<LocalReading> localReadings = new ArrayList<LocalReading>();
   private ListView listReadings;
   private LocalReadingAdapter listAdapterReadings;
@@ -39,8 +41,8 @@ public class FragmentReadingList extends Fragment {
    * @param itemLayoutResourceId resource id of layout to use for rendering readings
    * @return the new instance
    */
-  public static FragmentReadingList newInstance(ArrayList<LocalReading> localReadings, int itemLayoutResourceId) {
-    FragmentReadingList instance = new FragmentReadingList();
+  public static ReadingListFragment newInstance(ArrayList<LocalReading> localReadings, int itemLayoutResourceId) {
+    ReadingListFragment instance = new ReadingListFragment();
     instance.setLocalReadings(localReadings);
     instance.setItemLayoutResourceId(itemLayoutResourceId);
     return instance;
@@ -118,9 +120,11 @@ public class FragmentReadingList extends Fragment {
    * @param localReadings list of local readings to display
    */
   public void setLocalReadings(ArrayList<LocalReading> localReadings) {
+    Log.v(TAG, "Setting list of local readings to list with size: " + (localReadings == null ? "NULL" : localReadings.size()));
     this.localReadings.clear();
     this.localReadings.addAll(localReadings);
     if(listAdapterReadings != null) {
+      listAdapterReadings.sort();
       listAdapterReadings.notifyDataSetChanged();
     }
   }
