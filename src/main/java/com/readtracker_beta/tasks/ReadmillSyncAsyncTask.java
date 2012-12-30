@@ -7,9 +7,7 @@ import com.j256.ormlite.stmt.Where;
 import com.readtracker_beta.ApplicationReadTracker;
 import com.readtracker_beta.interfaces.ReadmillSyncProgressListener;
 import com.readtracker_beta.db.*;
-import com.readtracker_beta.support.ReadmillConverter;
-import com.readtracker_beta.support.ReadmillApiHelper;
-import com.readtracker_beta.support.ReadmillException;
+import com.readtracker_beta.support.*;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -107,7 +105,7 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
    * Syncs all local and remote data for a given user.
    *
    * @param readmillUserId readmill id of user to sync data for
-   * @param fullSync   skip change detection and force update of local data
+   * @param fullSync       skip change detection and force update of local data
    * @throws ReadmillException if an error occurs while communicating with Readmill
    * @throws JSONException     if the response from Readmill is not properly formatted
    */
@@ -151,7 +149,7 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
    * @param remoteReading Readmill Reading containing canonical metadata
    * @throws JSONException if the readmill response was not properly formatted
    */
-  private void updateLocalReading(LocalReading localReading, JSONObject remoteReading) throws JSONException, SQLException {
+  private void updateLocalReadingMetadata(LocalReading localReading, JSONObject remoteReading) throws JSONException, SQLException {
     Log.i(TAG, "Updating Metadata for Reading: " + localReading.readmillReadingId);
 
     JSONObject remoteBook = remoteReading.getJSONObject("book");
@@ -164,16 +162,15 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
 
     String coverURL = remoteBook.getString("cover_url");
     if(coverURL.matches("default-cover")) {
-      Log.d(TAG, "Not replacing with default cover");
+      Log.v(TAG, "Not replacing with default cover");
     } else {
-      Log.d(TAG, "Replacing old cover url: " + localReading.coverURL + " with server cover: " + coverURL);
+      Log.i(TAG, "Replacing old cover url: " + localReading.coverURL + " with server cover: " + coverURL);
       localReading.coverURL = coverURL;
     }
 
     localReading.lastReadAt = Math.max(localReading.readmillTouchedAt, localReading.lastReadAt);
 
     mReadingDao.update(localReading);
-    syncDependentObjects(localReading, remoteReading);
   }
 
   private void syncDependentObjects(LocalReading localReading, JSONObject remoteReading) throws JSONException, SQLException {
@@ -204,7 +201,7 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
    * @param remoteReadings Remote readings to create locally
    * @throws JSONException if the readmill response was not properly formatted
    */
-  private void pullReadings(List<JSONObject> remoteReadings) throws JSONException, SQLException {
+  private void createLocalReadings(List<JSONObject> remoteReadings) throws JSONException, SQLException {
     int totalCount = remoteReadings.size();
     Log.d(TAG, "Pulling " + totalCount + " new readings");
     for(int currentCount = 0; currentCount < totalCount; currentCount++) {
@@ -239,7 +236,8 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
 
       postProgressUpdateMessage("Updating " + localReading.title, currentCount++, totalCount - 1);
       try {
-        updateLocalReading(localReading, remoteReading);
+        updateLocalReadingMetadata(localReading, remoteReading);
+        syncDependentObjects(localReading, remoteReading);
       } catch(JSONException e) {
         Log.w(TAG, "Failed to update, unexpected JSON format of remote reading: " + (remoteReading == null ? "NULL" : remoteReading.toString()));
       }
@@ -265,12 +263,12 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
    * @throws JSONException if the response from Readmill was not correct
    */
   private void syncLocalReadingsWithRemoteReadings(ArrayList<LocalReading> localReadings, ArrayList<JSONObject> remoteReadings, boolean fullSync)
-    throws JSONException, SQLException {
+    throws JSONException, SQLException, ReadmillException {
     Map<LocalReading, JSONObject> pullChangesList = new HashMap<LocalReading, JSONObject>();
     List<LocalReading> pushClosedStateList = new ArrayList<LocalReading>();
     List<JSONObject> pullReadingsList = new ArrayList<JSONObject>();
     List<LocalReading> readingsToDelete = new ArrayList<LocalReading>();
-    List<LocalReading> maybeOrphans = new ArrayList<LocalReading>();
+    List<LocalReading> possibleOrphans = new ArrayList<LocalReading>();
 
     Log.i(TAG, "Performing a sync between " + localReadings.size() + " local readings and " + remoteReadings.size() + " remote readings");
 
@@ -292,7 +290,7 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
       }
 
       if(!remoteFound) {
-        maybeOrphans.add(localReading);
+        possibleOrphans.add(localReading);
       }
     }
 
@@ -339,11 +337,11 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
       }
     }
 
-    confirmAndDeleteOrphans(maybeOrphans);
+    confirmAndDeleteOrphans(possibleOrphans);
     pushDeletions(readingsToDelete);
     pushClosedStates(pushClosedStateList);
     pullChanges(pullChangesList);
-    pullReadings(pullReadingsList);
+    createLocalReadings(pullReadingsList);
   }
 
   /**
@@ -480,7 +478,9 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
    * @param remoteHighlights list of remote highlights
    * @throws JSONException if the Readmill response is not properly formatted
    */
-  private void mergeHighlights(LocalReading localReading, List<LocalHighlight> localHighlights, ArrayList<JSONObject> remoteHighlights) throws JSONException, SQLException {
+  private void mergeHighlights(LocalReading localReading,
+                               List<LocalHighlight> localHighlights,
+                               ArrayList<JSONObject> remoteHighlights) throws JSONException, SQLException {
     if(remoteHighlights == null || localHighlights == null) {
       Log.d(TAG, "Received NULL list - aborting");
       return;
