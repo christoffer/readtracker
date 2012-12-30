@@ -362,17 +362,16 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
 
   /**
    * Delete the remote and the local reading.
+   *
    * @param localReadings Local readings to delete
    */
-  private void pushDeletions(List<LocalReading> localReadings) throws SQLException {
-    Log.d(TAG, "Deleting " + localReadings.size() + " local and remote readings");
+  private void pushDeletions(List<LocalReading> localReadings) throws SQLException, ReadmillException {
+    Log.d(TAG, "Deleting " + localReadings.size() + " readings");
     for(LocalReading localReading : localReadings) {
-      Log.v(TAG, "Delete Readmill Reading with id: " + localReading.readmillReadingId);
-      boolean deleted = mReadmillApi.deleteReading(localReading.readmillReadingId);
-      if(deleted) {
-        Log.v(TAG, "Reading deleted on Readmill. Deleting locally: " + localReading);
-        mReadingDao.delete(localReading);
-      }
+      Log.v(TAG, "Deleting Readmill Reading with id: " + localReading.readmillReadingId);
+      mReadmillApi.deleteReading(localReading.readmillReadingId);
+      Log.v(TAG, "Reading deleted on Readmill. Deleting locally: " + localReading);
+      mReadingDao.delete(localReading);
     }
   }
 
