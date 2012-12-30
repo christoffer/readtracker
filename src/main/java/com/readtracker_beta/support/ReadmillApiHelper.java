@@ -249,6 +249,8 @@ public class ReadmillApiHelper {
    * <p/>
    * Currently only supports getting the latest 100 periods.
    *
+   * TODO Get all periods, not just the first 100
+   *
    * @param readmillReadingId ID of Readmill reading to fetch periods for
    * @return The list of ReadingPeriods for the given reading id
    */
@@ -278,6 +280,8 @@ public class ReadmillApiHelper {
    * Gets all readings for a given user id. Only fetches readings that are
    * in state "reading", "finished" or "abandoned"
    *
+   * TODO Get all readings, not just the first 100
+   *
    * @param userId Readmill user id to fetch readings for
    * @return the list of readings or null
    * @throws ReadmillException if Readmill request was not successful
@@ -306,6 +310,8 @@ public class ReadmillApiHelper {
 
   /**
    * Fetches a list of highlights for a given Readmill reading.
+   *
+   * TODO Get all higlights, not just the first 100
    *
    * @param readmillReadingId The id of the reading to fetch highlights for
    * @return The list of highlights
