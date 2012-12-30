@@ -40,4 +40,12 @@ public interface ReadmillSyncProgressListener {
    * @param localReading the changed local reading
    */
   public void onReadingUpdated(LocalReading localReading);
+
+
+  /**
+   * Called when the local reading has been deleted.
+   *
+   * @param localReadingId id of the deleted local reading
+   */
+  void onReadingDeleted(int localReadingId);
 }

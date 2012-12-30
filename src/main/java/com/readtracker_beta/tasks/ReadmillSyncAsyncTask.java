@@ -93,11 +93,17 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
   @Override
   protected void onProgressUpdate(ReadmillSyncProgressMessage... messages) {
     for(ReadmillSyncProgressMessage message : messages) {
-      LocalReading localReading = message.getLocalReading();
-      if(localReading != null) {
-        mProgressListener.onReadingUpdated(localReading);
+      switch(message.getMessageType()) {
+        case READING_CHANGED:
+          mProgressListener.onReadingUpdated(message.getLocalReading());
+          break;
+        case READING_DELETED:
+          mProgressListener.onReadingDeleted(message.getLocalReading().id);
+          break;
+        case SYNC_PROGRESS:
+          mProgressListener.onSyncProgress(message.getMessage(), message.getProgress());
+          break;
       }
-      mProgressListener.onSyncProgress(message.toString(), message.getProgress());
     }
   }
 
@@ -126,7 +132,8 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
    * @param totalSteps  total steps
    */
   private void postProgressUpdateMessage(String message, int currentStep, int totalSteps) {
-    publishProgress(new ReadmillSyncProgressMessage(message, (float) currentStep / totalSteps));
+    final float progress = ((float) currentStep / totalSteps);
+    publishProgress(ReadmillSyncProgressMessage.syncProgress(progress, message));
   }
 
   /**
@@ -136,7 +143,13 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
    */
   private void postProgressUpdateData(LocalReading localReading) {
     if(localReading != null) {
-      publishProgress(new ReadmillSyncProgressMessage(localReading));
+      publishProgress(ReadmillSyncProgressMessage.readingChanged(localReading));
+    }
+  }
+
+  private void postProgressUpdateDeletedReading(LocalReading deletedLocalReading) {
+    if(deletedLocalReading != null) {
+      publishProgress(ReadmillSyncProgressMessage.readingDeleted(deletedLocalReading));
     }
   }
 
@@ -353,7 +366,10 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
     for(LocalReading localReading : maybeOrphanLocalReadings) {
       if(verifyReadingNotOnReadmill(localReading.readmillReadingId)) {
         Log.v(TAG, "Verified reading not on Readmill: " + localReading);
+        Log.i(TAG, "Deleting remotely deleted reading: " + localReading);
+        final long deletedReadingId = localReading.id;
         mReadingDao.delete(localReading);
+        postProgressUpdateDeletedReading(localReading);
       } else {
         Log.v(TAG, "Could not verify that reading is not readmill: " + localReading);
       }

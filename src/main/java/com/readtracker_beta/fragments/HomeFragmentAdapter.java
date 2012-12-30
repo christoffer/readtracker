@@ -93,11 +93,10 @@ public class HomeFragmentAdapter extends FragmentStatePagerAdapter implements Lo
     Log.d(TAG, "Adding: " + localReading.toString());
     if(localReading.isActive()) {
       activeReadings.add(localReading);
-      refreshFragment(FRAGMENT_ACTIVE, activeReadings);
     } else {
       finishedReadings.add(localReading);
-      refreshFragment(FRAGMENT_FINISHED, finishedReadings);
     }
+    refreshFragments();
     mLocalReadingMap.put(localReading.id, localReading);
   }
 
@@ -108,7 +107,10 @@ public class HomeFragmentAdapter extends FragmentStatePagerAdapter implements Lo
    */
   public void removeReadingsWithId(int localReadingId) {
     LocalReading localReading = getLocalReadingById(localReadingId);
-    if(localReading == null) { return; }
+    if(localReading == null) {
+      Log.d(TAG, "Asked to remove reading with id: " + localReadingId + ", but none found");
+      return;
+    }
 
     Log.d(TAG, "Found local reading with id, remove from all lists: " + localReading.toString());
     activeReadings.remove(localReading);

@@ -54,6 +54,13 @@ public class ReadmillSyncStatusUIHandler implements ReadmillSyncProgressListener
     public void onReadingUpdate(LocalReading localReading);
 
     /**
+     * Called when a local reading has been deleted
+     *
+     * @param localReadingId id of the deleted reading
+     */
+    public void onReadingDelete(int localReadingId);
+
+    /**
      * Called when the synchronization has completed
      */
     public void onSyncComplete(SyncStatus status);
@@ -92,7 +99,7 @@ public class ReadmillSyncStatusUIHandler implements ReadmillSyncProgressListener
 
   @Override public void onSyncProgress(String message, Float progress) {
     Log.d(TAG, "Readmill sync progress: " + (message == null ? "NULL" : message) + " progress: " + progress);
-    if(message != null) {
+    if(message != null && message.length() > 0) {
       mProgressMessage.setText(message);
     }
 
@@ -114,6 +121,13 @@ public class ReadmillSyncStatusUIHandler implements ReadmillSyncProgressListener
     Log.d(TAG, "Readmill sync reading updated: " + localReading.id);
     if(mSyncUpdateHandler != null) {
       mSyncUpdateHandler.onReadingUpdate(localReading);
+    }
+  }
+
+  @Override public void onReadingDeleted(int localReadingId) {
+    Log.d(TAG, "Readmill sync reading deleted: " + localReadingId);
+    if(mSyncUpdateHandler != null) {
+      mSyncUpdateHandler.onReadingDelete(localReadingId);
     }
   }
 

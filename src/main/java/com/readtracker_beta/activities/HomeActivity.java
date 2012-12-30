@@ -95,6 +95,11 @@ public class HomeActivity extends ReadTrackerActivity {
           finish();
         }
       }
+
+      @Override public void onReadingDelete(int localReadingId) {
+        mHomeFragmentAdapter.removeReadingsWithId(localReadingId);
+        mHomeFragmentAdapter.refreshFragments();
+      }
     });
 
     bindEvents();
