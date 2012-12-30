@@ -5,7 +5,7 @@
   1. Install maven
   2. Create the file `/assets/readmill.properties` with credentials from [your Readmill app](https://readmill.com/you/apps):
 
-  :::properties
+  :::python
     client-id=my-test-app-client-id
     client-secret=my-test-app-client-secret
 
