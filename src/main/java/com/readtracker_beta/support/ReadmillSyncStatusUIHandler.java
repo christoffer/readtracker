@@ -26,9 +26,6 @@ public class ReadmillSyncStatusUIHandler implements ReadmillSyncProgressListener
   // The handler for updated readings
   private SyncUpdateHandler mSyncUpdateHandler;
 
-  // Flag hiding in progress
-  private boolean mIsHiding = false;
-
   private Activity mParentActivity;
 
   private LinearLayout mLayoutSyncProgress;
@@ -147,8 +144,6 @@ public class ReadmillSyncStatusUIHandler implements ReadmillSyncProgressListener
    * Hides the sync bar
    */
   private void hideSyncBar() {
-    if(mIsHiding) return;
-
     final Animation slide = AnimationUtils.loadAnimation(mParentActivity, R.anim.slide_down_disappear);
     slide.setFillAfter(true);
     slide.setStartOffset(900); // Let the bar linger for a little while to show the final message
@@ -160,11 +155,9 @@ public class ReadmillSyncStatusUIHandler implements ReadmillSyncProgressListener
 
       @Override public void onAnimationEnd(Animation animation) {
         mLayoutSyncProgress.setVisibility(View.GONE);
-        mIsHiding = false;
       }
     });
     mLayoutSyncProgress.startAnimation(slide);
-    mIsHiding = true;
   }
 }
 
