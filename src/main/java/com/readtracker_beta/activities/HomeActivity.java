@@ -8,8 +8,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.ImageButton;
 import com.j256.ormlite.dao.Dao;
 import com.readtracker_beta.ApplicationReadTracker;
@@ -34,7 +32,6 @@ import static com.readtracker_beta.support.ReadmillSyncStatusUIHandler.SyncUpdat
 
 public class HomeActivity extends ReadTrackerActivity {
 
-  private static Button mButtonSyncReadmill;
   private static ImageButton mButtonAddBook;
   private static MenuItem mMenuReadmillSync;
   private static ViewPager mPagerHomeActivity;
@@ -204,7 +201,6 @@ public class HomeActivity extends ReadTrackerActivity {
   }
 
   private void bindViews() {
-    mButtonSyncReadmill = (Button) findViewById(R.id.buttonSyncReadmill);
     mButtonAddBook = (ImageButton) findViewById(R.id.buttonAddBook);
     mPagerHomeActivity = (ViewPager) findViewById(R.id.pagerHomeActivity);
   }
@@ -212,9 +208,6 @@ public class HomeActivity extends ReadTrackerActivity {
   private void bindEvents() {
     mButtonAddBook.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View view) { exitToBookSearch(); }
-    });
-    mButtonSyncReadmill.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View view) { sync(false); }
     });
 
     mHomeFragmentAdapter.setLocalReadingInteractionListener(new LocalReadingInteractionListener() {
@@ -235,7 +228,6 @@ public class HomeActivity extends ReadTrackerActivity {
     startService(new Intent(this, ReadmillTransferIntent.class));
 
     Log.i(TAG, "Starting ASyncTask for Syncing Readmill Readings");
-    mButtonSyncReadmill.startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_out));
 
     ReadmillApiHelper api = ApplicationReadTracker.getReadmillApi();
     mReadmillSyncTask = new ReadmillSyncAsyncTask(mSyncStatusHandler, api, fullSync);

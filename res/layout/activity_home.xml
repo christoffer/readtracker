@@ -30,7 +30,6 @@
       android:src="@drawable/icon_add"
       android:layout_alignParentRight="true"
       android:contentDescription="Add new Reading" />
-
   </RelativeLayout>
 
   <android.support.v4.view.ViewPager
@@ -40,34 +39,5 @@
     android:layout_height="fill_parent">
 
     <android.support.v4.view.CustomPagerTabStrip style="@style/pager_title" />
-
   </android.support.v4.view.ViewPager>
-
-  <LinearLayout
-    android:id="@+id/readingListBlankState"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical"
-    android:visibility="gone"
-    android:layout_below="@id/layoutActionBar"
-    android:gravity="center">
-
-    <ImageView
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:scaleType="fitStart"
-      android:src="@drawable/reading_list_blank" />
-
-    <Button
-      android:id="@+id/buttonSyncReadmill"
-      style="@style/button_small"
-      android:layout_marginTop="20dp"
-      android:paddingTop="10dp"
-      android:paddingBottom="10dp"
-      android:paddingLeft="15dp"
-      android:paddingRight="15dp"
-      android:text="Sync books with Readmill" />
-
-  </LinearLayout>
-
 </RelativeLayout>

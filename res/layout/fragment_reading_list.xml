@@ -5,11 +5,38 @@
   android:layout_height="fill_parent">
 
   <ListView
-    android:id="@android:id/list"
-    android:layout_height="fill_parent"
+  android:id="@android:id/list"
+  android:layout_height="fill_parent"
+  android:layout_width="fill_parent"
+  android:layout_gravity="bottom"
+  android:divider="@android:color/transparent"
+  android:cacheColorHint="#ff000000" />
+
+  <!--suppress AndroidLintUseCompoundDrawables -->
+  <LinearLayout
+    android:id="@android:id/empty"
     android:layout_width="fill_parent"
-    android:layout_gravity="bottom"
-    android:divider="@android:color/transparent"
-    android:cacheColorHint="#ff000000" />
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:gravity="center_vertical"
+    android:padding="12dp">
+
+    <ImageView
+      android:src="@drawable/blank_reading_list"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center_horizontal"
+      android:contentDescription="Blank reading list" />
+
+    <TextView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center_horizontal"
+      android:text="No books"
+      android:gravity="center"
+      android:layout_marginTop="12dp"
+      style="@style/default_text" />
+
+  </LinearLayout>
 
 </LinearLayout>
