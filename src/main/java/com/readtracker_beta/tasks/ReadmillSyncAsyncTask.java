@@ -399,8 +399,7 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
    * @return true if Readmill does not have a reading with the given ID.
    */
   private boolean verifyReadingNotOnReadmill(long readingId) {
-    // TODO implement
-    return false;
+    return mReadmillApi.verifyReadingMissing(readingId);
   }
 
   /**

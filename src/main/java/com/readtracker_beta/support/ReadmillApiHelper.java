@@ -2,9 +2,11 @@ package com.readtracker_beta.support;
 
 import android.util.Log;
 import com.readmill.api.ReadmillWrapper;
+import com.readmill.api.Request;
 import com.readmill.api.RequestBuilder;
 import com.readmill.api.Token;
 import com.readtracker_beta.db.LocalHighlight;
+import org.apache.http.HttpResponse;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -248,7 +250,7 @@ public class ReadmillApiHelper {
    * Collects the list of ReadingPeriods for a given ReadmillReading.
    * <p/>
    * Currently only supports getting the latest 100 periods.
-   *
+   * <p/>
    * TODO Get all periods, not just the first 100
    *
    * @param readmillReadingId ID of Readmill reading to fetch periods for
@@ -279,7 +281,7 @@ public class ReadmillApiHelper {
   /**
    * Gets all readings for a given user id. Only fetches readings that are
    * in state "reading", "finished" or "abandoned"
-   *
+   * <p/>
    * TODO Get all readings, not just the first 100
    *
    * @param userId Readmill user id to fetch readings for
@@ -310,7 +312,7 @@ public class ReadmillApiHelper {
 
   /**
    * Fetches a list of highlights for a given Readmill reading.
-   *
+   * <p/>
    * TODO Get all higlights, not just the first 100
    *
    * @param readmillReadingId The id of the reading to fetch highlights for
@@ -415,6 +417,29 @@ public class ReadmillApiHelper {
       sendRequest(request, "update reading to 'reading' state", 200);
     } catch(JSONException e) {
       fail("get reading id", e);
+    }
+  }
+
+  /**
+   * Verifies that there is no reading with the given reading ID.
+   * This is needed to figure out if a reading as been deleted on the server.
+   * Since this has irrevocable consequences (deleted user data) we want to
+   * take some measures to assert that the response is a 404, and that the response
+   * is coming from Readmill.
+   *
+   * @param readingId Reading id to verify missing.
+   * @return true if the reading is verified to be missing from the Readmill server,
+   *         false otherwise.
+   */
+  public boolean verifyReadingMissing(long readingId) {
+    final String endpoint = String.format("/readings/%d", readingId);
+    final RequestBuilder request = mWrapper.get(endpoint);
+
+    try {
+      sendRequest(request, "verifying reading missing", 404);
+      return true; // request send and verified to be 404
+    } catch(ReadmillException e) {
+      return false;
     }
   }
 
