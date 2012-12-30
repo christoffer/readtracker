@@ -175,8 +175,10 @@ public class ReadmillApiHelper {
    * @param readmillReadingId Readmill ID of reading to delete.
    * @return true if the reading was deleted, false otherwise.
    */
-  public boolean deleteReading(long readmillReadingId) {
-    return false;
+  public void deleteReading(long readmillReadingId) throws ReadmillException {
+    final String endpoint = String.format("/readings/%d", readmillReadingId);
+    RequestBuilder request = mWrapper.delete(endpoint);
+    sendRequest(request, "delete reading", 200);
   }
 
   /**
