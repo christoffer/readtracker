@@ -327,8 +327,15 @@
   <!-- style for normal text usage -->
 
   <style name="default_text">
-    <item name="android:textSize">14dp</item>
+    <item name="android:textSize">16dp</item>
     <item name="android:color">@color/text_color_primary</item>
+    <item name="android:layout_width">wrap_content</item>
+    <item name="android:layout_height">wrap_content</item>
+  </style>
+
+  <style name="ui_hint">
+    <item name="android:textSize">10dp</item>
+    <item name="android:textColor">@color/text_color_secondary_slightly_transparent</item>
     <item name="android:layout_width">wrap_content</item>
     <item name="android:layout_height">wrap_content</item>
   </style>

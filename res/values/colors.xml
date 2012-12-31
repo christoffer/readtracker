@@ -20,6 +20,7 @@
   <color name="midnight_medium_disabled">#88181e20</color>
 
   <color name="text_color_primary_slightly_transparent">#ddfffded</color>
+  <color name="text_color_secondary_slightly_transparent">#44fffded</color>
   <color name="text_color_hint">#44fffded</color>
 
   <color name="text_color_primary_disabled">#44fffded</color>

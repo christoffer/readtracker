@@ -15,16 +15,6 @@ while another layout can have it expand horizontally.
     android:gravity="center_vertical"
     android:orientation="horizontal">
 
-    <!-- ended on label -->
-    <TextView
-      android:layout_height="wrap_content"
-      android:layout_width="wrap_content"
-      android:textSize="18dp"
-      android:text="Ended on"
-      android:layout_marginRight="24dp"
-      android:gravity="center_vertical"
-      android:id="@+id/textLabel" />
-
     <!-- simple page picker for page numbers -->
 
     <com.readtracker_beta.thirdparty.widget.WheelView
@@ -56,5 +46,4 @@ while another layout can have it expand horizontally.
       style="@style/generic_number_wheel" />
 
   </LinearLayout>
-
 </merge>

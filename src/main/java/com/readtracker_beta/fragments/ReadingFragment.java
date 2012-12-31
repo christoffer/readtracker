@@ -298,7 +298,7 @@ public class ReadingFragment extends Fragment {
     boolean isFirstRead = localReading.currentPage == 0;
 
     if(isFirstRead) {
-      mTextBillboard.setText("First session");
+      mTextBillboard.setText("New book");
       return;
     }
 
@@ -432,6 +432,7 @@ public class ReadingFragment extends Fragment {
     int[] hms = Utils.convertMillisToHoursMinutesSeconds(milliseconds);
     final int hours = hms[0];
     final int minutes = hms[1];
+    final int seconds = hms[2];
 
     String summary;
     if(hours > 0) {
@@ -442,7 +443,7 @@ public class ReadingFragment extends Fragment {
     } else if(minutes > 0) {
       summary = Utils.pluralizeWithCount(minutes, "minute");
     } else {
-      summary = "Tracking...";
+      summary = Utils.pluralizeWithCount(seconds, "second");
     }
     mTextBillboard.setText(summary);
   }

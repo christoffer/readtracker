@@ -7,12 +7,14 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import com.readtracker_beta.*;
+import com.readtracker_beta.ApplicationReadTracker;
+import com.readtracker_beta.IntentKeys;
+import com.readtracker_beta.R;
+import com.readtracker_beta.ReadmillTransferIntent;
 import com.readtracker_beta.custom_views.ProgressPicker;
 import com.readtracker_beta.db.LocalReading;
 import com.readtracker_beta.db.LocalSession;
 import com.readtracker_beta.support.Utils;
-import com.readtracker_beta.thirdparty.SafeViewFlipper;
 import com.readtracker_beta.thirdparty.widget.WheelView;
 import com.readtracker_beta.thirdparty.widget.adapters.NumericWheelAdapter;
 
@@ -24,19 +26,13 @@ import java.util.UUID;
  * Screen for input the ending page of a reading session
  */
 public class EndSessionActivity extends ReadTrackerActivity {
-  // View flipper page for editing duration
-  private static final int PAGE_EDIT_DURATION = 1;
-
   private static Button mButtonSaveReadingSession;
-  private static Button mButtonShowDurationPicker;
   private static Button mButtonFinish;
 
   private static WheelView mWheelDurationHours;
   private static WheelView mWheelDurationMinutes;
 
   private static ProgressPicker mProgressPicker;
-
-  private static SafeViewFlipper mFlipperSessionLength;
 
   private LocalReading mLocalReading;
   private long mSessionLengthMillis;
@@ -50,6 +46,7 @@ public class EndSessionActivity extends ReadTrackerActivity {
 
     bindViews();
     bindEvents();
+    initializeWheelViews();
 
     int currentPage;
     if(in == null) {
@@ -67,6 +64,8 @@ public class EndSessionActivity extends ReadTrackerActivity {
       currentPage = in.getInt(IntentKeys.PAGE);
     }
 
+    setupDuration(mSessionLengthMillis);
+
     ViewBindingBookHeader.bindWithDefaultClickHandler(this, mLocalReading);
 
     if(mLocalReading.isMeasuredInPercent()) {
@@ -74,15 +73,10 @@ public class EndSessionActivity extends ReadTrackerActivity {
     } else {
       mProgressPicker.setupPagesMode(currentPage, (int) mLocalReading.totalPages);
     }
-    mProgressPicker.setText("Ended on");
 
-    findViewById(R.id.dividerTop).setBackgroundColor(mLocalReading.getColor());
     findViewById(R.id.dividerBottom).setBackgroundColor(mLocalReading.getColor());
 
     Log.i(TAG, "Init for reading : " + mLocalReading.id + " with session length:" + mSessionLengthMillis);
-
-    final String duration = Utils.shortHumanTimeFromMillis(mSessionLengthMillis);
-    mButtonShowDurationPicker.setText(duration);
   }
 
   @Override
@@ -116,12 +110,10 @@ public class EndSessionActivity extends ReadTrackerActivity {
 
   private void bindViews() {
     mButtonSaveReadingSession = (Button) findViewById(R.id.btnSaveReadingSession);
-    mButtonShowDurationPicker = (Button) findViewById(R.id.buttonShowDurationPicker);
 
     mWheelDurationHours = (WheelView) findViewById(R.id.wheelDurationHours);
     mWheelDurationMinutes = (WheelView) findViewById(R.id.wheelDurationMinutes);
 
-    mFlipperSessionLength = (SafeViewFlipper) findViewById(R.id.flipperSessionLength);
     mProgressPicker = (ProgressPicker) findViewById(R.id.progressPicker);
 
     mButtonFinish = (Button) findViewById(R.id.buttonFinish);
@@ -134,13 +126,6 @@ public class EndSessionActivity extends ReadTrackerActivity {
       public void onClick(View view) {
         final long page = mProgressPicker.getPage();
         saveSessionAndExit(page);
-      }
-    });
-
-    mButtonShowDurationPicker.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
-        showDurationPicker();
       }
     });
 
@@ -166,35 +151,28 @@ public class EndSessionActivity extends ReadTrackerActivity {
     wheelAdapter.setTypeStyle(Typeface.NORMAL);
   }
 
-  private void showDurationPicker() {
-    boolean needInitialize = (
-      mWheelDurationHours.getViewAdapter() == null || mWheelDurationMinutes.getViewAdapter() == null
-    );
+  private void initializeWheelViews() {
+    NumericWheelAdapter hoursAdapter = createDurationWheelAdapter(24, "%s h");
+    NumericWheelAdapter minutesAdapter = createDurationWheelAdapter(59, "%s min");
 
-    if(needInitialize) {
-      NumericWheelAdapter hoursAdapter = createDurationWheelAdapter(24, "%s hour[s?]");
-      NumericWheelAdapter minutesAdapter = createDurationWheelAdapter(59, "%s minute[s?]");
+    mWheelDurationHours.setCalliperMode(WheelView.CalliperMode.LEFT_CALLIPER);
+    mWheelDurationMinutes.setCalliperMode(WheelView.CalliperMode.RIGHT_CALLIPER);
 
-      mWheelDurationHours.setCalliperMode(WheelView.CalliperMode.LEFT_CALLIPER);
-      mWheelDurationMinutes.setCalliperMode(WheelView.CalliperMode.RIGHT_CALLIPER);
+    mWheelDurationHours.setVisibleItems(3);
+    mWheelDurationMinutes.setVisibleItems(3);
 
-      mWheelDurationHours.setVisibleItems(3);
-      mWheelDurationMinutes.setVisibleItems(3);
+    mWheelDurationHours.setViewAdapter(hoursAdapter);
+    mWheelDurationMinutes.setViewAdapter(minutesAdapter);
+  }
 
-      mWheelDurationHours.setViewAdapter(hoursAdapter);
-      mWheelDurationMinutes.setViewAdapter(minutesAdapter);
-    }
-
-    mWheelDurationHours.setCurrentItem(Utils.getHoursFromMillis(mSessionLengthMillis));
-    mWheelDurationMinutes.setCurrentItem(Utils.getMinutesFromMillis(mSessionLengthMillis));
-
-    mFlipperSessionLength.setDisplayedChild(PAGE_EDIT_DURATION);
+  private void setupDuration(long sessionLengthMillis) {
+    mWheelDurationHours.setCurrentItem(Utils.getHoursFromMillis(sessionLengthMillis));
+    mWheelDurationMinutes.setCurrentItem(Utils.getMinutesFromMillis(sessionLengthMillis));
   }
 
   private NumericWheelAdapter createDurationWheelAdapter(int maxValue, String format) {
     NumericWheelAdapter adapter = new NumericWheelAdapter(this, 0, maxValue, format);
     configureWheelAdapterStyle(adapter);
-    adapter.setTextSize(14);
     return adapter;
   }
 

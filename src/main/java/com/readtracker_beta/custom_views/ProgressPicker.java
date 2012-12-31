@@ -7,7 +7,6 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import com.readtracker_beta.R;
 import com.readtracker_beta.thirdparty.widget.OnWheelChangedListener;
 import com.readtracker_beta.thirdparty.widget.WheelView;
@@ -17,7 +16,6 @@ public class ProgressPicker extends LinearLayout {
   private WheelView mWheelEndingPage;
   private WheelView mWheelEndPercentInteger;
   private WheelView mWheelEndPercentFraction;
-  private TextView mTextLabel;
 
   private boolean mPercentMode;
   private int mTotalPageCount = 0;
@@ -47,10 +45,6 @@ public class ProgressPicker extends LinearLayout {
 
   public void setOnProgressChangeListener(OnProgressChangeListener listener) {
     mListener = listener;
-  }
-
-  public void setText(String text) {
-    mTextLabel.setText(text);
   }
 
   public void setupPercentMode(int currentPage) {
@@ -104,8 +98,6 @@ public class ProgressPicker extends LinearLayout {
     // Wheel for percents
     mWheelEndPercentInteger = (WheelView) root.findViewById(R.id.wheelEndPercentInteger);
     mWheelEndPercentFraction = (WheelView) root.findViewById(R.id.wheelEndPercentFraction);
-
-    mTextLabel = (TextView) root.findViewById(R.id.textLabel);
   }
 
   private void initializeWheelViews() {
