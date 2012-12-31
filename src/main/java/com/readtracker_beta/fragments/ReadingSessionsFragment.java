@@ -8,9 +8,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import com.readtracker_beta.IntentKeys;
 import com.readtracker_beta.R;
+import com.readtracker_beta.activities.BookActivity;
 import com.readtracker_beta.support.Utils;
 import com.readtracker_beta.custom_views.SegmentBar;
 import com.readtracker_beta.custom_views.SessionView;
@@ -82,6 +84,7 @@ public class ReadingSessionsFragment extends Fragment {
     if(mLocalSessions != null && mLocalSessions.size() > 0) {
       mSessionView.setColor(color);
       mSessionView.setSessions(mLocalSessions);
+
       presentReadingState(mLocalReading.readmillState, color);
       presentClosingRemark(mLocalReading.getClosingRemark());
       presentSummary(mLocalReading.timeSpentMillis, mLocalReading.estimateTimeLeft(), mLocalSessions.size(), mLocalReading.readmillState);

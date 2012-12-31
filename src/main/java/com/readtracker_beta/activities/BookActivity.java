@@ -5,6 +5,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import com.j256.ormlite.dao.Dao;
 import com.readtracker_beta.*;
 import com.readtracker_beta.db.LocalHighlight;
@@ -26,6 +28,9 @@ public class BookActivity extends ReadTrackerActivity {
   public static final int PAGE_SESSIONS = 0;
   public static final int PAGE_READING = 1;
   public static final int PAGE_HIGHLIGHTS = 2;
+
+  private static final int NO_GROUP = 0;
+  private static final int MENU_EDIT_BOOK_SETTINGS = 1;
 
   private LocalReading mLocalReading;
 
@@ -106,6 +111,22 @@ public class BookActivity extends ReadTrackerActivity {
         }
     }
     super.onActivityResult(requestCode, resultCode, data);
+  }
+
+  @Override public boolean onCreateOptionsMenu(Menu menu) {
+    MenuItem editBook = menu.add(NO_GROUP, MENU_EDIT_BOOK_SETTINGS, 0, "Edit book settings");
+    return true;
+  }
+
+  @Override public boolean onMenuItemSelected(int featureId, MenuItem item) {
+    switch(item.getItemId()) {
+      case MENU_EDIT_BOOK_SETTINGS:
+        exitToBookSettings();
+        break;
+      default:
+        return false;
+    }
+    return true;
   }
 
   /**

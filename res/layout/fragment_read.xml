@@ -5,16 +5,6 @@
   android:layout_width="fill_parent"
   android:padding="12dp">
 
-  <ImageButton
-    android:id="@+id/buttonBookSettings"
-    android:layout_width="32dp"
-    android:layout_height="32dp"
-    android:layout_alignParentTop="true"
-    android:layout_alignParentLeft="true"
-    android:layout_marginLeft="12dp"
-    android:layout_marginTop="12dp"
-    android:src="@drawable/icon_settings_cog" />
-
   <TextView
     android:id="@+id/textBillboard"
     style="@style/default_text"

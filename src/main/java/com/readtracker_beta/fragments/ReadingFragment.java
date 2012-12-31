@@ -1,6 +1,5 @@
 package com.readtracker_beta.fragments;
 
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -9,22 +8,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.view.animation.*;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LinearInterpolator;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import com.readtracker_beta.IntentKeys;
 import com.readtracker_beta.R;
 import com.readtracker_beta.activities.BookActivity;
-import com.readtracker_beta.activities.BookSettingsActivity;
-import com.readtracker_beta.interfaces.SessionTimerEventListener;
-import com.readtracker_beta.support.SessionTimerStore;
-import com.readtracker_beta.support.Utils;
 import com.readtracker_beta.custom_views.PauseableSpinAnimation;
 import com.readtracker_beta.custom_views.TimeSpinner;
 import com.readtracker_beta.db.LocalReading;
-import com.readtracker_beta.thirdparty.SafeViewFlipper;
+import com.readtracker_beta.interfaces.SessionTimerEventListener;
 import com.readtracker_beta.support.SessionTimer;
+import com.readtracker_beta.support.SessionTimerStore;
+import com.readtracker_beta.support.Utils;
+import com.readtracker_beta.thirdparty.SafeViewFlipper;
 
 /**
  * Fragment for managing a reading session
@@ -36,7 +35,6 @@ public class ReadingFragment extends Fragment {
   private static Button mButtonStart;
   private static Button mButtonPause;
   private static Button mButtonDone;
-  private static ImageButton mButtonBookSettings;
 
   // Time tracking
   private static TextView mTextBillboard;
@@ -173,8 +171,6 @@ public class ReadingFragment extends Fragment {
 
     mTextBillboard = (TextView) view.findViewById(R.id.textBillboard);
     mTimeSpinner = (TimeSpinner) view.findViewById(R.id.timespinner);
-
-    mButtonBookSettings = (ImageButton) view.findViewById(R.id.buttonBookSettings);
   }
 
   private void bindEvents() {
@@ -195,12 +191,6 @@ public class ReadingFragment extends Fragment {
     mButtonDone.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View view) {
         onClickedDone();
-      }
-    });
-
-    mButtonBookSettings.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View view) {
-        ((BookActivity) getActivity()).exitToBookSettings();
       }
     });
 
