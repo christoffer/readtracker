@@ -16,7 +16,7 @@
   <TextView
     android:id="@+id/textBlankState"
     style="@style/text_blank_state"
-    android:text="Here you'll find your collected highlights for this book."
+    android:text="No highlights created for this book"
     android:layout_alignParentTop="true"
     android:layout_above="@id/buttonAddHighlight" />
 
