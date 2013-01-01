@@ -68,11 +68,8 @@ public class EndSessionActivity extends ReadTrackerActivity {
 
     ViewBindingBookHeader.bindWithDefaultClickHandler(this, mLocalReading);
 
-    if(mLocalReading.isMeasuredInPercent()) {
-      mProgressPicker.setupPercentMode(currentPage);
-    } else {
-      mProgressPicker.setupPagesMode(currentPage, (int) mLocalReading.totalPages);
-    }
+    mProgressPicker.setupForLocalReading(mLocalReading);
+    mProgressPicker.setCurrentPage(currentPage);
 
     findViewById(R.id.dividerBottom).setBackgroundColor(mLocalReading.getColor());
 
@@ -86,7 +83,7 @@ public class EndSessionActivity extends ReadTrackerActivity {
     out.putParcelable(IntentKeys.LOCAL_READING, mLocalReading);
     out.putLong(IntentKeys.SESSION_LENGTH_MS, mSessionLengthMillis);
     out.putBoolean(IntentKeys.BUTTON_ENABLED, mButtonSaveReadingSession.isEnabled());
-    out.putInt(IntentKeys.PAGE, mProgressPicker.getPage());
+    out.putInt(IntentKeys.PAGE, mProgressPicker.getCurrentPage());
   }
 
   @Override
@@ -124,7 +121,7 @@ public class EndSessionActivity extends ReadTrackerActivity {
     mButtonSaveReadingSession.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
-        final long page = mProgressPicker.getPage();
+        final long page = mProgressPicker.getCurrentPage();
         saveSessionAndExit(page);
       }
     });

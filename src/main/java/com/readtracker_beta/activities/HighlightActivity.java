@@ -54,13 +54,8 @@ public class HighlightActivity extends ReadTrackerActivity {
     divider.setBackgroundColor(mLocalReading.getColor());
 
     if(mLocalReading.hasPageInfo()) {
-      if(mLocalReading.isMeasuredInPercent()) {
-        mProgressPicker.setupPercentMode(currentPage);
-//        mProgressPicker.setText("Position");
-      } else {
-        mProgressPicker.setupPagesMode(currentPage, (int) mLocalReading.totalPages);
-//        mProgressPicker.setText("Page");
-      }
+      mProgressPicker.setupForLocalReading(mLocalReading);
+      mProgressPicker.setCurrentPage(currentPage);
     } else {
       mProgressPicker.setVisibility(View.GONE);
     }
@@ -75,7 +70,7 @@ public class HighlightActivity extends ReadTrackerActivity {
     outState.putParcelable(IntentKeys.LOCAL_READING, mLocalReading);
     outState.putString(IntentKeys.TEXT, mEditHighlightText.getText().toString());
     if(mLocalReading.hasPageInfo()) {
-      outState.putInt(IntentKeys.PAGE, mProgressPicker.getPage());
+      outState.putInt(IntentKeys.PAGE, mProgressPicker.getCurrentPage());
     }
   }
 
