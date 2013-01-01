@@ -2,90 +2,93 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_height="fill_parent"
   android:layout_width="fill_parent"
-  android:paddingBottom="12dp"
   android:gravity="center_horizontal">
 
   <include layout="@layout/_book_header" />
 
-  <LinearLayout
+  <ScrollView
     android:layout_below="@id/_bookHeader"
-    android:layout_above="@+id/btnSaveReadingSession"
-    android:layout_width="fill_parent"
+    android:fillViewport="true"
     android:layout_height="fill_parent"
-    android:orientation="vertical"
-    android:padding="12dp">
-
-    <!-- duration button + container for edit duration -->
-    <TextView
-      style="@style/default_text"
-      android:text="Reading time"
-      android:layout_marginBottom="12dp"
-      android:layout_gravity="center_horizontal" />
+    android:layout_width="fill_parent">
 
     <LinearLayout
-      android:layout_marginBottom="12dp"
+      android:id="@+id/layoutSessionData"
       android:layout_width="fill_parent"
-      android:layout_height="wrap_content"
-      android:gravity="center"
-      android:orientation="horizontal">
+      android:layout_height="0dp"
+      android:orientation="vertical"
+      android:padding="12dp">
 
-      <com.readtracker_beta.thirdparty.widget.WheelView
-        android:id="@+id/wheelDurationHours"
-        android:minWidth="80dp"
-        android:minHeight="80dp"
+      <!-- duration button + container for edit duration -->
+      <TextView
+        style="@style/default_text"
+        android:text="Reading time"
+        android:layout_marginBottom="12dp"
+        android:layout_gravity="center_horizontal" />
+
+      <LinearLayout
+        android:layout_marginBottom="12dp"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <com.readtracker_beta.thirdparty.widget.WheelView
+          android:id="@+id/wheelDurationHours"
+          android:minWidth="80dp"
+          android:minHeight="80dp"
+          android:layout_height="wrap_content"
+          android:layout_width="wrap_content"
+          android:layout_marginRight="6dp" />
+
+        <com.readtracker_beta.thirdparty.widget.WheelView
+          android:id="@+id/wheelDurationMinutes"
+          android:minWidth="100dp"
+          android:minHeight="80dp"
+          android:layout_height="wrap_content"
+          android:layout_marginLeft="6dp"
+          android:layout_width="wrap_content" />
+
+      </LinearLayout>
+
+      <TextView
+        style="@style/default_text"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="12dp"
+        android:text="Book progress"
+        android:layout_gravity="center_horizontal" />
+
+      <com.readtracker_beta.custom_views.ProgressPicker
+        android:id="@+id/progressPicker"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:layout_marginRight="6dp" />
+        android:layout_gravity="center_horizontal" />
 
-      <com.readtracker_beta.thirdparty.widget.WheelView
-        android:id="@+id/wheelDurationMinutes"
-        android:minWidth="100dp"
-        android:minHeight="80dp"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="6dp"
-        android:layout_width="wrap_content" />
+
+      <View
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+      <Button
+        android:id="@+id/buttonFinish"
+        style="@style/default_button"
+        android:layout_marginTop="24dp"
+        android:textColor="@color/text_color_secondary"
+        android:text="Finish book" />
+
+      <View
+        android:id="@+id/dividerBottom"
+        style="@style/thick_divider"
+        android:layout_marginBottom="12dp"
+        android:layout_marginTop="12dp"
+        android:layout_width="fill_parent" />
+
+      <Button
+        android:id="@+id/btnSaveReadingSession"
+        style="@style/default_button"
+        android:text="Save" />
 
     </LinearLayout>
-  
-    <TextView
-      style="@style/default_text"
-      android:layout_marginTop="24dp"
-      android:layout_marginBottom="12dp"
-      android:text="Book progress"
-      android:layout_gravity="center_horizontal" />
-
-    <com.readtracker_beta.custom_views.ProgressPicker
-      android:id="@+id/progressPicker"
-      android:layout_height="wrap_content"
-      android:layout_width="wrap_content"
-      android:layout_gravity="center_horizontal" />
-
-    <!-- divider -->
-
-    <!-- finished? -->
-
-    <View
-      android:id="@+id/dividerBottom"
-      style="@style/thick_divider"
-      android:layout_marginBottom="6dp"
-      android:layout_marginTop="24dp"
-      android:layout_width="fill_parent" />
-
-    <Button
-      android:id="@+id/buttonFinish"
-      style="@style/default_button"
-      android:textColor="@color/text_color_secondary"
-      android:text="Finish book"
-      android:layout_marginTop="24dp" />
-
-  </LinearLayout>
-
-  <Button
-    android:id="@+id/btnSaveReadingSession"
-    style="@style/default_button"
-    android:layout_alignParentBottom="true"
-    android:layout_marginLeft="12dp"
-    android:layout_marginRight="12dp"
-    android:text="Save" />
-
+  </ScrollView>
 </RelativeLayout>
