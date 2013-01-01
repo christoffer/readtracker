@@ -2,11 +2,9 @@ package com.readtracker_beta.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Editable;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import com.readtracker_beta.IntentKeys;
 import com.readtracker_beta.R;
 import com.readtracker_beta.db.LocalReading;
@@ -54,7 +52,7 @@ public class FinishBookActivity extends ReadTrackerActivity {
 
   private void bindViews() {
     mEditClosingRemark = (EditText) findViewById(R.id.editClosingRemark);
-    mButtonFinish = (Button) findViewById(R.id.buttonFinish);
+    mButtonFinish = (Button) findViewById(R.id.buttonFinishBook);
     mSwitchRecommended = (Switch) findViewById(R.id.switchRecommended);
   }
 

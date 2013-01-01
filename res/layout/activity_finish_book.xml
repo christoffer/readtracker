@@ -23,13 +23,13 @@
     android:layout_centerHorizontal="true"
     android:layout_marginTop="24dp"
     android:layout_marginBottom="24dp"
-    android:layout_above="@+id/buttonFinish"
+    android:layout_above="@+id/buttonFinishBook"
     app:textOff="Just finish"
     android:checked="true"
     app:textOn="Recommend" />
 
   <Button
-    android:id="@+id/buttonFinish"
+    android:id="@+id/buttonFinishBook"
     style="@style/default_button"
     android:layout_alignParentBottom="true"
     android:text="Finish" />

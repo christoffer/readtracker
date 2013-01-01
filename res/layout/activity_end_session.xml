@@ -51,44 +51,53 @@
 
       </LinearLayout>
 
+      <View
+        android:id="@+id/dividerBottom"
+        style="@style/thick_divider"
+        android:layout_marginBottom="24dp"
+        android:layout_marginTop="24dp"
+        android:layout_width="fill_parent" />
+
       <TextView
         style="@style/default_text"
-        android:layout_marginTop="24dp"
-        android:layout_marginBottom="12dp"
         android:text="Book progress"
+        android:layout_gravity="center_horizontal" />
+
+      <TextView
+        style="@style/ui_hint"
+        android:text="Scroll to the very end to finish book"
         android:layout_gravity="center_horizontal" />
 
       <com.readtracker_beta.custom_views.ProgressPicker
         android:id="@+id/progressPicker"
+        android:layout_marginTop="12dp"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:layout_gravity="center_horizontal" />
-
 
       <View
         android:layout_width="fill_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />
 
-      <Button
-        android:id="@+id/buttonFinish"
-        style="@style/default_button"
-        android:layout_marginTop="24dp"
-        android:textColor="@color/text_color_secondary"
-        android:text="Finish book" />
+      <com.readtracker_beta.thirdparty.SafeViewFlipper
+        android:id="@+id/flipperActionButtons"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:inAnimation="@anim/slide_up_appear"
+        android:outAnimation="@anim/slide_down_disappear">
 
-      <View
-        android:id="@+id/dividerBottom"
-        style="@style/thick_divider"
-        android:layout_marginBottom="12dp"
-        android:layout_marginTop="12dp"
-        android:layout_width="fill_parent" />
+        <Button
+          android:id="@+id/buttonSaveProgress"
+          style="@style/default_button"
+          android:text="Save" />
 
-      <Button
-        android:id="@+id/btnSaveReadingSession"
-        style="@style/default_button"
-        android:text="Save" />
+        <Button
+          android:id="@+id/buttonFinishBook"
+          style="@style/default_button"
+          android:text="Finish book" />
 
+      </com.readtracker_beta.thirdparty.SafeViewFlipper>
     </LinearLayout>
   </ScrollView>
 </RelativeLayout>

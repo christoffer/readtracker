@@ -15,6 +15,7 @@ import com.readtracker_beta.custom_views.ProgressPicker;
 import com.readtracker_beta.db.LocalReading;
 import com.readtracker_beta.db.LocalSession;
 import com.readtracker_beta.support.Utils;
+import com.readtracker_beta.thirdparty.SafeViewFlipper;
 import com.readtracker_beta.thirdparty.widget.WheelView;
 import com.readtracker_beta.thirdparty.widget.adapters.NumericWheelAdapter;
 
@@ -26,11 +27,16 @@ import java.util.UUID;
  * Screen for input the ending page of a reading session
  */
 public class EndSessionActivity extends ReadTrackerActivity {
-  private static Button mButtonSaveReadingSession;
-  private static Button mButtonFinish;
+  private static final int SAVE_BUTTON_PAGE = 0;
+  private static final int FINISH_BUTTON_PAGE = 1;
+
+  private static Button mButtonSaveProgress;
+  private static Button mButtonFinishBook;
 
   private static WheelView mWheelDurationHours;
   private static WheelView mWheelDurationMinutes;
+
+  private static SafeViewFlipper mFlipperActionButtons;
 
   private static ProgressPicker mProgressPicker;
 
@@ -53,14 +59,14 @@ public class EndSessionActivity extends ReadTrackerActivity {
       Bundle extras = getIntent().getExtras();
       mSessionLengthMillis = extras.getLong(IntentKeys.SESSION_LENGTH_MS);
       mLocalReading = extras.getParcelable(IntentKeys.LOCAL_READING);
-      mButtonSaveReadingSession.setEnabled(false);
+      mButtonSaveProgress.setEnabled(false);
       currentPage = (int) mLocalReading.currentPage;
     } else {
       Log.i(TAG, "unfreezing state");
       mLocalReading = in.getParcelable(IntentKeys.LOCAL_READING);
       mSessionLengthMillis = in.getLong(IntentKeys.SESSION_LENGTH_MS);
       boolean buttonEnabled = in.getBoolean(IntentKeys.BUTTON_ENABLED);
-      mButtonSaveReadingSession.setEnabled(buttonEnabled);
+      mButtonSaveProgress.setEnabled(buttonEnabled);
       currentPage = in.getInt(IntentKeys.PAGE);
     }
 
@@ -70,6 +76,9 @@ public class EndSessionActivity extends ReadTrackerActivity {
 
     mProgressPicker.setupForLocalReading(mLocalReading);
     mProgressPicker.setCurrentPage(currentPage);
+
+    final boolean onLastPage = currentPage == mLocalReading.totalPages;
+    toggleFinishButton(onLastPage);
 
     findViewById(R.id.dividerBottom).setBackgroundColor(mLocalReading.getColor());
 
@@ -82,7 +91,7 @@ public class EndSessionActivity extends ReadTrackerActivity {
     Log.d(TAG, "freezing state");
     out.putParcelable(IntentKeys.LOCAL_READING, mLocalReading);
     out.putLong(IntentKeys.SESSION_LENGTH_MS, mSessionLengthMillis);
-    out.putBoolean(IntentKeys.BUTTON_ENABLED, mButtonSaveReadingSession.isEnabled());
+    out.putBoolean(IntentKeys.BUTTON_ENABLED, mButtonSaveProgress.isEnabled());
     out.putInt(IntentKeys.PAGE, mProgressPicker.getCurrentPage());
   }
 
@@ -106,29 +115,28 @@ public class EndSessionActivity extends ReadTrackerActivity {
   }
 
   private void bindViews() {
-    mButtonSaveReadingSession = (Button) findViewById(R.id.btnSaveReadingSession);
+    mButtonSaveProgress = (Button) findViewById(R.id.buttonSaveProgress);
+    mButtonFinishBook = (Button) findViewById(R.id.buttonFinishBook);
 
     mWheelDurationHours = (WheelView) findViewById(R.id.wheelDurationHours);
     mWheelDurationMinutes = (WheelView) findViewById(R.id.wheelDurationMinutes);
 
-    mProgressPicker = (ProgressPicker) findViewById(R.id.progressPicker);
+    mFlipperActionButtons = (SafeViewFlipper) findViewById(R.id.flipperActionButtons);
 
-    mButtonFinish = (Button) findViewById(R.id.buttonFinish);
+    mProgressPicker = (ProgressPicker) findViewById(R.id.progressPicker);
   }
 
 
   private void bindEvents() {
-    mButtonSaveReadingSession.setOnClickListener(new View.OnClickListener() {
+    mButtonSaveProgress.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
-        final long page = mProgressPicker.getCurrentPage();
-        saveSessionAndExit(page);
+        saveSessionAndExit(mProgressPicker.getCurrentPage());
       }
     });
 
-    mButtonFinish.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
+    mButtonFinishBook.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View view) {
         exitToFinishReading(mLocalReading);
       }
     });
@@ -137,9 +145,20 @@ public class EndSessionActivity extends ReadTrackerActivity {
       @Override
       public void onChangeProgress(int newPage) {
         boolean hasChanged = mLocalReading.currentPage != newPage;
-        mButtonSaveReadingSession.setEnabled(hasChanged);
+        mButtonSaveProgress.setEnabled(hasChanged);
+
+        final boolean onLastPage = newPage == mLocalReading.totalPages;
+        toggleFinishButton(onLastPage);
       }
     });
+  }
+
+  private void toggleFinishButton(boolean finishMode) {
+    if(finishMode && mFlipperActionButtons.getDisplayedChild() != FINISH_BUTTON_PAGE) {
+      mFlipperActionButtons.setDisplayedChild(FINISH_BUTTON_PAGE);
+    } else if(!finishMode && mFlipperActionButtons.getDisplayedChild() != SAVE_BUTTON_PAGE) {
+      mFlipperActionButtons.setDisplayedChild(SAVE_BUTTON_PAGE);
+    }
   }
 
   private void configureWheelAdapterStyle(NumericWheelAdapter wheelAdapter) {
