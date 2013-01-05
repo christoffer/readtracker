@@ -18,14 +18,14 @@ import com.readtracker_beta.support.ReadTrackerUser;
 
 /**
  * Base of read tracker's activities.
- *
+ * <p/>
  * Hides the title from child applications.
  */
 class ReadTrackerActivity extends FragmentActivity {
   protected final String TAG = this.getClass().getName();
   private ApplicationReadTracker mApplication;
 
-  private Typeface mRobotoThin;
+  private static Typeface mRoboto;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -37,23 +37,25 @@ class ReadTrackerActivity extends FragmentActivity {
   }
 
   /**
-   * Lazily loads the roboto thin typeface
+   * Lazily loads the custom typeface
+   *
    * @return
    */
-  public Typeface getRobotoThin() {
-    if(mRobotoThin == null) {
-      mRobotoThin = Typeface.createFromAsset(getAssets(), "Roboto-Thin.ttf");
+  public Typeface getRoboto() {
+    if(mRoboto == null) {
+      mRoboto = Typeface.createFromAsset(getAssets(), "Roboto-Light.ttf");
     }
-    return mRobotoThin;
+    return mRoboto;
   }
 
   /**
-   * Applies the Roboto Thin font to a given text view.
-   * @param textViewId id of text view to apply roboto thin font on
+   * Applies the custom font to a given text view.
+   *
+   * @param textViewId id of text view to apply custom font on
    */
-  protected void applyRobotoThin(int textViewId) {
+  protected void applyRoboto(int textViewId) {
     TextView textView = (TextView) findViewById(textViewId);
-    textView.setTypeface(getRobotoThin());
+    textView.setTypeface(getRoboto());
   }
 
   public final ApplicationReadTracker getApp() {
@@ -62,6 +64,7 @@ class ReadTrackerActivity extends FragmentActivity {
 
   /**
    * Gets the currently logged in user.
+   *
    * @return the currently logged in user or null.
    */
   public ReadTrackerUser getCurrentUser() {
@@ -70,6 +73,7 @@ class ReadTrackerActivity extends FragmentActivity {
 
   /**
    * Gets the readmill id of the current user.
+   *
    * @return the id of the current user or -1 if no user is signed in.
    */
   public long getCurrentUserId() {
@@ -81,7 +85,7 @@ class ReadTrackerActivity extends FragmentActivity {
    * @return Internet connectivity status
    */
   protected boolean isNetworkAvailable() {
-    ConnectivityManager connectivityManager  = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+    ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
     NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
     return activeNetworkInfo != null;
   }
@@ -95,6 +99,7 @@ class ReadTrackerActivity extends FragmentActivity {
 
   /**
    * Display a short toast message to the user
+   *
    * @param toastMessage Message to be displayed
    */
   protected void toast(String toastMessage) {
@@ -103,6 +108,7 @@ class ReadTrackerActivity extends FragmentActivity {
 
   /**
    * Display a long toast message to the user
+   *
    * @param toastMessage Message to be displayed
    */
   protected void toastLong(String toastMessage) {
@@ -114,7 +120,7 @@ class ReadTrackerActivity extends FragmentActivity {
    * globally available drawable manager.
    *
    * @param imageView Image view to set image for.
-   * @param url The url of the image to set. Will be downloaded if not cached.
+   * @param url       The url of the image to set. Will be downloaded if not cached.
    */
   protected void setImageViewUrl(ImageView imageView, String url) {
     ApplicationReadTracker.getDrawableManager().fetchDrawableOnThread(url, imageView);
@@ -122,6 +128,7 @@ class ReadTrackerActivity extends FragmentActivity {
 
   /**
    * Delegate access to the application global Readmill object.
+   *
    * @return the current readmill api helper or null
    */
   protected ReadmillApiHelper readmillApi() {

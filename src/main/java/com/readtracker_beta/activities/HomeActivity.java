@@ -66,7 +66,7 @@ public class HomeActivity extends ReadTrackerActivity {
     bindViews();
 
     // Set correct font of header
-    applyRobotoThin(R.id.textHeader);
+    applyRoboto(R.id.textHeader);
 
     // Initialize the adapter with empty list of readings (populated later)
     mHomeFragmentAdapter = new HomeFragmentAdapter(getSupportFragmentManager(), new ArrayList<LocalReading>());

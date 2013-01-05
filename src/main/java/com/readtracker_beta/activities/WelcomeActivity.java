@@ -37,7 +37,7 @@ public class WelcomeActivity extends ReadTrackerActivity {
     Button btnAuthorization = (Button) findViewById(R.id.btnAuthorization);
     Button buttonOffline = (Button) findViewById(R.id.buttonOffline);
 
-    applyRobotoThin(R.id.textReadTracker);
+    applyRoboto(R.id.textReadTracker);
 
     btnSignUp.setOnClickListener(new OnClickListener() {
       @Override public void onClick(View view) {

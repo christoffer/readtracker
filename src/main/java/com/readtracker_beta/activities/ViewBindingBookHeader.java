@@ -58,7 +58,7 @@ public class ViewBindingBookHeader {
     textTitle.setVisibility(View.INVISIBLE);
     textAuthor.setVisibility(View.INVISIBLE);
 
-    final Typeface robotoThin = ((ReadTrackerActivity) activity).getRobotoThin();
+    final Typeface robotoThin = ((ReadTrackerActivity) activity).getRoboto();
     textTitle.setTypeface(robotoThin);
     textAuthor.setTypeface(robotoThin);
 
