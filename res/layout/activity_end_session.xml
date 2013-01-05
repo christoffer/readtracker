@@ -6,98 +6,75 @@
 
   <include layout="@layout/_book_header" />
 
-  <ScrollView
+  <!-- Adjust the centering to be visually (roughly) in the middle of the screen -->
+
+  <LinearLayout
     android:layout_below="@id/_bookHeader"
-    android:fillViewport="true"
+    android:layout_above="@+id/flipperActionButtons"
+    android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:layout_width="fill_parent">
+    android:layout_marginTop="-42dp"
+    android:orientation="vertical"
+    android:gravity="center_vertical"
+    android:padding="12dp">
 
-    <LinearLayout
-      android:id="@+id/layoutSessionData"
-      android:layout_width="fill_parent"
-      android:layout_height="0dp"
-      android:orientation="vertical"
-      android:padding="12dp">
+    <TextView
+      style="@style/default_text"
+      android:text="Reading time"
+      android:layout_marginBottom="12dp"
+      android:layout_gravity="center_horizontal" />
 
-      <!-- duration button + container for edit duration -->
-      <TextView
-        style="@style/default_text"
-        android:text="Reading time"
-        android:layout_marginBottom="12dp"
-        android:layout_gravity="center_horizontal" />
+    <com.readtracker_beta.thirdparty.widget.WheelView
+      android:id="@+id/wheelDuration"
+      android:minWidth="220dp"
+      android:minHeight="80dp"
+      android:layout_height="wrap_content"
+      android:layout_width="wrap_content"
+      android:layout_gravity="center_horizontal"
+      android:layout_marginRight="6dp" />
 
-      <LinearLayout
-        android:layout_marginBottom="12dp"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal">
+    <View
+      android:id="@+id/dividerBottom"
+      style="@style/thick_divider"
+      android:layout_marginBottom="24dp"
+      android:layout_marginTop="24dp"
+      android:layout_width="fill_parent" />
 
-        <com.readtracker_beta.thirdparty.widget.WheelView
-          android:id="@+id/wheelDurationHours"
-          android:minWidth="80dp"
-          android:minHeight="80dp"
-          android:layout_height="wrap_content"
-          android:layout_width="wrap_content"
-          android:layout_marginRight="6dp" />
+    <TextView
+      style="@style/default_text"
+      android:text="Book progress"
+      android:layout_gravity="center_horizontal" />
 
-        <com.readtracker_beta.thirdparty.widget.WheelView
-          android:id="@+id/wheelDurationMinutes"
-          android:minWidth="100dp"
-          android:minHeight="80dp"
-          android:layout_height="wrap_content"
-          android:layout_marginLeft="6dp"
-          android:layout_width="wrap_content" />
+    <TextView
+      style="@style/ui_hint"
+      android:text="Scroll to the very end to finish book"
+      android:layout_gravity="center_horizontal" />
 
-      </LinearLayout>
+    <com.readtracker_beta.custom_views.ProgressPicker
+      android:id="@+id/progressPicker"
+      android:layout_marginTop="12dp"
+      android:layout_height="wrap_content"
+      android:layout_width="wrap_content"
+      android:layout_gravity="center_horizontal" />
+  </LinearLayout>
 
-      <View
-        android:id="@+id/dividerBottom"
-        style="@style/thick_divider"
-        android:layout_marginBottom="24dp"
-        android:layout_marginTop="24dp"
-        android:layout_width="fill_parent" />
+  <com.readtracker_beta.thirdparty.SafeViewFlipper
+    android:id="@+id/flipperActionButtons"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentBottom="true"
+    android:inAnimation="@anim/slide_up_appear"
+    android:outAnimation="@anim/slide_down_disappear">
 
-      <TextView
-        style="@style/default_text"
-        android:text="Book progress"
-        android:layout_gravity="center_horizontal" />
+    <Button
+      android:id="@+id/buttonSaveProgress"
+      style="@style/default_button"
+      android:text="Save" />
 
-      <TextView
-        style="@style/ui_hint"
-        android:text="Scroll to the very end to finish book"
-        android:layout_gravity="center_horizontal" />
+    <Button
+      android:id="@+id/buttonFinishBook"
+      style="@style/default_button"
+      android:text="Finish book" />
 
-      <com.readtracker_beta.custom_views.ProgressPicker
-        android:id="@+id/progressPicker"
-        android:layout_marginTop="12dp"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:layout_gravity="center_horizontal" />
-
-      <View
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
-
-      <com.readtracker_beta.thirdparty.SafeViewFlipper
-        android:id="@+id/flipperActionButtons"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:inAnimation="@anim/slide_up_appear"
-        android:outAnimation="@anim/slide_down_disappear">
-
-        <Button
-          android:id="@+id/buttonSaveProgress"
-          style="@style/default_button"
-          android:text="Save" />
-
-        <Button
-          android:id="@+id/buttonFinishBook"
-          style="@style/default_button"
-          android:text="Finish book" />
-
-      </com.readtracker_beta.thirdparty.SafeViewFlipper>
-    </LinearLayout>
-  </ScrollView>
+  </com.readtracker_beta.thirdparty.SafeViewFlipper>
 </RelativeLayout>

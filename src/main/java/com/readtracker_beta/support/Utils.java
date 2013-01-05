@@ -12,6 +12,11 @@ import java.util.Locale;
 public class Utils {
   private static final long DAYS = 60 * 60 * 24 * 1000;
 
+  /**
+   * Returns a string representation like "3 hours, 12 minutes"
+   * @param duration the duration to represent
+   * @return the duration formatted as full hours and minutes
+   */
   public static String hoursAndMinutesFromMillis(long duration) {
     int[] hms = convertMillisToHoursMinutesSeconds(duration);
     int hours = hms[0];
@@ -27,6 +32,28 @@ public class Utils {
     );
   }
 
+  /**
+   * Returns a string representation like "3 h, 12 min"
+   * @param duration the duration to represent
+   * @return the duration formatted as short hours and minutes
+   */
+  public static String shortHoursAndMinutesFromMillis(long duration) {
+    int[] hms = convertMillisToHoursMinutesSeconds(duration);
+    int hours = hms[0];
+    int minutes = hms[1];
+
+    if(hours == 0) {
+      return String.format("%d min", minutes);
+    } else {
+      return String.format("%d h, %d min", hours, minutes);
+    }
+  }
+
+  /**
+   * Returns a string representation like: "4h 23m 12s"
+   * @param duration duration in milliseconds to represent
+   * @return the given duration in a short human string representation
+   */
   public static String shortHumanTimeFromMillis(long duration) {
     int[] hms = convertMillisToHoursMinutesSeconds(duration);
 

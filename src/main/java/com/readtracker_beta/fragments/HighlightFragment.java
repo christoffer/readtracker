@@ -80,6 +80,7 @@ public class HighlightFragment extends Fragment {
     super.onCreate(in);
     if(in != null && !mForceReinitialize) {
       Log.d(TAG, "unfreezing state");
+      mLocalReading = in.getParcelable(IntentKeys.LOCAL_READING);
       mLocalHighlights = in.getParcelableArrayList(IntentKeys.READING_HIGHLIGHTS);
     }
   }
@@ -88,6 +89,7 @@ public class HighlightFragment extends Fragment {
   public void onSaveInstanceState(Bundle out) {
     super.onSaveInstanceState(out);
     Log.d(TAG, "freezing state");
+    out.putParcelable(IntentKeys.LOCAL_READING, mLocalReading);
     out.putParcelableArrayList(IntentKeys.READING_HIGHLIGHTS, mLocalHighlights);
   }
 

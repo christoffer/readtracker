@@ -41,4 +41,5 @@ public class IntentKeys {
   public static final String SESSION_TIMER = "session-timer";
   public static final String CLOSING_REMARK = "closing-remark";
   public static final String RECOMMENDED = "recommended";
+  public static final String CURRENT_DURATION = "current-duration";
 }
