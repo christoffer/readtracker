@@ -13,26 +13,28 @@
     android:text="Use ReadTracker without Readmill"
     android:layout_gravity="center_horizontal" />
 
-  <LinearLayout
+  <RelativeLayout
     android:layout_width="fill_parent"
     android:layout_height="0dp"
     android:orientation="vertical"
     android:layout_weight="1.0"
     android:gravity="center">
 
-    <ImageView
-      android:layout_marginTop="12dp"
+    <com.readtracker_beta.custom_views.TimeSpinner
       android:layout_width="fill_parent"
-      android:layout_gravity="center"
-      android:contentDescription="ReadTracker Logotype"
       android:layout_height="wrap_content"
-      android:src="@drawable/logo_timer"
-      android:paddingLeft="24dip"
-      android:paddingRight="24dip"
-      android:paddingBottom="12dp"
-      android:scaleType="centerInside" />
+      android:layout_centerInParent="true" />
 
-  </LinearLayout>
+    <TextView
+      android:id="@+id/textReadTracker"
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content"
+      android:layout_centerInParent="true"
+      android:gravity="center_horizontal"
+      android:textSize="30dp"
+      android:text="ReadTracker 3" />
+
+  </RelativeLayout>
 
   <View
     android:layout_height="1dp"
@@ -49,18 +51,18 @@
     android:orientation="horizontal">
 
     <Button
+      android:id="@+id/btnAuthorization"
+      style="@style/default_button"
+      android:layout_marginRight="6dp"
+      android:layout_weight="1"
+      android:text="Sign in" />
+
+    <Button
       android:id="@+id/btnSignUp"
       style="@style/default_button"
       android:layout_weight="1"
-      android:layout_marginRight="6dp"
-      android:text="Sign up" />
-
-    <Button
-      android:id="@+id/btnAuthorization"
-      style="@style/default_button"
       android:layout_marginLeft="6dp"
-      android:layout_weight="1"
-      android:text="Sign in" />
+      android:text="Sign up" />
 
   </LinearLayout>
 
