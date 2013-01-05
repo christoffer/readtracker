@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.Layout;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -38,8 +37,7 @@ public class WelcomeActivity extends ReadTrackerActivity {
 
     setContentView(R.layout.activity_welcome);
 
-    Button btnSignUp = (Button) findViewById(R.id.btnSignUp);
-    Button btnAuthorization = (Button) findViewById(R.id.btnAuthorization);
+    Button buttonConnectToReadmill = (Button) findViewById(R.id.buttonConnectToReadmill);
     Button buttonOffline = (Button) findViewById(R.id.buttonOffline);
 
     Button moreAboutReadmill = (Button) findViewById(R.id.buttonMoreAboutReadmill);
@@ -47,15 +45,9 @@ public class WelcomeActivity extends ReadTrackerActivity {
 
     applyRoboto(R.id.textReadTracker);
 
-    btnSignUp.setOnClickListener(new OnClickListener() {
+    buttonConnectToReadmill.setOnClickListener(new OnClickListener() {
       @Override public void onClick(View view) {
-        onCreateAccountClicked();
-      }
-    });
-
-    btnAuthorization.setOnClickListener(new OnClickListener() {
-      @Override public void onClick(View view) {
-        onSignInClicked();
+        onAuthorizeClicked();
       }
     });
 
@@ -128,22 +120,10 @@ public class WelcomeActivity extends ReadTrackerActivity {
     exitToHomeScreen();
   }
 
-  private void onSignInClicked() {
-    Log.d(TAG, "clicked Sign in");
+  private void onAuthorizeClicked() {
+    Log.d(TAG, "clicked Authorize");
     Intent intentWebView = new Intent(this, OAuthActivity.class);
-    intentWebView.putExtra(IntentKeys.WEB_VIEW_ACTION, IntentKeys.WEB_VIEW_SIGN_IN_AND_AUTHORIZE);
     startActivityForResult(intentWebView, ActivityCodes.REQUEST_SIGN_IN);
-  }
-
-  private void onCreateAccountClicked() {
-    Log.d(TAG, "clicked Create Account");
-    Intent intentWebView = new Intent(this, OAuthActivity.class);
-    intentWebView.putExtra(IntentKeys.WEB_VIEW_ACTION, IntentKeys.WEB_VIEW_CREATE_ACCOUNT);
-    startActivityForResult(intentWebView, ActivityCodes.REQUEST_CREATE_ACCOUNT);
-  }
-
-  private void showIntroduction(ViewGroup viewe) {
-
   }
 
   private void onCheckAnonymousReadings(int anonymousReadingsCount) {
@@ -177,7 +157,7 @@ public class WelcomeActivity extends ReadTrackerActivity {
   }
 
   private void associateAnonymousReadings(long readmillUserId) {
-    Log.d(TAG, "Assocation clicked");
+    Log.d(TAG, "Association clicked");
     //noinspection unchecked
     (new AssociateAnonymousReadings()).execute(readmillUserId);
   }

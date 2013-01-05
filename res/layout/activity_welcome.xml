@@ -18,7 +18,7 @@
     android:layout_width="fill_parent"
     android:layout_height="0dp"
     android:layout_below="@+id/buttonOffline"
-    android:layout_above="@+id/layoutActionButtons"
+    android:layout_above="@+id/buttonConnectToReadmill"
     android:orientation="vertical"
     android:gravity="center">
 
@@ -42,33 +42,16 @@
     android:layout_height="1dp"
     android:background="@color/midnight_ultralight"
     android:layout_width="fill_parent"
-    android:layout_above="@+id/layoutActionButtons" />
+    android:layout_above="@+id/buttonConnectToReadmill" />
 
-  <LinearLayout
-    android:id="@+id/layoutActionButtons"
-    android:layout_height="wrap_content"
-    android:layout_width="fill_parent"
-    android:layout_alignParentBottom="true"
+  <Button
+    android:id="@+id/buttonConnectToReadmill"
+    style="@style/default_button"
     android:layout_marginTop="24dp"
     android:layout_marginBottom="12dp"
-    android:gravity="center_horizontal"
-    android:orientation="horizontal">
-
-    <Button
-      android:id="@+id/btnAuthorization"
-      style="@style/default_button"
-      android:layout_marginRight="6dp"
-      android:layout_weight="1"
-      android:text="Sign in" />
-
-    <Button
-      android:id="@+id/btnSignUp"
-      style="@style/default_button"
-      android:layout_weight="1"
-      android:layout_marginLeft="6dp"
-      android:text="Sign up" />
-
-  </LinearLayout>
+    android:layout_width="fill_parent"
+    android:layout_alignParentBottom="true"
+    android:text="Connect with Readmill" />
 
   <ScrollView
     android:id="@+id/scrollviewIntroduction"
@@ -76,6 +59,7 @@
     android:layout_height="fill_parent"
     android:layout_centerInParent="true"
     android:background="#dd000000"
+    android:visibility="gone"
     android:fillViewport="true">
 
     <LinearLayout

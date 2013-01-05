@@ -10,8 +10,6 @@ public class IntentKeys {
   public static final String READMILL_TRANSFER_COMPLETE = "readmill-transfer-complete";
   public static final String READMILL_SYNC_READINGS_COMPLETE = "readmill-sync-readings-complete";
 
-  public static final int WEB_VIEW_SIGN_IN_AND_AUTHORIZE = 0;
-  public static final int WEB_VIEW_CREATE_ACCOUNT = 1;
   public static final String WEB_VIEW_URL = "webview-url";
 
   public static final String SHOULD_ABANDON = "should-abandond";

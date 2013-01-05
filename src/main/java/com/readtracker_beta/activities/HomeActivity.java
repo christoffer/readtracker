@@ -181,6 +181,7 @@ public class HomeActivity extends ReadTrackerActivity {
         // with Readmill to send the new data
         if(requestCode == ActivityCodes.REQUEST_READING_SESSION ||
           requestCode == ActivityCodes.REQUEST_ADD_BOOK) {
+          Log.v(TAG, "Result OK from :" + requestCode);
           refreshReadingList();
           sync(false);
         }

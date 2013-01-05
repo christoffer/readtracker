@@ -12,7 +12,6 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import com.readtracker_beta.IntentKeys;
 import com.readtracker_beta.R;
 
 /**
@@ -28,19 +27,6 @@ public class OAuthActivity extends ReadTrackerActivity {
 
     mLayoutProgressBar = (LinearLayout) findViewById(R.id.layoutProgressBar);
 
-    int webViewAction;
-
-    try {
-      Bundle intentExtras = getIntent().getExtras();
-      webViewAction = intentExtras.getInt(IntentKeys.WEB_VIEW_ACTION);
-    } catch(Exception ex) {
-      Log.e(TAG, "Failed to get intent keys", ex);
-      toastLong("An error occurred when trying to open the browser");
-      setResult(RESULT_CANCELED);
-      finish();
-      return;
-    }
-
     RelativeLayout parentLayout = (RelativeLayout) findViewById(R.id.layoutParentForWebview);
 
     WebView webView = createWebContentView();
@@ -55,13 +41,7 @@ public class OAuthActivity extends ReadTrackerActivity {
     // Load empty page so view is not transparent
     webView.loadData("<html><body></body></html>", "text/html", "utf-8");
     webView.setBackgroundColor(0xff000000);
-    String url = null;
-
-    if(webViewAction == IntentKeys.WEB_VIEW_CREATE_ACCOUNT) {
-      url = readmillApi().createAccountUrl();
-    } else if(webViewAction == IntentKeys.WEB_VIEW_SIGN_IN_AND_AUTHORIZE) {
-      url = readmillApi().authorizeUrl();
-    }
+    String url = readmillApi().authorizeUrl();
 
     if(url != null) {
       Log.i(TAG, "Loading url: " + url);

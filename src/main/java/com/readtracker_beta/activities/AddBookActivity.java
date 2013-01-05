@@ -30,6 +30,8 @@ public class AddBookActivity extends ReadTrackerActivity {
   private static Switch mSwitchPagesPercent;
   private static Switch mSwitchPublicPrivate;
 
+  private static TextView mTextReadmillPrivacyHint;
+
   private boolean mCameFromReadingSession = false;
 
   // Store the cover url from the intent that starts the activity
@@ -61,6 +63,8 @@ public class AddBookActivity extends ReadTrackerActivity {
       mCameFromReadingSession = extras.getBoolean(IntentKeys.FROM_READING_SESSION, false);
       if(mCameFromReadingSession) {
         mEditPageCount.requestFocus();
+      } else {
+
       }
     }
   }
@@ -72,6 +76,7 @@ public class AddBookActivity extends ReadTrackerActivity {
     mSwitchPagesPercent = (Switch) findViewById(R.id.togglePagesPercent);
     mSwitchPublicPrivate = (Switch) findViewById(R.id.togglePublicPrivate);
     mButtonAddBook = (Button) findViewById(R.id.buttonAddBook);
+    mTextReadmillPrivacyHint = (TextView) findViewById(R.id.textReadmillPrivacyHint);
   }
 
   private void bindEvents() {
@@ -92,6 +97,13 @@ public class AddBookActivity extends ReadTrackerActivity {
           mEditPageCount.setTag(mEditPageCount.getText().toString());
           mEditPageCount.setText("100.00%");
         }
+      }
+    });
+
+    mSwitchPublicPrivate.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+      @Override public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
+        final int textResource = checked ? R.string.readmill_shared : R.string.readmill_private;
+        mTextReadmillPrivacyHint.setText(getString(textResource));
       }
     });
   }
@@ -170,7 +182,7 @@ public class AddBookActivity extends ReadTrackerActivity {
     }
 
     if(mEditAuthor.getText().length() < 1) {
-      toast("Please enter the name of the author");
+      toast("Please enter the author");
       mEditAuthor.requestFocus();
       return false;
     }

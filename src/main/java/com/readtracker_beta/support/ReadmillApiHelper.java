@@ -1,10 +1,7 @@
 package com.readtracker_beta.support;
 
 import android.util.Log;
-import com.readmill.api.ReadmillWrapper;
-import com.readmill.api.Request;
-import com.readmill.api.RequestBuilder;
-import com.readmill.api.Token;
+import com.readmill.api.*;
 import com.readtracker_beta.db.LocalHighlight;
 import org.apache.http.HttpResponse;
 import org.json.JSONArray;
@@ -380,16 +377,6 @@ public class ReadmillApiHelper {
   public String authorizeUrl() {
     return mWrapper.getAuthorizationURL().toString();
   }
-
-  /**
-   * Get the url where the user can create an account
-   *
-   * @return the url for creating an account
-   */
-  public String createAccountUrl() {
-    return mWrapper.getAuthorizationURL().toString();
-  }
-
 
   // =======
   // HELPERS

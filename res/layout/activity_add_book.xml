@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ScrollView
-  xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:app="http://schemas.android.com/apk/res/com.readtracker_beta"
 
   android:layout_height="fill_parent"
@@ -34,81 +33,75 @@
       android:layout_marginBottom="12dp"
       android:hint="Author" />
 
-    <RelativeLayout
+    <TextView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="24dp"
+      android:textColor="@color/text_color_secondary"
+      android:text="Length used for tracking" />
+
+    <LinearLayout
       android:layout_width="fill_parent"
       android:layout_height="wrap_content"
-      android:gravity="center_vertical"
-      android:layout_marginTop="24dp"
-      android:layout_marginBottom="6dp">
-
-      <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-
-        android:textColor="@color/text_color_secondary"
-        android:text="Tracking by"
-        android:layout_alignParentLeft="true"
-        android:layout_centerVertical="true" />
-
-      <com.readtracker_beta.thirdparty.views.Switch
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/togglePagesPercent"
-        app:textOn="Pages"
-        app:textOff="Percent"
-        android:checked="true"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true" />
-
-    </RelativeLayout>
-
-    <EditText
-      android:id="@+id/editPageCount"
-      style="@style/centered_number_input_field"
-      android:layout_width="wrap_content"
-      android:layout_gravity="center"
       android:layout_marginTop="12dp"
       android:layout_marginBottom="12dp"
-      android:layout_marginRight="6dp"
-      android:paddingLeft="24dp"
-      android:paddingRight="24dp"
-      android:inputType="number"
-      android:hint="0"
-      android:gravity="center_horizontal"
-      android:ellipsize="end" />
+      android:gravity="center_vertical">
 
-    <!-- show readmill connection settings when in online mode -->
+      <EditText
+        android:id="@+id/editPageCount"
+        style="@style/centered_number_input_field"
+        android:textSize="30dp"
+        android:layout_width="fill_parent"
+        android:layout_weight="1"
+        android:paddingLeft="24dp"
+        android:paddingRight="24dp"
+        android:inputType="number"
+        android:hint="0"
+        android:gravity="center_horizontal"
+        android:ellipsize="end" />
 
-    <RelativeLayout
+      <com.readtracker_beta.thirdparty.views.Switch
+        android:id="@+id/togglePagesPercent"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_weight="1"
+        app:textOn="Pages"
+        app:textOff="%"
+        android:checked="true" />
+
+    </LinearLayout>
+
+    <LinearLayout
       android:id="@+id/layoutReadmill"
       android:layout_width="fill_parent"
       android:layout_height="wrap_content"
-      android:gravity="center_vertical"
-      android:layout_marginTop="24dp"
-      android:layout_marginBottom="6dp"
-      >
+      android:layout_marginTop="12dp"
+      android:layout_marginBottom="12dp">
 
-      <TextView
-        android:text="Readmill profile page"
-        android:layout_width="wrap_content"
+    <TextView
+        android:text="Readmill privacy"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_centerVertical="true"
-        />
+        android:layout_weight="1"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp" />
 
       <com.readtracker_beta.thirdparty.views.Switch
         android:id="@+id/togglePublicPrivate"
         android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        app:textOn="Visible"
-        app:textOff="Hidden"
+        android:layout_width="fill_parent"
+        android:layout_weight="1"
+        app:textOn="Shared"
+        app:textOff="Private"
         android:checked="true" />
 
-      <!-- spacer to push the add button to the bottom of the page but still allow small screens to scroll -->
+    </LinearLayout>
 
-    </RelativeLayout>
+    <TextView
+      android:id="@+id/textReadmillPrivacyHint"
+      style="@style/ui_hint"
+      android:layout_width="fill_parent"
+      android:text="@string/readmill_shared" />
 
     <View
       android:layout_width="fill_parent"
