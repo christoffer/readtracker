@@ -6,14 +6,19 @@ import android.util.Log;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.Where;
 import com.readtracker_beta.db.LocalHighlight;
+import com.readtracker_beta.db.LocalReading;
 import com.readtracker_beta.db.LocalSession;
 import com.readtracker_beta.support.ReadmillApiHelper;
+import com.readtracker_beta.support.ReadmillConverter;
 import com.readtracker_beta.support.ReadmillException;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
+
+import static com.readtracker_beta.support.ReadmillApiHelper.dumpJSON;
 
 /**
  * Performs push syncing to Readmill.
@@ -34,9 +39,65 @@ public class ReadmillTransferIntent extends IntentService {
   @Override
   protected void onHandleIntent(Intent intent) {
     Log.d(TAG, "Processing unsent items...");
+    uploadNewReadings();
     uploadNewSessions();
     uploadNewHighlights();
     sendBroadcast(new Intent(IntentKeys.READMILL_TRANSFER_COMPLETE));
+  }
+
+  private void uploadNewReadings() {
+    Log.v(TAG, "uploadNewReadings()");
+
+    try {
+      Dao<LocalReading, Integer> readingDao = ApplicationReadTracker.getReadingDao();
+
+      // Fetch readings that have an associated reading (not anonymous readings)
+      // that are not yet connected to Readmill
+      Where<LocalReading, Integer> stmt = readingDao.queryBuilder().where()
+        .le(LocalReading.READMILL_READING_ID_FIELD_NAME, 0)
+        .and()
+        .gt(LocalHighlight.READMILL_USER_ID_FIELD_NAME, 0);
+
+      List<LocalReading> readingsToPush = stmt.query();
+
+      if(readingsToPush.size() < 1) {
+        Log.v(TAG, "No new readings found.");
+        return;
+      }
+
+      Log.i(TAG, "Pushing " + readingsToPush.size() + " new readings");
+
+      for(LocalReading localReading : readingsToPush) {
+        Log.d(TAG, "Pushing reading: " + localReading.getInfo());
+
+        JSONObject jsonBook = null, jsonReading = null;
+
+        try {
+          jsonBook = readmillApi().createBook(localReading.title, localReading.author);
+          jsonReading = readmillApi().createReading(jsonBook.getLong("id"), !localReading.readmillPrivate);
+
+          // Keep the provided cover if any
+          if(localReading.coverURL == null) {
+            localReading.coverURL = jsonBook.getString("cover_url");
+          }
+
+          // Include data from Readmill
+          ReadmillConverter.mergeLocalReadingWithJSON(localReading, jsonReading);
+
+          // Store locally
+          readingDao.createOrUpdate(localReading);
+        } catch(ReadmillException e) {
+          Log.w(TAG, "Failed to connect book to readmill", e);
+        } catch(JSONException e) {
+          Log.w(TAG, "Unexpected result from Readmill when creating LocalReading. book: " +
+            dumpJSON(jsonBook) + " and reading: " + dumpJSON(jsonReading), e);
+        } catch(SQLException e) {
+          Log.w(TAG, "SQL Error while trying to save LocalReading", e);
+        }
+      }
+    } catch(SQLException e) {
+      Log.d(TAG, "Failed to save local reading", e);
+    }
   }
 
   private void uploadNewHighlights() {

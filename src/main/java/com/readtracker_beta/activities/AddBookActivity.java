@@ -2,14 +2,18 @@ package com.readtracker_beta.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
-import android.widget.*;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.TextView;
 import com.readtracker_beta.IntentKeys;
 import com.readtracker_beta.R;
 import com.readtracker_beta.db.LocalReading;
 import com.readtracker_beta.interfaces.SaveLocalReadingListener;
-import com.readtracker_beta.tasks.ConnectReadingTask;
-import com.readtracker_beta.interfaces.ConnectedReadingListener;
+import com.readtracker_beta.support.ReadTrackerUser;
 import com.readtracker_beta.tasks.SaveLocalReadingTask;
 import com.readtracker_beta.thirdparty.views.Switch;
 
@@ -31,6 +35,8 @@ public class AddBookActivity extends ReadTrackerActivity {
   private static Switch mSwitchPublicPrivate;
 
   private static TextView mTextReadmillPrivacyHint;
+
+  private static ViewGroup mLayoutReadmill;
 
   private boolean mCameFromReadingSession = false;
 
@@ -77,6 +83,7 @@ public class AddBookActivity extends ReadTrackerActivity {
     mSwitchPublicPrivate = (Switch) findViewById(R.id.togglePublicPrivate);
     mButtonAddBook = (Button) findViewById(R.id.buttonAddBook);
     mTextReadmillPrivacyHint = (TextView) findViewById(R.id.textReadmillPrivacyHint);
+    mLayoutReadmill = (ViewGroup) findViewById(R.id.layoutReadmill);
   }
 
   private void bindEvents() {
@@ -120,7 +127,11 @@ public class AddBookActivity extends ReadTrackerActivity {
 
   private void setupEditMode(LocalReading localReading) {
     mButtonAddBook.setText("Save");
-    mSwitchPublicPrivate.setVisibility(View.GONE);
+
+    mEditTitle.setEnabled(false);
+    mEditAuthor.setEnabled(false);
+    mLayoutReadmill.setVisibility(View.GONE);
+    mTextReadmillPrivacyHint.setVisibility(View.GONE);
 
     mLocalReading = localReading;
 
@@ -149,6 +160,19 @@ public class AddBookActivity extends ReadTrackerActivity {
     localReading.author = mEditAuthor.getText().toString();
     localReading.coverURL = mCoverURL;
 
+    ReadTrackerUser user = getApp().getCurrentUser();
+    if(user != null && mLocalReading == null) {
+
+      Log.v(TAG, "Creating a reading that should be connected to Readmill. " +
+        "Setting user id: " + user.getReadmillId() +
+        " and privacy: " + (mSwitchPublicPrivate.isChecked() ? "public" : "private")
+      );
+
+      // Creating a reading that will connect to Readmill
+      localReading.readmillUserId = getApp().getCurrentUser().getReadmillId();
+      localReading.readmillPrivate = !mSwitchPublicPrivate.isChecked();
+    }
+
     if(mSwitchPagesPercent.isChecked()) {
       localReading.totalPages = Integer.parseInt(mEditPageCount.getText().toString());
       localReading.measureInPercent = false;
@@ -157,16 +181,7 @@ public class AddBookActivity extends ReadTrackerActivity {
       localReading.measureInPercent = true;
     }
 
-    final boolean isInEditMode = mLocalReading != null;
-    final boolean shouldConnectToReadmill = getCurrentUser() != null && !isInEditMode;
-
-    if(shouldConnectToReadmill) {
-      // TODO this should really be saveLocalReading(localReading) + ReadmillApi.connectBook(...)
-      final boolean connectAsPublic = mSwitchPublicPrivate.isChecked();
-      saveAndConnectLocalReading(localReading, connectAsPublic);
-    } else {
-      saveLocalReading(localReading);
-    }
+    saveLocalReading(localReading);
   }
 
   /**
@@ -218,20 +233,6 @@ public class AddBookActivity extends ReadTrackerActivity {
       setResult(ActivityCodes.RESULT_OK);
     }
     finish();
-  }
-
-  private void saveAndConnectLocalReading(LocalReading localReading, boolean isPublic) {
-    getApp().showProgressDialog(this, "Connecting your book to Readmill...");
-    ConnectReadingTask.connect(localReading, isPublic, new ConnectedReadingListener() {
-      @Override public void onLocalReadingConnected(LocalReading localReading) {
-        getApp().clearProgressDialog();
-        if(localReading == null) {
-          toastLong("Could not connect with Readmill");
-        } else {
-          exitToReadingSession(localReading);
-        }
-      }
-    });
   }
 
   private void saveLocalReading(LocalReading localReading) {
