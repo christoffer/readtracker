@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
+import android.util.Log;
 import android.widget.Toast;
 import com.readtracker_beta.IntentKeys;
 import com.readtracker_beta.R;
@@ -88,7 +89,7 @@ public class BookSettingsActivity extends PreferenceActivity {
 
     builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
       @Override public void onClick(DialogInterface dialog, int id) {
-        deleteReading();
+        deleteReading(mLocalReading);
       }
     });
 
@@ -97,11 +98,14 @@ public class BookSettingsActivity extends PreferenceActivity {
     builder.show();
   }
 
-  private void deleteReading() {
-    mLocalReading.deletedByUser = true;
-    SaveLocalReadingTask.save(mLocalReading, new SaveLocalReadingListener() {
+  private void deleteReading(LocalReading localReading) {
+    Log.i(TAG, "Deleting reading: " + localReading);
+    localReading.deletedByUser = true;
+    SaveLocalReadingTask.save(localReading, new SaveLocalReadingListener() {
       @Override public void onLocalReadingSaved(LocalReading localReading) {
         toastDeleted(localReading.isConnected());
+        setResult(ActivityCodes.RESULT_DELETED_BOOK);
+        finish();
       }
     });
   }

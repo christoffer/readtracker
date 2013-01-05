@@ -76,6 +76,7 @@ public class BookActivity extends ReadTrackerActivity {
     if(resultCode == ActivityCodes.RESULT_CANCELED) {
       return;
     }
+
     Log.d(TAG, "onActivityResult: requestCode: " + requestCode + ", resultCode: " + resultCode);
     switch(requestCode) {
       case ActivityCodes.CREATE_PING:
@@ -114,7 +115,7 @@ public class BookActivity extends ReadTrackerActivity {
   }
 
   @Override public boolean onCreateOptionsMenu(Menu menu) {
-    MenuItem editBook = menu.add(NO_GROUP, MENU_EDIT_BOOK_SETTINGS, 0, "Edit book settings");
+    menu.add(NO_GROUP, MENU_EDIT_BOOK_SETTINGS, 0, "Edit book settings");
     return true;
   }
 
