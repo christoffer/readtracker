@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
   android:orientation="vertical"
   android:layout_height="fill_parent"
   android:layout_width="fill_parent"
@@ -10,14 +10,16 @@
   <Button
     android:id="@+id/buttonOffline"
     style="@style/button_small"
-    android:text="Use ReadTracker without Readmill"
-    android:layout_gravity="center_horizontal" />
+    android:layout_gravity="center_horizontal"
+    android:layout_alignParentTop="true"
+    android:text="Use ReadTracker without Readmill" />
 
   <RelativeLayout
     android:layout_width="fill_parent"
     android:layout_height="0dp"
+    android:layout_below="@+id/buttonOffline"
+    android:layout_above="@+id/layoutActionButtons"
     android:orientation="vertical"
-    android:layout_weight="1.0"
     android:gravity="center">
 
     <com.readtracker_beta.custom_views.TimeSpinner
@@ -39,12 +41,14 @@
   <View
     android:layout_height="1dp"
     android:background="@color/midnight_ultralight"
-    android:layout_width="fill_parent" />
+    android:layout_width="fill_parent"
+    android:layout_above="@+id/layoutActionButtons" />
 
   <LinearLayout
+    android:id="@+id/layoutActionButtons"
     android:layout_height="wrap_content"
     android:layout_width="fill_parent"
-    android:layout_gravity="bottom"
+    android:layout_alignParentBottom="true"
     android:layout_marginTop="24dp"
     android:layout_marginBottom="12dp"
     android:gravity="center_horizontal"
@@ -66,4 +70,59 @@
 
   </LinearLayout>
 
-</LinearLayout>
+  <ScrollView
+    android:id="@+id/scrollviewIntroduction"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_centerInParent="true"
+    android:background="#dd000000"
+    android:fillViewport="true">
+
+    <LinearLayout
+      android:id="@+id/layoutTutorial"
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content"
+      android:gravity="center_vertical"
+      android:paddingLeft="24dp"
+      android:paddingRight="24dp"
+      android:orientation="vertical">
+
+      <TextView
+        style="@style/default_text"
+        android:textSize="20dp"
+        android:text="Welcome to ReadTracker!" />
+
+      <TextView
+        style="@style/default_text"
+        android:layout_marginTop="12dp"
+        android:text="@string/welcome_text" />
+
+      <Button
+        android:id="@+id/buttonMoreAboutReadmill"
+        style="@style/button_small"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="More about Readmill" />
+
+      <Button
+        android:id="@+id/buttonMoreAboutReadTracker"
+        style="@style/button_small"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="More about ReadTracker" />
+
+      <Button
+        android:id="@+id/buttonStartUsing"
+        style="@style/default_button"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:padding="12dp"
+        android:text="Start using ReadTracker" />
+
+    </LinearLayout>
+
+  </ScrollView>
+
+</RelativeLayout>

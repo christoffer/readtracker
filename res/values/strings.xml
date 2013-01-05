@@ -14,4 +14,6 @@
 
   <string name="delete_reading_connected">This will DELETE the book, both from your device AND from your Readmill profile.\n\nAll related data such as highlights and progress will also be delete.\n\nThere is NO WAY to restore it.</string>
   <string name="delete_reading_unconnected">This will DELETE the book from your device.\n\nAll related data such as highlights and progress will also be delete.\n\nThere is NO WAY to restore it.</string>
+  <string name="welcome_tagline">Helps you get all your reading into your Readmill account</string>
+  <string name="welcome_text">ReadTracker is a tool for syncing any book you are reading with your Readmill account.\n\nReadmill is a web service that helps you leave a trail of the books you\'ve read and loved, together highlights of the parts that was most important to you.\n\nAnd with Readmill you can share this with your friends, or follow interesting people who can inspire you to find the next book to read.</string>
 </resources>

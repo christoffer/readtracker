@@ -259,7 +259,7 @@ public class BookActivity extends ReadTrackerActivity {
       SessionTimer sessionTimer = mBookFragmentAdapter.getSessionTimer();
       sessionTimer.stop();
       finishWithResultAndPausedSession(ActivityCodes.RESULT_CANCELED, mLocalReading.id, sessionTimer);
-      toast("Pausing " + mLocalReading.title);
+      toast("Pausing " + mLocalReading.title + "\n\nClick it again to resume");
     } else {
       finishWithResult(ActivityCodes.RESULT_OK);
     }

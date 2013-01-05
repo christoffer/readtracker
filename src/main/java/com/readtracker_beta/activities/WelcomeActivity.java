@@ -3,12 +3,17 @@ package com.readtracker_beta.activities;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Layout;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.view.Window;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.PreparedQuery;
@@ -37,6 +42,9 @@ public class WelcomeActivity extends ReadTrackerActivity {
     Button btnAuthorization = (Button) findViewById(R.id.btnAuthorization);
     Button buttonOffline = (Button) findViewById(R.id.buttonOffline);
 
+    Button moreAboutReadmill = (Button) findViewById(R.id.buttonMoreAboutReadmill);
+    Button moreAboutReadTracker = (Button) findViewById(R.id.buttonMoreAboutReadTracker);
+
     applyRoboto(R.id.textReadTracker);
 
     btnSignUp.setOnClickListener(new OnClickListener() {
@@ -56,6 +64,44 @@ public class WelcomeActivity extends ReadTrackerActivity {
         onOfflineClicked();
       }
     });
+
+    moreAboutReadmill.setOnClickListener(new OnClickListener() {
+      @Override public void onClick(View view) {
+        visitWebPage("https://readmill.com/about");
+      }
+    });
+
+    moreAboutReadTracker.setOnClickListener(new OnClickListener() {
+      @Override public void onClick(View view) {
+        visitWebPage("http://readtracker.com");
+      }
+    });
+
+    if(getApp().getFirstTimeFlag()) {
+      final ViewGroup scrollView = (ViewGroup) findViewById(R.id.scrollviewIntroduction);
+      final Button buttonStart = (Button) findViewById(R.id.buttonStartUsing);
+
+      buttonStart.setOnClickListener(new OnClickListener() {
+        @Override public void onClick(View view) {
+          Animation disappear = AnimationUtils.loadAnimation(WelcomeActivity.this, R.anim.fade_out);
+          disappear.setAnimationListener(new Animation.AnimationListener() {
+            @Override public void onAnimationStart(Animation animation) {}
+            @Override public void onAnimationRepeat(Animation animation) {}
+            @Override public void onAnimationEnd(Animation animation) {
+              // Can't get rid of the view by just setting the visibility to gone (clicks are still registered)
+              // So we remove it all together instead.
+              ((ViewGroup) scrollView.getParent()).removeView(scrollView);
+            }
+          });
+          scrollView.startAnimation(disappear);
+        }
+      });
+
+      Animation appear = AnimationUtils.loadAnimation(this, R.anim.fade_in);
+      appear.setStartOffset(500);
+      scrollView.startAnimation(appear);
+      scrollView.setVisibility(View.VISIBLE);
+    }
   }
 
   @Override
@@ -94,6 +140,10 @@ public class WelcomeActivity extends ReadTrackerActivity {
     Intent intentWebView = new Intent(this, OAuthActivity.class);
     intentWebView.putExtra(IntentKeys.WEB_VIEW_ACTION, IntentKeys.WEB_VIEW_CREATE_ACCOUNT);
     startActivityForResult(intentWebView, ActivityCodes.REQUEST_CREATE_ACCOUNT);
+  }
+
+  private void showIntroduction(ViewGroup viewe) {
+
   }
 
   private void onCheckAnonymousReadings(int anonymousReadingsCount) {
@@ -138,6 +188,12 @@ public class WelcomeActivity extends ReadTrackerActivity {
     intentWelcome.putExtra(IntentKeys.SIGNED_IN, true);
     startActivity(intentWelcome);
     finish();
+  }
+
+  private void visitWebPage(String url) {
+    Uri readmillUrl = Uri.parse(url);
+    Intent launchBrowser = new Intent(Intent.ACTION_VIEW, readmillUrl);
+    startActivity(launchBrowser);
   }
 
   private class AssociateAnonymousReadings extends AsyncTask<Long, Void, Void> {
