@@ -41,7 +41,8 @@ public class LocalReading implements Parcelable {
   public static final String READMILL_STATE_FIELD_NAME = "rm_state";
   public static final String READMILL_CLOSING_REMARK = "rm_closing_remark";
 
-  public static final String READMILL_RECOMMENDED = "rm_recommended";
+  public static final String READMILL_RECOMMENDED_FIELD_NAME = "rm_recommended";
+  public static final String READMILL_IS_PRIVATE_FIELD_NAME = "rm_is_private";
 
   public static final String DELETED_BY_USER_FIELD_NAME = "user_deleted";
 
@@ -72,7 +73,8 @@ public class LocalReading implements Parcelable {
 
   @DatabaseField(columnName = LOCALLY_CLOSED_AT_FIELD_NAME) public long locallyClosedAt;
 
-  @DatabaseField(columnName = READMILL_RECOMMENDED) public boolean recommended = false;
+  @DatabaseField(columnName = READMILL_RECOMMENDED_FIELD_NAME) public boolean readmillRecommended = false;
+  @DatabaseField(columnName = READMILL_IS_PRIVATE_FIELD_NAME) public boolean readmillPrivate = false;
 
   @DatabaseField(columnName = DELETED_BY_USER_FIELD_NAME) public boolean deletedByUser = false;
 

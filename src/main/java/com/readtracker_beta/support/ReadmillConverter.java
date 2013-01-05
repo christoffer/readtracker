@@ -50,6 +50,7 @@ public class ReadmillConverter {
     localReading.readmillState = toIntegerState(source.getString("state"));
     localReading.progress = source.getDouble("progress");
     localReading.lastReadAt = localReading.readmillTouchedAt;
+    localReading.readmillPrivate = source.getBoolean("private");
 
     localReading.readmillClosingRemark = optString("closing_remark", null, source);
 

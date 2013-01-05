@@ -71,7 +71,7 @@ public class FinishBookActivity extends ReadTrackerActivity {
     localReading.readmillClosingRemark = closingRemark;
     localReading.readmillState = ReadmillApiHelper.ReadingState.FINISHED;
     localReading.locallyClosedAt = (new Date()).getTime();
-    localReading.recommended = isRecommended;
+    localReading.readmillRecommended = isRecommended;
     (new SaveLocalReadingTask(new SaveLocalReadingListener() {
       @Override
       public void onLocalReadingSaved(LocalReading localReading) {
