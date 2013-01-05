@@ -1,6 +1,7 @@
 package com.readtracker_beta.activities;
 
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -31,6 +32,8 @@ class ReadTrackerActivity extends FragmentActivity {
     super.onCreate(savedInstanceState);
     mApplication = (ApplicationReadTracker) getApplication();
     requestWindowFeatures();
+
+    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
   }
 
   /**
