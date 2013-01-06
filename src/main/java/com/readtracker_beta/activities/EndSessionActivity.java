@@ -52,7 +52,6 @@ public class EndSessionActivity extends ReadTrackerActivity {
     setContentView(R.layout.activity_end_session);
 
     bindViews();
-    bindEvents();
     initializeWheelViews();
 
     int currentPage;
@@ -84,9 +83,11 @@ public class EndSessionActivity extends ReadTrackerActivity {
     final boolean onLastPage = currentPage == mLocalReading.totalPages;
     toggleFinishButton(onLastPage);
 
-    findViewById(R.id.dividerBottom).setBackgroundColor(mLocalReading.getColor());
+    findViewById(R.id.dividerOne).setBackgroundColor(mLocalReading.getColor());
+    findViewById(R.id.dividerTwo).setBackgroundColor(mLocalReading.getColor());
 
     Log.i(TAG, "Init for reading : " + mLocalReading.id + " with session length:" + mSessionLengthMillis);
+    bindEvents();
   }
 
   @Override
@@ -263,6 +264,13 @@ public class EndSessionActivity extends ReadTrackerActivity {
       mListener = listener;
     }
 
+    @Override protected void onPreExecute() {
+      super.onPreExecute();
+    }
+
+    @Override protected void onCancelled() {
+      super.onCancelled();
+    }
     @Override
     protected LocalSession doInBackground(Void... args) {
       Log.i(TAG, "Saving reading with id " + mLocalReading.id);

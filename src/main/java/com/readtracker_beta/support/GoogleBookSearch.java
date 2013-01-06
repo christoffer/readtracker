@@ -21,7 +21,7 @@ public class GoogleBookSearch {
   private static final Pattern ISBNPattern = Pattern.compile("^(?:isbn[ :]+)([0-9 -]+)$");
 
   public static ArrayList<GoogleBook> search(String query) throws GoogleBookSearchException {
-    Log.i(TAG, "Searching GoogleBooks for query:\"" + query + "\"");
+    Log.i(TAG, "Got raw search query:\"" + query + "\"");
     ArrayList<GoogleBook> result = new ArrayList<GoogleBook>();
 
     HttpClient httpClient = new DefaultHttpClient();

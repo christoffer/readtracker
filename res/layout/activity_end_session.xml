@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--suppress AndroidLintDuplicateIds -->
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_height="fill_parent"
   android:layout_width="fill_parent"
@@ -35,7 +35,7 @@
       android:layout_marginBottom="24dp" />
 
     <View
-      android:id="@+id/dividerBottom"
+      android:id="@+id/dividerOne"
       style="@style/thick_divider"
       android:layout_marginTop="-52dp"
       android:layout_marginBottom="52dp"
@@ -60,7 +60,7 @@
       android:layout_gravity="center_horizontal" />
 
     <View
-      android:id="@+id/dividerBottom"
+      android:id="@+id/dividerTwo"
       style="@style/thick_divider"
       android:layout_marginTop="-32dp"
       android:layout_marginBottom="32dp"

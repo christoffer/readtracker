@@ -215,8 +215,7 @@ public class BookSearchActivity extends ReadTrackerActivity {
     mBookSearchAdapter.clear();
 
     if(foundBooks == null) {
-      Log.d(TAG, "Book search result was null");
-      toastLong("There was a problem with searching");
+      toastLong("No results");
       foundBooks = new ArrayList<GoogleBook>();
     }
 
@@ -244,7 +243,6 @@ public class BookSearchActivity extends ReadTrackerActivity {
       try {
         return GoogleBookSearch.search(searchWords[0]);
       } catch(GoogleBookSearchException e) {
-        Log.e(TAG, "Error while searching GoogleBooks", e);
         return null;
       }
     }

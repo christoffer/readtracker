@@ -334,8 +334,8 @@ public class ReadingFragment extends Fragment {
       }
     });
 
-    mTextBillboard.startAnimation(disappear);
     mFlipperSessionControl.setDisplayedChild(FLIPPER_PAGE_READING_BUTTONS);
+    mTextBillboard.startAnimation(disappear);
   }
 
   /**
