@@ -246,6 +246,7 @@ public class ReadingFragment extends Fragment {
         startTrackerUpdates();
         setupPauseMode();
       }
+
       @Override public void onStopped() {
         stopTrackerUpdates();
         setupResumeMode();
@@ -393,11 +394,11 @@ public class ReadingFragment extends Fragment {
    * Changes UI to pause mode
    */
   private void setupResumeMode() {
-    mButtonPause.setText("Resume");
+    mButtonPause.setText("Paused");
     flipToButtonPage(FLIPPER_PAGE_READING_BUTTONS);
-    Animation fadeOutHalf = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_out_half);
-    fadeOutHalf.setAnimationListener(new EnableReadingControls(false));
-    mButtonDone.startAnimation(fadeOutHalf);
+    Animation pulse = AnimationUtils.loadAnimation(getActivity(), R.anim.pulse);
+    mButtonPause.startAnimation(pulse);
+    mButtonDone.setEnabled(false);
   }
 
   /**
@@ -406,9 +407,8 @@ public class ReadingFragment extends Fragment {
   private void setupPauseMode() {
     mButtonPause.setText("Pause");
     flipToButtonPage(FLIPPER_PAGE_READING_BUTTONS);
-    Animation fadeInHalf = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_in_half);
-    fadeInHalf.setAnimationListener(new EnableReadingControls(true));
-    mButtonDone.startAnimation(fadeInHalf);
+    mButtonPause.setAnimation(null);
+    mButtonDone.setEnabled(true);
   }
 
   // Timing events
@@ -489,6 +489,9 @@ public class ReadingFragment extends Fragment {
     }
   }
 
+  /**
+   * Enables/disables the button after/before the animation
+   */
   private class EnableReadingControls implements Animation.AnimationListener {
     private boolean enabled = false;
 
@@ -498,7 +501,7 @@ public class ReadingFragment extends Fragment {
 
     @Override public void onAnimationEnd(Animation animation) {
       if(!this.enabled) {
-        mButtonDone.setBackgroundDrawable(getResources().getDrawable(R.drawable.default_button_no_states));
+//        mButtonDone.setBackgroundDrawable(getResources().getDrawable(R.drawable.default_button_no_states));
         mButtonDone.setEnabled(false);
       }
     }
@@ -506,7 +509,7 @@ public class ReadingFragment extends Fragment {
     @Override public void onAnimationStart(Animation animation) {
       if(this.enabled) {
         mButtonDone.setEnabled(true);
-        mButtonDone.setBackgroundDrawable(getResources().getDrawable(R.drawable.default_toggle_button_background));
+//        mButtonDone.setBackgroundDrawable(getResources().getDrawable(R.drawable.default_toggle_button_background));
       }
     }
 
