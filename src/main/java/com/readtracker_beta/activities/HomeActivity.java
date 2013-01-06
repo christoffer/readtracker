@@ -54,8 +54,10 @@ public class HomeActivity extends ReadTrackerActivity {
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
+    boolean cameFromSignIn = getIntent().getBooleanExtra(IntentKeys.SIGNED_IN, false);
+
     // Show welcome screen for first time users
-    if(getApp().getFirstTimeFlag()) {
+    if(getApp().getFirstTimeFlag() || (getCurrentUser() == null && !cameFromSignIn)) {
       getApp().signOut();
       finish();
       return;
@@ -101,7 +103,6 @@ public class HomeActivity extends ReadTrackerActivity {
 
     bindEvents();
 
-    boolean cameFromSignIn = getIntent().getBooleanExtra(IntentKeys.SIGNED_IN, false);
     if(cameFromSignIn && getCurrentUser() != null) {
       Log.d(TAG, "Fresh from sign in, doing initial full sync.");
       sync(true);
@@ -225,6 +226,7 @@ public class HomeActivity extends ReadTrackerActivity {
     if(!shouldSync()) {
       return;
     }
+    Log.i(TAG, "Performing " + (fullSync ? "full" : "partial") + " sync");
 
     startService(new Intent(this, ReadmillTransferIntent.class));
 
