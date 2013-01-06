@@ -20,5 +20,6 @@
   </string>
 
   <string name="readmill_private">Book will be visible only to you on your Readmill profile.\n\nNo one else can see that you are reading it, and nothing is ever shared to other services like Facebook and Twitter.</string>
+  <string name="book_search_hint">Free text search or \"isbn 978-0-7645-8874-7\"</string>
 
 </resources>

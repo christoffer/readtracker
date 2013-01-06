@@ -11,23 +11,24 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.regex.MatchResult;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class GoogleBookSearch {
   private static final String TAG = GoogleBookSearch.class.getName();
+
+  private static final Pattern ISBNPattern = Pattern.compile("^(?:isbn[ :]+)([0-9 -]+)$");
 
   public static ArrayList<GoogleBook> search(String query) throws GoogleBookSearchException {
     Log.i(TAG, "Searching GoogleBooks for query:\"" + query + "\"");
     ArrayList<GoogleBook> result = new ArrayList<GoogleBook>();
 
     HttpClient httpClient = new DefaultHttpClient();
-    Uri uri = new Uri.Builder().
-                scheme("https").
-                authority("www.googleapis.com").
-                path("books/v1/volumes").
-                appendQueryParameter("q", query).
-                build();
 
-    HttpGet httpGet = new HttpGet(uri.toString());
+    Uri queryUri = buildQueryUri(query);
+    HttpGet httpGet = new HttpGet(queryUri.toString());
+
     try {
       HttpResponse httpResponse = httpClient.execute(httpGet);
       String responseBody = HttpUtils.getString(httpResponse);
@@ -46,6 +47,31 @@ public class GoogleBookSearch {
       throw new GoogleBookSearchException(e.getMessage());
     }
     return result;
+  }
+
+  protected static Uri buildQueryUri(String queryString) {
+    String isbnQueryString = parseISBNQueryString(queryString);
+    queryString = isbnQueryString == null ? queryString : isbnQueryString;
+
+    Log.i(TAG, "Searching for query: " + queryString);
+
+    Uri uri = new Uri.Builder().
+      scheme("https").
+      authority("www.googleapis.com").
+      path("books/v1/volumes").
+      appendQueryParameter("q", queryString).
+      build();
+
+    return uri;
+  }
+
+  private static String parseISBNQueryString(String queryString) {
+    Matcher isbnMatcher = ISBNPattern.matcher(queryString.toLowerCase().trim());
+    if(isbnMatcher.matches()) {
+      String cleanedNumber = isbnMatcher.group(0).replaceAll("[^0-9]+", "");
+      return String.format("isbn:%s", cleanedNumber);
+    }
+    return null;
   }
 
   /**
