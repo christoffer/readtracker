@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--suppress AndroidLintDuplicateIds -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_height="fill_parent"
   android:layout_width="fill_parent"
@@ -20,7 +21,7 @@
 
     <TextView
       style="@style/default_text"
-      android:text="Reading time"
+      android:text="Time spent reading"
       android:layout_marginBottom="12dp"
       android:layout_gravity="center_horizontal" />
 
@@ -29,33 +30,42 @@
       android:minWidth="220dp"
       android:minHeight="80dp"
       android:layout_height="wrap_content"
-      android:layout_width="wrap_content"
+      android:layout_width="fill_parent"
       android:layout_gravity="center_horizontal"
-      android:layout_marginRight="6dp" />
+      android:layout_marginBottom="24dp" />
 
     <View
       android:id="@+id/dividerBottom"
       style="@style/thick_divider"
-      android:layout_marginBottom="24dp"
-      android:layout_marginTop="24dp"
+      android:layout_marginTop="-52dp"
+      android:layout_marginBottom="52dp"
       android:layout_width="fill_parent" />
 
     <TextView
       style="@style/default_text"
-      android:text="Book progress"
+      android:layout_marginTop="24dp"
+      android:text="Where did you end?"
       android:layout_gravity="center_horizontal" />
 
     <TextView
       style="@style/ui_hint"
-      android:text="Scroll to the very end to finish book"
+      android:text="Scroll to the very end if you finished the book"
       android:layout_gravity="center_horizontal" />
 
     <com.readtracker_beta.custom_views.ProgressPicker
       android:id="@+id/progressPicker"
       android:layout_marginTop="12dp"
       android:layout_height="wrap_content"
-      android:layout_width="wrap_content"
+      android:layout_width="fill_parent"
       android:layout_gravity="center_horizontal" />
+
+    <View
+      android:id="@+id/dividerBottom"
+      style="@style/thick_divider"
+      android:layout_marginTop="-32dp"
+      android:layout_marginBottom="32dp"
+      android:layout_width="fill_parent" />
+
   </LinearLayout>
 
   <com.readtracker_beta.thirdparty.SafeViewFlipper

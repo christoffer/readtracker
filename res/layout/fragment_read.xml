@@ -12,7 +12,7 @@
     android:layout_height="wrap_content"
     android:textSize="20dp"
     android:layout_centerVertical="true"
-    android:text="Need to know how many pages the book is"
+    android:text=""
     android:paddingBottom="48dp"
     android:gravity="center" />
 

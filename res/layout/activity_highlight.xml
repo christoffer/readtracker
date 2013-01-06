@@ -18,20 +18,21 @@
     android:layout_below="@id/_bookHeader"
     android:hint="Highlight text" />
 
-  <View
-    android:id="@+id/divider"
-    style="@style/thick_divider"
-    android:layout_marginTop="12dp"
-    android:layout_marginBottom="12dp"
-    android:layout_above="@+id/progressPicker" />
-
   <com.readtracker_beta.custom_views.ProgressPicker
     android:id="@+id/progressPicker"
     android:layout_width="wrap_content"
     android:layout_centerHorizontal="true"
     android:layout_height="wrap_content"
     android:layout_above="@+id/buttonSaveHighlight"
+    android:layout_marginTop="12dp"
     android:layout_marginBottom="12dp" />
+
+  <View
+    android:id="@+id/divider"
+    style="@style/thick_divider"
+    android:layout_below="@+id/progressPicker"
+    android:layout_marginTop="-42dp"
+    android:layout_marginBottom="42dp" />
 
   <Button
     android:id="@+id/buttonSaveHighlight"

@@ -5,6 +5,7 @@
   <com.readtracker_beta.thirdparty.widget.WheelView
     android:id="@+id/wheelEndingPage"
     android:minWidth="150dp"
+    android:layout_width="fill_parent"
     style="@style/generic_number_wheel" />
 
 </merge>

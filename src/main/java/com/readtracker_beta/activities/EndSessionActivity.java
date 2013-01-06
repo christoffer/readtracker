@@ -5,6 +5,7 @@ import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
 import com.readtracker_beta.ApplicationReadTracker;
@@ -163,16 +164,11 @@ public class EndSessionActivity extends ReadTrackerActivity {
     }
   }
 
-  private void configureWheelAdapterStyle(AbstractWheelTextAdapter wheelAdapter) {
-    wheelAdapter.setTextColor(getResources().getColor(R.color.text_color_primary));
-    wheelAdapter.setTypeFace(Typeface.DEFAULT);
-    wheelAdapter.setTypeStyle(Typeface.NORMAL);
-  }
-
   private void initializeWheelViews() {
     ArrayWheelAdapter hoursAdapter = createDurationWheelAdapter(24 * 60);
     mWheelDuration.setVisibleItems(3);
     mWheelDuration.setViewAdapter(hoursAdapter);
+    mWheelDuration.setCalliperMode(WheelView.CalliperMode.NO_CALLIPERS);
   }
 
   private void setupDuration(long sessionLengthMillis) {
@@ -189,11 +185,15 @@ public class EndSessionActivity extends ReadTrackerActivity {
   private ArrayWheelAdapter createDurationWheelAdapter(int maxMinutes) {
     String[] labels = new String[maxMinutes];
     for(int minute = 0; minute < maxMinutes; minute++) {
-      labels[minute] = Utils.shortHoursAndMinutesFromMillis(minute * 60 * 1000);
+      labels[minute] = Utils.hoursAndMinutesFromMillis(minute * 60 * 1000);
     }
 
     ArrayWheelAdapter<String> adapter = new ArrayWheelAdapter<String>(this, labels);
-    configureWheelAdapterStyle(adapter);
+    adapter.setTextColor(getResources().getColor(R.color.text_color_primary));
+    adapter.setTypeFace(Typeface.DEFAULT);
+    adapter.setTypeStyle(Typeface.NORMAL);
+    float fontSizePixels = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 12, getResources().getDisplayMetrics());
+    adapter.setTextSize((int) fontSizePixels);
     return adapter;
   }
 

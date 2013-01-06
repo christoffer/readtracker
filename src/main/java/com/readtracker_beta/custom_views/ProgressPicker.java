@@ -112,6 +112,7 @@ public class ProgressPicker extends LinearLayout {
 
   private void configureWheelView(WheelView wheelView) {
     wheelView.setVisibleItems(3);
+    wheelView.setCalliperMode(WheelView.CalliperMode.NO_CALLIPERS);
 
     wheelView.addChangingListener(new OnWheelChangedListener() {
       @Override public void onChanged(WheelView wheel, int oldValue, int newValue) {
