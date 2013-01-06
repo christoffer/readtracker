@@ -1,63 +1,63 @@
-package com.readtracker_beta.activities;
+package com.readtracker_beta.custom_views;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
-import android.view.Window;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
+import com.readtracker_beta.ApplicationReadTracker;
 import com.readtracker_beta.R;
+import com.readtracker_beta.interfaces.OAuthDialogResultListener;
+import com.readtracker_beta.support.ReadmillApiHelper;
 
 /**
  * Screen for signing in to Readmill through a web interface
  */
-public class OAuthActivity extends ReadTrackerActivity {
-  private static LinearLayout mLayoutProgressBar;
+public class OAuthDialog extends DialogFragment {
+  private static final String TAG = OAuthDialog.class.getName();
 
-  @Override
-  public void onCreate(Bundle savedInstanceState) {
+  public OAuthDialog() {
+
+  }
+
+  @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.sign_in_and_authorize);
+    setStyle(STYLE_NO_TITLE, 0);
+  }
 
-    mLayoutProgressBar = (LinearLayout) findViewById(R.id.layoutProgressBar);
-
-    RelativeLayout parentLayout = (RelativeLayout) findViewById(R.id.layoutParentForWebview);
-
-    WebView webView = createWebContentView();
-    RelativeLayout.LayoutParams paramsWebView = new RelativeLayout.LayoutParams(
-        LayoutParams.FILL_PARENT,
-        LayoutParams.FILL_PARENT);
-    paramsWebView.addRule(RelativeLayout.CENTER_IN_PARENT);
-    webView.setLayoutParams(paramsWebView);
-
-    parentLayout.addView(webView, 0);
+  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    LinearLayout root = new LinearLayout(getActivity());
+    root.setMinimumHeight(10000); // Avoid jumping in size by always being max size
+    WebView webView = createWebContentView(getActivity());
 
     // Load empty page so view is not transparent
     webView.loadData("<html><body></body></html>", "text/html", "utf-8");
     webView.setBackgroundColor(0xff000000);
-    String url = readmillApi().authorizeUrl();
 
-    if(url != null) {
-      Log.i(TAG, "Loading url: " + url);
-      webView.loadUrl(url);
-      webView.setBackgroundColor(0xff000000);
-    }
+    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+      LayoutParams.FILL_PARENT,
+      LayoutParams.WRAP_CONTENT);
 
+    String url = ApplicationReadTracker.getReadmillApiHelper().authorizeUrl();
+    Log.i(TAG, "Loading url: " + url);
+
+    root.addView(webView, layoutParams);
+    webView.loadUrl(url);
+
+    return root;
   }
 
-  @Override
-  protected void requestWindowFeatures() {
-    requestWindowFeature(Window.FEATURE_NO_TITLE);
-  }
-
-  private WebView createWebContentView() {
-    WebView webView = new WebView(this);
+  private WebView createWebContentView(Context context) {
+    WebView webView = new WebView(context);
     webView.setWebViewClient(new WebViewClient() {
       @Override
       public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -88,12 +88,11 @@ public class OAuthActivity extends ReadTrackerActivity {
       }
 
       private void setProgressVisible(boolean shouldBeVisible) {
-        LinearLayout layout = OAuthActivity.mLayoutProgressBar;
-        if(layout != null) {
-          layout.setVisibility(shouldBeVisible ? View.VISIBLE : View.GONE);
-        }
+//        LinearLayout layout = OAuthDialog.mLayoutProgressBar;
+//        if(layout != null) {
+//          layout.setVisibility(shouldBeVisible ? View.VISIBLE : View.GONE);
+//        }
       }
-
     });
 
     webView.getSettings().setJavaScriptEnabled(true);
@@ -101,25 +100,23 @@ public class OAuthActivity extends ReadTrackerActivity {
   }
 
   private void onTokenExchangeComplete(boolean success) {
-    if(!success) {
-      Log.d(TAG, "Failed getting a token - exiting");
-      toast("Authorization failed");
-      setResult(RESULT_CANCELED);
-      finish();
-      return;
+    OAuthDialogResultListener listener = ((OAuthDialogResultListener) getActivity());
+    if(success) {
+      listener.onOAuthSuccess();
+    } else {
+      listener.onOAuthFailure();
     }
-
-    setResult(RESULT_OK);
-    finish();
   }
 
   // Perform the actual exchange in a background thread
   private class TokenExchangeAsyncTask extends AsyncTask<String, Void, Boolean> {
     @Override protected Boolean doInBackground(String... args) {
-      return readmillApi().authorize(args[0]);
+      ReadmillApiHelper apiHelper = ApplicationReadTracker.getReadmillApiHelper();
+      return apiHelper.authorize(args[0]);
     }
 
     @Override protected void onPostExecute(Boolean success) {
+      Log.v(TAG, "Completed exchange with success: " + success);
       onTokenExchangeComplete(success);
     }
   }

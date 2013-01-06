@@ -101,7 +101,7 @@ public class ApplicationReadTracker extends Application implements TokenChangeLi
     mInstance = this;
   }
 
-  public ReadmillApiHelper getReadmillApiHelper() {
+  public ReadmillApiHelper getReadmillApiHelperInstance() {
     return mReadmillApiHelper;
   }
 
@@ -304,9 +304,9 @@ public class ApplicationReadTracker extends Application implements TokenChangeLi
     return mInstance.getDatabaseHelper().getHighlightDao();
   }
 
-  public static ReadmillApiHelper getReadmillApi() {
+  public static ReadmillApiHelper getReadmillApiHelper() {
     assertInstance();
-    return mInstance.getReadmillApiHelper();
+    return mInstance.getReadmillApiHelperInstance();
   }
 
   /**

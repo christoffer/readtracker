@@ -230,7 +230,7 @@ public class HomeActivity extends ReadTrackerActivity {
 
     Log.i(TAG, "Starting ASyncTask for Syncing Readmill Readings");
 
-    ReadmillApiHelper api = ApplicationReadTracker.getReadmillApi();
+    ReadmillApiHelper api = ApplicationReadTracker.getReadmillApiHelper();
     mReadmillSyncTask = new ReadmillSyncAsyncTask(mSyncStatusHandler, api, fullSync);
 
     // Prevent starting another sync while this is ongoing

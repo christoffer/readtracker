@@ -21,7 +21,7 @@
     <activity android:label="ReadTracker"
               android:name=".activities.WelcomeActivity" />
 
-    <activity android:name=".activities.OAuthActivity" />
+    <activity android:name=".custom_views.OAuthDialog" />
 
     <activity android:name=".activities.FinishBookActivity" />
 

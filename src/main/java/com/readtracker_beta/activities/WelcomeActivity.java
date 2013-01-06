@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -20,7 +21,9 @@ import com.j256.ormlite.stmt.Where;
 import com.readtracker_beta.ApplicationReadTracker;
 import com.readtracker_beta.IntentKeys;
 import com.readtracker_beta.R;
+import com.readtracker_beta.custom_views.OAuthDialog;
 import com.readtracker_beta.db.LocalReading;
+import com.readtracker_beta.interfaces.OAuthDialogResultListener;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -28,7 +31,7 @@ import java.util.ArrayList;
 /**
  * Splash screen that lets a user sign in or sign up to Readmill
  */
-public class WelcomeActivity extends ReadTrackerActivity {
+public class WelcomeActivity extends ReadTrackerActivity implements OAuthDialogResultListener {
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -101,20 +104,6 @@ public class WelcomeActivity extends ReadTrackerActivity {
     requestWindowFeature(Window.FEATURE_NO_TITLE);
   }
 
-  @Override
-  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    boolean validRequestCode = (
-        requestCode == ActivityCodes.REQUEST_SIGN_IN ||
-            requestCode == ActivityCodes.REQUEST_CREATE_ACCOUNT
-    );
-
-    if(validRequestCode && (resultCode == RESULT_OK)) {
-      // Initiate a search for device only readings
-      //noinspection unchecked
-      (new CheckAnonymousReadingsASync()).execute();
-    }
-  }
-
   private void onOfflineClicked() {
     Log.d(TAG, "clicked Start in offline mode");
     exitToHomeScreen();
@@ -122,8 +111,9 @@ public class WelcomeActivity extends ReadTrackerActivity {
 
   private void onAuthorizeClicked() {
     Log.d(TAG, "clicked Authorize");
-    Intent intentWebView = new Intent(this, OAuthActivity.class);
-    startActivityForResult(intentWebView, ActivityCodes.REQUEST_SIGN_IN);
+    FragmentManager fm = getSupportFragmentManager();
+    OAuthDialog dialog = new OAuthDialog();
+    dialog.show(fm, "tag");
   }
 
   private void onCheckAnonymousReadings(int anonymousReadingsCount) {
@@ -174,6 +164,15 @@ public class WelcomeActivity extends ReadTrackerActivity {
     Uri readmillUrl = Uri.parse(url);
     Intent launchBrowser = new Intent(Intent.ACTION_VIEW, readmillUrl);
     startActivity(launchBrowser);
+  }
+
+  @Override public void onOAuthFailure() {
+    Log.v(TAG, "Got negative response from OAuth dialog");
+  }
+
+  @Override public void onOAuthSuccess() {
+    Log.v(TAG, "Got positive response from OAuth dialog");
+    (new CheckAnonymousReadingsASync()).execute();
   }
 
   private class AssociateAnonymousReadings extends AsyncTask<Long, Void, Void> {

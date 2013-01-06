@@ -67,7 +67,7 @@ public class ConnectReadingTask {
         jsonBook = createBookOnReadmill(localReading.title, localReading.author);
 
         // Start reading it on Readmill
-        jsonReading = ApplicationReadTracker.getReadmillApi().
+        jsonReading = ApplicationReadTracker.getReadmillApiHelper().
             createReading(jsonBook.getLong("id"), isPublic);
 
         // Prefer a provided cover over the one that is on Readmill
@@ -101,7 +101,7 @@ public class ConnectReadingTask {
      * @throws ReadmillException if the request was not successful
      */
     private JSONObject createBookOnReadmill(String title, String authorName) throws ReadmillException {
-      return ApplicationReadTracker.getReadmillApi().createBook(title, authorName);
+      return ApplicationReadTracker.getReadmillApiHelper().createBook(title, authorName);
     }
 
     protected void onPostExecute(LocalReading localReading) {

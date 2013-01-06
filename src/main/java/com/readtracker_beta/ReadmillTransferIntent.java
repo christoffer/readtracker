@@ -33,7 +33,7 @@ public class ReadmillTransferIntent extends IntentService {
   }
 
   private ReadmillApiHelper readmillApi() {
-    return ((ApplicationReadTracker) getApplication()).getReadmillApiHelper();
+    return ((ApplicationReadTracker) getApplication()).getReadmillApiHelperInstance();
   }
 
   @Override

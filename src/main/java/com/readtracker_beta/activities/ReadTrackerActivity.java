@@ -125,18 +125,4 @@ class ReadTrackerActivity extends FragmentActivity {
   protected void setImageViewUrl(ImageView imageView, String url) {
     ApplicationReadTracker.getDrawableManager().fetchDrawableOnThread(url, imageView);
   }
-
-  /**
-   * Delegate access to the application global Readmill object.
-   *
-   * @return the current readmill api helper or null
-   */
-  protected ReadmillApiHelper readmillApi() {
-    ReadmillApiHelper readmillApiHelper = mApplication.getReadmillApiHelper();
-    if(readmillApiHelper == null) {
-      Log.e(TAG, "CRITICAL ! The connection to Readmill was not initialized.");
-      throw new RuntimeException("CRITICAL ! The connection to Readmill was not initialized.");
-    }
-    return readmillApiHelper;
-  }
 }
