@@ -87,6 +87,7 @@ public class OAuthDialog extends DialogFragment {
     } else {
       listener.onOAuthFailure();
     }
+    dismiss();
   }
 
   // Perform the actual exchange in a background thread
