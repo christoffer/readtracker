@@ -273,9 +273,9 @@ public class ReadingFragment extends Fragment {
   }
 
   private void setupForMissingPages() {
-    mTextBillboard.setText("Please add page count");
+    mTextBillboard.setText("Just one more step...");
     mTextBillboard.setEnabled(false);
-    mButtonStart.setText("Edit book");
+    mButtonStart.setText("Set book length");
   }
 
   /**

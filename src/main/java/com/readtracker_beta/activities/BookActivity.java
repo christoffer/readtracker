@@ -77,7 +77,7 @@ public class BookActivity extends ReadTrackerActivity {
       return;
     }
 
-    Log.d(TAG, "onActivityResult: requestCode: " + requestCode + ", resultCode: " + resultCode);
+    Log.v(TAG, "onActivityResult: requestCode: " + requestCode + ", resultCode: " + resultCode);
     switch(requestCode) {
       case ActivityCodes.CREATE_PING:
         // Set result to OK to state that something was changed
@@ -87,9 +87,9 @@ public class BookActivity extends ReadTrackerActivity {
           return;
         }
         break;
-      case ActivityCodes.REQUEST_EDIT_BOOK:
+      case ActivityCodes.REQUEST_ADD_PAGE_NUMBERS:
         if(resultCode == RESULT_OK) {
-          Log.d(TAG, "Came back from editing the book");
+          Log.d(TAG, "Came back from adding page number");
           mInitialPageForFragmentAdapter = PAGE_READING;
           int updateReadingId = data.getIntExtra(IntentKeys.READING_ID, -1);
           reloadLocalData(updateReadingId);
@@ -103,7 +103,7 @@ public class BookActivity extends ReadTrackerActivity {
           reloadLocalData(updateReadingId); // TODO optimally we should only reload the highlights here
         }
         break;
-      case ActivityCodes.REQUEST_CHANGE_BOOK_SETTINGS:
+      case ActivityCodes.REQUEST_BOOK_SETTINGS:
         if(resultCode == ActivityCodes.RESULT_OK) {
           // Something changed
           reloadLocalData(data.getIntExtra(IntentKeys.READING_ID, -1));
@@ -242,7 +242,7 @@ public class BookActivity extends ReadTrackerActivity {
     Intent intentEditBook = new Intent(this, AddBookActivity.class);
     intentEditBook.putExtra(IntentKeys.LOCAL_READING, localReading);
     intentEditBook.putExtra(IntentKeys.FROM_READING_SESSION, true);
-    startActivityForResult(intentEditBook, ActivityCodes.REQUEST_EDIT_BOOK);
+    startActivityForResult(intentEditBook, ActivityCodes.REQUEST_ADD_PAGE_NUMBERS);
   }
 
   public void exitToCreateHighlightScreen() {
@@ -269,7 +269,7 @@ public class BookActivity extends ReadTrackerActivity {
   public void exitToBookSettings() {
     Intent bookSettings = new Intent(this, BookSettingsActivity.class);
     bookSettings.putExtra(IntentKeys.LOCAL_READING, mLocalReading);
-    startActivityForResult(bookSettings, ActivityCodes.REQUEST_CHANGE_BOOK_SETTINGS);
+    startActivityForResult(bookSettings, ActivityCodes.REQUEST_BOOK_SETTINGS);
   }
 
   public void finishWithResult(int resultCode) {
