@@ -74,25 +74,6 @@ public class OAuthDialog extends DialogFragment {
 
         return super.shouldOverrideUrlLoading(view, url);
       }
-
-      @Override
-      public void onPageFinished(WebView view, String url) {
-        super.onPageFinished(view, url);
-        setProgressVisible(false);
-      }
-
-      @Override
-      public void onPageStarted(WebView view, String url, Bitmap favicon) {
-        super.onPageStarted(view, url, favicon);
-        setProgressVisible(true);
-      }
-
-      private void setProgressVisible(boolean shouldBeVisible) {
-//        LinearLayout layout = OAuthDialog.mLayoutProgressBar;
-//        if(layout != null) {
-//          layout.setVisibility(shouldBeVisible ? View.VISIBLE : View.GONE);
-//        }
-      }
     });
 
     webView.getSettings().setJavaScriptEnabled(true);
