@@ -11,7 +11,7 @@
                     android:normalScreens="true"
                     android:smallScreens="false" />
 
-  <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="15" />
+  <uses-sdk android:targetSdkVersion="8" />
 
   <application android:icon="@drawable/icon"
                android:label="RT3-Beta"
