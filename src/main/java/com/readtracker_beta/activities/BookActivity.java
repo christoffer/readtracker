@@ -159,7 +159,7 @@ public class BookActivity extends ReadTrackerActivity {
       return;
     }
 
-    if(bundle.isValid()) {
+    if(!bundle.isValid()) {
       toastLong("An error occurred while loading data for this book");
       finishWithResult(ActivityCodes.RESULT_CANCELED);
       return;
@@ -381,7 +381,7 @@ public class BookActivity extends ReadTrackerActivity {
         ", readingSessions: " + (localSessions == null ? "null" : localSessions.size()) +
         ", readingHighlights: " + (localHighlights == null ? "null" : localHighlights.size())
       );
-      return localReading == null || localSessions == null || localHighlights == null;
+      return localReading != null && localSessions != null && localHighlights != null;
     }
   }
 
