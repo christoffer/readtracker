@@ -57,7 +57,7 @@ public class ReadingFragment extends Fragment {
 
   // Timing
   private SessionTimer mSessionTimer;
-  private RedrawTimerTask mRedrawTimerTask;
+  private UpdateDurationTask mUpdateDurationTask;
 
   private static WheelView mWheelDuration;
 
@@ -92,7 +92,7 @@ public class ReadingFragment extends Fragment {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    mRedrawTimerTask = null;
+    mUpdateDurationTask = null;
     if(savedInstanceState != null && !mForceReInitialize) {
       Log.d(TAG, "unfreeze state");
       mLocalReading = savedInstanceState.getParcelable(IntentKeys.LOCAL_READING);
@@ -483,14 +483,22 @@ public class ReadingFragment extends Fragment {
 
   // Timing events
 
+  /**
+   * Gets the elapsed time in milliseconds.
+   *
+   * @return the elapsed time in milliseconds.
+   */
   private long getElapsed() {
     return mSessionTimer.getTotalElapsed();
   }
 
-  // Sets the billboard to show the elapsed time
-  private void updateDuration(long milliseconds) {
-    int elapsedTimeInSeconds = (int) (milliseconds / (1000 * 60));
-    mWheelDuration.setCurrentItem(elapsedTimeInSeconds, false, false);
+  private void updateDuration(long elapsedMilliseconds) {
+    Log.i(TAG, "Updating duration: " + elapsedMilliseconds);
+    int elapsedMinutes = (int) (elapsedMilliseconds / (1000 * 60));
+    int currentItem = mWheelDuration.getCurrentItem();
+    if(elapsedMinutes != currentItem) {
+      mWheelDuration.setCurrentItem(elapsedMinutes, false, false);
+    }
   }
 
   private void startTrackerUpdates() {
@@ -503,9 +511,15 @@ public class ReadingFragment extends Fragment {
 
     mWheelDuration.setEnabled(true);
 
-    mRedrawTimerTask = new RedrawTimerTask();
-    //noinspection unchecked
-    mRedrawTimerTask.execute();
+    mUpdateDurationTask = new UpdateDurationTask();
+
+    final float minutes = ((getElapsed() / 1000.0f) / 60.0f);
+    int millisecondsToNextFullMinute = (int) ((1.0f - (minutes - (int)minutes)) * 60000);
+
+    // Add a little padding to avoid rounding errors which can cause the update
+    // to miss the minute change and have to wait a whole minute for the next update.
+    millisecondsToNextFullMinute += 100;
+    mUpdateDurationTask.execute(millisecondsToNextFullMinute);
   }
 
   private void stopTrackerUpdates() {
@@ -515,26 +529,28 @@ public class ReadingFragment extends Fragment {
     }
 
     // Clear out the redraw timer
-    if(mRedrawTimerTask != null) {
-      mRedrawTimerTask.cancel(true);
-      mRedrawTimerTask = null;
+    if(mUpdateDurationTask != null) {
+      mUpdateDurationTask.cancel(true);
+      mUpdateDurationTask = null;
     }
 
     mWheelDuration.setEnabled(false);
   }
 
-  private class RedrawTimerTask extends AsyncTask<Void, Void, Void> {
-    private static final int UPDATE_INTERVAL = 1000;
+  private class UpdateDurationTask extends AsyncTask<Integer, Void, Void> {
+    private static final int UPDATE_INTERVAL = 60 * 1000;
 
     // TODO display a notification while reading is active
 
     @Override
-    protected Void doInBackground(Void... voids) {
+    protected Void doInBackground(Integer... initialDelay) {
+      int delay = initialDelay[0];
       try {
         while(!isCancelled()) {
-          //noinspection unchecked
           publishProgress();
-          Thread.sleep(UPDATE_INTERVAL);
+          Log.d(TAG, "Next update in: " + delay + " milliseconds");
+          Thread.sleep(delay);
+          delay = UPDATE_INTERVAL;
         }
         return null;
       } catch(InterruptedException ignored) {
@@ -543,7 +559,8 @@ public class ReadingFragment extends Fragment {
     }
 
     @Override
-    protected void onProgressUpdate(Void... values) {
+    protected void onProgressUpdate(Void... voids) {
+      Log.v(TAG, "Updated progress");
       updateDuration(getElapsed());
     }
   }

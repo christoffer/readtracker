@@ -59,6 +59,8 @@ public class SessionTimer implements Parcelable {
   /**
    * Get the total elapsed time, including any time passed since the
    * active timestamp.
+   *
+   * @return total elapsed time in milliseconds.
    */
   public long getTotalElapsed() {
     return getTotalElapsed(System.currentTimeMillis());
