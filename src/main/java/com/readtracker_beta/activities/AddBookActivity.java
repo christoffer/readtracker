@@ -54,6 +54,7 @@ public class AddBookActivity extends ReadTrackerActivity {
     if(getCurrentUser() == null) {
       // No Readmill connection setup, hide related settings
       findViewById(R.id.layoutReadmill).setVisibility(View.GONE);
+      findViewById(R.id.textReadmillPrivacyHint).setVisibility(View.GONE);
     }
 
     Bundle extras = getIntent().getExtras();
