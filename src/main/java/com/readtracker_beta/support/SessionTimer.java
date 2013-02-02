@@ -151,7 +151,7 @@ public class SessionTimer implements Parcelable {
    *
    * @param elapsed The elapsed time in milliseconds
    */
-  public void setElapsed(int elapsed) {
+  public void setElapsedMillis(int elapsed) {
     if(isActive()) {
       final long now = System.currentTimeMillis();
       stopTimer(now);

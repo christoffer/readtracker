@@ -305,7 +305,7 @@ public class ReadingFragment extends Fragment {
       public void onChanged(WheelView wheel, int oldValue, int newValue) {
         if(mSessionTimer != null) {
           int elapsed = newValue * 60 * 1000;
-          mSessionTimer.setElapsed(elapsed);
+          mSessionTimer.setElapsedMillis(elapsed);
           PauseableSpinAnimation currentAnimation = (PauseableSpinAnimation) mTimeSpinner.getAnimation();
           if(currentAnimation != null) {
             mTimeSpinner.startAnimation(currentAnimation);
@@ -490,7 +490,7 @@ public class ReadingFragment extends Fragment {
   // Sets the billboard to show the elapsed time
   private void updateDuration(long milliseconds) {
     int elapsedTimeInSeconds = (int) (milliseconds / (1000 * 60));
-    mWheelDuration.setCurrentItem(elapsedTimeInSeconds);
+    mWheelDuration.setCurrentItem(elapsedTimeInSeconds, false, false);
   }
 
   private void startTrackerUpdates() {

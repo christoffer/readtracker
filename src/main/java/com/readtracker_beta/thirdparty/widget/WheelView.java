@@ -368,6 +368,17 @@ public class WheelView extends View {
    * @param animated the animation flag
    */
   public void setCurrentItem(int index, boolean animated) {
+    setCurrentItem(index, animated, true);
+  }
+
+  /**
+   * Sets the current item. Does nothing when index is wrong.
+   *
+   * @param index        the item index to set
+   * @param animated     flag for using animation or not
+   * @param fireCallback flag for firing callbacks or not (only has effect when animated is false)
+   */
+  public void setCurrentItem(int index, boolean animated, boolean fireCallback) {
     if(viewAdapter == null || viewAdapter.getItemsCount() == 0) {
       return; // throw?
     }
@@ -399,7 +410,9 @@ public class WheelView extends View {
         int old = currentItem;
         currentItem = index;
 
-        notifyChangingListeners(old, currentItem);
+        if(fireCallback) {
+          notifyChangingListeners(old, currentItem);
+        }
 
         invalidate();
       }
