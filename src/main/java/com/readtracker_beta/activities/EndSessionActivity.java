@@ -2,6 +2,7 @@ package com.readtracker_beta.activities;
 
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,6 +16,7 @@ import com.readtracker_beta.ReadmillTransferIntent;
 import com.readtracker_beta.custom_views.ProgressPicker;
 import com.readtracker_beta.db.LocalReading;
 import com.readtracker_beta.db.LocalSession;
+import com.readtracker_beta.support.DrawableGenerator;
 import com.readtracker_beta.support.Utils;
 import com.readtracker_beta.thirdparty.SafeViewFlipper;
 import com.readtracker_beta.thirdparty.widget.WheelView;
@@ -88,6 +90,9 @@ public class EndSessionActivity extends ReadTrackerActivity {
 
     Log.i(TAG, "Init for reading : " + mLocalReading.id + " with session length:" + mSessionLengthMillis);
     bindEvents();
+
+    mButtonSaveProgress.setBackgroundDrawable(DrawableGenerator.generateButtonBackground(mLocalReading.getColor()));
+    mButtonFinishBook.setBackgroundDrawable(DrawableGenerator.generateButtonBackground(mLocalReading.getColor()));
   }
 
   @Override

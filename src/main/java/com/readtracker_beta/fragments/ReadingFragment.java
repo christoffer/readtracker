@@ -1,9 +1,13 @@
 package com.readtracker_beta.fragments;
 
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.StateListDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.util.StateSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +24,7 @@ import com.readtracker_beta.custom_views.PauseableSpinAnimation;
 import com.readtracker_beta.custom_views.TimeSpinner;
 import com.readtracker_beta.db.LocalReading;
 import com.readtracker_beta.interfaces.SessionTimerEventListener;
+import com.readtracker_beta.support.DrawableGenerator;
 import com.readtracker_beta.support.SessionTimer;
 import com.readtracker_beta.support.SessionTimerStore;
 import com.readtracker_beta.support.Utils;
@@ -114,6 +119,10 @@ public class ReadingFragment extends Fragment {
     }
 
     mTimeSpinner.setColor(mLocalReading.getColor());
+
+    mButtonStart.setBackgroundDrawable(DrawableGenerator.generateButtonBackground(mLocalReading.getColor()));
+    mButtonPause.setBackgroundDrawable(DrawableGenerator.generateButtonBackground(mLocalReading.getColor()));
+    mButtonDone.setBackgroundDrawable(DrawableGenerator.generateButtonBackground(mLocalReading.getColor()));
 
     return view;
   }

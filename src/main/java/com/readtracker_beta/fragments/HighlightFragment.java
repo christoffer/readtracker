@@ -17,6 +17,7 @@ import com.readtracker_beta.adapters.HighlightItem;
 import com.readtracker_beta.db.LocalHighlight;
 import com.readtracker_beta.db.LocalReading;
 import com.readtracker_beta.adapters.HighlightAdapter;
+import com.readtracker_beta.support.DrawableGenerator;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -86,14 +87,6 @@ public class HighlightFragment extends Fragment {
   }
 
   @Override
-  public void onSaveInstanceState(Bundle out) {
-    super.onSaveInstanceState(out);
-    Log.d(TAG, "freezing state");
-    out.putParcelable(IntentKeys.LOCAL_READING, mLocalReading);
-    out.putParcelableArrayList(IntentKeys.READING_HIGHLIGHTS, mLocalHighlights);
-  }
-
-  @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_highlights, container, false);
     bindViews(view);
@@ -104,7 +97,17 @@ public class HighlightFragment extends Fragment {
       }
     });
 
+    mButtonAddHighlight.setBackgroundDrawable(DrawableGenerator.generateButtonBackground(mLocalReading.getColor()));
+
     return view;
+  }
+
+  @Override
+  public void onSaveInstanceState(Bundle out) {
+    super.onSaveInstanceState(out);
+    Log.d(TAG, "freezing state");
+    out.putParcelable(IntentKeys.LOCAL_READING, mLocalReading);
+    out.putParcelableArrayList(IntentKeys.READING_HIGHLIGHTS, mLocalHighlights);
   }
 
   @Override

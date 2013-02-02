@@ -13,6 +13,7 @@ import com.readtracker_beta.custom_views.ProgressPicker;
 import com.readtracker_beta.db.LocalHighlight;
 import com.readtracker_beta.db.LocalReading;
 import com.readtracker_beta.interfaces.CreateHighlightTaskListener;
+import com.readtracker_beta.support.DrawableGenerator;
 import com.readtracker_beta.tasks.CreateHighlightAsyncTask;
 
 import java.util.Date;
@@ -22,7 +23,7 @@ import java.util.Date;
  */
 public class HighlightActivity extends ReadTrackerActivity {
   private static EditText mEditHighlightText;
-  private static Button mSaveHighlightButton;
+  private static Button mButtonSaveHighlight;
 
   private static ProgressPicker mProgressPicker;
 
@@ -60,6 +61,8 @@ public class HighlightActivity extends ReadTrackerActivity {
       mProgressPicker.setVisibility(View.GONE);
     }
 
+    mButtonSaveHighlight.setBackgroundDrawable(DrawableGenerator.generateButtonBackground(mLocalReading.getColor()));
+
     ViewBindingBookHeader.bindWithDefaultClickHandler(this, mLocalReading);
   }
 
@@ -76,12 +79,12 @@ public class HighlightActivity extends ReadTrackerActivity {
 
   private void bindViews() {
     mEditHighlightText = (EditText) findViewById(R.id.editHighlight);
-    mSaveHighlightButton = (Button) findViewById(R.id.buttonSaveHighlight);
+    mButtonSaveHighlight = (Button) findViewById(R.id.buttonSaveHighlight);
     mProgressPicker = (ProgressPicker) findViewById(R.id.progressPicker);
   }
 
   private void bindButtonEvents() {
-    mSaveHighlightButton.setOnClickListener(new View.OnClickListener() {
+    mButtonSaveHighlight.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
         saveHighlight();
