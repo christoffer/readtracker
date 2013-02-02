@@ -171,7 +171,7 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
     localReading.author = remoteBook.getString("author");
     localReading.readmillTouchedAt = ReadmillApiHelper.parseISO8601ToUnix(remoteReading.getString("touched_at"));
     localReading.readmillState = ReadmillApiHelper.toIntegerState(remoteReading.getString("state"));
-    localReading.readmillClosingRemark = remoteReading.optString("closing_remark");
+    localReading.readmillClosingRemark = ReadmillConverter.optString("closing_remark", null, remoteReading);
 
     String coverURL = remoteBook.getString("cover_url");
     if(coverURL.matches("default-cover")) {

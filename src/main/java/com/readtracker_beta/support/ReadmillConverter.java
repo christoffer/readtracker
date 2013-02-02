@@ -127,6 +127,18 @@ public class ReadmillConverter {
   }
 
   /**
+   * Work around to get a string response from JSON, avoiding the
+   * (intentional) JSON string bug.
+   *
+   * Use this method instead of JSObject.optString()
+   *
+   * @link http://code.google.com/p/android/issues/detail?id=13830
+    */
+  public static String optString(String key, String opt, JSONObject source) throws JSONException {
+    return source.isNull(key) ? opt : source.getString(key);
+  }
+
+  /**
    * Guard against the argument being null by throwing an exception
    *
    * @param jsonObject The object to guard against null
@@ -136,11 +148,5 @@ public class ReadmillConverter {
     if(jsonObject == null) {
       throw new JSONException("Received NULL object");
     }
-  }
-
-  // Work around the intentional JSON string bug:
-  // http://code.google.com/p/android/issues/detail?id=13830
-  private static String optString(String key, String opt, JSONObject source) throws JSONException {
-    return source.isNull(key) ? opt : source.getString(key);
   }
 }
