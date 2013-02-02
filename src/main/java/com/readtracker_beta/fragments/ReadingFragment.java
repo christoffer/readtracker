@@ -518,7 +518,7 @@ public class ReadingFragment extends Fragment {
 
     // Add a little padding to avoid rounding errors which can cause the update
     // to miss the minute change and have to wait a whole minute for the next update.
-    millisecondsToNextFullMinute += 100;
+    millisecondsToNextFullMinute = Math.min(60000, millisecondsToNextFullMinute + 100);
     mUpdateDurationTask.execute(millisecondsToNextFullMinute);
   }
 
