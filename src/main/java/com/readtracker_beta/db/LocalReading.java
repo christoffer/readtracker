@@ -104,12 +104,17 @@ public class LocalReading implements Parcelable {
     return timeSpentMillis / 1000;
   }
 
+  /**
+   * Returns the estimated time left to finish the book.
+   *
+   * @return The estimated time left in seconds.
+   */
   public int estimateTimeLeft() {
-    int spentSeconds = (int) (timeSpentMillis / 1000);
-    if(!isActive() || progress == 0 || spentSeconds == 0 || progress > 1.0f) {
+    if(!isActive() || progress == 0 || timeSpentMillis == 0 || progress > 1.0f) {
       return 0;
     }
-    return (int) ((spentSeconds / progress) - spentSeconds);
+    long estimatedMillisecondsLeft = (long)((1.0 - progress) * timeSpentMillis);
+    return (int) (estimatedMillisecondsLeft / 1000);
   }
 
   public void setCurrentPage(long currentPage) {
