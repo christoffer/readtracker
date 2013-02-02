@@ -183,10 +183,10 @@ public class ReadingSessionsFragment extends Fragment {
         Utils.longCoarseHumanTimeFromMillis(secondsPerDayForGoal * 1000));
     }
 
-    String timeLeft = String.format("You have about %s left of reading, given you keep the same pace", Utils.longCoarseHumanTimeFromMillis(estimatedSecondsLeft));
+    String timeLeft = String.format("You have about %s left of reading, given you keep the same pace", Utils.longCoarseHumanTimeFromMillis(estimatedSecondsLeft * 1000));
 
     if(pepTalk != null) {
-      timeLeft += ". " + pepTalk;
+      timeLeft += ".\n\n" + pepTalk;
     }
 
     mTextTimeLeft.setText(timeLeft);
