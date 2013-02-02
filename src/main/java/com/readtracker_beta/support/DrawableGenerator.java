@@ -4,7 +4,6 @@ import android.R;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.StateListDrawable;
-import android.util.StateSet;
 
 public class DrawableGenerator {
   // Reuse this temporary container for color conversions
@@ -12,6 +11,9 @@ public class DrawableGenerator {
 
   public static StateListDrawable generateButtonBackground(int baseColor) {
     StateListDrawable states = new StateListDrawable();
+
+    baseColor = multiplyHSV(baseColor, 1.0f, 0.8f, 0.5f);
+
     int fillColor = baseColor;
 
     // Focused
