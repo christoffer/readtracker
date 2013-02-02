@@ -5,22 +5,32 @@
   android:layout_width="fill_parent"
   android:padding="12dp">
 
-  <TextView
-    android:id="@+id/textBillboard"
-    style="@style/default_text"
+  <!--suppress AndroidLintUnknownIdInLayout -->
+  <RelativeLayout
+    android:id="@+id/layoutTimeSpinnerWrapper"
+    android:layout_above="@+id/flipperSessionControl"
+    android:layout_below="@+id/_bookHeader"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:textSize="20dp"
-    android:layout_centerVertical="true"
-    android:text=""
-    android:paddingBottom="48dp"
-    android:gravity="center" />
+    android:layout_height="fill_parent">
 
-  <com.readtracker_beta.custom_views.TimeSpinner
-    android:id="@+id/timespinner"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:layout_marginBottom="48dp" />
+    <TextView
+      android:id="@+id/textBillboard"
+      style="@style/default_text"
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content"
+      android:textSize="20dp"
+      android:layout_centerInParent="true"
+      android:text=""
+      android:gravity="center" />
+
+    <com.readtracker_beta.custom_views.TimeSpinner
+      android:id="@+id/timespinner"
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent"
+      android:layout_centerInParent="true"
+      android:layout_marginBottom="48dp" />
+
+  </RelativeLayout>
 
   <include
     layout="@layout/_reading_session_controls"

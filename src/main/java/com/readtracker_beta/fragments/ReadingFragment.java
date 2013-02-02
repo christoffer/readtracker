@@ -44,6 +44,9 @@ public class ReadingFragment extends Fragment {
   // Time tracking
   private static TextView mTextBillboard;
   private static TimeSpinner mTimeSpinner;
+  // Wrap the spinner to apply the pulse animation on pause without
+  // disrupting the time spinner animation
+  private static ViewGroup mLayoutTimeSpinnerWrapper;
 
   // Flipper for showing start vs. stop/done
   private static SafeViewFlipper mFlipperSessionControl;
@@ -180,6 +183,8 @@ public class ReadingFragment extends Fragment {
 
     mTextBillboard = (TextView) view.findViewById(R.id.textBillboard);
     mTimeSpinner = (TimeSpinner) view.findViewById(R.id.timespinner);
+
+    mLayoutTimeSpinnerWrapper = (ViewGroup) view.findViewById(R.id.layoutTimeSpinnerWrapper);
   }
 
   private void bindEvents() {
@@ -403,11 +408,10 @@ public class ReadingFragment extends Fragment {
    * Changes UI to pause mode
    */
   private void setupResumeMode() {
-    mButtonPause.setText("Paused");
+    mButtonPause.setText("Resume");
     flipToButtonPage(FLIPPER_PAGE_READING_BUTTONS);
     Animation pulse = AnimationUtils.loadAnimation(getActivity(), R.anim.pulse);
-    mButtonPause.startAnimation(pulse);
-    mButtonDone.setEnabled(false);
+    mLayoutTimeSpinnerWrapper.startAnimation(pulse);
   }
 
   /**
@@ -416,8 +420,7 @@ public class ReadingFragment extends Fragment {
   private void setupPauseMode() {
     mButtonPause.setText("Pause");
     flipToButtonPage(FLIPPER_PAGE_READING_BUTTONS);
-    mButtonPause.setAnimation(null);
-    mButtonDone.setEnabled(true);
+    mLayoutTimeSpinnerWrapper.setAnimation(null);
   }
 
   // Timing events
@@ -495,34 +498,6 @@ public class ReadingFragment extends Fragment {
     @Override
     protected void onProgressUpdate(Void... values) {
       presentTime(getElapsed());
-    }
-  }
-
-  /**
-   * Enables/disables the button after/before the animation
-   */
-  private class EnableReadingControls implements Animation.AnimationListener {
-    private boolean enabled = false;
-
-    public EnableReadingControls(boolean enabled) {
-      this.enabled = enabled;
-    }
-
-    @Override public void onAnimationEnd(Animation animation) {
-      if(!this.enabled) {
-//        mButtonDone.setBackgroundDrawable(getResources().getDrawable(R.drawable.default_button_no_states));
-        mButtonDone.setEnabled(false);
-      }
-    }
-
-    @Override public void onAnimationStart(Animation animation) {
-      if(this.enabled) {
-        mButtonDone.setEnabled(true);
-//        mButtonDone.setBackgroundDrawable(getResources().getDrawable(R.drawable.default_toggle_button_background));
-      }
-    }
-
-    @Override public void onAnimationRepeat(Animation animation) {
     }
   }
 }
