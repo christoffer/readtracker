@@ -13,6 +13,9 @@ public class TimeSpinner extends View {
   private int mPrimaryColor;
   private int mSecondaryColor;
   private int mFillColor;
+  private int mFillColorHighlighted;
+
+  private boolean mIsHighlighted = false;
 
   private Paint mTickPaint;
 
@@ -28,7 +31,9 @@ public class TimeSpinner extends View {
   @Override protected void onDraw(Canvas canvas) {
     Paint p = new Paint();
     p.setStyle(Paint.Style.FILL);
-    p.setColor(mFillColor);
+
+    p.setColor(mIsHighlighted ? mFillColorHighlighted : mFillColor);
+
     float midX = getWidth() / 2.0f;
     float midY = getHeight() / 2.0f;
     canvas.drawCircle(midX, midY, Math.min(midX,  midY) - 35.0f, p);
@@ -49,6 +54,7 @@ public class TimeSpinner extends View {
     mSecondaryColor = Color.HSVToColor(hsv);
 
     mFillColor = Color.HSVToColor(30, hsv);
+    mFillColorHighlighted = Color.HSVToColor(50, hsv);
     invalidate();
   }
 
@@ -57,6 +63,11 @@ public class TimeSpinner extends View {
     mTickPaint = new Paint();
     mTickPaint.setStyle(Paint.Style.FILL);
     mTickPaint.setAntiAlias(true);
+  }
+
+  public void setHighlighted(boolean isHighlighted) {
+    mIsHighlighted = isHighlighted;
+    invalidate();
   }
 
   private void drawTicks(Canvas canvas, int tickCount, int tickHeight, int tickWidth, int tickOffset, int color) {

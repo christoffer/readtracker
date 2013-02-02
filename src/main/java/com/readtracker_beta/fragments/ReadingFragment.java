@@ -6,10 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
+import android.view.*;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LinearInterpolator;
@@ -60,6 +57,8 @@ public class ReadingFragment extends Fragment {
   private UpdateDurationTask mUpdateDurationTask;
 
   private static WheelView mWheelDuration;
+
+  private boolean mIsStarted = false;
 
 //  // Timestamp of when play/resume was pressed last time
 //  private long mTimestampLastStarted = 0;
@@ -275,11 +274,35 @@ public class ReadingFragment extends Fragment {
       }
     });
 
-    mTimeSpinner.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View view) {
+    mTimeSpinner.setOnTouchListener(new View.OnTouchListener() {
+      @Override public boolean onTouch(View view, MotionEvent motionEvent) {
+        // The start wheel is not active as a click target when the timing is started
+        // this is due to the inability to have both the timespinner and the underlying
+        // wheel view receive touch events prior to android 11.
+        if(mIsStarted) {
+          return false;
+        }
 
+        int action = motionEvent.getAction();
+        if(action == MotionEvent.ACTION_DOWN) {
+          mTimeSpinner.setHighlighted(true);
+          MotionEvent clonedEvent = MotionEvent.obtain(motionEvent);
+          mWheelDuration.onTouchEvent(clonedEvent);
+          return true;
+        } else if(action == MotionEvent.ACTION_UP) {
+          onClickedStart();
+          mTimeSpinner.setHighlighted(false);
+          MotionEvent clonedEvent = MotionEvent.obtain(motionEvent);
+          mWheelDuration.onTouchEvent(clonedEvent);
+          return true;
+        } else if(action == MotionEvent.ACTION_CANCEL) {
+          mTimeSpinner.setHighlighted(false);
+          return true;
+        }
+        return false;
       }
-    });
+    }
+    );
   }
 
   /**
@@ -419,6 +442,8 @@ public class ReadingFragment extends Fragment {
 
     mFlipperSessionControl.setDisplayedChild(FLIPPER_PAGE_READING_BUTTONS);
     mTextBillboard.startAnimation(disappear);
+
+    mIsStarted = true;
   }
 
   /**
@@ -520,7 +545,7 @@ public class ReadingFragment extends Fragment {
     mUpdateDurationTask = new UpdateDurationTask();
 
     final float minutes = ((getElapsed() / 1000.0f) / 60.0f);
-    int millisecondsToNextFullMinute = (int) ((1.0f - (minutes - (int)minutes)) * 60000);
+    int millisecondsToNextFullMinute = (int) ((1.0f - (minutes - (int) minutes)) * 60000);
 
     // Add a little padding to avoid rounding errors which can cause the update
     // to miss the minute change and have to wait a whole minute for the next update.
