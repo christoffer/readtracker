@@ -187,8 +187,6 @@ public class ReadingFragment extends Fragment {
       @Override public void onStarted() {
         startTrackerUpdates();
         setupPauseMode();
-        mTextBillboard.setVisibility(View.INVISIBLE);
-        mWheelDuration.setVisibility(View.VISIBLE);
       }
 
       @Override public void onStopped() {
@@ -274,6 +272,12 @@ public class ReadingFragment extends Fragment {
         } else {
           spinAnimation.pause();
         }
+      }
+    });
+
+    mTimeSpinner.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View view) {
+
       }
     });
   }
@@ -407,7 +411,9 @@ public class ReadingFragment extends Fragment {
       @Override public void onAnimationEnd(Animation animation) {
         mSessionTimer.start();
         updateDuration(getElapsed());
-        mTextBillboard.startAnimation(appear);
+        mTextBillboard.setVisibility(View.INVISIBLE);
+        mWheelDuration.startAnimation(appear);
+        mWheelDuration.setVisibility(View.VISIBLE);
       }
     });
 
