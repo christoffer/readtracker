@@ -10,6 +10,7 @@
   <Button
     android:id="@+id/buttonOffline"
     style="@style/button_small"
+    android:layout_width="fill_parent"
     android:layout_gravity="center_horizontal"
     android:layout_alignParentTop="true"
     android:text="Use ReadTracker without Readmill" />
@@ -37,12 +38,6 @@
       android:text="ReadTracker 3" />
 
   </RelativeLayout>
-
-  <View
-    android:layout_height="1dp"
-    android:background="@color/midnight_ultralight"
-    android:layout_width="fill_parent"
-    android:layout_above="@+id/buttonConnectToReadmill" />
 
   <Button
     android:id="@+id/buttonConnectToReadmill"
