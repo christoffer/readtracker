@@ -13,14 +13,14 @@
 
   <!-- base text colors -->
   <color name="text_color_primary">#fffffded</color>
-  <color name="text_color_secondary">#88fffded</color>
+  <color name="text_color_secondary">#aafffded</color>
 
   <!-- color variations -->
   <color name="midnight_dark_tint">#ff101414</color>
   <color name="midnight_medium_disabled">#88181e20</color>
 
   <color name="text_color_primary_slightly_transparent">#ddfffded</color>
-  <color name="text_color_secondary_slightly_transparent">#44fffded</color>
+  <color name="text_color_secondary_slightly_transparent">#88fffded</color>
   <color name="text_color_hint">#44fffded</color>
 
   <color name="text_color_primary_disabled">#44fffded</color>
