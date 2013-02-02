@@ -11,10 +11,7 @@ import com.readtracker_beta.R;
 import com.readtracker_beta.support.Utils;
 import com.readtracker_beta.db.LocalSession;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * Draws a history of reading sessions on a time line.
@@ -108,21 +105,14 @@ public class SessionView extends View {
       mNodes[index++] = new Node(session);
     }
 
-    Arrays.sort(mNodes, new Comparator<Node>() {
-      @Override public int compare(Node node1, Node node2) {
-        return (int) (node1.occurredAt.getTime() - node2.occurredAt.getTime());
-      }
-    });
-
+    Arrays.sort(mNodes, new LocalSessionComparator());
     invalidate();
   }
 
   private void drawText(Canvas canvas, float x, float y, float radius, String primaryText, String secondaryText, boolean drawFlipped) {
     final float textPadding = TEXT_PADDING; // Padding between the text and the box
-
     final float primaryTextHeight = mPrimaryTextPaint.measureText("X");
     final float secondaryTextHeight = mSecondaryTextPaint.measureText("X");
-
     final float lineHeight = 1.5f;
 
     // Calculate dimensions of the text box
@@ -240,6 +230,16 @@ public class SessionView extends View {
       this.durationSeconds = localSession.durationSeconds;
       this.progress = (float) localSession.progress;
       this.occurredAt = localSession.occurredAt;
+    }
+  }
+
+  /**
+   * Sorts nodes by progress
+   */
+  private class LocalSessionComparator implements Comparator<Node> {
+    @Override public int compare(Node a, Node b) {
+      // Multiply by 10000 to get a percent sensitivity with two decimals
+      return (int)(10000 * (a.progress - b.progress));
     }
   }
 }
