@@ -25,4 +25,15 @@
 
   <color name="text_color_primary_disabled">#44fffded</color>
   <color name="text_color_secondary_disabled">#44fffded</color>
+
+  <!-- button color -->
+  <color name="default_button_color_default">#ff253e4d</color>
+  <color name="default_button_color_pressed">#ff2e5873</color>
+  <color name="default_button_color_disabled">#ff14181a</color>
+
+  <color name="default_button_color_outline_default">#442e5873</color>
+  <color name="default_button_color_outline_pressed">#ff375e73</color>
+  <color name="default_button_color_outline_disabled">#223d4e57</color>
+
+  <color name="default_button_color_outline_focused">#ff2e5873</color>
 </resources>

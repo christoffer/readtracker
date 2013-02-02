@@ -2,8 +2,8 @@
   android:shape="rectangle"
   xmlns:android="http://schemas.android.com/apk/res/android">
   <stroke
-    android:color="#0fffffff"
+    android:color="@color/default_button_color_outline_disabled"
     android:width="1dp" />
   <corners android:radius="3dp" />
-  <solid android:color="#00000000" />
+  <solid android:color="@color/default_button_color_disabled" />
 </shape>
