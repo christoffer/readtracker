@@ -1,13 +1,11 @@
 package com.readtracker_beta.fragments;
 
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.StateListDrawable;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.util.StateSet;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +27,9 @@ import com.readtracker_beta.support.SessionTimer;
 import com.readtracker_beta.support.SessionTimerStore;
 import com.readtracker_beta.support.Utils;
 import com.readtracker_beta.thirdparty.SafeViewFlipper;
+import com.readtracker_beta.thirdparty.widget.OnWheelChangedListener;
+import com.readtracker_beta.thirdparty.widget.WheelView;
+import com.readtracker_beta.thirdparty.widget.adapters.ArrayWheelAdapter;
 
 /**
  * Fragment for managing a reading session
@@ -57,6 +58,8 @@ public class ReadingFragment extends Fragment {
   // Timing
   private SessionTimer mSessionTimer;
   private RedrawTimerTask mRedrawTimerTask;
+
+  private static WheelView mWheelDuration;
 
 //  // Timestamp of when play/resume was pressed last time
 //  private long mTimestampLastStarted = 0;
@@ -127,6 +130,8 @@ public class ReadingFragment extends Fragment {
     mButtonPause.setBackgroundDrawable(DrawableGenerator.generateButtonBackground(mLocalReading.getColor()));
     mButtonDone.setBackgroundDrawable(DrawableGenerator.generateButtonBackground(mLocalReading.getColor()));
 
+    initializeDurationWheel();
+
     return view;
   }
 
@@ -174,6 +179,35 @@ public class ReadingFragment extends Fragment {
     }
   }
 
+
+  private void setSessionTimer(SessionTimer sessionTimer) {
+    Log.v(TAG, "Setting session timer: " + sessionTimer);
+
+    sessionTimer.setEventListener(new SessionTimerEventListener() {
+      @Override public void onStarted() {
+        startTrackerUpdates();
+        setupPauseMode();
+        mTextBillboard.setVisibility(View.INVISIBLE);
+        mWheelDuration.setVisibility(View.VISIBLE);
+      }
+
+      @Override public void onStopped() {
+        stopTrackerUpdates();
+        setupResumeMode();
+      }
+    });
+
+    mSessionTimer = sessionTimer;
+  }
+
+  public void setLocalReading(LocalReading localReading) {
+    mLocalReading = localReading;
+  }
+
+  private void setForceReinitialize(boolean forceReinitialize) {
+    mForceReInitialize = forceReinitialize;
+  }
+
   private void bindViews(View view) {
     mButtonDone = (Button) view.findViewById(R.id.buttonDone);
     mButtonStart = (Button) view.findViewById(R.id.buttonStart);
@@ -184,12 +218,12 @@ public class ReadingFragment extends Fragment {
     mTextBillboard = (TextView) view.findViewById(R.id.textBillboard);
     mTimeSpinner = (TimeSpinner) view.findViewById(R.id.timespinner);
 
+    mWheelDuration = (WheelView) view.findViewById(R.id.wheelDuration);
+
     mLayoutTimeSpinnerWrapper = (ViewGroup) view.findViewById(R.id.layoutTimeSpinnerWrapper);
   }
 
   private void bindEvents() {
-    Log.d(TAG, "bindEvents()");
-
     mButtonPause.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View view) {
         onClickedPauseResume();
@@ -208,9 +242,11 @@ public class ReadingFragment extends Fragment {
       }
     });
 
-    // The spinner animation depends on knowledge of the size of the time tracker
-    // widget since it pivots around the center of it.
-    // This seems to be the most reliant way of knowing what that dimension is available.
+    /*
+      The spinner animation depends on knowledge of the size of the time tracker
+      widget since it pivots around the center of it.
+      This seems to be the most reliant way of knowing what that dimension is available.
+    */
     ViewTreeObserver obs = mTimeSpinner.getViewTreeObserver();
     obs.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
       @Override public void onGlobalLayout() {
@@ -252,26 +288,53 @@ public class ReadingFragment extends Fragment {
     }
   }
 
-  private void setSessionTimer(SessionTimer sessionTimer) {
-    Log.v(TAG, "Setting session timer: " + sessionTimer);
+  /**
+   * Initializes the wheel view for displaying the reading session duration
+   */
+  private void initializeDurationWheel() {
+    ArrayWheelAdapter hoursAdapter = createDurationWheelAdapter(24 * 60);
+    mWheelDuration.setVisibleItems(3);
+    mWheelDuration.setViewAdapter(hoursAdapter);
+    mWheelDuration.setCalliperMode(WheelView.CalliperMode.NO_CALLIPERS);
 
-    sessionTimer.setEventListener(new SessionTimerEventListener() {
-      @Override public void onStarted() {
-        startTrackerUpdates();
-        setupPauseMode();
-      }
+    // Have the wheel duration initially invisible, and show it once timing starts
+    mWheelDuration.setVisibility(View.INVISIBLE);
 
-      @Override public void onStopped() {
-        stopTrackerUpdates();
-        setupResumeMode();
+    mWheelDuration.addChangingListener(new OnWheelChangedListener() {
+      @Override
+      public void onChanged(WheelView wheel, int oldValue, int newValue) {
+        if(mSessionTimer != null) {
+          int elapsed = newValue * 60 * 1000;
+          mSessionTimer.setElapsed(elapsed);
+          PauseableSpinAnimation currentAnimation = (PauseableSpinAnimation) mTimeSpinner.getAnimation();
+          if(currentAnimation != null) {
+            mTimeSpinner.startAnimation(currentAnimation);
+          }
+        }
       }
     });
-
-    mSessionTimer = sessionTimer;
   }
 
-  public void setLocalReading(LocalReading localReading) {
-    mLocalReading = localReading;
+  /**
+   * Creates an adapter to display the duration in a human readable form.
+   *
+   * @param maxMinutes the maximum time (in minutes) to show
+   * @return an ArrayWheelAdapter for showing duration
+   */
+  private ArrayWheelAdapter createDurationWheelAdapter(int maxMinutes) {
+    String[] labels = new String[maxMinutes];
+    for(int minute = 0; minute < maxMinutes; minute++) {
+      labels[minute] = Utils.hoursAndMinutesFromMillis(minute * 60 * 1000);
+    }
+
+    ArrayWheelAdapter<String> adapter = new ArrayWheelAdapter<String>(getActivity(), labels);
+    adapter.setTextColor(getResources().getColor(R.color.text_color_primary));
+    adapter.setTypeFace(Typeface.DEFAULT);
+    adapter.setTypeStyle(Typeface.NORMAL);
+    float fontSizePixels = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 12, getResources().getDisplayMetrics());
+    adapter.setTextSize((int) fontSizePixels);
+
+    return adapter;
   }
 
   private void setupForTimeTracking() {
@@ -282,7 +345,7 @@ public class ReadingFragment extends Fragment {
       describeLastPosition(mLocalReading);
       setupStartMode();
     } else {
-      presentTime(totalElapsed);
+      updateDuration(totalElapsed);
       setupResumeMode();
     }
   }
@@ -343,7 +406,7 @@ public class ReadingFragment extends Fragment {
       @Override public void onAnimationRepeat(Animation animation) { }
       @Override public void onAnimationEnd(Animation animation) {
         mSessionTimer.start();
-        presentTime(getElapsed());
+        updateDuration(getElapsed());
         mTextBillboard.startAnimation(appear);
       }
     });
@@ -368,11 +431,6 @@ public class ReadingFragment extends Fragment {
     ((BookActivity) getActivity()).exitToSessionEndScreen(elapsed);
   }
 
-  // Causes the activity to reload the LocalReading
-  private void setForceReinitialize(boolean forceReinitialize) {
-    mForceReInitialize = forceReinitialize;
-  }
-
   /**
    * Restores the current timing state to a given one
    *
@@ -393,7 +451,7 @@ public class ReadingFragment extends Fragment {
       setupResumeMode();
     }
 
-    presentTime(getElapsed());
+    updateDuration(getElapsed());
   }
 
   /**
@@ -430,24 +488,9 @@ public class ReadingFragment extends Fragment {
   }
 
   // Sets the billboard to show the elapsed time
-  private void presentTime(long milliseconds) {
-    int[] hms = Utils.convertMillisToHoursMinutesSeconds(milliseconds);
-    final int hours = hms[0];
-    final int minutes = hms[1];
-    final int seconds = hms[2];
-
-    String summary;
-    if(hours > 0) {
-      summary = String.format("%s, %s",
-        Utils.pluralizeWithCount(hours, "hour"),
-        Utils.pluralizeWithCount(minutes, "minute")
-      );
-    } else if(minutes > 0) {
-      summary = Utils.pluralizeWithCount(minutes, "minute");
-    } else {
-      summary = Utils.pluralizeWithCount(seconds, "second");
-    }
-    mTextBillboard.setText(summary);
+  private void updateDuration(long milliseconds) {
+    int elapsedTimeInSeconds = (int) (milliseconds / (1000 * 60));
+    mWheelDuration.setCurrentItem(elapsedTimeInSeconds);
   }
 
   private void startTrackerUpdates() {
@@ -457,6 +500,8 @@ public class ReadingFragment extends Fragment {
     if(spinAnimation != null) {
       spinAnimation.resume();
     }
+
+    mWheelDuration.setEnabled(true);
 
     mRedrawTimerTask = new RedrawTimerTask();
     //noinspection unchecked
@@ -474,6 +519,8 @@ public class ReadingFragment extends Fragment {
       mRedrawTimerTask.cancel(true);
       mRedrawTimerTask = null;
     }
+
+    mWheelDuration.setEnabled(false);
   }
 
   private class RedrawTimerTask extends AsyncTask<Void, Void, Void> {
@@ -497,7 +544,7 @@ public class ReadingFragment extends Fragment {
 
     @Override
     protected void onProgressUpdate(Void... values) {
-      presentTime(getElapsed());
+      updateDuration(getElapsed());
     }
   }
 }

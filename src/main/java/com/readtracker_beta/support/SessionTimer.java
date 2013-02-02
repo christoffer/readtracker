@@ -2,6 +2,7 @@ package com.readtracker_beta.support;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 import com.readtracker_beta.interfaces.SessionTimerEventListener;
 
 import java.util.Date;
@@ -110,12 +111,7 @@ public class SessionTimer implements Parcelable {
    * Pauses the reading state.
    */
   public void stop(long now) {
-    if(isActive()) {
-      final long elapsedSinceTimeStamp = now - mActiveTimestamp;
-      mElapsedBeforeTimestamp += elapsedSinceTimeStamp;
-      mActiveTimestamp = 0;
-    }
-
+    stopTimer(now);
     if(mListener != null) {
       mListener.onStopped();
     }
@@ -129,7 +125,7 @@ public class SessionTimer implements Parcelable {
   }
 
   public void start(long now) {
-    mActiveTimestamp = now;
+    startTimer(now);
     if(mListener != null) {
       mListener.onStarted();
     }
@@ -148,5 +144,43 @@ public class SessionTimer implements Parcelable {
     } else {
       start(now);
     }
+  }
+
+  /**
+   * Set the elapsed time in milliseconds.
+   *
+   * @param elapsed The elapsed time in milliseconds
+   */
+  public void setElapsed(int elapsed) {
+    if(isActive()) {
+      final long now = System.currentTimeMillis();
+      stopTimer(now);
+      mElapsedBeforeTimestamp = elapsed;
+      startTimer(now);
+    } else {
+      mElapsedBeforeTimestamp = elapsed;
+    }
+  }
+
+  /**
+   * Stops the timer and updates the elapsed time without firing the callback.
+   *
+   * @param now Current time in epoch milliseconds
+   */
+  private void stopTimer(long now) {
+    if(isActive()) {
+      final long elapsedSinceTimeStamp = now - mActiveTimestamp;
+      mElapsedBeforeTimestamp += elapsedSinceTimeStamp;
+      mActiveTimestamp = 0;
+    }
+  }
+
+  /**
+   * Starts the timer without firing the callback.
+   *
+   * @param now Current time in epoch milliseconds.
+   */
+  private void startTimer(long now) {
+    mActiveTimestamp = now;
   }
 }
