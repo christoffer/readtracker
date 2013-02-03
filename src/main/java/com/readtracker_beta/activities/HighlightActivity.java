@@ -57,6 +57,7 @@ public class HighlightActivity extends ReadTrackerActivity {
       mProgressPicker.setCurrentPage(currentPage);
     } else {
       mProgressPicker.setVisibility(View.GONE);
+      findViewById(R.id.textLabelEnterPosition).setVisibility(View.GONE);
     }
 
     mButtonSaveHighlight.setBackgroundDrawable(DrawableGenerator.generateButtonBackground(mLocalReading.getColor()));
