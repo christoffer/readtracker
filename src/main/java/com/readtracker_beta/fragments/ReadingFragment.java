@@ -398,8 +398,8 @@ public class ReadingFragment extends Fragment {
     }
 
     if(localReading.measureInPercent) {
-      int currentInteger = (int) localReading.currentPage / 100;
-      int currentFraction = (int) localReading.currentPage - currentInteger * 100;
+      int currentInteger = (int) localReading.currentPage / 10;
+      int currentFraction = (int) localReading.currentPage - currentInteger * 10;
       mTextBillboard.setText(String.format("Last at %d.%d%%", currentInteger, currentFraction));
     } else {
       mTextBillboard.setText(String.format("Last on page %d", localReading.currentPage));

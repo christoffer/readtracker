@@ -84,7 +84,7 @@ public class ProgressPicker extends LinearLayout {
 
   protected void setupPercentMode(int currentPage) {
     mMode = PERCENT_MODE;
-    setupWheelView(mWheelEndingPage, 10000);
+    setupWheelView(mWheelEndingPage, 1000);
     setCurrentPage(currentPage);
   }
 

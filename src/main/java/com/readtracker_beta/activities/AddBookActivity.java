@@ -178,7 +178,7 @@ public class AddBookActivity extends ReadTrackerActivity {
       localReading.totalPages = Integer.parseInt(mEditPageCount.getText().toString());
       localReading.measureInPercent = false;
     } else {
-      localReading.totalPages = 10000;
+      localReading.totalPages = 1000;
       localReading.measureInPercent = true;
     }
 

@@ -19,13 +19,13 @@ public class PercentWheelAdapter extends AbstractWheelTextAdapter {
   @Override public CharSequence getItemText(int index) {
     if(index < 0 || index >= getItemsCount()) { return null; }
 
-    final int integer = index / 100;
-    final int fraction = index - (integer * 100);
-    return String.format("%d.%02d%%", integer, fraction);
+    final int integer = index / 10;
+    final int fraction = index - (integer * 10);
+    return String.format("%d.%01d%%", integer, fraction);
   }
 
   @Override
   public int getItemsCount() {
-    return 10000; // 100.00%
+    return 1000; // 100.0%
   }
 }
