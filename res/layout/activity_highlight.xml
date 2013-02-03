@@ -43,7 +43,6 @@
     android:id="@+id/buttonSaveHighlight"
     style="@style/default_button"
     android:text="Save"
-    android:layout_margin="5dp"
     android:layout_alignParentBottom="true" />
 
 </RelativeLayout>

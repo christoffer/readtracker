@@ -63,6 +63,7 @@ public class HighlightActivity extends ReadTrackerActivity {
 
     Drawable drawable = DrawableGenerator.generateEditTextOutline(mLocalReading.getColor(), getPixels(1), getPixels(3));
     mEditHighlightText.setBackgroundDrawable(drawable);
+    mButtonSaveHighlight.setBackgroundDrawable(DrawableGenerator.generateButtonBackground(mLocalReading.getColor()));
 
     ViewBindingBookHeader.bindWithDefaultClickHandler(this, mLocalReading);
   }
