@@ -38,6 +38,8 @@
     android:layout_below="@id/layoutActionBar"
     android:layout_height="fill_parent">
 
-    <android.support.v4.view.CustomPagerTabStrip style="@style/pager_title" />
+    <android.support.v4.view.PagerTabStrip
+      style="@style/pager_title"
+      android:id="@+id/pagerTabStrip" />
   </android.support.v4.view.ViewPager>
 </RelativeLayout>

@@ -1,8 +1,10 @@
 package com.readtracker_beta.activities;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Menu;
@@ -201,6 +203,8 @@ public class BookActivity extends ReadTrackerActivity implements EndSessionDialo
       }
     }
 
+    PagerTabStrip pagerTabStrip = (PagerTabStrip) findViewById(R.id.pagerTabStrip);
+    pagerTabStrip.setTabIndicatorColor(mLocalReading.getColor());
     setupFragments(bundle);
 
     Log.i(TAG, "Initialized for reading with id:" + mLocalReading.id);

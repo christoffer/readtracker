@@ -1,8 +1,10 @@
 package com.readtracker_beta.activities;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Menu;
@@ -107,6 +109,9 @@ public class HomeActivity extends ReadTrackerActivity {
       Log.d(TAG, "Fresh from sign in, doing initial full sync.");
       sync(true);
     }
+
+    PagerTabStrip pagerTabStrip = (PagerTabStrip) findViewById(R.id.pagerTabStrip);
+    pagerTabStrip.setTabIndicatorColor(Color.DKGRAY);
   }
 
   @Override
