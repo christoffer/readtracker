@@ -3,6 +3,49 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
+  <!--
+
+  NOTES:
+
+  ReadTracker depends on the Android Support Library version 11.
+
+  Unfortunately the latest version available in Maven Central is r6, and the EULA does
+  not allow redistributing the Android Support Library as binaries.
+
+  It is easily installed using the Android SDK though, but requires a little work
+  to setup for Maven.
+
+  First, create a settings.xml file in your home directory (~/.m2/settings.xml)
+  and add the following profile:
+
+  <profiles>
+    <profile>
+      <id>readtracker</id>
+      <properties>
+        <android.support.path>${user.home}/android/extras/android/support/v4/android-support-v4.jar</android.support.path>
+      </properties>
+    </profile>
+  </profiles>
+
+  Note that the example path assumes the android support libraries are installed at:
+
+    ~/android/extras/android/support/v4/android-support-v4.jar
+
+  please change the path above to where you have installed your copy.
+
+  Be sure to also run maven with the readtracker profile activated.
+
+  From the command line it would look something like this: "mvn -D readtracker verify"
+
+  Alternatively you can activate the readtracker profile in you settings file by
+  something like the following to the root of the file:
+
+  <activeProfiles>
+    <activeProfile>readtracker</activeProfile>
+  </activeProfiles>
+
+  -->
+
   <groupId>com.christofferklang</groupId>
   <artifactId>readtracker</artifactId>
   <version>3.0-SNAPSHOT</version>
@@ -31,7 +74,10 @@
     <dependency>
       <groupId>com.google.android</groupId>
       <artifactId>support-v4</artifactId>
-      <version>r6</version>
+      <scope>system</scope>
+      <version>11.0</version>
+      <!-- See not about settings.xml and android.support.path above -->
+      <systemPath>${android.support.path}</systemPath>
     </dependency>
 
     <dependency>
