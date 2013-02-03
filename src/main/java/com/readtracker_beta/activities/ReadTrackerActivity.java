@@ -8,6 +8,7 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -21,7 +22,7 @@ import com.readtracker_beta.support.ReadTrackerUser;
  * <p/>
  * Hides the title from child applications.
  */
-class ReadTrackerActivity extends FragmentActivity {
+public class ReadTrackerActivity extends FragmentActivity {
   protected final String TAG = this.getClass().getName();
   private ApplicationReadTracker mApplication;
 
@@ -124,5 +125,15 @@ class ReadTrackerActivity extends FragmentActivity {
    */
   protected void setImageViewUrl(ImageView imageView, String url) {
     ApplicationReadTracker.getDrawableManager().fetchDrawableOnThread(url, imageView);
+  }
+
+  /**
+   * Converts a device independent pixel value to pixels.
+   *
+   * @param dpValue The value in DIP
+   * @return the value in pixels
+   */
+  public int getPixels(int dpValue) {
+    return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dpValue, getResources().getDisplayMetrics());
   }
 }

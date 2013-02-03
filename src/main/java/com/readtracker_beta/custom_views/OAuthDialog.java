@@ -1,6 +1,8 @@
 package com.readtracker_beta.custom_views;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -11,11 +13,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import com.readtracker_beta.ApplicationReadTracker;
 import com.readtracker_beta.R;
+import com.readtracker_beta.activities.ReadTrackerActivity;
 import com.readtracker_beta.interfaces.OAuthDialogResultListener;
 import com.readtracker_beta.support.ReadmillApiHelper;
 
@@ -24,6 +31,10 @@ import com.readtracker_beta.support.ReadmillApiHelper;
  */
 public class OAuthDialog extends DialogFragment {
   private static final String TAG = OAuthDialog.class.getName();
+
+  private ProgressBar mProgressBar;
+
+  private boolean mStatusVisible = false;
 
   public OAuthDialog() {
 
@@ -34,14 +45,8 @@ public class OAuthDialog extends DialogFragment {
     setStyle(STYLE_NO_TITLE, 0);
   }
 
-  @Override
-  public void onViewCreated(View view, Bundle savedInstanceState) {
-    getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-    super.onViewCreated(view, savedInstanceState);
-  }
-
   @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    LinearLayout root = new LinearLayout(getActivity());
+    RelativeLayout root = new RelativeLayout(getActivity());
     root.setMinimumHeight(10000); // Avoid jumping in size by always being max size
     WebView webView = createWebContentView(getActivity());
 
@@ -49,17 +54,29 @@ public class OAuthDialog extends DialogFragment {
     webView.loadData("<html><body></body></html>", "text/html", "utf-8");
     webView.setBackgroundColor(0xff000000);
 
-    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+    RelativeLayout.LayoutParams layoutFill = new RelativeLayout.LayoutParams(
       LayoutParams.FILL_PARENT,
       LayoutParams.WRAP_CONTENT);
+    layoutFill.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
+    webView.setLayoutParams(layoutFill);
 
     String url = ApplicationReadTracker.getReadmillApiHelper().authorizeUrl();
     Log.i(TAG, "Loading url: " + url);
 
-    root.addView(webView, layoutParams);
+    mProgressBar = createStatusIndicator();
+    mStatusVisible = true;
+
+    root.addView(webView);
+    root.addView(mProgressBar);
     webView.loadUrl(url);
 
     return root;
+  }
+
+  @Override
+  public void onViewCreated(View view, Bundle savedInstanceState) {
+    getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+    super.onViewCreated(view, savedInstanceState);
   }
 
   private WebView createWebContentView(Context context) {
@@ -77,8 +94,24 @@ public class OAuthDialog extends DialogFragment {
           (new TokenExchangeAsyncTask()).execute(code);
           return false;
         }
-
         return super.shouldOverrideUrlLoading(view, url);
+      }
+    });
+
+    webView.setWebChromeClient(new WebChromeClient() {
+      @Override public void onProgressChanged(WebView view, int newProgress) {
+        Log.d(TAG, "onProgressChanged() " + newProgress);
+        if(newProgress == 100 && mStatusVisible) {
+          Animation hide = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_out);
+          hide.setFillAfter(true);
+          mProgressBar.startAnimation(hide);
+          mStatusVisible = false;
+        } else if(newProgress < 100 && !mStatusVisible) {
+          Animation show = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_in);
+          show.setFillAfter(true);
+          mProgressBar.startAnimation(show);
+          mStatusVisible = true;
+        }
       }
     });
 
@@ -94,6 +127,41 @@ public class OAuthDialog extends DialogFragment {
       listener.onOAuthFailure();
     }
     dismiss();
+  }
+
+  /**
+   * Creates the TextView that shows the loading status.
+   *
+   * @return the text view
+   */
+  private ProgressBar createStatusIndicator() {
+    ProgressBar indicator = new ProgressBar(getActivity());
+    indicator.setIndeterminate(true);
+
+    int indicatorSize = ((ReadTrackerActivity) getActivity()).getPixels(24);
+    RelativeLayout.LayoutParams layoutTop = new RelativeLayout.LayoutParams(
+      indicatorSize,
+      indicatorSize
+    );
+
+    layoutTop.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
+
+    int margin = ((ReadTrackerActivity) getActivity()).getPixels(12);
+    layoutTop.setMargins(margin, margin, 0, 0);
+
+    int padding = ((ReadTrackerActivity) getActivity()).getPixels(6);
+    indicator.setPadding(padding, padding, padding, padding);
+
+    int color = Color.parseColor("#88000000");
+
+    GradientDrawable backgroundDrawable = new GradientDrawable();
+    backgroundDrawable.setCornerRadius(((ReadTrackerActivity) getActivity()).getPixels(24));
+    backgroundDrawable.setColor(color);
+
+    indicator.setBackgroundDrawable(backgroundDrawable);
+
+    indicator.setLayoutParams(layoutTop);
+    return indicator;
   }
 
   // Perform the actual exchange in a background thread
