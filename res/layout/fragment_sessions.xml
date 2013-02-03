@@ -54,7 +54,7 @@
         android:layout_marginBottom="12dp"
         android:textColor="@color/text_color_secondary" />
 
-      <com.readtracker_beta.custom_views.SegmentBar
+      <com.readtracker.custom_views.SegmentBar
         android:id="@+id/segmentBar"
         android:layout_width="fill_parent"
         android:paddingLeft="12dp"
@@ -71,7 +71,7 @@
         android:layout_marginBottom="12dp"
         android:textColor="@color/text_color_secondary" />
 
-      <com.readtracker_beta.custom_views.SessionView
+      <com.readtracker.custom_views.SessionView
         android:id="@+id/sessionView"
         android:layout_height="fill_parent"
         android:layout_width="fill_parent"

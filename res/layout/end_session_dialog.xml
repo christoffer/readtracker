@@ -16,7 +16,7 @@
     android:text="Scroll to the very end if you finished the book"
     android:gravity="center_horizontal" />
 
-  <com.readtracker_beta.custom_views.ProgressPicker
+  <com.readtracker.custom_views.ProgressPicker
     android:id="@+id/progressPicker"
     android:layout_marginTop="24dp"
     android:layout_marginBottom="24dp"
@@ -24,7 +24,7 @@
     android:layout_width="fill_parent"
     android:layout_gravity="center_horizontal" />
 
-  <com.readtracker_beta.thirdparty.SafeViewFlipper
+  <com.readtracker.thirdparty.SafeViewFlipper
     android:id="@+id/flipperActionButtons"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
@@ -41,5 +41,5 @@
       style="@style/default_button"
       android:text="Finish book" />
 
-  </com.readtracker_beta.thirdparty.SafeViewFlipper>
+  </com.readtracker.thirdparty.SafeViewFlipper>
 </LinearLayout>

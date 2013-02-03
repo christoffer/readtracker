@@ -23,7 +23,7 @@
       android:text=""
       android:gravity="center" />
 
-    <com.readtracker_beta.thirdparty.widget.WheelView
+    <com.readtracker.thirdparty.widget.WheelView
       android:id="@+id/wheelDuration"
       android:minWidth="220dp"
       android:minHeight="80dp"
@@ -32,7 +32,7 @@
       android:layout_centerInParent="true"
       android:layout_marginBottom="24dp" />
 
-    <com.readtracker_beta.custom_views.TimeSpinner
+    <com.readtracker.custom_views.TimeSpinner
       android:id="@+id/timespinner"
       android:layout_width="fill_parent"
       android:layout_height="fill_parent"

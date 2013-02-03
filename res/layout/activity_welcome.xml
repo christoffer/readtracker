@@ -23,7 +23,7 @@
     android:orientation="vertical"
     android:gravity="center">
 
-    <com.readtracker_beta.custom_views.TimeSpinner
+    <com.readtracker.custom_views.TimeSpinner
       android:layout_width="fill_parent"
       android:layout_height="wrap_content"
       android:layout_centerInParent="true" />

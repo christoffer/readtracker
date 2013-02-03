@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.readtracker_beta"
+          package="com.readtracker"
           android:versionCode="10"
           android:versionName="3.0.0">
 

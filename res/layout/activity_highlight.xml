@@ -30,7 +30,7 @@
     android:layout_marginBottom="6dp"
     android:text="Where is this passage in the book?" />
 
-  <com.readtracker_beta.custom_views.ProgressPicker
+  <com.readtracker.custom_views.ProgressPicker
     android:id="@+id/progressPicker"
     android:layout_width="wrap_content"
     android:layout_centerHorizontal="true"

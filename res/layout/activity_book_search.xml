@@ -29,7 +29,7 @@
     android:layout_gravity="bottom"
     android:cacheColorHint="@color/background" />
 
-  <com.readtracker_beta.thirdparty.SafeViewFlipper
+  <com.readtracker.thirdparty.SafeViewFlipper
     android:id="@+id/flipperBookSearchActions"
     style="@style/flipper_action_buttons">
 
@@ -43,5 +43,5 @@
       android:text="Search"
       style="@style/default_button" />
 
-  </com.readtracker_beta.thirdparty.SafeViewFlipper>
+  </com.readtracker.thirdparty.SafeViewFlipper>
 </LinearLayout>
