@@ -11,7 +11,7 @@
                     android:normalScreens="true"
                     android:smallScreens="false" />
 
-  <uses-sdk android:targetSdkVersion="8" />
+  <uses-sdk android:targetSdkVersion="10" />
 
   <application android:icon="@drawable/icon"
                android:label="ReadTracker"
