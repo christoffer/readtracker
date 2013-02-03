@@ -13,6 +13,7 @@ import com.readtracker_beta.db.LocalHighlight;
 import com.readtracker_beta.db.LocalReading;
 import com.readtracker_beta.db.LocalSession;
 import com.readtracker_beta.fragments.BookFragmentAdapter;
+import com.readtracker_beta.interfaces.EndSessionDialogListener;
 import com.readtracker_beta.support.SessionTimerStore;
 import com.readtracker_beta.support.SessionTimer;
 
@@ -22,7 +23,7 @@ import java.util.ArrayList;
 /**
  * Fragmented screen for browsing and reading a book
  */
-public class BookActivity extends ReadTrackerActivity {
+public class BookActivity extends ReadTrackerActivity implements EndSessionDialogListener {
   // Fragment pages
   public static final int PAGE_UNSPECIFIED = -1;
   public static final int PAGE_SESSIONS = 0;
@@ -79,14 +80,14 @@ public class BookActivity extends ReadTrackerActivity {
 
     Log.v(TAG, "onActivityResult: requestCode: " + requestCode + ", resultCode: " + resultCode);
     switch(requestCode) {
-      case ActivityCodes.CREATE_PING:
-        // Set result to OK to state that something was changed
-        if(resultCode == RESULT_OK) {
-          Log.d(TAG, "Came back from ping creation");
-          finishWithResult(ActivityCodes.RESULT_OK);
-          return;
-        }
-        break;
+//      case ActivityCodes.CREATE_PING:
+//        // Set result to OK to state that something was changed
+//        if(resultCode == RESULT_OK) {
+//          Log.d(TAG, "Came back from ping creation");
+//          finishWithResult(ActivityCodes.RESULT_OK);
+//          return;
+//        }
+//        break;
       case ActivityCodes.REQUEST_ADD_PAGE_NUMBERS:
         if(resultCode == RESULT_OK) {
           Log.d(TAG, "Came back from adding page number");
@@ -128,6 +129,19 @@ public class BookActivity extends ReadTrackerActivity {
         return false;
     }
     return true;
+  }
+
+  @Override public void onSessionCreated(LocalSession localSession) {
+    Log.d(TAG, "Created a local session");
+    // Fire off a transfer of the new session
+    startService(new Intent(this, ReadmillTransferIntent.class));
+
+    // And bail out
+    finishWithResult(ActivityCodes.RESULT_OK);
+  }
+
+  @Override public void onSessionFailed() {
+    toast("Failed to save your reading session.\n\nPlease report this to the developer.");
   }
 
   /**
@@ -230,13 +244,6 @@ public class BookActivity extends ReadTrackerActivity {
   }
 
   // Private
-
-  public void exitToSessionEndScreen(long elapsedMilliseconds) {
-    Intent intentReadingSessionEnd = new Intent(this, EndSessionActivity.class);
-    intentReadingSessionEnd.putExtra(IntentKeys.LOCAL_READING, mLocalReading);
-    intentReadingSessionEnd.putExtra(IntentKeys.SESSION_LENGTH_MS, elapsedMilliseconds);
-    startActivityForResult(intentReadingSessionEnd, ActivityCodes.CREATE_PING);
-  }
 
   public void exitToBookInfoScreen(LocalReading localReading) {
     Intent intentEditBook = new Intent(this, AddBookActivity.class);

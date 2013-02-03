@@ -1,9 +1,11 @@
 package com.readtracker_beta.fragments;
 
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.*;
@@ -15,6 +17,8 @@ import android.widget.TextView;
 import com.readtracker_beta.IntentKeys;
 import com.readtracker_beta.R;
 import com.readtracker_beta.activities.BookActivity;
+import com.readtracker_beta.activities.EndSessionDialog;
+import com.readtracker_beta.custom_views.OAuthDialog;
 import com.readtracker_beta.custom_views.PauseableSpinAnimation;
 import com.readtracker_beta.custom_views.TimeSpinner;
 import com.readtracker_beta.db.LocalReading;
@@ -459,7 +463,16 @@ public class ReadingFragment extends Fragment {
   private void onClickedDone() {
     mSessionTimer.stop();
     final long elapsed = mSessionTimer.getTotalElapsed();
-    ((BookActivity) getActivity()).exitToSessionEndScreen(elapsed);
+
+    EndSessionDialog dialog = new EndSessionDialog();
+
+    Bundle arguments = new Bundle();
+    arguments.putParcelable(IntentKeys.LOCAL_READING, mLocalReading);
+    arguments.putLong(IntentKeys.SESSION_LENGTH_MS, elapsed);
+    dialog.setArguments(arguments);
+
+    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+    dialog.show(fragmentManager, "end-session");
   }
 
   /**

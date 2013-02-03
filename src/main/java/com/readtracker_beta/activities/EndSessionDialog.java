@@ -1,27 +1,26 @@
 package com.readtracker_beta.activities;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Intent;
-import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.util.Log;
-import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import com.readtracker_beta.ApplicationReadTracker;
 import com.readtracker_beta.IntentKeys;
 import com.readtracker_beta.R;
-import com.readtracker_beta.ReadmillTransferIntent;
 import com.readtracker_beta.custom_views.ProgressPicker;
 import com.readtracker_beta.db.LocalReading;
 import com.readtracker_beta.db.LocalSession;
+import com.readtracker_beta.interfaces.EndSessionDialogListener;
 import com.readtracker_beta.support.DrawableGenerator;
-import com.readtracker_beta.support.Utils;
 import com.readtracker_beta.thirdparty.SafeViewFlipper;
-import com.readtracker_beta.thirdparty.widget.WheelView;
-import com.readtracker_beta.thirdparty.widget.adapters.AbstractWheelTextAdapter;
-import com.readtracker_beta.thirdparty.widget.adapters.ArrayWheelAdapter;
 
 import java.sql.SQLException;
 import java.util.Date;
@@ -30,84 +29,84 @@ import java.util.UUID;
 /**
  * Screen for input the ending page of a reading session
  */
-public class EndSessionActivity extends ReadTrackerActivity {
+public class EndSessionDialog extends DialogFragment {
+  private static final String TAG = EndSessionDialog.class.getName();
   private static final int SAVE_BUTTON_PAGE = 0;
   private static final int FINISH_BUTTON_PAGE = 1;
 
   private static Button mButtonSaveProgress;
   private static Button mButtonFinishBook;
 
-  private static WheelView mWheelDuration;
-
   private static SafeViewFlipper mFlipperActionButtons;
 
   private static ProgressPicker mProgressPicker;
 
+  // Local reading to edit
   private LocalReading mLocalReading;
-  private long mSessionLengthMillis;
 
-  @Override
-  public void onCreate(Bundle in) {
-    super.onCreate(in);
-    Log.i(TAG, "onCreate");
+  // Length of the reading session
+  private long mSessionDuration;
 
-    setContentView(R.layout.activity_end_session);
+  // The current page
+  private int mCurrentPage;
 
-    bindViews();
-    initializeWheelViews();
+  public EndSessionDialog() {
+  }
 
-    int currentPage;
-    long currentDuration;
-    if(in == null) {
-      Bundle extras = getIntent().getExtras();
-      mLocalReading = extras.getParcelable(IntentKeys.LOCAL_READING);
-      mSessionLengthMillis = extras.getLong(IntentKeys.SESSION_LENGTH_MS);
-      currentDuration = mSessionLengthMillis;
-      mButtonSaveProgress.setEnabled(false);
-      currentPage = (int) mLocalReading.currentPage;
+  @Override public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    Log.v(TAG, "onCreate()");
+
+    if(savedInstanceState != null) {
+      Log.v(TAG, "thawing");
+      mLocalReading = savedInstanceState.getParcelable(IntentKeys.LOCAL_READING);
+      mSessionDuration = savedInstanceState.getLong(IntentKeys.SESSION_LENGTH_MS);
+      mCurrentPage = savedInstanceState.getInt(IntentKeys.PAGE);
     } else {
-      Log.i(TAG, "unfreezing state");
-      mLocalReading = in.getParcelable(IntentKeys.LOCAL_READING);
-      mSessionLengthMillis = in.getLong(IntentKeys.SESSION_LENGTH_MS);
-      currentDuration = in.getLong(IntentKeys.CURRENT_DURATION);
-      currentPage = in.getInt(IntentKeys.PAGE);
-      boolean buttonEnabled = in.getBoolean(IntentKeys.BUTTON_ENABLED);
-      mButtonSaveProgress.setEnabled(buttonEnabled);
+      Log.v(TAG, "init from arguments");
+      mLocalReading = getArguments().getParcelable(IntentKeys.LOCAL_READING);
+      mSessionDuration = getArguments().getLong(IntentKeys.SESSION_LENGTH_MS);
+      mCurrentPage = (int) mLocalReading.currentPage;
     }
 
-    setupDuration(currentDuration);
+    setStyle(STYLE_NO_TITLE, android.R.style.Theme_Dialog);
+  }
 
-    ViewBindingBookHeader.bindWithDefaultClickHandler(this, mLocalReading);
+  @Override public void onSaveInstanceState(Bundle out) {
+    super.onSaveInstanceState(out);
+    Log.v(TAG, "onSaveInstanceState()");
+    out.putParcelable(IntentKeys.LOCAL_READING, mLocalReading);
+    out.putLong(IntentKeys.SESSION_LENGTH_MS, mSessionDuration);
+    if(mProgressPicker != null) {
+      out.putLong(IntentKeys.PAGE, mProgressPicker.getCurrentPage());
+    } else {
+      out.putLong(IntentKeys.PAGE, mLocalReading.currentPage);
+    }
+  }
+
+  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    Log.v(TAG, "onCreateView()");
+    View root = inflater.inflate(R.layout.end_session_dialog, null);
+
+    bindViews(root);
 
     mProgressPicker.setupForLocalReading(mLocalReading);
-    mProgressPicker.setCurrentPage(currentPage);
 
-    final boolean onLastPage = currentPage == mLocalReading.totalPages;
+    mProgressPicker.setCurrentPage(mCurrentPage);
+
+    final boolean onLastPage = mCurrentPage == mLocalReading.totalPages;
     toggleFinishButton(onLastPage);
 
-    findViewById(R.id.dividerOne).setBackgroundColor(mLocalReading.getColor());
-    findViewById(R.id.dividerTwo).setBackgroundColor(mLocalReading.getColor());
-
-    Log.i(TAG, "Init for reading : " + mLocalReading.id + " with session length:" + mSessionLengthMillis);
+    Log.i(TAG, "Init for reading : " + mLocalReading.id + " with session length:" + mSessionDuration);
     bindEvents();
 
     mButtonSaveProgress.setBackgroundDrawable(DrawableGenerator.generateButtonBackground(mLocalReading.getColor()));
     mButtonFinishBook.setBackgroundDrawable(DrawableGenerator.generateButtonBackground(mLocalReading.getColor()));
+
+    return root;
   }
 
-  @Override
-  protected void onSaveInstanceState(Bundle out) {
-    super.onSaveInstanceState(out);
-    Log.d(TAG, "freezing state");
-    out.putParcelable(IntentKeys.LOCAL_READING, mLocalReading);
-    out.putLong(IntentKeys.SESSION_LENGTH_MS, mSessionLengthMillis);
-    out.putLong(IntentKeys.CURRENT_DURATION, getCurrentDuration());
-    out.putBoolean(IntentKeys.BUTTON_ENABLED, mButtonSaveProgress.isEnabled());
-    out.putInt(IntentKeys.PAGE, mProgressPicker.getCurrentPage());
-  }
-
-  @Override
-  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+  @Override public void onActivityResult(int requestCode, int resultCode, Intent data) {
     switch(requestCode) {
       case ActivityCodes.REQUEST_FINISH_READING:
         if(resultCode == ActivityCodes.RESULT_OK) {
@@ -115,7 +114,7 @@ public class EndSessionActivity extends ReadTrackerActivity {
           Log.v(TAG, "Reading was finished, exit with success");
           mLocalReading = data.getExtras().getParcelable(IntentKeys.LOCAL_READING);
           final long page = mLocalReading.totalPages;
-          saveSessionAndExit(page, getCurrentDuration());
+          saveSessionAndExit(page, mSessionDuration);
         } else {
           // User cancelled the finish
           Log.v(TAG, "Reading was not finished. Ignoring.");
@@ -125,22 +124,18 @@ public class EndSessionActivity extends ReadTrackerActivity {
     }
   }
 
-  private void bindViews() {
-    mButtonSaveProgress = (Button) findViewById(R.id.buttonSaveProgress);
-    mButtonFinishBook = (Button) findViewById(R.id.buttonFinishBook);
-
-    mWheelDuration = (WheelView) findViewById(R.id.wheelDuration);
-
-    mFlipperActionButtons = (SafeViewFlipper) findViewById(R.id.flipperActionButtons);
-
-    mProgressPicker = (ProgressPicker) findViewById(R.id.progressPicker);
+  private void bindViews(View root) {
+    mButtonSaveProgress = (Button) root.findViewById(R.id.buttonSaveProgress);
+    mButtonFinishBook = (Button) root.findViewById(R.id.buttonFinishBook);
+    mFlipperActionButtons = (SafeViewFlipper) root.findViewById(R.id.flipperActionButtons);
+    mProgressPicker = (ProgressPicker) root.findViewById(R.id.progressPicker);
   }
 
   private void bindEvents() {
     mButtonSaveProgress.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
-        saveSessionAndExit(mProgressPicker.getCurrentPage(), getCurrentDuration());
+        saveSessionAndExit(mProgressPicker.getCurrentPage(), mSessionDuration);
       }
     });
 
@@ -170,46 +165,13 @@ public class EndSessionActivity extends ReadTrackerActivity {
     }
   }
 
-  private void initializeWheelViews() {
-    ArrayWheelAdapter hoursAdapter = createDurationWheelAdapter(24 * 60);
-    mWheelDuration.setVisibleItems(3);
-    mWheelDuration.setViewAdapter(hoursAdapter);
-    mWheelDuration.setCalliperMode(WheelView.CalliperMode.NO_CALLIPERS);
-  }
-
-  private void setupDuration(long sessionLengthMillis) {
-    int minutes = (int) (sessionLengthMillis / (1000 * 60));
-    Log.v(TAG, "Setting duration: " + sessionLengthMillis);
-    mWheelDuration.setCurrentItem(minutes);
-  }
-
-  private long getCurrentDuration() {
-    Log.v(TAG, "Current duration: " + mWheelDuration.getCurrentItem() * 60 * 1000);
-    return mWheelDuration.getCurrentItem() * 60 * 1000;
-  }
-
-  private ArrayWheelAdapter createDurationWheelAdapter(int maxMinutes) {
-    String[] labels = new String[maxMinutes];
-    for(int minute = 0; minute < maxMinutes; minute++) {
-      labels[minute] = Utils.hoursAndMinutesFromMillis(minute * 60 * 1000);
-    }
-
-    ArrayWheelAdapter<String> adapter = new ArrayWheelAdapter<String>(this, labels);
-    adapter.setTextColor(getResources().getColor(R.color.text_color_primary));
-    adapter.setTypeFace(Typeface.DEFAULT);
-    adapter.setTypeStyle(Typeface.NORMAL);
-    float fontSizePixels = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 12, getResources().getDisplayMetrics());
-    adapter.setTextSize((int) fontSizePixels);
-    return adapter;
-  }
-
   /**
    * Start the FinishBookActivity with the current reading and await the result.
    *
    * @param localReading The current local reading to finish.
    */
   private void exitToFinishReading(LocalReading localReading) {
-    Intent finishActivity = new Intent(this, FinishBookActivity.class);
+    Intent finishActivity = new Intent(getActivity(), FinishBookActivity.class);
     finishActivity.putExtra(IntentKeys.LOCAL_READING, localReading);
     startActivityForResult(finishActivity, ActivityCodes.REQUEST_FINISH_READING);
   }
@@ -232,15 +194,14 @@ public class EndSessionActivity extends ReadTrackerActivity {
 
   private void onSessionSaved(LocalSession localSession) {
     Log.i(TAG, "onSessionSaved: " + localSession);
-    if(localSession == null) {
-      toastLong("An error occurred while saving your data.");
-      return;
-    }
 
-    Log.i(TAG, "Saved locally, initializing process of queued pings...");
-    startService(new Intent(this, ReadmillTransferIntent.class));
-    setResult(RESULT_OK);
-    finish();
+    if(localSession == null) {
+      ((EndSessionDialogListener) getActivity()).onSessionFailed();
+    } else {
+      Log.i(TAG, "Saved locally, initializing process of queued pings...");
+      ((EndSessionDialogListener) getActivity()).onSessionCreated(localSession);
+      dismiss();
+    }
   }
 
   // --------------------------------------------------------------------

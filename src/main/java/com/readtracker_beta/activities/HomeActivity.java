@@ -140,13 +140,10 @@ public class HomeActivity extends ReadTrackerActivity {
     Log.d(TAG, "Creating Options menu for reading list");
 
     mMenuReadmillSync = menu.add(0, MENU_SYNC_BOOKS, 1, "Sync list with Readmill");
-    mMenuReadmillSync.setIcon(R.drawable.readmill_sync);
     mMenuReadmillSync.setTitleCondensed("Sync");
 
     MenuItem menuSettings = menu.add(0, MENU_SETTINGS, 3, "Settings");
     menuSettings.setTitleCondensed("Settings");
-    menuSettings.setIcon(android.R.drawable.ic_menu_preferences);
-
     return true;
   }
 
