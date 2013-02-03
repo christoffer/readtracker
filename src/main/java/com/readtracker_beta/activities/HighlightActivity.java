@@ -1,6 +1,7 @@
 package com.readtracker_beta.activities;
 
 import android.content.Intent;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -51,9 +52,6 @@ public class HighlightActivity extends ReadTrackerActivity {
       currentPage = (int) mLocalReading.currentPage;
     }
 
-    View divider = findViewById(R.id.divider);
-    divider.setBackgroundColor(mLocalReading.getColor());
-
     if(mLocalReading.hasPageInfo()) {
       mProgressPicker.setupForLocalReading(mLocalReading);
       mProgressPicker.setCurrentPage(currentPage);
@@ -62,6 +60,11 @@ public class HighlightActivity extends ReadTrackerActivity {
     }
 
     mButtonSaveHighlight.setBackgroundDrawable(DrawableGenerator.generateButtonBackground(mLocalReading.getColor()));
+    GradientDrawable gradientDrawable = new GradientDrawable();
+    gradientDrawable.setCornerRadius(getPixels(3));
+    gradientDrawable.setStroke(getPixels(1), mLocalReading.getColor());
+    gradientDrawable.setColor(getResources().getColor(R.color.background));
+    mEditHighlightText.setBackgroundDrawable(gradientDrawable);
 
     ViewBindingBookHeader.bindWithDefaultClickHandler(this, mLocalReading);
   }
@@ -141,6 +144,8 @@ public class HighlightActivity extends ReadTrackerActivity {
   }
 
   private boolean validateHighlightContent(String content) {
+    content = content.trim();
+
     if(content.length() == 0) {
       toastLong("Please enter some text for the highlight.");
       return false;

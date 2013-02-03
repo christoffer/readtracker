@@ -57,6 +57,8 @@
       <com.readtracker_beta.custom_views.SegmentBar
         android:id="@+id/segmentBar"
         android:layout_width="fill_parent"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
         android:layout_height="4dp"
         android:layout_marginBottom="12dp" />
 

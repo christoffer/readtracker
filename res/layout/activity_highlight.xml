@@ -3,20 +3,32 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_height="fill_parent"
   android:layout_width="fill_parent"
-  android:padding="6dp"
-  android:gravity="center_horizontal">
+  android:padding="12dp">
 
-  <include
-    layout="@layout/_book_header"
-    android:id="@+id/_bookHeader" />
+  <include layout="@layout/_book_header" />
+
+  <TextView
+    style="@style/default_text"
+    android:layout_below="@id/_bookHeader"
+    android:id="@+id/textLabelEnterHighlight"
+    android:layout_marginTop="6dp"
+    android:layout_marginBottom="6dp"
+    android:text="Enter the text to highlight" />
 
   <EditText
     android:id="@+id/editHighlight"
     style="@style/free_text_input"
-    android:layout_alignParentTop="true"
-    android:layout_above="@+id/divider"
-    android:layout_below="@id/_bookHeader"
-    android:hint="Highlight text" />
+    android:layout_above="@+id/textLabelEnterPosition"
+    android:layout_below="@+id/textLabelEnterHighlight"
+    android:hint="" />
+
+  <TextView
+    android:id="@+id/textLabelEnterPosition"
+    style="@style/default_text"
+    android:layout_above="@+id/progressPicker"
+    android:layout_marginTop="6dp"
+    android:layout_marginBottom="6dp"
+    android:text="Where is this passage in the book?" />
 
   <com.readtracker_beta.custom_views.ProgressPicker
     android:id="@+id/progressPicker"
@@ -26,13 +38,6 @@
     android:layout_above="@+id/buttonSaveHighlight"
     android:layout_marginTop="12dp"
     android:layout_marginBottom="12dp" />
-
-  <View
-    android:id="@+id/divider"
-    style="@style/thick_divider"
-    android:layout_below="@+id/progressPicker"
-    android:layout_marginTop="-42dp"
-    android:layout_marginBottom="42dp" />
 
   <Button
     android:id="@+id/buttonSaveHighlight"

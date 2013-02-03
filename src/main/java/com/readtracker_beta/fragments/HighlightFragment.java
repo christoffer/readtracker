@@ -190,7 +190,9 @@ public class HighlightFragment extends Fragment {
   }
 
   private void onItemRemoved(HighlightItem deletedItem) {
+    Log.v(TAG, "onItemRemoved(): " + deletedItem.toString());
     mHighlightAdapter.remove(deletedItem);
+    mHighlightAdapter.notifyDataSetChanged();
   }
 
   private class DeleteHighlightFromDeviceTask extends AsyncTask<HighlightItem, Void, HighlightItem> {
