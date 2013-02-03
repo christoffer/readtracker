@@ -13,6 +13,7 @@ readmill.properties
 .classpath
 .project
 .settings
+settings.xml
 
 R.java
 
