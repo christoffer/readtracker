@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.readtracker_beta"
           android:versionCode="10"
-          android:versionName="3.0.0-DEV">
+          android:versionName="3.0.0">
 
   <uses-permission android:name="android.permission.INTERNET" />
   <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -14,7 +14,7 @@
   <uses-sdk android:targetSdkVersion="8" />
 
   <application android:icon="@drawable/icon"
-               android:label="RT3-Beta"
+               android:label="ReadTracker"
                android:name=".ApplicationReadTracker"
                android:theme="@style/ReadTrackerTheme">
 
