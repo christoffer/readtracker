@@ -508,7 +508,7 @@ public class Switch extends CompoundButton
 		mTrackDrawable.getPadding(mTempRect);
 		final int maxTextWidth = Math.max(mOnLayout.getWidth(), mOffLayout.getWidth());
 		final int switchWidth = Math.max(mSwitchMinWidth, maxTextWidth * 2 + mThumbTextPadding * 4 + mTempRect.left + mTempRect.right);
-		final int switchHeight = mTrackDrawable.getIntrinsicHeight();
+		final int switchHeight = mTrackDrawable.getIntrinsicHeight() + 6;
 
 		mThumbWidth = maxTextWidth + mThumbTextPadding * 2;
 
