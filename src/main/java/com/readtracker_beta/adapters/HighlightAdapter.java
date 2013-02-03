@@ -68,7 +68,7 @@ public class HighlightAdapter extends ArrayAdapter<HighlightItem> {
     if(content == null || content.length() < 100) {
       return textSizeFromDP(18);
     }
-    if(content.length() < 500) {
+    if(content.length() < 350) {
       return textSizeFromDP(14);
     }
     return textSizeFromDP(10);
