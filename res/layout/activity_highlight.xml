@@ -8,9 +8,9 @@
   <include layout="@layout/_book_header" />
 
   <TextView
+    android:id="@+id/textLabelEnterHighlight"
     style="@style/default_text"
     android:layout_below="@id/_bookHeader"
-    android:id="@+id/textLabelEnterHighlight"
     android:layout_marginTop="6dp"
     android:layout_marginBottom="6dp"
     android:text="Enter the text to highlight" />

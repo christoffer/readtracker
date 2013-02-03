@@ -1,6 +1,7 @@
 package com.readtracker_beta.activities;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -9,6 +10,7 @@ import com.readtracker_beta.IntentKeys;
 import com.readtracker_beta.R;
 import com.readtracker_beta.db.LocalReading;
 import com.readtracker_beta.interfaces.SaveLocalReadingListener;
+import com.readtracker_beta.support.DrawableGenerator;
 import com.readtracker_beta.support.ReadmillApiHelper;
 import com.readtracker_beta.tasks.SaveLocalReadingTask;
 import com.readtracker_beta.thirdparty.views.Switch;
@@ -38,6 +40,11 @@ public class FinishBookActivity extends ReadTrackerActivity {
       final boolean isRecommended = savedInstanceState.getBoolean(IntentKeys.RECOMMENDED);
       mSwitchRecommended.setChecked(isRecommended);
     }
+
+    Drawable drawable = DrawableGenerator.generateEditTextOutline(mLocalReading.getColor(), getPixels(1), getPixels(3));
+    mEditClosingRemark.setBackgroundDrawable(drawable);
+
+    mButtonFinish.setBackgroundDrawable(DrawableGenerator.generateButtonBackground(mLocalReading.getColor()));
 
     ViewBindingBookHeader.bindWithDefaultClickHandler(this, mLocalReading);
   }

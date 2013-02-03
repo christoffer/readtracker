@@ -1,6 +1,7 @@
 package com.readtracker_beta.activities;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -60,12 +61,8 @@ public class HighlightActivity extends ReadTrackerActivity {
       findViewById(R.id.textLabelEnterPosition).setVisibility(View.GONE);
     }
 
-    mButtonSaveHighlight.setBackgroundDrawable(DrawableGenerator.generateButtonBackground(mLocalReading.getColor()));
-    GradientDrawable gradientDrawable = new GradientDrawable();
-    gradientDrawable.setCornerRadius(getPixels(3));
-    gradientDrawable.setStroke(getPixels(1), mLocalReading.getColor());
-    gradientDrawable.setColor(getResources().getColor(R.color.background));
-    mEditHighlightText.setBackgroundDrawable(gradientDrawable);
+    Drawable drawable = DrawableGenerator.generateEditTextOutline(mLocalReading.getColor(), getPixels(1), getPixels(3));
+    mEditHighlightText.setBackgroundDrawable(drawable);
 
     ViewBindingBookHeader.bindWithDefaultClickHandler(this, mLocalReading);
   }

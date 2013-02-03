@@ -2,6 +2,7 @@ package com.readtracker_beta.support;
 
 import android.R;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.StateListDrawable;
 
@@ -33,6 +34,14 @@ public class DrawableGenerator {
     states.addState(new int[]{ }, createButtonDrawable(fillColor, outlineColorFor(fillColor)));
 
     return states;
+  }
+
+  public static Drawable generateEditTextOutline(int color, int pixelBorder, int pixelRadius) {
+    GradientDrawable gradientDrawable = new GradientDrawable();
+    gradientDrawable.setCornerRadius(pixelRadius);
+    gradientDrawable.setStroke(pixelBorder, color);
+    gradientDrawable.setColor(Color.BLACK);
+    return gradientDrawable;
   }
 
   private static int outlineColorFor(int baseColor) {
