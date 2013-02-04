@@ -81,14 +81,6 @@ public class BookActivity extends ReadTrackerActivity implements EndSessionDialo
 
     Log.v(TAG, "onActivityResult: requestCode: " + requestCode + ", resultCode: " + resultCode);
     switch(requestCode) {
-//      case ActivityCodes.CREATE_PING:
-//        // Set result to OK to state that something was changed
-//        if(resultCode == RESULT_OK) {
-//          Log.d(TAG, "Came back from ping creation");
-//          finishWithResult(ActivityCodes.RESULT_OK);
-//          return;
-//        }
-//        break;
       case ActivityCodes.REQUEST_ADD_PAGE_NUMBERS:
         if(resultCode == RESULT_OK) {
           Log.d(TAG, "Came back from adding page number");
@@ -107,6 +99,7 @@ public class BookActivity extends ReadTrackerActivity implements EndSessionDialo
         break;
       case ActivityCodes.REQUEST_BOOK_SETTINGS:
         if(resultCode == ActivityCodes.RESULT_OK) {
+          Log.d(TAG, "Came back from changing the book settings");
           // Something changed
           reloadLocalData(data.getIntExtra(IntentKeys.READING_ID, -1));
         } else if(resultCode == ActivityCodes.RESULT_DELETED_BOOK) {
@@ -132,7 +125,10 @@ public class BookActivity extends ReadTrackerActivity implements EndSessionDialo
     return true;
   }
 
-  @Override public void onSessionCreated(LocalSession localSession) {
+  /**
+    The session has been successfully created.
+   */
+  public void onSessionCreated(LocalSession localSession) {
     Log.d(TAG, "Created a local session");
     // Fire off a transfer of the new session
     startService(new Intent(this, ReadmillTransferIntent.class));
@@ -141,7 +137,10 @@ public class BookActivity extends ReadTrackerActivity implements EndSessionDialo
     finishWithResult(ActivityCodes.RESULT_OK);
   }
 
-  @Override public void onSessionFailed() {
+  /**
+   * The session could not be created.
+   */
+  public void onSessionFailed() {
     toast("Failed to save your reading session.\n\nPlease report this to the developer.");
   }
 
@@ -188,7 +187,6 @@ public class BookActivity extends ReadTrackerActivity implements EndSessionDialo
 
     // Book info
     ViewBindingBookHeader.bind(this, mLocalReading, new ViewBindingBookHeader.BookHeaderClickListener() {
-      @Override
       public void onBackButtonClick() {
         exitToHomeScreen();
       }
