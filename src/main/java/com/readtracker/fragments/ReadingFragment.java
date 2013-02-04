@@ -361,6 +361,9 @@ public class ReadingFragment extends Fragment {
     return adapter;
   }
 
+  /**
+   * Sets up the UI for tracking the time of a book.
+   */
   private void setupForTimeTracking() {
     // Starting or continuing a reading session?
     final long totalElapsed = getElapsed();
@@ -374,6 +377,9 @@ public class ReadingFragment extends Fragment {
     }
   }
 
+  /**
+   * Sets up the UI for asking the user for the number of pages in the book.
+   */
   private void setupForMissingPages() {
     mTextBillboard.setText("Just one more step...");
     mTextBillboard.setEnabled(false);
@@ -390,7 +396,7 @@ public class ReadingFragment extends Fragment {
     boolean isFirstRead = localReading.currentPage == 0;
 
     if(isFirstRead) {
-      mTextBillboard.setText("New book");
+      mTextBillboard.setText("First reading");
       return;
     }
 
@@ -547,6 +553,7 @@ public class ReadingFragment extends Fragment {
     }
 
     mWheelDuration.setEnabled(true);
+    mWheelDuration.setVisibility(View.VISIBLE);
 
     mUpdateDurationTask = new UpdateDurationTask();
 
