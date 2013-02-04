@@ -180,7 +180,6 @@ public class ReadingFragment extends Fragment {
     }
   }
 
-
   private void setSessionTimer(SessionTimer sessionTimer) {
     Log.v(TAG, "Setting session timer: " + sessionTimer);
 
@@ -254,6 +253,7 @@ public class ReadingFragment extends Fragment {
         }
         PauseableSpinAnimation spinAnimation = (PauseableSpinAnimation) mTimeSpinner.getAnimation();
         if(spinAnimation == null) {
+          Log.v(TAG, "View has layout: Setting up spinner animation");
           final float offsetX = mTimeSpinner.getWidth() / 2.0f;
           final float offsetY = mTimeSpinner.getHeight() / 2.0f;
 
@@ -279,7 +279,7 @@ public class ReadingFragment extends Fragment {
     mTimeSpinner.setOnTouchListener(new View.OnTouchListener() {
       @Override public boolean onTouch(View view, MotionEvent motionEvent) {
         // The start wheel is not active as a click target when the timing is started
-        // this is due to the inability to have both the timespinner and the underlying
+        // this is due to the inability to have both the TimeSpinner and the underlying
         // wheel view receive touch events prior to android 11.
         if(mIsStarted) {
           return false;
@@ -288,14 +288,10 @@ public class ReadingFragment extends Fragment {
         int action = motionEvent.getAction();
         if(action == MotionEvent.ACTION_DOWN) {
           mTimeSpinner.setHighlighted(true);
-          MotionEvent clonedEvent = MotionEvent.obtain(motionEvent);
-          mWheelDuration.onTouchEvent(clonedEvent);
           return true;
         } else if(action == MotionEvent.ACTION_UP) {
           onClickedStart();
           mTimeSpinner.setHighlighted(false);
-          MotionEvent clonedEvent = MotionEvent.obtain(motionEvent);
-          mWheelDuration.onTouchEvent(clonedEvent);
           return true;
         } else if(action == MotionEvent.ACTION_CANCEL) {
           mTimeSpinner.setHighlighted(false);
@@ -303,8 +299,7 @@ public class ReadingFragment extends Fragment {
         }
         return false;
       }
-    }
-    );
+    });
   }
 
   /**
