@@ -39,9 +39,6 @@ public class TimeSpinner extends View {
     canvas.drawCircle(midX, midY, Math.min(midX,  midY) - 35.0f, p);
     drawTicks(canvas, 60, 15, 2, 10, mSecondaryColor);
     drawTicks(canvas, 12, 25, 4, 0, mPrimaryColor);
-
-    // Draw the index tick
-    drawTicks(canvas, 1, 45, 4, -10, mPrimaryColor);
   }
 
   public void setColor(int primaryColor) {
@@ -84,9 +81,6 @@ public class TimeSpinner extends View {
     canvas.translate(width / 2, height / 2);
 
     final float rotation = 360 / tickCount;
-
-    // Start drawing ticks at the top
-    canvas.rotate(-180);
 
     for(int i = 0; i < tickCount; i++) {
       canvas.rotate(rotation);
