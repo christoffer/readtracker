@@ -60,6 +60,7 @@ public class HomeActivity extends ReadTrackerActivity {
 
     // Show welcome screen for first time users
     if(getApp().getFirstTimeFlag() || (getCurrentUser() == null && !cameFromSignIn)) {
+      Log.d(TAG, "First time user or not logged in, bouncing to Welcome");
       getApp().signOut();
       finish();
       return;
@@ -111,7 +112,7 @@ public class HomeActivity extends ReadTrackerActivity {
     }
 
     PagerTabStrip pagerTabStrip = (PagerTabStrip) findViewById(R.id.pagerTabStrip);
-    pagerTabStrip.setTabIndicatorColor(Color.DKGRAY);
+    pagerTabStrip.setTabIndicatorColor(getResources().getColor(R.color.base_color));
   }
 
   @Override

@@ -2,6 +2,7 @@
 <resources>
 
   <!-- base colors -->
+  <color name="base_color">#ff457698</color>
   <color name="background">#ff000000</color>
   <color name="background_pressed">#ff171A1F</color>
 
