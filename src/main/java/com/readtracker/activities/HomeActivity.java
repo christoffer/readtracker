@@ -32,7 +32,7 @@ import java.util.List;
 import static com.readtracker.support.ReadmillSyncStatusUIHandler.SyncStatus;
 import static com.readtracker.support.ReadmillSyncStatusUIHandler.SyncUpdateHandler;
 
-public class HomeActivity extends ReadTrackerActivity {
+public class HomeActivity extends ReadTrackerActivity implements LocalReadingInteractionListener {
 
   private static ImageButton mButtonAddBook;
   private static MenuItem mMenuReadmillSync;
@@ -214,12 +214,15 @@ public class HomeActivity extends ReadTrackerActivity {
     mButtonAddBook.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View view) { exitToBookSearch(); }
     });
+  }
 
-    mHomeFragmentAdapter.setLocalReadingInteractionListener(new LocalReadingInteractionListener() {
-      @Override public void onLocalReadingClicked(LocalReading localReading) {
-        exitToActivityBook(localReading.id);
-      }
-    });
+  /**
+   * Callback from clicking a local readings in one of the fragment lists.
+   *
+   * @param localReading clicked local reading
+   */
+  @Override public void onLocalReadingClicked(LocalReading localReading) {
+    exitToActivityBook(localReading.id);
   }
 
   /**

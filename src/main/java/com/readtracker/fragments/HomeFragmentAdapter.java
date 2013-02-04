@@ -17,7 +17,7 @@ import java.util.List;
  * Managers a set of local readings and partitions them into two states:
  * finished and active.
  */
-public class HomeFragmentAdapter extends FragmentStatePagerAdapter implements LocalReadingInteractionListener {
+public class HomeFragmentAdapter extends FragmentStatePagerAdapter {
   private static final String TAG = HomeFragmentAdapter.class.getName();
 
 
@@ -39,7 +39,6 @@ public class HomeFragmentAdapter extends FragmentStatePagerAdapter implements Lo
 
   // A mapping between a local reading instance (in any list) and its id
   private HashMap<Integer, LocalReading> mLocalReadingMap = new HashMap<Integer, LocalReading>();
-  private LocalReadingInteractionListener mLocalReadingInteractionListener;
 
   public HomeFragmentAdapter(FragmentManager fragmentManager, ArrayList<LocalReading> localReadings) {
     super(fragmentManager);
@@ -50,10 +49,10 @@ public class HomeFragmentAdapter extends FragmentStatePagerAdapter implements Lo
 
   @Override public CharSequence getPageTitle(int position) {
     switch(position) {
-      case FRAGMENT_ACTIVE:
-        return "Reading";
       case FRAGMENT_FINISHED:
         return "Finished";
+      case FRAGMENT_ACTIVE:
+        return "Reading";
       default:
         return "";
     }
@@ -71,7 +70,6 @@ public class HomeFragmentAdapter extends FragmentStatePagerAdapter implements Lo
     // Keep a reference to the active fragment around so we can update it later
     if(fragment != null) {
       fragments[position] = fragment;
-      fragment.setInteractionListener(this);
       return fragment;
     }
 
@@ -199,19 +197,4 @@ public class HomeFragmentAdapter extends FragmentStatePagerAdapter implements Lo
   public LocalReading getLocalReadingById(int localReadingId) {
     return mLocalReadingMap.get(localReadingId);
   }
-
-  public void setLocalReadingInteractionListener(LocalReadingInteractionListener listener) {
-    mLocalReadingInteractionListener = listener;
-  }
-
-  /**
-   * Pass on events from the local reading lists to any potential listeners
-   * @param localReading clicked local reading
-   */
-  @Override public void onLocalReadingClicked(LocalReading localReading) {
-    if(mLocalReadingInteractionListener != null) {
-      mLocalReadingInteractionListener.onLocalReadingClicked(localReading);
-    }
-  }
-
 }

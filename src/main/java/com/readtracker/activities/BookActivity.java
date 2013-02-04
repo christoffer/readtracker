@@ -281,20 +281,30 @@ public class BookActivity extends ReadTrackerActivity implements EndSessionDialo
   }
 
   public void finishWithResult(int resultCode) {
-    setResult(resultCode);
-    shutdown();
+    shutdownWithResult(resultCode);
   }
 
   public void finishWithResultAndPausedSession(int resultCode, int localReadingId, SessionTimer sessionTimer) {
     Log.v(TAG, String.format("Finishing with reading id: %d and session timer: %s", localReadingId, sessionTimer.toString()));
     Intent resultIntent = new Intent();
     resultIntent.putExtra(IntentKeys.READING_SESSION_STATE, sessionTimer);
-    setResult(resultCode, resultIntent);
-    shutdown();
+    shutdownWithResult(resultCode, resultIntent);
   }
 
-  private void shutdown() {
+  private void shutdownWithResult(int resultCode) {
+    shutdownWithResult(resultCode, null);
+  }
+
+  private void shutdownWithResult(int resultCode, Intent resultBundle) {
     Log.v(TAG, "Shutting down");
+
+    if(resultBundle == null) {
+      resultBundle = new Intent();
+    }
+
+    resultBundle.putExtra(IntentKeys.LOCAL_READING, mLocalReading);
+    setResult(resultCode, resultBundle);
+
     mManualShutdown = true;
     SessionTimerStore.clear();
     finish();

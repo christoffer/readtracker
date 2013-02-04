@@ -28,7 +28,6 @@ public class ReadingListFragment extends ListFragment {
   private static final String TAG = ReadingListFragment.class.getName();
   private LocalReadingAdapter listAdapterReadings;
   private int itemLayoutResourceId;
-  private LocalReadingInteractionListener interactionListener;
   private ArrayList<LocalReading> localReadings;
 
   private Comparator<LocalReading> mLocalReadingComparator = new Comparator<LocalReading>() {
@@ -54,8 +53,10 @@ public class ReadingListFragment extends ListFragment {
 
   @Override
   public void onCreate(Bundle in) {
+    Log.v(TAG, "onCreate()");
     super.onCreate(in);
     if(in != null) {
+      Log.v(TAG, "thawing state");
       ArrayList<LocalReading> frozenReadings = in.getParcelableArrayList(IntentKeys.LOCAL_READINGS);
       itemLayoutResourceId = in.getInt(IntentKeys.RESOURCE_ID);
       setLocalReadings(frozenReadings);
@@ -64,6 +65,7 @@ public class ReadingListFragment extends ListFragment {
 
   @Override
   public void onSaveInstanceState(Bundle out) {
+    Log.v(TAG, "onSaveInstanceState()");
     super.onSaveInstanceState(out);
     out.putParcelableArrayList(IntentKeys.LOCAL_READINGS, localReadings);
     out.putInt(IntentKeys.RESOURCE_ID, itemLayoutResourceId);
@@ -71,13 +73,21 @@ public class ReadingListFragment extends ListFragment {
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    View view = inflater.inflate(R.layout.fragment_reading_list, container, false);
-    return view;
+    Log.v(TAG, "onCreateView()");
+    return inflater.inflate(R.layout.fragment_reading_list, container, false);
   }
 
   @Override
   public void onActivityCreated(Bundle savedInstanceState) {
+    Log.v(TAG, "onActivityCreated()");
     super.onActivityCreated(savedInstanceState);
+
+    try {
+      //noinspection UnusedDeclaration
+      LocalReadingInteractionListener classCassTest = (LocalReadingInteractionListener) getActivity();
+    } catch(ClassCastException ignored) {
+      throw new RuntimeException("Hosting activity must implement " + LocalReadingInteractionListener.class.getName());
+    }
 
     listAdapterReadings = new LocalReadingAdapter(
       getActivity(),
@@ -91,10 +101,9 @@ public class ReadingListFragment extends ListFragment {
   }
 
   @Override public void onListItemClick(ListView listView, View clickedView, int position, long id) {
+    Log.v(TAG, "onListItemClick()");
     LocalReading clickedReading = (LocalReading) listView.getItemAtPosition(position);
-    if(interactionListener != null) {
-      interactionListener.onLocalReadingClicked(clickedReading);
-    }
+    ((LocalReadingInteractionListener) getActivity()).onLocalReadingClicked(clickedReading);
   }
 
   /**
@@ -105,7 +114,7 @@ public class ReadingListFragment extends ListFragment {
    * @param localReadings list of local readings to display
    */
   public void setLocalReadings(ArrayList<LocalReading> localReadings) {
-    Log.v(TAG, "Setting list of local readings to list with size: " + (localReadings == null ? "NULL" : localReadings.size()));
+    Log.v(TAG, "setLocalReadings() with list size: " + (localReadings == null ? "NULL" : localReadings.size()));
 
     if(this.localReadings == null) {
       this.localReadings = new ArrayList<LocalReading>();
@@ -130,9 +139,5 @@ public class ReadingListFragment extends ListFragment {
    */
   public void setItemLayoutResourceId(int resourceId) {
     this.itemLayoutResourceId = resourceId;
-  }
-
-  public void setInteractionListener(HomeFragmentAdapter listener) {
-    interactionListener = listener;
   }
 }
