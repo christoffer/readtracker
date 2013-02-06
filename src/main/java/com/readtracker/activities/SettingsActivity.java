@@ -24,12 +24,10 @@ public class SettingsActivity extends PreferenceActivity {
 
     // Current user info
     if(currentUser == null) {
-      emailPreference.setTitle("Anonymous user");
       emailPreference.setSummary("Not logged in to Readmill");
       emailPreference.setEnabled(false);
     } else {
-      emailPreference.setTitle(currentUser.getDisplayName());
-      emailPreference.setSummary(currentUser.getEmail());
+      emailPreference.setSummary("Logged in as " + currentUser.getDisplayName());
       emailPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
         @Override public boolean onPreferenceClick(Preference preference) {
           Uri userUri = Uri.parse(currentUser.getWebURL());
