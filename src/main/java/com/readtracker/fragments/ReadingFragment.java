@@ -281,7 +281,8 @@ public class ReadingFragment extends Fragment {
         // The start wheel is not active as a click target when the timing is started
         // this is due to the inability to have both the TimeSpinner and the underlying
         // wheel view receive touch events prior to android 11.
-        if(mIsStarted) {
+
+        if(mWheelDuration == null || mWheelDuration.isEnabled()) {
           return false;
         }
 
@@ -290,7 +291,11 @@ public class ReadingFragment extends Fragment {
           mTimeSpinner.setHighlighted(true);
           return true;
         } else if(action == MotionEvent.ACTION_UP) {
-          onClickedStart();
+          if(mIsStarted) {
+            onClickedPauseResume();
+          } else {
+            onClickedStart();
+          }
           mTimeSpinner.setHighlighted(false);
           return true;
         } else if(action == MotionEvent.ACTION_CANCEL) {
@@ -323,6 +328,7 @@ public class ReadingFragment extends Fragment {
 
     // Have the wheel duration initially invisible, and show it once timing starts
     mWheelDuration.setVisibility(View.INVISIBLE);
+    mWheelDuration.setEnabled(false);
 
     mWheelDuration.addChangingListener(new OnWheelChangedListener() {
       @Override
@@ -445,7 +451,6 @@ public class ReadingFragment extends Fragment {
 
     mFlipperSessionControl.setDisplayedChild(FLIPPER_PAGE_READING_BUTTONS);
     mTextBillboard.startAnimation(disappear);
-
     mIsStarted = true;
   }
 
