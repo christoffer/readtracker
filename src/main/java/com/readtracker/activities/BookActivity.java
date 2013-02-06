@@ -75,6 +75,7 @@ public class BookActivity extends ReadTrackerActivity implements EndSessionDialo
 
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    Log.v(TAG, "onActivityResult()");
     if(resultCode == ActivityCodes.RESULT_CANCELED) {
       return;
     }

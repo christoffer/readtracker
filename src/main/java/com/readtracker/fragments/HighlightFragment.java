@@ -87,6 +87,14 @@ public class HighlightFragment extends Fragment {
   }
 
   @Override
+  public void onSaveInstanceState(Bundle out) {
+    super.onSaveInstanceState(out);
+    Log.d(TAG, "freezing state");
+    out.putParcelable(IntentKeys.LOCAL_READING, mLocalReading);
+    out.putParcelableArrayList(IntentKeys.READING_HIGHLIGHTS, mLocalHighlights);
+  }
+
+  @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_highlights, container, false);
     bindViews(view);
@@ -100,14 +108,6 @@ public class HighlightFragment extends Fragment {
     mButtonAddHighlight.setBackgroundDrawable(DrawableGenerator.generateButtonBackground(mLocalReading.getColor()));
 
     return view;
-  }
-
-  @Override
-  public void onSaveInstanceState(Bundle out) {
-    super.onSaveInstanceState(out);
-    Log.d(TAG, "freezing state");
-    out.putParcelable(IntentKeys.LOCAL_READING, mLocalReading);
-    out.putParcelableArrayList(IntentKeys.READING_HIGHLIGHTS, mLocalHighlights);
   }
 
   @Override

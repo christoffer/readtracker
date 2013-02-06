@@ -62,16 +62,6 @@ public class ReadingFragment extends Fragment {
 
   private boolean mIsStarted = false;
 
-//  // Timestamp of when play/resume was pressed last time
-//  private long mTimestampLastStarted = 0;
-//
-//  // Accumulated elapsed time, not including the time since latest timestamp
-//  private long mElapsed = 0;
-
-  // Force reinitialize when returning from an activity that is known
-  // to cause data updates.
-  private boolean mForceReInitialize;
-
   // Display child index for flipper session control
   private static final int FLIPPER_PAGE_START_BUTTON = 0;
   private static final int FLIPPER_PAGE_READING_BUTTONS = 1;
@@ -86,19 +76,58 @@ public class ReadingFragment extends Fragment {
     }
     instance.setSessionTimer(initialSessionTimer);
     instance.setLocalReading(localReading);
-    instance.setForceReinitialize(true);
     return instance;
   }
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
+    Log.v(TAG, "onCreate()");
     super.onCreate(savedInstanceState);
     mUpdateDurationTask = null;
-    if(savedInstanceState != null && !mForceReInitialize) {
+    if(savedInstanceState != null) {
       Log.d(TAG, "unfreeze state");
       mLocalReading = savedInstanceState.getParcelable(IntentKeys.LOCAL_READING);
-      SessionTimer sessionTimer = savedInstanceState.getParcelable(IntentKeys.SESSION_TIMER);
-      setSessionTimer(sessionTimer);
+    }
+    setSessionTimer(new SessionTimer(mLocalReading.id));
+  }
+
+  @Override
+  public void onSaveInstanceState(Bundle outState) {
+    super.onSaveInstanceState(outState);
+    Log.d(TAG, "freezing state");
+    outState.putParcelable(IntentKeys.LOCAL_READING, mLocalReading);
+  }
+
+  @Override
+  public void onPause() {
+    super.onPause();
+    Log.d(TAG, "onPause()");
+
+    if(((BookActivity) getActivity()).isManualShutdown()) {
+      Log.d(TAG, "Parent Activity is shutting down - don't store state");
+    } else {
+      if(getElapsed() > 0) {
+        Log.d(TAG, "Parent Activity not shutting down and has active state - store state");
+        SessionTimerStore.store(mSessionTimer);
+      }
+    }
+
+    stopTrackerUpdates();
+  }
+
+  @Override
+  public void onResume() {
+    super.onResume();
+    Log.v(TAG, "onResume()");
+
+    Log.d(TAG, "Loading stored timing state");
+    SessionTimer storedSessionTimer = SessionTimerStore.load();
+
+    if(storedSessionTimer == null) {
+      Log.d(TAG, "... Not found");
+    } else {
+      setSessionTimer(storedSessionTimer);
+      restoreTimingState(storedSessionTimer);
     }
   }
 
@@ -136,50 +165,6 @@ public class ReadingFragment extends Fragment {
     return view;
   }
 
-  @Override
-  public void onSaveInstanceState(Bundle outState) {
-    super.onSaveInstanceState(outState);
-    Log.d(TAG, "freezing state");
-    outState.putParcelable(IntentKeys.LOCAL_READING, mLocalReading);
-    outState.putParcelable(IntentKeys.SESSION_TIMER, mSessionTimer);
-  }
-
-  @Override
-  public void onPause() {
-    super.onPause();
-    Log.d(TAG, "onPause()");
-
-    if(((BookActivity) getActivity()).isManualShutdown()) {
-      Log.d(TAG, "Parent Activity is shutting down - don't store state");
-    } else {
-      if(getElapsed() > 0) {
-        Log.d(TAG, "Parent Activity not shutting down and has active state - store state");
-        SessionTimerStore.store(mSessionTimer);
-      }
-    }
-
-    stopTrackerUpdates();
-  }
-
-  @Override
-  public void onResume() {
-    super.onResume();
-    Log.d(TAG, "onResume() with " + (mForceReInitialize ? "forced" : "non-forced") + " initialize");
-    if(!mForceReInitialize) {
-      Log.d(TAG, "Loading stored timing state");
-      SessionTimer storedSessionTimer = SessionTimerStore.load();
-
-      if(storedSessionTimer == null) {
-        Log.d(TAG, "... Not found");
-      } else {
-        setSessionTimer(storedSessionTimer);
-        restoreTimingState(storedSessionTimer);
-      }
-    } else {
-      mForceReInitialize = false; // avoid re-init when bringing an instance back into focus
-    }
-  }
-
   private void setSessionTimer(SessionTimer sessionTimer) {
     Log.v(TAG, "Setting session timer: " + sessionTimer);
 
@@ -200,10 +185,6 @@ public class ReadingFragment extends Fragment {
 
   public void setLocalReading(LocalReading localReading) {
     mLocalReading = localReading;
-  }
-
-  private void setForceReinitialize(boolean forceReinitialize) {
-    mForceReInitialize = forceReinitialize;
   }
 
   private void bindViews(View view) {
