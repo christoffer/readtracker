@@ -145,8 +145,10 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
   public boolean onCreateOptionsMenu(Menu menu) {
     Log.d(TAG, "Creating Options menu for reading list");
 
-    mMenuReadmillSync = menu.add(0, MENU_SYNC_BOOKS, 1, "Sync list with Readmill");
-    mMenuReadmillSync.setTitleCondensed("Sync");
+    if(getCurrentUser() != null) {
+      mMenuReadmillSync = menu.add(0, MENU_SYNC_BOOKS, 1, "Sync list with Readmill");
+      mMenuReadmillSync.setTitleCondensed("Sync");
+    }
 
     MenuItem menuSettings = menu.add(0, MENU_SETTINGS, 3, "Settings");
     menuSettings.setTitleCondensed("Settings");
