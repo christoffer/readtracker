@@ -128,6 +128,7 @@ public class BookActivity extends ReadTrackerActivity implements EndSessionDialo
   /**
     The session has been successfully created.
    */
+  @Override
   public void onSessionCreated(LocalSession localSession) {
     Log.d(TAG, "Created a local session");
     // Fire off a transfer of the new session
@@ -140,6 +141,7 @@ public class BookActivity extends ReadTrackerActivity implements EndSessionDialo
   /**
    * The session could not be created.
    */
+  @Override
   public void onSessionFailed() {
     toast("Failed to save your reading session.\n\nPlease report this to the developer.");
   }
@@ -169,6 +171,7 @@ public class BookActivity extends ReadTrackerActivity implements EndSessionDialo
     Log.i(TAG, "Loaded LocalReading");
 
     if(mManualShutdown) {
+      // Avoid the rather costly setup if we are shutting down
       Log.w(TAG, "Activity is shutting down - not initializing");
       return;
     }
