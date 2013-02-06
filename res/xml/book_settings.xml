@@ -3,8 +3,9 @@
   <PreferenceCategory android:title="Social">
     <CheckBoxPreference
       android:title="Visible on Readmill"
-      android:summary="Let others view your progress on your Readmill profile."
+      android:summary="Let others view your progress on your Readmill profile (Not yet implemented)"
       android:checked="true"
+      android:enabled="false"
       android:key="readmill.privacy" />
 
   </PreferenceCategory>
