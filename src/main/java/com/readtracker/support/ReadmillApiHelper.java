@@ -43,7 +43,7 @@ public class ReadmillApiHelper {
    *
    * @param readmillBookId Book to create reading for
    * @param isPublic       true if the reading should be public, false if it should be private
-   * @param startedAt      Date when the reading was created
+   * @param startedAt      epoch timestamp of when the reading was started
    * @return The created reading (or an existing reading if it already existed)
    * @throws ReadmillException if the request to readmill was not successful
    */
@@ -64,18 +64,6 @@ public class ReadmillApiHelper {
     activateReading(reading);
 
     return reading;
-  }
-
-  /**
-   * Creates a reading at Readmill for the given book.
-   *
-   * @param readmillBookId Book to create reading for
-   * @param isPublic       true if the reading should be public, false if it should be private
-   * @return The created reading (or an existing reading if it already existed)
-   * @throws ReadmillException if the request to readmill was not successful
-   */
-  public JSONObject createReading(long readmillBookId, boolean isPublic) throws ReadmillException {
-    return createReading(readmillBookId, isPublic, new Date());
   }
 
   /**

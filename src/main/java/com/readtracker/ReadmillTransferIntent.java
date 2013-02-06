@@ -74,7 +74,11 @@ public class ReadmillTransferIntent extends IntentService {
 
         try {
           jsonBook = readmillApi().createBook(localReading.title, localReading.author);
-          jsonReading = readmillApi().createReading(jsonBook.getLong("id"), !localReading.readmillPrivate);
+
+          final Date startedAt = (localReading.startedAt > 0) ? new Date(localReading.startedAt) : new Date();
+          final long id = jsonBook.getLong("id");
+          final boolean isPublic = !localReading.readmillPrivate;
+          jsonReading = readmillApi().createReading(id, isPublic, startedAt);
 
           // Keep the provided cover if any
           if(localReading.coverURL == null) {

@@ -17,6 +17,8 @@ import com.readtracker.support.ReadTrackerUser;
 import com.readtracker.tasks.SaveLocalReadingTask;
 import com.readtracker.thirdparty.views.Switch;
 
+import java.util.Date;
+
 /**
  * Screen for adding a new book manually
  */
@@ -159,6 +161,7 @@ public class AddBookActivity extends ReadTrackerActivity {
 
     localReading.title = mEditTitle.getText().toString();
     localReading.author = mEditAuthor.getText().toString();
+    localReading.startedAt = (new Date()).getTime();
     localReading.coverURL = mCoverURL;
 
     ReadTrackerUser user = getApp().getCurrentUser();
