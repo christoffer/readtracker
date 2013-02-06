@@ -218,5 +218,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     Log.i(TAG, "Running database upgrade 8");
     db.execSQL("ALTER TABLE LocalReading ADD COLUMN " + LocalReading.DELETED_BY_USER_FIELD_NAME + " INTEGER NOT NULL DEFAULT 0;");
     db.execSQL("ALTER TABLE LocalReading ADD COLUMN " + LocalReading.READMILL_IS_PRIVATE_FIELD_NAME + " INTEGER NOT NULL DEFAULT 0;");
+    db.execSQL("ALTER TABLE LocalReading ADD COLUMN " + LocalReading.STARTED_AT_FIELD_NAME + " INTEGER NOT NULL DEFAULT 0;");
   }
 }

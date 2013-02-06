@@ -45,6 +45,7 @@ public class LocalReading implements Parcelable {
   public static final String READMILL_IS_PRIVATE_FIELD_NAME = "rm_is_private";
 
   public static final String DELETED_BY_USER_FIELD_NAME = "user_deleted";
+  public static final String STARTED_AT_FIELD_NAME = "started_at";
 
   // Database => Member bindings
 
@@ -77,6 +78,7 @@ public class LocalReading implements Parcelable {
   @DatabaseField(columnName = READMILL_IS_PRIVATE_FIELD_NAME) public boolean readmillPrivate = false;
 
   @DatabaseField(columnName = DELETED_BY_USER_FIELD_NAME) public boolean deletedByUser = false;
+  @DatabaseField(columnName = STARTED_AT_FIELD_NAME) public long startedAt = 0;
 
   // Virtual attributes
 
