@@ -13,7 +13,7 @@
     android:layout_below="@id/_bookHeader"
     android:layout_marginTop="6dp"
     android:layout_marginBottom="6dp"
-    android:text="Enter the text to highlight" />
+    android:text="Highlight text" />
 
   <EditText
     android:id="@+id/editHighlight"
@@ -28,7 +28,7 @@
     android:layout_above="@+id/progressPicker"
     android:layout_marginTop="6dp"
     android:layout_marginBottom="6dp"
-    android:text="Where is this passage in the book?" />
+    android:text="Position in book" />
 
   <com.readtracker.custom_views.ProgressPicker
     android:id="@+id/progressPicker"
