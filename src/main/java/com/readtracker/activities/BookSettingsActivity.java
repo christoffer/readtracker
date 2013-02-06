@@ -31,17 +31,9 @@ public class BookSettingsActivity extends PreferenceActivity {
     }
 
     CheckBoxPreference checkboxReadmillPrivacy = (CheckBoxPreference) findPreference(SettingsKeys.READMILL_PRIVACY);
-    CheckBoxPreference checkboxReadmillSharing = (CheckBoxPreference) findPreference(SettingsKeys.READMILL_SHARING);
-    Preference prefDeleteBook = (Preference) findPreference(SettingsKeys.OTHER_DELETE_BOOK);
+    Preference prefDeleteBook = findPreference(SettingsKeys.OTHER_DELETE_BOOK);
 
     checkboxReadmillPrivacy.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-      @Override public boolean onPreferenceChange(Preference preference, Object o) {
-        toastNotImplemented();
-        return false;
-      }
-    });
-
-    checkboxReadmillSharing.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
       @Override public boolean onPreferenceChange(Preference preference, Object o) {
         toastNotImplemented();
         return false;

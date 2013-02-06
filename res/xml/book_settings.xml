@@ -7,12 +7,6 @@
       android:checked="true"
       android:key="readmill.privacy" />
 
-    <CheckBoxPreference
-      android:title="Sharing"
-      android:summary="Share highlights and progress to third party services like Twitter and Facebook."
-      android:checked="true"
-      android:key="readmill.sharing" />
-
   </PreferenceCategory>
 
   <PreferenceCategory android:title="Other">
