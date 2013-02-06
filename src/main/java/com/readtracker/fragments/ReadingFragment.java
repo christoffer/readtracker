@@ -125,6 +125,8 @@ public class ReadingFragment extends Fragment {
 
     if(storedSessionTimer == null) {
       Log.d(TAG, "... Not found");
+    } else if(storedSessionTimer.getLocalReadingId() != mLocalReading.id) {
+      Log.d(TAG, "... Not for this reading");
     } else {
       setSessionTimer(storedSessionTimer);
       restoreTimingState(storedSessionTimer);
@@ -250,8 +252,10 @@ public class ReadingFragment extends Fragment {
         }
 
         if(mSessionTimer.isActive()) {
+          Log.v(TAG, "Session timer already active, starting animation");
           spinAnimation.start();
         } else {
+          Log.v(TAG, "Session timer not active, pausing animation");
           spinAnimation.pause();
         }
       }
@@ -469,6 +473,9 @@ public class ReadingFragment extends Fragment {
     Log.i(TAG, "Restoring session: " + sessionTimer);
 
     mFlipperSessionControl.setDisplayedChild(FLIPPER_PAGE_READING_BUTTONS);
+    mTextBillboard.setVisibility(View.GONE);
+    mWheelDuration.setEnabled(true);
+    mWheelDuration.setVisibility(View.VISIBLE);
 
     // Check if we should automatically start the timer
     if(sessionTimer.isActive()) {

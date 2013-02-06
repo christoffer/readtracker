@@ -104,7 +104,8 @@ public class BookActivity extends ReadTrackerActivity implements EndSessionDialo
           // Something changed
           reloadLocalData(data.getIntExtra(IntentKeys.READING_ID, -1));
         } else if(resultCode == ActivityCodes.RESULT_DELETED_BOOK) {
-          finishWithResult(ActivityCodes.RESULT_OK); // finish with success to have the home screen reload
+          // finish with success to have the home screen reload
+          shutdownWithResult(ActivityCodes.RESULT_OK);
         }
     }
     super.onActivityResult(requestCode, resultCode, data);
@@ -136,7 +137,7 @@ public class BookActivity extends ReadTrackerActivity implements EndSessionDialo
     startService(new Intent(this, ReadmillTransferIntent.class));
 
     // And bail out
-    finishWithResult(ActivityCodes.RESULT_OK);
+    shutdownWithResult(ActivityCodes.RESULT_OK);
   }
 
   /**
@@ -179,7 +180,7 @@ public class BookActivity extends ReadTrackerActivity implements EndSessionDialo
 
     if(!bundle.isValid()) {
       toastLong("An error occurred while loading data for this book");
-      finishWithResult(ActivityCodes.RESULT_CANCELED);
+      shutdownWithResult(ActivityCodes.RESULT_CANCELED);
       return;
     }
 
@@ -269,12 +270,13 @@ public class BookActivity extends ReadTrackerActivity implements EndSessionDialo
   public void exitToHomeScreen() {
     SessionTimer currentSession = mBookFragmentAdapter.getSessionTimer();
     if(currentSession.getTotalElapsed() > 0) {
-      SessionTimer sessionTimer = mBookFragmentAdapter.getSessionTimer();
-      sessionTimer.stop();
-      finishWithResultAndPausedSession(ActivityCodes.RESULT_CANCELED, mLocalReading.id, sessionTimer);
+      currentSession.stop();
+      setResult(RESULT_CANCELED);
+      mManualShutdown = false; // prevent session clearing
       toast("Pausing " + mLocalReading.title + "\n\nClick it again to resume");
+      finish();
     } else {
-      finishWithResult(ActivityCodes.RESULT_CANCELED);
+      shutdownWithResult(ActivityCodes.RESULT_CANCELED);
     }
   }
 
@@ -282,17 +284,6 @@ public class BookActivity extends ReadTrackerActivity implements EndSessionDialo
     Intent bookSettings = new Intent(this, BookSettingsActivity.class);
     bookSettings.putExtra(IntentKeys.LOCAL_READING, mLocalReading);
     startActivityForResult(bookSettings, ActivityCodes.REQUEST_BOOK_SETTINGS);
-  }
-
-  public void finishWithResult(int resultCode) {
-    shutdownWithResult(resultCode);
-  }
-
-  public void finishWithResultAndPausedSession(int resultCode, int localReadingId, SessionTimer sessionTimer) {
-    Log.v(TAG, String.format("Finishing with reading id: %d and session timer: %s", localReadingId, sessionTimer.toString()));
-    Intent resultIntent = new Intent();
-    resultIntent.putExtra(IntentKeys.READING_SESSION_STATE, sessionTimer);
-    shutdownWithResult(resultCode, resultIntent);
   }
 
   private void shutdownWithResult(int resultCode) {
@@ -316,7 +307,7 @@ public class BookActivity extends ReadTrackerActivity implements EndSessionDialo
 
   private void finishWithGenericError() {
     toast("An error occurred while reading the book");
-    finishWithResult(ActivityCodes.RESULT_CANCELED);
+    shutdownWithResult(ActivityCodes.RESULT_CANCELED);
   }
 
   /**
