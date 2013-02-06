@@ -43,15 +43,17 @@ public class ReadmillApiHelper {
    *
    * @param readmillBookId Book to create reading for
    * @param isPublic       true if the reading should be public, false if it should be private
+   * @param startedAt      Date when the reading was created
    * @return The created reading (or an existing reading if it already existed)
    * @throws ReadmillException if the request to readmill was not successful
    */
-  public JSONObject createReading(long readmillBookId, boolean isPublic) throws ReadmillException {
+  public JSONObject createReading(long readmillBookId, boolean isPublic, Date startedAt) throws ReadmillException {
     Log.i(TAG, "Creating reading on Readmill for ReadmillBook with id:" + readmillBookId + " (" + (isPublic ? "public" : "private") + ")");
 
     String endpoint = String.format("/books/%d/readings", readmillBookId);
     RequestBuilder request = mWrapper.post(endpoint).
       readingPrivate(!isPublic).
+      readingStartedAt(startedAt).
       readingState("reading");
     JSONObject response = sendRequest(request, "create reading", 200, 201, 409); // 409 is a already existing reading – returns the reading
 
@@ -62,6 +64,18 @@ public class ReadmillApiHelper {
     activateReading(reading);
 
     return reading;
+  }
+
+  /**
+   * Creates a reading at Readmill for the given book.
+   *
+   * @param readmillBookId Book to create reading for
+   * @param isPublic       true if the reading should be public, false if it should be private
+   * @return The created reading (or an existing reading if it already existed)
+   * @throws ReadmillException if the request to readmill was not successful
+   */
+  public JSONObject createReading(long readmillBookId, boolean isPublic) throws ReadmillException {
+    return createReading(readmillBookId, isPublic, new Date());
   }
 
   /**
