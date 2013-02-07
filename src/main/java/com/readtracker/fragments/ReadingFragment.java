@@ -173,12 +173,12 @@ public class ReadingFragment extends Fragment {
     sessionTimer.setEventListener(new SessionTimerEventListener() {
       @Override public void onStarted() {
         startTrackerUpdates();
-        setupPauseMode();
+        displayPausableControls();
       }
 
       @Override public void onStopped() {
         stopTrackerUpdates();
-        setupResumeMode();
+        displayResumableControls();
       }
     });
 
@@ -266,7 +266,6 @@ public class ReadingFragment extends Fragment {
         // The start wheel is not active as a click target when the timing is started
         // this is due to the inability to have both the TimeSpinner and the underlying
         // wheel view receive touch events prior to android 11.
-
         if(mWheelDuration == null || mWheelDuration.isEnabled()) {
           return false;
         }
@@ -364,7 +363,7 @@ public class ReadingFragment extends Fragment {
       setupStartMode();
     } else {
       updateDuration(totalElapsed);
-      setupResumeMode();
+      displayResumableControls();
     }
   }
 
@@ -474,17 +473,18 @@ public class ReadingFragment extends Fragment {
 
     mFlipperSessionControl.setDisplayedChild(FLIPPER_PAGE_READING_BUTTONS);
     mTextBillboard.setVisibility(View.GONE);
-    mWheelDuration.setEnabled(true);
     mWheelDuration.setVisibility(View.VISIBLE);
+
+    mIsStarted = true;
 
     // Check if we should automatically start the timer
     if(sessionTimer.isActive()) {
       Log.d(TAG, "Got active reading state");
-      setupPauseMode();
+      displayPausableControls();
       startTrackerUpdates();
     } else {
       Log.d(TAG, "Got inactive reading state");
-      setupResumeMode();
+      displayResumableControls();
     }
 
     updateDuration(getElapsed());
@@ -501,8 +501,9 @@ public class ReadingFragment extends Fragment {
   /**
    * Changes UI to pause mode
    */
-  private void setupResumeMode() {
+  private void displayResumableControls() {
     mButtonPause.setText("Resume");
+    mWheelDuration.setEnabled(false);
     flipToButtonPage(FLIPPER_PAGE_READING_BUTTONS);
     Animation pulse = AnimationUtils.loadAnimation(getActivity(), R.anim.pulse);
     mLayoutTimeSpinnerWrapper.startAnimation(pulse);
@@ -511,10 +512,10 @@ public class ReadingFragment extends Fragment {
   /**
    * Changes UI to resumed mode
    */
-  private void setupPauseMode() {
+  private void displayPausableControls() {
     mButtonPause.setText("Pause");
     flipToButtonPage(FLIPPER_PAGE_READING_BUTTONS);
-    mLayoutTimeSpinnerWrapper.setAnimation(null);
+    mLayoutTimeSpinnerWrapper.setAnimation(null); // Cancel the pulse
   }
 
   // Timing events
