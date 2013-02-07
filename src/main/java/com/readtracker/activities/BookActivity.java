@@ -34,6 +34,8 @@ public class BookActivity extends ReadTrackerActivity implements EndSessionDialo
   private static final int NO_GROUP = 0;
   private static final int MENU_EDIT_BOOK_SETTINGS = 1;
 
+  private boolean mForceResultOK = false;
+
   private LocalReading mLocalReading;
 
   private BookFragmentAdapter mBookFragmentAdapter;
@@ -53,6 +55,11 @@ public class BookActivity extends ReadTrackerActivity implements EndSessionDialo
     }
 
     mViewPagerReading = (ViewPager) findViewById(R.id.pagerBookActivity);
+
+    // When a book is thrown of to the reading session immediately after being
+    // created we want to finish the activity with result OK to induce the home screen
+    // to reload the list of readings
+    mForceResultOK = getIntent().getBooleanExtra(IntentKeys.FORCE_RESULT_OK, false);
 
     // Load information from database
     int readingId = getIntent().getExtras().getInt(IntentKeys.READING_ID);
@@ -298,6 +305,9 @@ public class BookActivity extends ReadTrackerActivity implements EndSessionDialo
     }
 
     resultBundle.putExtra(IntentKeys.LOCAL_READING, mLocalReading);
+
+    resultCode = mForceResultOK ? RESULT_OK : resultCode;
+
     setResult(resultCode, resultBundle);
 
     mManualShutdown = true;

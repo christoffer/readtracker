@@ -185,12 +185,9 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
       case ActivityCodes.RESULT_OK:
         // Refresh the list of readings after a session, and start a sync
         // with Readmill to send the new data
-        if(requestCode == ActivityCodes.REQUEST_READING_SESSION ||
-          requestCode == ActivityCodes.REQUEST_ADD_BOOK) {
-          Log.v(TAG, "Result OK from :" + requestCode);
-          refreshReadingList();
-          sync(false);
-        }
+        Log.v(TAG, "Result OK from :" + requestCode);
+        refreshReadingList();
+        sync(false);
         break;
       case ActivityCodes.RESULT_SIGN_OUT:
         if(requestCode == ActivityCodes.SETTINGS) {
