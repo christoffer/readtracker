@@ -619,6 +619,7 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
     for(JSONObject remoteSession : remoteSessions) {
       // Figure out if we need to create the reading session locally or not
       boolean foundLocal = false;
+      // TODO Use a set here instead for faster look ups
       for(LocalSession localSession : localSessions) {
         String remoteSessionIdentifier = remoteSession.getString("identifier");
         Log.v(TAG, "Comparing local session-id: " + localSession.sessionIdentifier + " to remote session-id: " + remoteSessionIdentifier);
