@@ -3,29 +3,27 @@ package com.readtracker.fragments;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.view.*;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.*;
-import com.readtracker.ApplicationReadTracker;
 import com.readtracker.IntentKeys;
 import com.readtracker.R;
 import com.readtracker.activities.BookActivity;
+import com.readtracker.adapters.HighlightAdapter;
 import com.readtracker.adapters.HighlightItem;
 import com.readtracker.db.LocalHighlight;
 import com.readtracker.db.LocalReading;
-import com.readtracker.adapters.HighlightAdapter;
 import com.readtracker.support.DrawableGenerator;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class HighlightFragment extends Fragment {
   private static final String TAG = HighlightFragment.class.getName();
-  private static final int CONTEXT_MENU_DELETE = 0;
 
   private static ListView mListHighlights;
   private static TextView mTextBlankState;
@@ -64,11 +62,6 @@ public class HighlightFragment extends Fragment {
     Log.d(TAG, "onAttach()");
   }
 
-  @Override
-  public void onViewCreated(View view, Bundle savedInstanceState) {
-    super.onViewCreated(view, savedInstanceState);
-    Log.d(TAG, "onViewCreated");
-  }
 
   @Override
   public void onResume() {
@@ -97,6 +90,13 @@ public class HighlightFragment extends Fragment {
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_highlights, container, false);
+    return view;
+  }
+
+  @Override
+  public void onViewCreated(View view, Bundle savedInstanceState) {
+    super.onViewCreated(view, savedInstanceState);
+    Log.d(TAG, "onViewCreated()");
     bindViews(view);
 
     mButtonAddHighlight.setOnClickListener(new View.OnClickListener() {
@@ -106,14 +106,6 @@ public class HighlightFragment extends Fragment {
     });
 
     mButtonAddHighlight.setBackgroundDrawable(DrawableGenerator.generateButtonBackground(mLocalReading.getColor()));
-
-    return view;
-  }
-
-  @Override
-  public void onActivityCreated(Bundle savedInstanceState) {
-    super.onActivityCreated(savedInstanceState);
-    Log.d(TAG, "onActivityCreated()");
 
     List<HighlightItem> highlightItems = itemize(mLocalHighlights);
 
@@ -135,38 +127,17 @@ public class HighlightFragment extends Fragment {
         if(highlightItem.getPermalink() != null) {
           Intent browserIntent = new Intent(Intent.ACTION_VIEW, highlightItem.getPermalink());
           startActivity(browserIntent);
+        } else {
+          Toast.makeText(getActivity(), "Once this highlight is synced you'll be taken to it's web page", Toast.LENGTH_SHORT).show();
         }
       }
     });
-
-    registerForContextMenu(mListHighlights);
   }
 
   @Override
-  public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-    int position = ((AdapterView.AdapterContextMenuInfo) menuInfo).position;
-    HighlightItem readingItem = mHighlightAdapter.getItem(position);
-
-    MenuItem menuItem = menu.add(Menu.NONE, CONTEXT_MENU_DELETE, Menu.NONE, "Remove from device");
-    menuItem.setIcon(android.R.drawable.ic_menu_delete);
-
-    String title = readingItem.getContent();
-    if(title.length() > 50) {
-      title = title.substring(0, 50) + "...";
-    }
-    menu.setHeaderTitle(title);
-  }
-
-  @Override
-  public boolean onContextItemSelected(MenuItem item) {
-    AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-    HighlightItem readingItem = mHighlightAdapter.getItem(info.position);
-    removeFromDevice(readingItem);
-    return true;
-  }
-
-  private void removeFromDevice(HighlightItem item) {
-    (new DeleteHighlightFromDeviceTask()).execute(item);
+  public void onActivityCreated(Bundle savedInstanceState) {
+    super.onActivityCreated(savedInstanceState);
+    Log.d(TAG, "onActivityCreated()");
   }
 
   private void bindViews(View view) {
@@ -187,32 +158,5 @@ public class HighlightFragment extends Fragment {
       items.add(new HighlightItem(localHighlight));
     }
     return items;
-  }
-
-  private void onItemRemoved(HighlightItem deletedItem) {
-    Log.v(TAG, "onItemRemoved(): " + deletedItem.toString());
-    mHighlightAdapter.remove(deletedItem);
-    mHighlightAdapter.notifyDataSetChanged();
-  }
-
-  private class DeleteHighlightFromDeviceTask extends AsyncTask<HighlightItem, Void, HighlightItem> {
-
-    @Override
-    protected HighlightItem doInBackground(HighlightItem... items) {
-      try {
-        List<Integer> ids = new ArrayList<Integer>(1);
-        ids.add(items[0].getId());
-        ApplicationReadTracker.getHighlightDao().deleteIds(ids);
-        return items[0];
-      } catch(SQLException e) {
-        e.printStackTrace();
-        return null;
-      }
-    }
-
-    @Override
-    protected void onPostExecute(HighlightItem deletedItem) {
-      onItemRemoved(deletedItem);
-    }
   }
 }
