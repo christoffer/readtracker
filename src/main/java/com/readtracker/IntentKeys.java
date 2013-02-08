@@ -22,6 +22,6 @@ public class IntentKeys {
   public static final String FROM_READING_SESSION = "from-reading-session";
   public static final String SESSION_TIMER = "session-timer";
   public static final String CLOSING_REMARK = "closing-remark";
-  public static final String RECOMMENDED = "recommendOnReadmill";
+  public static final String RECOMMENDED = "readmillRecommended";
   public static final String FORCE_RESULT_OK = "force-result-ok";
 }

@@ -211,7 +211,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     Log.i(TAG, "Running database upgrade 7");
     db.execSQL("ALTER TABLE LocalHighlight ADD COLUMN " + LocalHighlight.COMMENT_COUNT_FIELD_NAME + " INTEGER NOT NULL DEFAULT 0;");
     db.execSQL("ALTER TABLE LocalHighlight ADD COLUMN " + LocalHighlight.LIKE_COUNT_FIELD_NAME + " INTEGER NOT NULL DEFAULT 0;");
-    db.execSQL("ALTER TABLE LocalReading ADD COLUMN " + LocalReading.RECOMMEND_ON_READMILL_FIELD_NAME + " INTEGER NOT NULL DEFAULT 0;");
+    db.execSQL("ALTER TABLE LocalReading ADD COLUMN " + LocalReading.READMILL_RECOMMENDED_FIELD_NAME + " INTEGER NOT NULL DEFAULT 0;");
   }
 
   private void _upgradeToVersion8(SQLiteDatabase db, ConnectionSource connectionSource) {

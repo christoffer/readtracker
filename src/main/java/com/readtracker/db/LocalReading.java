@@ -41,7 +41,7 @@ public class LocalReading implements Parcelable {
   public static final String READMILL_STATE_FIELD_NAME = "rm_state";
   public static final String READMILL_CLOSING_REMARK = "rm_closing_remark";
 
-  public static final String RECOMMEND_ON_READMILL_FIELD_NAME = "rm_recommend";
+  public static final String READMILL_RECOMMENDED_FIELD_NAME = "rm_recommend";
   public static final String READMILL_IS_PRIVATE_FIELD_NAME = "rm_is_private";
 
   public static final String DELETED_BY_USER_FIELD_NAME = "user_deleted";
@@ -59,26 +59,25 @@ public class LocalReading implements Parcelable {
   @DatabaseField(columnName = TOTAL_PAGES_FIELD_NAME) public long totalPages = 0;
   @DatabaseField(columnName = CURRENT_PAGE_FIELD_NAME) public long currentPage = 0;
   @DatabaseField(columnName = MEASURE_IN_PERCENT) public boolean measureInPercent = false;
+
   @DatabaseField(columnName = PROGRESS_FIELD_NAME) public double progress = 0.0f;
   @DatabaseField(columnName = TIME_SPENT_FIELD_NAME) public long timeSpentMillis = 0;
-  @DatabaseField(columnName = LAST_READ_AT_FIELD_NAME) public long lastReadAt = 0;
 
+  @DatabaseField(columnName = LAST_READ_AT_FIELD_NAME) public long lastReadAt = 0;
+  @DatabaseField(columnName = LOCALLY_CLOSED_AT_FIELD_NAME) public long locallyClosedAt;
+  @DatabaseField(columnName = DELETED_BY_USER_FIELD_NAME) public boolean deletedByUser = false;
+  @DatabaseField(columnName = STARTED_AT_FIELD_NAME) public long startedAt = 0;
+
+  // TODO These should be in another object
+  @DatabaseField(columnName = READMILL_RECOMMENDED_FIELD_NAME) public boolean readmillRecommended = false;
+  @DatabaseField(columnName = READMILL_IS_PRIVATE_FIELD_NAME) public boolean readmillPrivate = false;
   @DatabaseField(columnName = READMILL_READING_ID_FIELD_NAME) public long readmillReadingId = -1;
   @DatabaseField(columnName = READMILL_BOOK_ID_FIELD_NAME) public long readmillBookId = -1;
   @DatabaseField(columnName = READMILL_USER_ID_FIELD_NAME) public long readmillUserId = -1;
-
   @DatabaseField(columnName = READMILL_TOUCHED_AT_FIELD_NAME) public long readmillTouchedAt = 0;
-  @DatabaseField(columnName = READMILL_STATE_FIELD_NAME)
-  public int readmillState = ReadmillApiHelper.ReadingState.READING;
+  @DatabaseField(columnName = READMILL_STATE_FIELD_NAME) public int readmillState = ReadmillApiHelper.ReadingState.READING;
   @DatabaseField(columnName = READMILL_CLOSING_REMARK) public String readmillClosingRemark = "";
 
-  @DatabaseField(columnName = LOCALLY_CLOSED_AT_FIELD_NAME) public long locallyClosedAt;
-
-  @DatabaseField(columnName = RECOMMEND_ON_READMILL_FIELD_NAME) public boolean recommendOnReadmill = false;
-  @DatabaseField(columnName = READMILL_IS_PRIVATE_FIELD_NAME) public boolean readmillPrivate = false;
-
-  @DatabaseField(columnName = DELETED_BY_USER_FIELD_NAME) public boolean deletedByUser = false;
-  @DatabaseField(columnName = STARTED_AT_FIELD_NAME) public long startedAt = 0;
 
   // Virtual attributes
 
@@ -227,7 +226,6 @@ public class LocalReading implements Parcelable {
   @Override
   public void writeToParcel(Parcel parcel, int i) {
     parcel.writeInt(id);
-    parcel.writeInt(measureInPercent ? 1 : 0);
     parcel.writeInt(progressStops == null ? -1 : progressStops.length);
     if(progressStops != null) {
       parcel.writeFloatArray(progressStops);
@@ -235,12 +233,21 @@ public class LocalReading implements Parcelable {
     parcel.writeString(title);
     parcel.writeString(author);
     parcel.writeString(coverURL);
+
     parcel.writeLong(totalPages);
     parcel.writeLong(currentPage);
+    parcel.writeInt(measureInPercent ? 1 : 0);
+
     parcel.writeDouble(progress);
     parcel.writeLong(timeSpentMillis);
-    parcel.writeLong(lastReadAt);
 
+    parcel.writeLong(lastReadAt);
+    parcel.writeLong(locallyClosedAt);
+    parcel.writeInt(deletedByUser ? 1 : 0);
+    parcel.writeLong(startedAt);
+
+    parcel.writeInt(readmillRecommended ? 1 : 0);
+    parcel.writeInt(readmillPrivate ? 1 : 0);
     parcel.writeLong(readmillReadingId);
     parcel.writeLong(readmillBookId);
     parcel.writeLong(readmillUserId);
@@ -251,27 +258,38 @@ public class LocalReading implements Parcelable {
 
   public LocalReading(Parcel parcel) {
     id = parcel.readInt();
-    measureInPercent = parcel.readInt() == 1;
     int numStops = parcel.readInt();
     if(numStops != -1) {
       progressStops = new float[numStops];
       parcel.readFloatArray(progressStops);
     }
+
     title = parcel.readString();
     author = parcel.readString();
     coverURL = parcel.readString();
+
     totalPages = parcel.readLong();
     currentPage = parcel.readLong();
+    measureInPercent = parcel.readInt() == 1;
+
     progress = parcel.readDouble();
     timeSpentMillis = parcel.readLong();
-    lastReadAt = parcel.readLong();
 
+    lastReadAt = parcel.readLong();
+    locallyClosedAt = parcel.readLong();
+    deletedByUser = parcel.readInt() == 1;
+    startedAt = parcel.readLong();
+
+    readmillRecommended = parcel.readInt() == 1;
+    readmillPrivate = parcel.readInt() == 1;
     readmillReadingId = parcel.readLong();
     readmillBookId = parcel.readLong();
     readmillUserId = parcel.readLong();
     readmillTouchedAt = parcel.readLong();
     readmillState = parcel.readInt();
     readmillClosingRemark = parcel.readString();
+
+
   }
 
   @Override
