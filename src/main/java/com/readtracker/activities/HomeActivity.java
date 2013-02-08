@@ -135,12 +135,6 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
   }
 
   @Override
-  protected void onResume() {
-    super.onResume();
-    Log.d(TAG, "Registering data receiver for readmill sync");
-  }
-
-  @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     Log.d(TAG, "Creating Options menu for reading list");
 
