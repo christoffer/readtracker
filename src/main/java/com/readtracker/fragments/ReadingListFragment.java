@@ -10,6 +10,7 @@ import android.widget.ListView;
 import com.readtracker.ApplicationReadTracker;
 import com.readtracker.IntentKeys;
 import com.readtracker.R;
+import com.readtracker.activities.HomeActivity;
 import com.readtracker.adapters.LocalReadingAdapter;
 import com.readtracker.db.LocalReading;
 import com.readtracker.interfaces.LocalReadingInteractionListener;
@@ -28,15 +29,6 @@ public class ReadingListFragment extends ListFragment {
   private static final String TAG = ReadingListFragment.class.getName();
   private LocalReadingAdapter listAdapterReadings;
   private int itemLayoutResourceId;
-  private ArrayList<LocalReading> localReadings;
-
-  private Comparator<LocalReading> mLocalReadingComparator = new Comparator<LocalReading>() {
-    @Override
-    public int compare(LocalReading readingA, LocalReading readingB) {
-      // Sort readings freshest to stalest
-      return (int) (readingB.lastReadAt - readingA.lastReadAt);
-    }
-  };
 
   /**
    * Creates a new instance of the fragment
@@ -44,10 +36,9 @@ public class ReadingListFragment extends ListFragment {
    * @param itemLayoutResourceId resource id of layout to use for rendering readings
    * @return the new instance
    */
-  public static ReadingListFragment newInstance(ArrayList<LocalReading> localReadings, int itemLayoutResourceId) {
+  public static ReadingListFragment newInstance(int itemLayoutResourceId) {
     ReadingListFragment instance = new ReadingListFragment();
     instance.setItemLayoutResourceId(itemLayoutResourceId);
-    instance.setLocalReadings(localReadings);
     return instance;
   }
 
@@ -57,9 +48,7 @@ public class ReadingListFragment extends ListFragment {
     super.onCreate(in);
     if(in != null) {
       Log.v(TAG, "thawing state");
-      ArrayList<LocalReading> frozenReadings = in.getParcelableArrayList(IntentKeys.LOCAL_READINGS);
       itemLayoutResourceId = in.getInt(IntentKeys.RESOURCE_ID);
-      setLocalReadings(frozenReadings);
     }
   }
 
@@ -67,7 +56,6 @@ public class ReadingListFragment extends ListFragment {
   public void onSaveInstanceState(Bundle out) {
     Log.v(TAG, "onSaveInstanceState()");
     super.onSaveInstanceState(out);
-    out.putParcelableArrayList(IntentKeys.LOCAL_READINGS, localReadings);
     out.putInt(IntentKeys.RESOURCE_ID, itemLayoutResourceId);
   }
 
@@ -94,7 +82,7 @@ public class ReadingListFragment extends ListFragment {
       itemLayoutResourceId,
       R.id.textTitle,
       ApplicationReadTracker.getDrawableManager(),
-      localReadings
+      getLocalReadings()
     );
 
     setListAdapter(listAdapterReadings);
@@ -106,27 +94,16 @@ public class ReadingListFragment extends ListFragment {
     ((LocalReadingInteractionListener) getActivity()).onLocalReadingClicked(clickedReading);
   }
 
+
   /**
-   * Sets the list of LocalReadings to display
-   * <p/>
-   * Uses an empty list if set to null.
-   *
-   * @param localReadings list of local readings to display
+   * Makes the fragment reload the list of readings from the parent activity
    */
-  public void setLocalReadings(ArrayList<LocalReading> localReadings) {
-    Log.v(TAG, "setLocalReadings() with list size: " + (localReadings == null ? "NULL" : localReadings.size()));
-
-    if(this.localReadings == null) {
-      this.localReadings = new ArrayList<LocalReading>();
-    } else {
-      this.localReadings.clear();
-    }
-
-    this.localReadings.addAll(localReadings);
-    Collections.sort(this.localReadings, mLocalReadingComparator);
-
+  public void notifyDataSetChanged() {
+    Log.v(TAG, "notifyDataSetChanged()");
     if(listAdapterReadings != null) {
       listAdapterReadings.notifyDataSetChanged();
+    } else {
+      Log.d(TAG, "notifyDataSetChanged not yet initialized");
     }
   }
 
@@ -139,5 +116,12 @@ public class ReadingListFragment extends ListFragment {
    */
   public void setItemLayoutResourceId(int resourceId) {
     this.itemLayoutResourceId = resourceId;
+  }
+
+  private ArrayList<LocalReading> getLocalReadings() {
+    Log.v(TAG, "getLocalReadings()");
+    final ArrayList<LocalReading> localReadings = ((HomeActivity) getActivity()).getLocalReadings();
+    Log.d(TAG, "Returning local readings array object: " + System.identityHashCode(localReadings));
+    return localReadings;
   }
 }

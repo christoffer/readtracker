@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -27,6 +28,8 @@ import com.readtracker.tasks.ReadmillSyncAsyncTask;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import static com.readtracker.support.ReadmillSyncStatusUIHandler.SyncStatus;
@@ -37,6 +40,9 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
   private static ImageButton mButtonAddBook;
   private static MenuItem mMenuReadmillSync;
   private static ViewPager mPagerHomeActivity;
+
+  // A list of all the reading for the current user
+  private ArrayList<LocalReading> mLocalReadings = new ArrayList<LocalReading>();
 
   private static final int MENU_SYNC_BOOKS = 1;
   private static final int MENU_SETTINGS = 2;
@@ -51,6 +57,13 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
 
   // Keep a reference to the active session so the user can go back to it
   private static SessionTimer mActiveSessionTimer;
+
+  // Sort readings by freshness
+  private Comparator<LocalReading> mLocalReadingComparator = new Comparator<LocalReading>() {
+    @Override public int compare(LocalReading localReadingA, LocalReading localReadingB) {
+      return (int) (localReadingB.lastReadAt - localReadingA.lastReadAt);
+    }
+  };
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -80,30 +93,6 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
 
     mPagerHomeActivity.setCurrentItem(mHomeFragmentAdapter.getDefaultPage());
 
-    // Handler for showing sync status
-    mSyncStatusHandler = new ReadmillSyncStatusUIHandler(R.id.stub_sync_progress, this, new SyncUpdateHandler() {
-      @Override public void onReadingUpdate(LocalReading localReading) {
-        mHomeFragmentAdapter.put(localReading);
-      }
-
-      @Override public void onSyncComplete(SyncStatus status) {
-        Log.d(TAG, "Sync is complete with " + status);
-        toggleSyncMenuOption(true);
-        mReadmillSyncTask = null;
-
-        if(status == SyncStatus.INVALID_TOKEN) {
-          toastLong("An error occurred, which requires you to sign in to Readmill again.\nSorry about that.");
-          getApp().signOut();
-          finish();
-        }
-      }
-
-      @Override public void onReadingDelete(int localReadingId) {
-        mHomeFragmentAdapter.removeReadingsWithId(localReadingId);
-        mHomeFragmentAdapter.refreshFragments();
-      }
-    });
-
     bindEvents();
 
     if(cameFromSignIn && getCurrentUser() != null) {
@@ -115,6 +104,10 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
     pagerTabStrip.setTabIndicatorColor(getResources().getColor(R.color.base_color));
   }
 
+  @Override protected void onSaveInstanceState(Bundle outState) {
+    outState.putParcelableArrayList(IntentKeys.LOCAL_READINGS, mLocalReadings);
+  }
+
   @Override
   protected void onPostCreate(Bundle savedInstanceState) {
     super.onPostCreate(savedInstanceState);
@@ -122,7 +115,13 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
 
     // This is in onPostCreate instead of onCreate to avoid issues with un-dismissible dialogs
     // (as suggested at: http://stackoverflow.com/questions/891451/android-dialog-does-not-dismiss-the-dialog)
-    refreshReadingList();
+
+    if(savedInstanceState != null) {
+      mLocalReadings = savedInstanceState.getParcelableArrayList(IntentKeys.LOCAL_READINGS);
+      mHomeFragmentAdapter.notifyDataSetChanged();
+    } else {
+      refreshReadingList();
+    }
   }
 
   @Override
@@ -210,6 +209,50 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
   }
 
   private void bindEvents() {
+    // Handler for showing sync status
+    mSyncStatusHandler = new ReadmillSyncStatusUIHandler(R.id.stub_sync_progress, this, new SyncUpdateHandler() {
+      @Override public void onReadingUpdate(LocalReading localReading) {
+        mLocalReadings.add(localReading);
+        // TODO handle dupes
+        Collections.sort(mLocalReadings, mLocalReadingComparator);
+        mHomeFragmentAdapter.notifyDataSetChanged();
+      }
+
+      @Override public void onSyncComplete(SyncStatus status) {
+        Log.d(TAG, "Sync is complete with " + status);
+        toggleSyncMenuOption(true);
+        mReadmillSyncTask = null;
+
+        if(status == SyncStatus.INVALID_TOKEN) {
+          toastLong("An error occurred, which requires you to sign in to Readmill again.\nSorry about that.");
+          getApp().signOut();
+          finish();
+        }
+      }
+
+      @Override public void onReadingDelete(int localReadingId) {
+        Log.v(TAG, String.format("onReadingDelete(%d)", localReadingId));
+        LocalReading readingToRemove = null;
+        for(LocalReading localReading : mLocalReadings) {
+          if(localReading.id == localReadingId) {
+            Log.i(TAG, "Found: " + localReading.toString());
+            readingToRemove = localReading;
+            break;
+          }
+        }
+
+        if(readingToRemove != null) {
+          Log.d(TAG, "Removing " + readingToRemove.toString());
+          mLocalReadings.remove(readingToRemove);
+        } else {
+          Log.d(TAG, "Reading not found");
+        }
+
+        Collections.sort(mLocalReadings, mLocalReadingComparator);
+        mHomeFragmentAdapter.notifyDataSetChanged();
+      }
+    });
+
     mButtonAddBook.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View view) { exitToBookSearch(); }
     });
@@ -222,6 +265,15 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
    */
   @Override public void onLocalReadingClicked(LocalReading localReading) {
     exitToActivityBook(localReading.id);
+  }
+
+  /**
+   * Provides access to the current list of local readings
+   *
+   * @return the list of local readings for the current user
+   */
+  public ArrayList<LocalReading> getLocalReadings() {
+    return mLocalReadings;
   }
 
   /**
@@ -311,15 +363,20 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
   }
 
   private void refreshReadingList() {
-    Log.d(TAG, "Refreshing reading list...");
-    getApp().showProgressDialog(this, "Loading book list...");
+    Log.v(TAG, "refreshReadingList()");
+    getApp().showProgressDialog(this, "Loading your books");
     (new RefreshBookListTask()).execute(getCurrentUserId());
   }
 
-  private void onFetchedReadings(List<LocalReading> localReadingList) {
-    Log.d(TAG, "Listing " + localReadingList.size() + " existing readings");
+  private void onFetchedReadings(List<LocalReading> localReadings) {
+    Log.v(TAG, "onFetchedReadings()");
+    Log.d(TAG, "Listing " + localReadings.size() + " existing readings");
 
-    mHomeFragmentAdapter.setLocalReadings(localReadingList);
+    mLocalReadings.clear();
+    mLocalReadings.addAll(localReadings);
+//    mLocalReadings = (ArrayList<LocalReading>) localReadings;
+    Log.d(TAG, "Setting local readings array object: " + System.identityHashCode(localReadings));
+    mHomeFragmentAdapter.notifyDataSetChanged();
 
     getApp().clearProgressDialog();
   }
