@@ -309,7 +309,7 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
 
     for(JSONObject remoteReading : remoteReadings) {
       final long remoteReadingId = remoteReading.getLong("id");
-      Log.d(TAG, "Looking for a local reading matching remote id: " + remoteReadingId);
+      Log.v(TAG, "Looking for a local reading matching remote id: " + remoteReadingId);
 
       if(isCancelled()) { return; }
 
@@ -319,10 +319,10 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
         if(!foundLocal) {
           continue; // Not this reading
         } else if(remoteReading.getString("state").equals("interesting")) {
-          Log.d(TAG, " - Found but is state: interesting, ignoring");
+          Log.v(TAG, " - Found but is state: interesting, ignoring");
           break; // Don't involve "interesting" readings
         }
-        Log.d(TAG, " - Found in local reading with id: " + localReading.id);
+        Log.v(TAG, " - Found in local reading with id: " + localReading.id);
 
         // Resolve sync
         long remoteTouchedAt = ReadmillApiHelper.parseISO8601ToUnix(remoteReading.getString("touched_at"));
@@ -622,7 +622,6 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
       // TODO Use a set here instead for faster look ups
       for(LocalSession localSession : localSessions) {
         String remoteSessionIdentifier = remoteSession.getString("identifier");
-        Log.v(TAG, "Comparing local session-id: " + localSession.sessionIdentifier + " to remote session-id: " + remoteSessionIdentifier);
         if(localSession.sessionIdentifier != null &&
           localSession.sessionIdentifier.equals(remoteSessionIdentifier)) {
           foundLocal = true;

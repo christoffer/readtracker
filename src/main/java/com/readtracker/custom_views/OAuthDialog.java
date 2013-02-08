@@ -100,7 +100,6 @@ public class OAuthDialog extends DialogFragment {
 
     webView.setWebChromeClient(new WebChromeClient() {
       @Override public void onProgressChanged(WebView view, int newProgress) {
-        Log.d(TAG, "onProgressChanged() " + newProgress);
         if(newProgress == 100 && mStatusVisible) {
           Animation hide = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_out);
           hide.setFillAfter(true);

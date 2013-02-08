@@ -154,7 +154,7 @@ public class DrawableManager {
       }
       return drawable;
     } catch(URISyntaxException e) {
-      Log.w(TAG, "Invalid URL: " + urlString + ". Not loading.", e);
+      Log.i(TAG, "Invalid URL: " + urlString + ". Not loading.");
     } catch(Exception e) {
       Log.e(TAG, "fetchDrawable failed", e);
     }
@@ -188,8 +188,7 @@ public class DrawableManager {
   }
 
   private String getCoverFolderPath() {
-    return Environment.getExternalStorageDirectory().getPath() + "/Android/data/"
-        + PACKAGE_NAME + "/" + COVERS_FOLDER;
+    return Environment.getExternalStorageDirectory().getPath() + "/Android/data/" + PACKAGE_NAME + "/" + COVERS_FOLDER;
   }
 
   private BitmapDrawable readDrawable(String urlString) {
@@ -199,7 +198,7 @@ public class DrawableManager {
       Log.v(TAG, "Reading image from storage: " + coverFile.getAbsolutePath());
       return (BitmapDrawable) BitmapDrawable.createFromPath(coverFile.getPath());
     }
-    Log.w(TAG, "Failed to read image: " + coverFile.getAbsolutePath());
+    Log.i(TAG, "Failed to read image: " + coverFile.getAbsolutePath());
     return null;
   }
 
