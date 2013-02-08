@@ -227,6 +227,11 @@ public class LocalReading implements Parcelable {
   @Override
   public void writeToParcel(Parcel parcel, int i) {
     parcel.writeInt(id);
+    parcel.writeInt(measureInPercent ? 1 : 0);
+    parcel.writeInt(progressStops == null ? -1 : progressStops.length);
+    if(progressStops != null) {
+      parcel.writeFloatArray(progressStops);
+    }
     parcel.writeString(title);
     parcel.writeString(author);
     parcel.writeString(coverURL);
@@ -235,21 +240,23 @@ public class LocalReading implements Parcelable {
     parcel.writeDouble(progress);
     parcel.writeLong(timeSpentMillis);
     parcel.writeLong(lastReadAt);
+
     parcel.writeLong(readmillReadingId);
     parcel.writeLong(readmillBookId);
     parcel.writeLong(readmillUserId);
     parcel.writeLong(readmillTouchedAt);
     parcel.writeInt(readmillState);
     parcel.writeString(readmillClosingRemark);
-    parcel.writeInt(measureInPercent ? 1 : 0);
-    parcel.writeInt(progressStops == null ? 0 : progressStops.length);
-    if(progressStops != null) {
-      parcel.writeFloatArray(progressStops);
-    }
   }
 
   public LocalReading(Parcel parcel) {
     id = parcel.readInt();
+    measureInPercent = parcel.readInt() == 1;
+    int numStops = parcel.readInt();
+    if(numStops != -1) {
+      progressStops = new float[numStops];
+      parcel.readFloatArray(progressStops);
+    }
     title = parcel.readString();
     author = parcel.readString();
     coverURL = parcel.readString();
@@ -258,18 +265,13 @@ public class LocalReading implements Parcelable {
     progress = parcel.readDouble();
     timeSpentMillis = parcel.readLong();
     lastReadAt = parcel.readLong();
+
     readmillReadingId = parcel.readLong();
     readmillBookId = parcel.readLong();
     readmillUserId = parcel.readLong();
     readmillTouchedAt = parcel.readLong();
     readmillState = parcel.readInt();
     readmillClosingRemark = parcel.readString();
-    measureInPercent = parcel.readInt() == 1;
-    int numStops = parcel.readInt();
-    if(numStops > 0) {
-      progressStops = new float[numStops];
-      parcel.readFloatArray(progressStops);
-    }
   }
 
   @Override
