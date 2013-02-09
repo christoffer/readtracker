@@ -94,16 +94,15 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
 
     bindEvents();
 
+
+    PagerTabStrip pagerTabStrip = (PagerTabStrip) findViewById(R.id.pagerTabStrip);
+    pagerTabStrip.setTabIndicatorColor(getResources().getColor(R.color.base_color));
+
     final boolean skipFullSync = savedInstanceState != null && savedInstanceState.getBoolean(IntentKeys.SKIP_FULL_SYNC);
     if(cameFromSignIn && (getCurrentUser() != null) && !skipFullSync) {
       Log.d(TAG, "Fresh from sign in, doing initial full sync.");
       sync(true);
     }
-
-    PagerTabStrip pagerTabStrip = (PagerTabStrip) findViewById(R.id.pagerTabStrip);
-    pagerTabStrip.setTabIndicatorColor(getResources().getColor(R.color.base_color));
-
-    fetchLocalReadings();
   }
 
   @Override protected void onSaveInstanceState(Bundle outState) {
@@ -266,7 +265,7 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
     mLocalReadingMap.put(localReading.id, localReading);
 
     if(shouldRefresh) {
-      fetchLocalReadings();
+      refreshLocalReadingLists();
     }
   }
 
@@ -285,7 +284,7 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
     }
 
     if(shouldRefreshLists) {
-      fetchLocalReadings();
+      refreshLocalReadingLists();
     }
   }
 
@@ -385,7 +384,7 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
 
   private void fetchLocalReadings() {
     Log.v(TAG, "fetchLocalReadings()");
-    getApp().showProgressDialog(this, "Loading your books");
+    getApp().showProgressDialog(this, "Reloading books...");
     (new RefreshBookListTask()).execute(getCurrentUserId());
   }
 
@@ -399,9 +398,8 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
       addLocalReading(localReading, false);
     }
 
-    refreshLocalReadingLists();
-
     getApp().clearProgressDialog();
+    refreshLocalReadingLists();
   }
 
   /**
