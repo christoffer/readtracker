@@ -26,6 +26,6 @@ public class PercentWheelAdapter extends AbstractWheelTextAdapter {
 
   @Override
   public int getItemsCount() {
-    return 1000; // 100.0%
+    return 1000 + 1; // 0.0% => 100.0%
   }
 }

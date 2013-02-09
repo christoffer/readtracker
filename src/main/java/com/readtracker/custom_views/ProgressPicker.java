@@ -51,14 +51,20 @@ public class ProgressPicker extends LinearLayout {
     }
 
     if(localReading.isMeasuredInPercent()) {
-      setupPercentMode((int) localReading.currentPage);
+      mMode = PERCENT_MODE;
     } else {
-      setupPagesMode((int) localReading.currentPage, (int) localReading.totalPages);
+      mMode = PAGES_MODE;
     }
+    setupWheelView(mWheelEndingPage, (int) localReading.totalPages);
+    mWheelEndingPage.setCurrentItem((int) localReading.currentPage);
   }
 
   public int getCurrentPage() {
     return mWheelEndingPage.getCurrentItem();
+  }
+
+  public int getTotalPageCount() {
+    return mWheelEndingPage.getViewAdapter().getItemsCount();
   }
 
   public void setCurrentPage(int page) {
@@ -80,18 +86,6 @@ public class ProgressPicker extends LinearLayout {
 
   public void setOnProgressChangeListener(OnProgressChangeListener listener) {
     mListener = listener;
-  }
-
-  protected void setupPercentMode(int currentPage) {
-    mMode = PERCENT_MODE;
-    setupWheelView(mWheelEndingPage, 1000);
-    setCurrentPage(currentPage);
-  }
-
-  protected void setupPagesMode(int currentPage, int totalPages) {
-    mMode = PAGES_MODE;
-    setupWheelView(mWheelEndingPage, totalPages);
-    setCurrentPage(currentPage);
   }
 
   /**
