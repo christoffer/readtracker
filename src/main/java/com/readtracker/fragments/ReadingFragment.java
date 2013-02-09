@@ -157,6 +157,7 @@ public class ReadingFragment extends Fragment {
     }
 
     mTimeSpinner.setColor(mLocalReading.getColor());
+    mTimeSpinner.setMaxSize(500);
 
     mButtonStart.setBackgroundDrawable(DrawableGenerator.generateButtonBackground(mLocalReading.getColor()));
     mButtonPause.setBackgroundDrawable(DrawableGenerator.generateButtonBackground(mLocalReading.getColor()));
@@ -386,7 +387,7 @@ public class ReadingFragment extends Fragment {
     boolean isFirstRead = localReading.currentPage == 0;
 
     if(isFirstRead) {
-      mTextBillboard.setText("First reading");
+      mTextBillboard.setText("Click to start reading");
       return;
     }
 
