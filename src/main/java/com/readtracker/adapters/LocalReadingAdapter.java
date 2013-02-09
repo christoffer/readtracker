@@ -28,6 +28,12 @@ import java.util.*;
 public class LocalReadingAdapter extends ArrayAdapter<LocalReading> {
   private static final String TAG = LocalReadingAdapter.class.getName();
 
+  /**
+   * Reading filters
+   */
+  public static final CharSequence FILTER_ACTIVE = "@active";
+  public static final CharSequence FILTER_INACTIVE = "@inactive";
+
   // Inflater for new views
   private static LayoutInflater mInflater;
 
@@ -222,8 +228,15 @@ public class LocalReadingAdapter extends ArrayAdapter<LocalReading> {
       }
 
       ArrayList<LocalReading> filteredReadings = new ArrayList<LocalReading>();
+
+      // Minor speed optimization to avoid string comparisons
+      final boolean isFilterActive = q.equals(FILTER_ACTIVE);
+      final boolean isFilterInactive = q.equals(FILTER_INACTIVE);
+
       for(LocalReading localReading : mParentList) {
-        if(localReading.title.startsWith(q.toString())) {
+        if(isFilterActive && localReading.isActive()) {
+          filteredReadings.add(localReading);
+        } else if(isFilterInactive && !localReading.isActive()) {
           filteredReadings.add(localReading);
         }
       }

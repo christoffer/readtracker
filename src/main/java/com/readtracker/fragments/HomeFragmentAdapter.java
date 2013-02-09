@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.util.Log;
 import android.view.ViewGroup;
 import com.readtracker.R;
+import com.readtracker.adapters.LocalReadingAdapter;
 import com.readtracker.db.LocalReading;
 import java.util.ArrayList;
 
@@ -49,9 +50,9 @@ public class HomeFragmentAdapter extends FragmentStatePagerAdapter {
     ReadingListFragment fragment = null;
 
     if(position == FRAGMENT_FINISHED) {
-      fragment = ReadingListFragment.newInstance(R.layout.local_reading_item_finished);
+      fragment = ReadingListFragment.newInstance(R.layout.local_reading_item_finished, LocalReadingAdapter.FILTER_INACTIVE);
     } else if(position == FRAGMENT_ACTIVE) {
-      fragment = ReadingListFragment.newInstance(R.layout.local_reading_item_active);
+      fragment = ReadingListFragment.newInstance(R.layout.local_reading_item_active, LocalReadingAdapter.FILTER_ACTIVE);
     }
 
     // Keep a reference to the active fragment around so we can update it later

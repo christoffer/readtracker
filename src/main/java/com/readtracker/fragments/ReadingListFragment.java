@@ -28,7 +28,12 @@ import java.util.*;
 public class ReadingListFragment extends ListFragment {
   private static final String TAG = ReadingListFragment.class.getName();
   private LocalReadingAdapter listAdapterReadings;
+
+  // Which resources to render list items with
   private int itemLayoutResourceId;
+
+  // What filter to apply to the local reading list
+  private CharSequence mLocalReadingFilter;
 
   /**
    * Creates a new instance of the fragment
@@ -36,9 +41,10 @@ public class ReadingListFragment extends ListFragment {
    * @param itemLayoutResourceId resource id of layout to use for rendering readings
    * @return the new instance
    */
-  public static ReadingListFragment newInstance(int itemLayoutResourceId) {
+  public static ReadingListFragment newInstance(int itemLayoutResourceId, CharSequence localReadingFilter) {
     ReadingListFragment instance = new ReadingListFragment();
     instance.setItemLayoutResourceId(itemLayoutResourceId);
+    instance.setLocalReadingFilter(localReadingFilter);
     return instance;
   }
 
@@ -102,7 +108,9 @@ public class ReadingListFragment extends ListFragment {
     Log.v(TAG, "notifyDataSetChanged()");
     if(listAdapterReadings != null) {
       listAdapterReadings.resetParentList();
-      listAdapterReadings.getFilter().filter("T");
+      if(mLocalReadingFilter != null) {
+        listAdapterReadings.getFilter().filter(mLocalReadingFilter);
+      }
     } else {
       Log.d(TAG, "notifyDataSetChanged not yet initialized");
     }
@@ -117,6 +125,19 @@ public class ReadingListFragment extends ListFragment {
    */
   public void setItemLayoutResourceId(int resourceId) {
     this.itemLayoutResourceId = resourceId;
+  }
+
+  /**
+   * Sets the filter to use for filtering the list of local readings.
+   *
+   * Constant values defined in LocalReadingAdapter.
+   *
+   * @see LocalReadingAdapter
+   *
+   * @param localReadingFilter filter to use.
+   */
+  public void setLocalReadingFilter(CharSequence localReadingFilter) {
+    mLocalReadingFilter = localReadingFilter;
   }
 
   private ArrayList<LocalReading> getLocalReadings() {
