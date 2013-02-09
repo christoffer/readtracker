@@ -138,15 +138,16 @@ public class OAuthDialog extends DialogFragment {
     indicator.setIndeterminate(true);
 
     int indicatorSize = ((ReadTrackerActivity) getActivity()).getPixels(24);
-    RelativeLayout.LayoutParams layoutTop = new RelativeLayout.LayoutParams(
+    RelativeLayout.LayoutParams lpSpinner = new RelativeLayout.LayoutParams(
       indicatorSize,
       indicatorSize
     );
 
-    layoutTop.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
+    lpSpinner.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
+    lpSpinner.addRule(RelativeLayout.CENTER_HORIZONTAL, RelativeLayout.TRUE);
 
-    int margin = ((ReadTrackerActivity) getActivity()).getPixels(12);
-    layoutTop.setMargins(margin, margin, 0, 0);
+    int margin = ((ReadTrackerActivity) getActivity()).getPixels(24);
+    lpSpinner.setMargins(margin, margin, margin, margin);
 
     int padding = ((ReadTrackerActivity) getActivity()).getPixels(6);
     indicator.setPadding(padding, padding, padding, padding);
@@ -159,7 +160,7 @@ public class OAuthDialog extends DialogFragment {
 
     indicator.setBackgroundDrawable(backgroundDrawable);
 
-    indicator.setLayoutParams(layoutTop);
+    indicator.setLayoutParams(lpSpinner);
     return indicator;
   }
 
