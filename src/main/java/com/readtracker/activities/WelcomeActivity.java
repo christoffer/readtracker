@@ -22,6 +22,7 @@ import com.readtracker.ApplicationReadTracker;
 import com.readtracker.IntentKeys;
 import com.readtracker.R;
 import com.readtracker.custom_views.OAuthDialog;
+import com.readtracker.custom_views.TimeSpinner;
 import com.readtracker.db.LocalReading;
 import com.readtracker.interfaces.OAuthDialogResultListener;
 
@@ -97,6 +98,8 @@ public class WelcomeActivity extends ReadTrackerActivity implements OAuthDialogR
       scrollView.startAnimation(appear);
       scrollView.setVisibility(View.VISIBLE);
     }
+
+    ((TimeSpinner) findViewById(R.id.timeSpinner)).setMaxSize(500);
   }
 
   @Override

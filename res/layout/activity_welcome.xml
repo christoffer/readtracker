@@ -24,6 +24,7 @@
     android:gravity="center">
 
     <com.readtracker.custom_views.TimeSpinner
+      android:id="@+id/timeSpinner"
       android:layout_width="fill_parent"
       android:layout_height="wrap_content"
       android:layout_centerInParent="true" />
