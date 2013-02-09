@@ -222,14 +222,9 @@ public class BookActivity extends ReadTrackerActivity implements EndSessionDialo
   private void setupFragments(LocalReadingBundle bundle) {
     boolean browserMode = !mLocalReading.isActive();
 
-    if(mBookFragmentAdapter != null) {
-      Log.d(TAG, "Has FragmentAdapter");
-      mBookFragmentAdapter.setBundle(bundle);
-      mBookFragmentAdapter.notifyDataSetChanged();
-    } else {
-      mBookFragmentAdapter = new BookFragmentAdapter(getSupportFragmentManager(), bundle);
-      mBookFragmentAdapter.setBrowserMode(browserMode);
-    }
+    // (re-)create the book adapter
+    mBookFragmentAdapter = new BookFragmentAdapter(getSupportFragmentManager(), bundle);
+    mBookFragmentAdapter.setBrowserMode(browserMode);
 
     SessionTimer activeSessionTimer = getIntent().getExtras().getParcelable(IntentKeys.READING_SESSION_STATE);
     Log.d(TAG, "Received reading session state " + activeSessionTimer);
