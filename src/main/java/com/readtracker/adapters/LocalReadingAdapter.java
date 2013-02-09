@@ -2,6 +2,7 @@ package com.readtracker.adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.widget.Filter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.readtracker.R;
+import com.readtracker.support.DrawableGenerator;
 import com.readtracker.support.Utils;
 import com.readtracker.custom_views.SegmentBar;
 import com.readtracker.db.LocalReading;
@@ -136,6 +138,10 @@ public class LocalReadingAdapter extends ArrayAdapter<LocalReading> {
     }
 
     renderLocalReading(localReading, holder);
+
+    int backColor = getContext().getResources().getColor(R.color.background);
+    int activeColor = getContext().getResources().getColor(R.color.default_button_color_pressed);
+    view.setBackgroundDrawable(DrawableGenerator.generateListItemBackground(activeColor, backColor));
     return view;
   }
 

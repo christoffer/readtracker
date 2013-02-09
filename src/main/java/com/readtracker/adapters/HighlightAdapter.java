@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import com.readtracker.R;
+import com.readtracker.support.DrawableGenerator;
 import com.readtracker.support.Utils;
 
 import java.util.Comparator;
@@ -18,7 +19,7 @@ import java.util.List;
  * Shows a list of highlights
  */
 public class HighlightAdapter extends ArrayAdapter<HighlightItem> {
-
+  private int mColor;
   private LayoutInflater mInflater;
 
   private Comparator<HighlightItem> mReadingHighlightComparator = new Comparator<HighlightItem>() {
@@ -32,6 +33,11 @@ public class HighlightAdapter extends ArrayAdapter<HighlightItem> {
     super(context, textViewResourceId, highlights);
     sort(mReadingHighlightComparator);
     mInflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+  }
+
+  public void setColor(int color) {
+    mColor = color;
+    notifyDataSetChanged();
   }
 
   @Override
@@ -61,6 +67,9 @@ public class HighlightAdapter extends ArrayAdapter<HighlightItem> {
     }
 
     textDate.setText(metadata);
+    final int backgroundColor = getContext().getResources().getColor(R.color.background);
+    final int itemColor = mColor;
+    convertView.setBackgroundDrawable(DrawableGenerator.generateListItemBackground(itemColor, backgroundColor));
     return convertView;
   }
 

@@ -114,11 +114,14 @@ public class HighlightFragment extends Fragment {
       mListHighlights.setVisibility(View.GONE);
     } else {
       final int color = mLocalReading.getColor();
-      mListHighlights.setDivider(new ColorDrawable(color));
+      ColorDrawable divider = new ColorDrawable(color);
+      divider.setAlpha(128);
+      mListHighlights.setDivider(divider);
       mListHighlights.setDividerHeight(1);
     }
 
     mHighlightAdapter = new HighlightAdapter(getActivity(), R.layout.highlight_list_item, highlightItems);
+    mHighlightAdapter.setColor(mLocalReading.getColor());
     mListHighlights.setAdapter(mHighlightAdapter);
     mListHighlights.setOnItemClickListener(new AdapterView.OnItemClickListener() {
       @Override

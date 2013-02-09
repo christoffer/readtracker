@@ -17,6 +17,8 @@ public class TimeSpinner extends View {
 
   private boolean mIsHighlighted = false;
 
+  private int mMaxSize = 0;
+
   private Paint mTickPaint;
 
   public TimeSpinner(Context context) {
@@ -36,9 +38,24 @@ public class TimeSpinner extends View {
 
     float midX = getWidth() / 2.0f;
     float midY = getHeight() / 2.0f;
-    canvas.drawCircle(midX, midY, Math.min(midX,  midY) - 35.0f, p);
+    canvas.drawCircle(midX, midY, Math.min(midX, midY) - 35.0f, p);
     drawTicks(canvas, 60, 15, 2, 10, mSecondaryColor);
     drawTicks(canvas, 12, 25, 4, 0, mPrimaryColor);
+  }
+
+  @Override
+  protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+    int measuredWidth = MeasureSpec.getSize(widthMeasureSpec);
+    if(mMaxSize > 0 && mMaxSize < measuredWidth) {
+      int measureMode = MeasureSpec.getMode(widthMeasureSpec);
+      widthMeasureSpec = MeasureSpec.makeMeasureSpec(mMaxSize, measureMode);
+    }
+    int measuredHeight = MeasureSpec.getSize(heightMeasureSpec);
+    if(mMaxSize > 0 && mMaxSize < measuredHeight) {
+      int measureMode = MeasureSpec.getMode(heightMeasureSpec);
+      heightMeasureSpec = MeasureSpec.makeMeasureSpec(mMaxSize, measureMode);
+    }
+    super.onMeasure(widthMeasureSpec, heightMeasureSpec);
   }
 
   public void setColor(int primaryColor) {
@@ -53,6 +70,15 @@ public class TimeSpinner extends View {
     mFillColor = Color.HSVToColor(30, hsv);
     mFillColorHighlighted = Color.HSVToColor(50, hsv);
     invalidate();
+  }
+
+  /**
+   * Adjust the maximum size the timeSpinner can be
+   *
+   * @param maxSize the maximum size in pixels
+   */
+  public void setMaxSize(int maxSize) {
+    mMaxSize = maxSize;
   }
 
   private void initialize() {
@@ -73,7 +99,7 @@ public class TimeSpinner extends View {
     final int prevColor = mTickPaint.getColor();
     final float halfTickWidth = tickWidth / 2.0f;
 
-    final int radius = Math.min(width,  height) / 2 - 20;
+    final int radius = Math.min(width, height) / 2 - 20;
 
     canvas.save();
 

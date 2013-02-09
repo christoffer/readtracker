@@ -2,9 +2,7 @@ package com.readtracker.support;
 
 import android.R;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.StateListDrawable;
+import android.graphics.drawable.*;
 
 public class DrawableGenerator {
   // Reuse this temporary container for color conversions
@@ -42,6 +40,27 @@ public class DrawableGenerator {
     gradientDrawable.setStroke(pixelBorder, color);
     gradientDrawable.setColor(Color.BLACK);
     return gradientDrawable;
+  }
+
+  public static StateListDrawable generateListItemBackground(int activeColor, int baseColor) {
+    StateListDrawable states = new StateListDrawable();
+
+    activeColor = multiplyHSV(activeColor, 1.0f, 0.75f, 0.75f);
+
+    // Focused
+    GradientDrawable fillDrawable = new GradientDrawable();
+    fillDrawable.setStroke(3, activeColor);
+    states.addState(new int[]{ R.attr.state_focused }, fillDrawable);
+
+    // Pressed
+    ColorDrawable pressedDrawable = new ColorDrawable(activeColor);
+    fillDrawable.setAlpha(64);
+    states.addState(new int[]{ R.attr.state_pressed }, pressedDrawable);
+
+    // Default
+    states.addState(new int[]{ }, new ColorDrawable(baseColor));
+
+    return states;
   }
 
   private static int outlineColorFor(int baseColor) {
