@@ -13,7 +13,7 @@
   It is easily installed using the Android SDK though, but requires a little work
   to setup for Maven.
 
-  In this repo you will find a shellscript for installing the android support jar into
+  In this repo you will find a shell script for installing the android support jar into
   your local maven repository.
 
   run this command to setup maven:
