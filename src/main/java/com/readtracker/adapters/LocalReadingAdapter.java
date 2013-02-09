@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Filter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.readtracker.R;
@@ -21,7 +22,7 @@ import java.util.*;
 /**
  * Lists the local reading entity on the home screen with a progress bar,
  * connected state indicator etc.
- *
+ * <p/>
  * The list of local readings is managed from the fragment adapter.
  */
 public class LocalReadingAdapter extends ArrayAdapter<LocalReading> {
@@ -35,6 +36,18 @@ public class LocalReadingAdapter extends ArrayAdapter<LocalReading> {
 
   // Drawable manager used for getting or downloading covers
   private static DrawableManager mDrawableManager;
+
+  // Reference to the list used in the activity
+  private ArrayList<LocalReading> mParentList;
+
+  // List of current items to show
+  private ArrayList<LocalReading> mObjects;
+
+  // Lock for synchronizing list access
+  private final Object mLock = new Object();
+
+  // Custom filter for filter on local reading attributes
+  private LocalReadingFilter mFilter;
 
   // Used to cache view look-ups
   class ViewHolder {
@@ -54,14 +67,52 @@ public class LocalReadingAdapter extends ArrayAdapter<LocalReading> {
                              int resource,
                              int textViewResourceId,
                              DrawableManager drawableMgr,
-                             List<LocalReading> localReadings) {
+                             ArrayList<LocalReading> localReadings) {
     super(context, resource, textViewResourceId, localReadings);
+
+    mParentList = localReadings;
+    //noinspection unchecked
+    synchronized(mLock) {
+      mObjects = new ArrayList<LocalReading>();
+      mObjects.addAll(mParentList);
+    }
 
     Log.d(TAG, "Creating adapter with set of " + (localReadings == null ? "NULL" : localReadings.size()) + " local readings");
     mLayoutResource = resource;
 
     mInflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
     mDrawableManager = drawableMgr;
+  }
+
+  /**
+   * Resets the items in this list to the list managed by the parent.
+   */
+  public void resetParentList() {
+    synchronized(mLock) {
+      mObjects.clear();
+      mObjects.addAll(mParentList);
+    }
+  }
+
+  @Override public Filter getFilter() {
+    if(mFilter == null) {
+      mFilter = new LocalReadingFilter();
+    }
+    return mFilter;
+  }
+
+  @Override public int getCount() {
+    synchronized(mLock) {
+      return mObjects == null ? 0 : mObjects.size();
+    }
+  }
+
+  @Override public LocalReading getItem(int position) {
+    LocalReading localReading;
+    synchronized(mLock) {
+      localReading = mObjects == null ? null : mObjects.get(position);
+    }
+    return localReading;
   }
 
   @Override
@@ -154,6 +205,44 @@ public class LocalReadingAdapter extends ArrayAdapter<LocalReading> {
         viewHolder.textFinishedAt.setVisibility(View.VISIBLE);
       } else {
         viewHolder.textFinishedAt.setVisibility(View.GONE);
+      }
+    }
+  }
+
+  class LocalReadingFilter extends Filter {
+    @Override protected FilterResults performFiltering(CharSequence q) {
+      Log.v(TAG, String.format("performFiltering(%s)", (q == null ? "NULL" : q.toString())));
+      FilterResults result = new FilterResults();
+      if(q == null || q.length() == 0) {
+        synchronized(mLock) {
+          result.values = mParentList;
+          result.count = mParentList.size();
+          return result;
+        }
+      }
+
+      ArrayList<LocalReading> filteredReadings = new ArrayList<LocalReading>();
+      for(LocalReading localReading : mParentList) {
+        if(localReading.title.startsWith(q.toString())) {
+          filteredReadings.add(localReading);
+        }
+      }
+
+      Log.i(TAG, String.format("Found %d readings matching %s", filteredReadings.size(), q));
+
+      result.values = filteredReadings;
+      result.count = filteredReadings.size();
+      return result;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+      Log.v(TAG, "publishResults()");
+      notifyDataSetChanged();
+      synchronized(mLock) {
+        mObjects = new ArrayList<LocalReading>(filterResults.count);
+        mObjects.addAll((ArrayList<LocalReading>) filterResults.values);
       }
     }
   }

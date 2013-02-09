@@ -86,7 +86,7 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
     applyRoboto(R.id.textHeader);
 
     // Initialize the adapter with empty list of readings (populated later)
-    mHomeFragmentAdapter = new HomeFragmentAdapter(getSupportFragmentManager(), new ArrayList<LocalReading>());
+    mHomeFragmentAdapter = new HomeFragmentAdapter(getSupportFragmentManager());
 
     mPagerHomeActivity.setAdapter(mHomeFragmentAdapter);
 
@@ -102,6 +102,8 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
 
     PagerTabStrip pagerTabStrip = (PagerTabStrip) findViewById(R.id.pagerTabStrip);
     pagerTabStrip.setTabIndicatorColor(getResources().getColor(R.color.base_color));
+
+    fetchLocalReadings();
   }
 
   @Override protected void onSaveInstanceState(Bundle outState) {
@@ -121,7 +123,7 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
       mLocalReadings = savedInstanceState.getParcelableArrayList(IntentKeys.LOCAL_READINGS);
       refreshLocalReadingLists();
     } else {
-      fetchLocalReading();
+      fetchLocalReadings();
     }
   }
 
@@ -180,7 +182,7 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
         // Refresh the list of readings after a session, and start a sync
         // with Readmill to send the new data
         Log.v(TAG, "Result OK from :" + requestCode);
-        fetchLocalReading();
+        fetchLocalReadings();
         sync(false);
         break;
       case ActivityCodes.RESULT_SIGN_OUT:
@@ -264,7 +266,7 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
     mLocalReadingMap.put(localReading.id, localReading);
 
     if(shouldRefresh) {
-      fetchLocalReading();
+      fetchLocalReadings();
     }
   }
 
@@ -283,7 +285,7 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
     }
 
     if(shouldRefreshLists) {
-      fetchLocalReading();
+      fetchLocalReadings();
     }
   }
 
@@ -381,8 +383,8 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
     startActivityForResult(intentReadingSession, ActivityCodes.REQUEST_READING_SESSION);
   }
 
-  private void fetchLocalReading() {
-    Log.v(TAG, "fetchLocalReading()");
+  private void fetchLocalReadings() {
+    Log.v(TAG, "fetchLocalReadings()");
     getApp().showProgressDialog(this, "Loading your books");
     (new RefreshBookListTask()).execute(getCurrentUserId());
   }

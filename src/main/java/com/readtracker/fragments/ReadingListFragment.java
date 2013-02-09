@@ -101,7 +101,8 @@ public class ReadingListFragment extends ListFragment {
   public void notifyDataSetChanged() {
     Log.v(TAG, "notifyDataSetChanged()");
     if(listAdapterReadings != null) {
-      listAdapterReadings.notifyDataSetChanged();
+      listAdapterReadings.resetParentList();
+      listAdapterReadings.getFilter().filter("T");
     } else {
       Log.d(TAG, "notifyDataSetChanged not yet initialized");
     }

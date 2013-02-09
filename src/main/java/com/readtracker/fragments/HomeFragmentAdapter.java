@@ -28,7 +28,7 @@ public class HomeFragmentAdapter extends FragmentStatePagerAdapter {
   // list of local readings changes
   private ReadingListFragment[] fragments = new ReadingListFragment[NUM_PAGES];
 
-  public HomeFragmentAdapter(FragmentManager fragmentManager, ArrayList<LocalReading> localReadings) {
+  public HomeFragmentAdapter(FragmentManager fragmentManager) {
     super(fragmentManager);
   }
 
