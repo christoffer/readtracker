@@ -10,6 +10,7 @@
   android:layout_width="fill_parent"
   android:layout_gravity="bottom"
   android:divider="@android:color/transparent"
+  android:padding="48dp"
   android:cacheColorHint="#ff000000" />
 
   <!--suppress AndroidLintUseCompoundDrawables -->

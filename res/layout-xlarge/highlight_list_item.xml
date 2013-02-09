@@ -20,7 +20,7 @@
     android:paddingTop="12dp"
     android:paddingRight="12dp"
     android:paddingBottom="6dp" />
-w
+
   <TextView
     android:id="@+id/textDate"
     android:layout_height="wrap_content"
