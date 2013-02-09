@@ -1,10 +1,8 @@
 package com.readtracker.activities;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -27,10 +25,7 @@ import com.readtracker.support.SessionTimer;
 import com.readtracker.tasks.ReadmillSyncAsyncTask;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 import static com.readtracker.support.ReadmillSyncStatusUIHandler.SyncStatus;
 import static com.readtracker.support.ReadmillSyncStatusUIHandler.SyncUpdateHandler;
@@ -43,6 +38,9 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
 
   // A list of all the reading for the current user
   private ArrayList<LocalReading> mLocalReadings = new ArrayList<LocalReading>();
+
+  // Cache lookup of readings by ID
+  private HashMap<Integer, LocalReading> mLocalReadingMap = new HashMap<Integer, LocalReading>();
 
   private static final int MENU_SYNC_BOOKS = 1;
   private static final int MENU_SETTINGS = 2;
@@ -69,7 +67,8 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
-    boolean cameFromSignIn = getIntent().getBooleanExtra(IntentKeys.SIGNED_IN, false);
+    final boolean cameFromSignIn = getIntent().getBooleanExtra(IntentKeys.SIGNED_IN, false);
+    Log.d(TAG, "Came from sign in? " + (cameFromSignIn ? "YES" : "NO"));
 
     // Show welcome screen for first time users
     if(getApp().getFirstTimeFlag() || (getCurrentUser() == null && !cameFromSignIn)) {
@@ -107,6 +106,7 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
 
   @Override protected void onSaveInstanceState(Bundle outState) {
     outState.putParcelableArrayList(IntentKeys.LOCAL_READINGS, mLocalReadings);
+    outState.putBoolean(IntentKeys.SKIP_FULL_SYNC, true);
   }
 
   @Override
@@ -207,10 +207,11 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
     // Handler for showing sync status
     mSyncStatusHandler = new ReadmillSyncStatusUIHandler(R.id.stub_sync_progress, this, new SyncUpdateHandler() {
       @Override public void onReadingUpdate(LocalReading localReading) {
-        mLocalReadings.add(localReading);
-        // TODO handle dupes
-        Collections.sort(mLocalReadings, mLocalReadingComparator);
-        mHomeFragmentAdapter.notifyDataSetChanged();
+        addLocalReading(localReading, true);
+      }
+
+      @Override public void onReadingDelete(int localReadingId) {
+        removeLocalReadingIfExists(localReadingId, true);
       }
 
       @Override public void onSyncComplete(SyncStatus status) {
@@ -223,28 +224,6 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
           getApp().signOut();
           finish();
         }
-      }
-
-      @Override public void onReadingDelete(int localReadingId) {
-        Log.v(TAG, String.format("onReadingDelete(%d)", localReadingId));
-        LocalReading readingToRemove = null;
-        for(LocalReading localReading : mLocalReadings) {
-          if(localReading.id == localReadingId) {
-            Log.i(TAG, "Found: " + localReading.toString());
-            readingToRemove = localReading;
-            break;
-          }
-        }
-
-        if(readingToRemove != null) {
-          Log.d(TAG, "Removing " + readingToRemove.toString());
-          mLocalReadings.remove(readingToRemove);
-        } else {
-          Log.d(TAG, "Reading not found");
-        }
-
-        Collections.sort(mLocalReadings, mLocalReadingComparator);
-        mHomeFragmentAdapter.notifyDataSetChanged();
       }
     });
 
@@ -269,6 +248,51 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
    */
   public ArrayList<LocalReading> getLocalReadings() {
     return mLocalReadings;
+  }
+
+  /**
+   * Add a local reading the lists. Handles duplication of readings.
+   *
+   * @param localReading  LocalReading to add
+   * @param shouldRefresh flag if the list fragments should be refreshed
+   */
+  private void addLocalReading(LocalReading localReading, boolean shouldRefresh) {
+    Log.v(TAG, String.format("addLocalReading(%s)", localReading.toString()));
+
+    removeLocalReadingIfExists(localReading.id, false);
+    mLocalReadings.add(localReading);
+    mLocalReadingMap.put(localReading.id, localReading);
+
+    if(shouldRefresh) {
+      refreshReadingList();
+    }
+  }
+
+  /**
+   * Removes a local reading from the lists.
+   */
+  private void removeLocalReadingIfExists(int localReadingId, boolean shouldRefreshLists) {
+    Log.v(TAG, String.format("removeLocalReadingIfExists(%d)", localReadingId));
+
+    if(mLocalReadingMap.containsKey(localReadingId)) {
+      Log.v(TAG, String.format("Removing reading with id: %d", localReadingId));
+      mLocalReadings.remove(mLocalReadingMap.get(localReadingId));
+      mLocalReadingMap.remove(localReadingId);
+    } else {
+      Log.v(TAG, String.format("Reading with id: %d not in list.", localReadingId));
+    }
+
+    if(shouldRefreshLists) {
+      refreshReadingList();
+    }
+  }
+
+  /**
+   * Resort the local readings and tell lists to update themselves.
+   */
+  private void refreshLocalReadingLists() {
+    Collections.sort(mLocalReadings, mLocalReadingComparator);
+    mHomeFragmentAdapter.notifyDataSetChanged();
   }
 
   /**
@@ -368,10 +392,12 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
     Log.d(TAG, "Listing " + localReadings.size() + " existing readings");
 
     mLocalReadings.clear();
-    mLocalReadings.addAll(localReadings);
-//    mLocalReadings = (ArrayList<LocalReading>) localReadings;
-    Log.d(TAG, "Setting local readings array object: " + System.identityHashCode(localReadings));
-    mHomeFragmentAdapter.notifyDataSetChanged();
+    mLocalReadingMap.clear();
+    for(LocalReading localReading: localReadings) {
+      addLocalReading(localReading, false);
+    }
+
+    refreshLocalReadingLists();
 
     getApp().clearProgressDialog();
   }
