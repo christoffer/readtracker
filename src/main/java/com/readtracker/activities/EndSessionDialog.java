@@ -290,7 +290,9 @@ public class EndSessionDialog extends DialogFragment {
 
     @Override
     protected void onPostExecute(LocalSession localSession) {
-      mListener.onCompleted(localSession);
+      if(mListener != null) {
+        mListener.onCompleted(localSession);
+      }
     }
   }
 }

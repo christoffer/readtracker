@@ -69,7 +69,7 @@ public class WelcomeActivity extends ReadTrackerActivity implements OAuthDialogR
 
     moreAboutReadTracker.setOnClickListener(new OnClickListener() {
       @Override public void onClick(View view) {
-        visitWebPage("http://readtracker.com");
+        visitWebPage("http://www.readtracker.com");
       }
     });
 
