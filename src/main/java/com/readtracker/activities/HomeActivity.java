@@ -95,7 +95,8 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
 
     bindEvents();
 
-    if(cameFromSignIn && getCurrentUser() != null) {
+    final boolean skipFullSync = savedInstanceState != null && savedInstanceState.getBoolean(IntentKeys.SKIP_FULL_SYNC);
+    if(cameFromSignIn && (getCurrentUser() != null) && !skipFullSync) {
       Log.d(TAG, "Fresh from sign in, doing initial full sync.");
       sync(true);
     }
