@@ -119,9 +119,9 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
 
     if(savedInstanceState != null) {
       mLocalReadings = savedInstanceState.getParcelableArrayList(IntentKeys.LOCAL_READINGS);
-      mHomeFragmentAdapter.notifyDataSetChanged();
+      refreshLocalReadingLists();
     } else {
-      refreshReadingList();
+      fetchLocalReading();
     }
   }
 
@@ -180,7 +180,7 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
         // Refresh the list of readings after a session, and start a sync
         // with Readmill to send the new data
         Log.v(TAG, "Result OK from :" + requestCode);
-        refreshReadingList();
+        fetchLocalReading();
         sync(false);
         break;
       case ActivityCodes.RESULT_SIGN_OUT:
@@ -264,7 +264,7 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
     mLocalReadingMap.put(localReading.id, localReading);
 
     if(shouldRefresh) {
-      refreshReadingList();
+      fetchLocalReading();
     }
   }
 
@@ -283,7 +283,7 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
     }
 
     if(shouldRefreshLists) {
-      refreshReadingList();
+      fetchLocalReading();
     }
   }
 
@@ -381,8 +381,8 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
     startActivityForResult(intentReadingSession, ActivityCodes.REQUEST_READING_SESSION);
   }
 
-  private void refreshReadingList() {
-    Log.v(TAG, "refreshReadingList()");
+  private void fetchLocalReading() {
+    Log.v(TAG, "fetchLocalReading()");
     getApp().showProgressDialog(this, "Loading your books");
     (new RefreshBookListTask()).execute(getCurrentUserId());
   }
