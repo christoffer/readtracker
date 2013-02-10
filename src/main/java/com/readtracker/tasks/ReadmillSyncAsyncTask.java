@@ -335,9 +335,9 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
         } else if(closedLocallyButNotRemotely(localReading, remoteReading)) {
           Log.d(TAG, "Local reading has been closed, readmill id:" + remoteReadingId);
           pushClosedStateList.add(localReading);
-        } else if(fullSync || (remoteTouchedAt != localReading.getTouchedAtUnixSeconds())) {
+        } else if(fullSync || localReading.touchedAtDifferentFrom(remoteTouchedAt)) {
           Log.d(TAG, "Remote reading has changed, readmill id: " + remoteReadingId);
-          Log.d(TAG, " - Local timestamp: " + localReading.getTouchedAtUnixSeconds() + " vs remote: " + remoteTouchedAt);
+          Log.d(TAG, " - Local timestamp: " + (0.001 * localReading.getTouchedAt().getTime()) + " vs remote: " + remoteTouchedAt);
           pullChangesList.put(localReading, remoteReading);
         } else {
           Log.d(TAG, "No changes detected, readmill id: " + remoteReadingId);

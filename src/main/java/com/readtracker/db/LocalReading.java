@@ -230,12 +230,24 @@ public class LocalReading implements Parcelable {
     return hasClosingRemark() ? readmillClosingRemark : null;
   }
 
+  /*
+
+  Date converters.
+
+  Dates are a bit problematic due to Readmill having the timestamps in
+  Unix Epoch (seconds) where Java Date uses Unix Epoch (milliseconds).
+
+  To avoid conversion mistakes and to keep the conversions DRY we handle all
+  dates with getter/setters.
+
+ */
+
   public void setClosedAt(Date closedAt) {
-    locallyClosedAt = closedAt.getTime() / 1000;
+    locallyClosedAt = _dateToUnixSeconds(closedAt);
   }
 
   public Date getClosedAt() {
-    return new Date(locallyClosedAt * 1000);
+    return _unixSecondsToDate(locallyClosedAt);
   }
 
   public boolean hasClosedAt() {
@@ -243,23 +255,19 @@ public class LocalReading implements Parcelable {
   }
 
   public Date getLastReadAt() {
-    return new Date(lastReadAt * 1000);
-  }
-
-  public void setLastReadAt(long unixEpochSeconds) {
-    lastReadAt = unixEpochSeconds;
+    return _unixSecondsToDate(lastReadAt);
   }
 
   public void setLastReadAt(Date date) {
-    lastReadAt = date.getTime() / 1000;
+    lastReadAt = _dateToUnixSeconds(date);
   }
 
   public void setStartedAt(Date date) {
-    startedAt = date.getTime() / 1000;
+    startedAt = _dateToUnixSeconds(date);
   }
 
   public Date getStartedAt() {
-    return new Date(startedAt * 1000);
+    return _unixSecondsToDate(startedAt);
   }
 
   public boolean hasStartedAt() {
@@ -267,16 +275,15 @@ public class LocalReading implements Parcelable {
   }
 
   public void setTouchedAt(Date date) {
-    readmillTouchedAt = date.getTime() / 1000;
+    readmillTouchedAt = _dateToUnixSeconds(date);
   }
 
   public Date getTouchedAt() {
-    return new Date(readmillTouchedAt * 1000);
+    return _unixSecondsToDate(readmillTouchedAt);
   }
 
-  // Returns the touchedAt timestamp as a unix epoch (seconds since 1970)
-  public long getTouchedAtUnixSeconds() {
-    return readmillTouchedAt;
+  public boolean touchedAtDifferentFrom(long other) {
+    return readmillTouchedAt != other;
   }
 
   public void setProgressStops(final List<LocalSession> sessions) {
@@ -294,6 +301,30 @@ public class LocalReading implements Parcelable {
 
   public float[] getProgressStops() {
     return this.progressStops;
+  }
+
+  /**
+   * Converts a Date object to a unix epoch timestamp (seconds).
+   *
+   * @param date Date object to convert
+   * @return the unix epoch timestamp (seconds)
+   */
+  public long _dateToUnixSeconds(Date date) {
+    if(date == null) {
+      return 0;
+    } else {
+      return date.getTime() / 1000;
+    }
+  }
+
+  /**
+   * Convert a unix epoch (seconds) timestamp to a Java Date object
+   *
+   * @param unixEpochSeconds Timestamp (in seconds) to convert
+   * @return Date object representing the given timestamp
+   */
+  public Date _unixSecondsToDate(long unixEpochSeconds) {
+    return new Date(unixEpochSeconds * 1000);
   }
 
   public static Creator<LocalReading> CREATOR = new Creator<LocalReading>() {
@@ -373,8 +404,6 @@ public class LocalReading implements Parcelable {
     readmillTouchedAt = parcel.readLong();
     readmillState = parcel.readInt();
     readmillClosingRemark = parcel.readString();
-
-
   }
 
   @Override
