@@ -17,6 +17,9 @@
     android:layout_alignParentRight="true"
     android:contentDescription="Book cover" />
 
+  <!--
+    note that textTitle and textAuthor will have their text size set dynamically
+   -->
   <TextView
     android:id="@+id/textTitle"
     style="@style/default_text"
@@ -43,9 +46,9 @@
     style="@style/default_text"
     android:layout_width="fill_parent"
     android:layout_below="@id/imageCover"
-    android:layout_marginTop="9dp"
+    android:layout_marginTop="18dp"
     android:background="@drawable/quote_background"
-    android:paddingLeft="6dp"
+    android:paddingLeft="12dp"
     android:textSize="12dp"
     android:textColor="@color/text_color_secondary"
     android:text="– Something something something something smething seomthjigs"
@@ -55,7 +58,7 @@
     android:id="@+id/textFinishedAt"
     style="@style/default_text"
     android:layout_below="@id/textClosingRemark"
-    android:layout_marginTop="5dp"
+    android:layout_marginTop="12dp"
     android:textSize="10dp"
     android:textColor="@color/text_color_secondary"
     android:text="Finished Nov 13th, 2012" />

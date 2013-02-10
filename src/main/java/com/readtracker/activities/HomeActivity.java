@@ -11,10 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import com.j256.ormlite.dao.Dao;
-import com.readtracker.ApplicationReadTracker;
-import com.readtracker.IntentKeys;
-import com.readtracker.R;
-import com.readtracker.ReadmillTransferIntent;
+import com.readtracker.*;
 import com.readtracker.db.LocalReading;
 import com.readtracker.db.LocalSession;
 import com.readtracker.fragments.HomeFragmentAdapter;
@@ -83,7 +80,7 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
     applyRoboto(R.id.textHeader);
 
     // Initialize the adapter with empty list of readings (populated later)
-    mHomeFragmentAdapter = new HomeFragmentAdapter(getSupportFragmentManager());
+    initializeFragmentAdapter();
 
     mPagerHomeActivity.setAdapter(mHomeFragmentAdapter);
 
@@ -156,7 +153,7 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
         sync(false);
         break;
       case MENU_SETTINGS:
-        exitToPreferences();
+        exitToSettings();
       default:
         return false;
     }
@@ -166,6 +163,11 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
 
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    if(requestCode == ActivityCodes.SETTINGS) {
+      initializeFragmentAdapter();
+      mPagerHomeActivity.setAdapter(mHomeFragmentAdapter);
+    }
+
     switch(resultCode) {
       case ActivityCodes.RESULT_OK:
         // Refresh the list of readings after a session, and start a sync
@@ -221,6 +223,11 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
     mButtonAddBook.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View view) { exitToBookSearch(); }
     });
+  }
+
+  private void initializeFragmentAdapter() {
+    boolean compactMode = ApplicationReadTracker.getApplicationPreferences().getBoolean(SettingsKeys.SETTINGS_COMPACT_FINISH_LIST, false);
+    mHomeFragmentAdapter = new HomeFragmentAdapter(getSupportFragmentManager(), compactMode);
   }
 
   /**

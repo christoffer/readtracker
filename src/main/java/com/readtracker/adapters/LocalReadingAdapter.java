@@ -2,7 +2,6 @@ package com.readtracker.adapters;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,14 +11,15 @@ import android.widget.Filter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.readtracker.R;
-import com.readtracker.support.DrawableGenerator;
-import com.readtracker.support.Utils;
 import com.readtracker.custom_views.SegmentBar;
 import com.readtracker.db.LocalReading;
+import com.readtracker.support.DrawableGenerator;
 import com.readtracker.support.ReadmillApiHelper;
+import com.readtracker.support.Utils;
 import com.readtracker.thirdparty.DrawableManager;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Lists the local reading entity on the home screen with a progress bar,
@@ -30,9 +30,7 @@ import java.util.*;
 public class LocalReadingAdapter extends ArrayAdapter<LocalReading> {
   private static final String TAG = LocalReadingAdapter.class.getName();
 
-  /**
-   * Reading filters
-   */
+  // Reading filters
   public static final CharSequence FILTER_ACTIVE = "@active";
   public static final CharSequence FILTER_INACTIVE = "@inactive";
 
@@ -92,16 +90,6 @@ public class LocalReadingAdapter extends ArrayAdapter<LocalReading> {
     mDrawableManager = drawableMgr;
   }
 
-  /**
-   * Resets the items in this list to the list managed by the parent.
-   */
-  public void resetParentList() {
-    synchronized(mLock) {
-      mObjects.clear();
-      mObjects.addAll(mParentList);
-    }
-  }
-
   @Override public Filter getFilter() {
     if(mFilter == null) {
       mFilter = new LocalReadingFilter();
@@ -143,6 +131,16 @@ public class LocalReadingAdapter extends ArrayAdapter<LocalReading> {
     int activeColor = getContext().getResources().getColor(R.color.default_button_color_pressed);
     view.setBackgroundDrawable(DrawableGenerator.generateListItemBackground(activeColor, backColor));
     return view;
+  }
+
+  /**
+   * Resets the items in this list to the list managed by the parent.
+   */
+  public void resetParentList() {
+    synchronized(mLock) {
+      mObjects.clear();
+      mObjects.addAll(mParentList);
+    }
   }
 
   /**

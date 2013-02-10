@@ -5,7 +5,9 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.util.Log;
 import android.view.ViewGroup;
+import com.readtracker.ApplicationReadTracker;
 import com.readtracker.R;
+import com.readtracker.SettingsKeys;
 import com.readtracker.adapters.LocalReadingAdapter;
 import com.readtracker.db.LocalReading;
 import java.util.ArrayList;
@@ -29,8 +31,11 @@ public class HomeFragmentAdapter extends FragmentStatePagerAdapter {
   // list of local readings changes
   private ReadingListFragment[] fragments = new ReadingListFragment[NUM_PAGES];
 
-  public HomeFragmentAdapter(FragmentManager fragmentManager) {
+  private boolean mCompactMode = false;
+
+  public HomeFragmentAdapter(FragmentManager fragmentManager, boolean compactMode) {
     super(fragmentManager);
+    mCompactMode = compactMode;
   }
 
   @Override public int getCount() { return NUM_PAGES; }
@@ -50,7 +55,11 @@ public class HomeFragmentAdapter extends FragmentStatePagerAdapter {
     ReadingListFragment fragment = null;
 
     if(position == FRAGMENT_FINISHED) {
-      fragment = ReadingListFragment.newInstance(R.layout.local_reading_item_finished, LocalReadingAdapter.FILTER_INACTIVE);
+      if(mCompactMode) {
+        fragment = ReadingListFragment.newInstance(R.layout.local_reading_item_finished_compact, LocalReadingAdapter.FILTER_INACTIVE);
+      } else {
+        fragment = ReadingListFragment.newInstance(R.layout.local_reading_item_finished, LocalReadingAdapter.FILTER_INACTIVE);
+      }
     } else if(position == FRAGMENT_ACTIVE) {
       fragment = ReadingListFragment.newInstance(R.layout.local_reading_item_active, LocalReadingAdapter.FILTER_ACTIVE);
     }

@@ -4,22 +4,26 @@
   android:layout_width="fill_parent"
   android:layout_height="wrap_content"
   android:paddingTop="12dp"
-  android:paddingBottom="24dp"
+  android:paddingBottom="12dp"
   android:paddingLeft="24dp"
   android:paddingRight="24dp">
 
   <ImageView
     android:id="@+id/imageCover"
-    android:layout_height="50dp"
-    android:layout_width="50dp"
+    android:layout_height="36dp"
+    android:layout_width="36dp"
     android:scaleType="centerCrop"
     android:layout_marginLeft="12dp"
     android:layout_alignParentRight="true"
     android:contentDescription="Book cover" />
 
+  <!--
+    note that textTitle and textAuthor will have their text size set dynamically
+   -->
   <TextView
     android:id="@+id/textTitle"
     style="@style/default_text"
+    android:textSize="12dp"
     android:layout_width="fill_parent"
     android:layout_toLeftOf="@id/imageCover"
     android:layout_marginTop="-3dp"
@@ -30,6 +34,7 @@
   <TextView
     android:id="@+id/textAuthor"
     style="@style/default_text"
+    android:textSize="12dp"
     android:layout_width="fill_parent"
     android:layout_below="@id/textTitle"
     android:layout_toLeftOf="@id/imageCover"
@@ -39,23 +44,10 @@
     android:text="Franz Kafka" />
 
   <TextView
-    android:id="@+id/textClosingRemark"
-    style="@style/default_text"
-    android:layout_width="fill_parent"
-    android:layout_below="@id/imageCover"
-    android:layout_marginTop="3dp"
-    android:background="@drawable/quote_background"
-    android:paddingLeft="12dp"
-    android:textSize="12dp"
-    android:textColor="@color/text_color_secondary"
-    android:text="– Something something something something smething seomthjigs"
-    android:typeface="serif" />
-
-  <TextView
     android:id="@+id/textFinishedAt"
     style="@style/default_text"
-    android:layout_below="@id/textClosingRemark"
-    android:layout_marginTop="12dp"
+    android:layout_below="@id/textAuthor"
+    android:layout_marginTop="3dp"
     android:textSize="10dp"
     android:textColor="@color/text_color_secondary"
     android:text="Finished Nov 13th, 2012" />
