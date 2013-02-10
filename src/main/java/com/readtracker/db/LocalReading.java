@@ -166,7 +166,7 @@ public class LocalReading implements Parcelable {
   }
 
   public boolean isActive() {
-    return readmillState == ReadmillApiHelper.ReadingState.READING && !(locallyClosedAt > 0);
+    return readmillState == ReadmillApiHelper.ReadingState.READING;
   }
 
   public boolean isClosed() {

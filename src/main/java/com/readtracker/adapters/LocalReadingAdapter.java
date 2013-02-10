@@ -209,8 +209,8 @@ public class LocalReadingAdapter extends ArrayAdapter<LocalReading> {
     }
 
     if(viewHolder.textFinishedAt != null) {
-      if(localReading.isClosed() && localReading.locallyClosedAt > 0) {
-        final String finishedAt = Utils.humanPastDate(new Date(localReading.locallyClosedAt * 1000));
+      if(localReading.locallyClosedAt > 0) {
+        final String finishedAt = Utils.humanPastDate(new Date(localReading.locallyClosedAt));
         final String finishAction = localReading.readmillState == ReadmillApiHelper.ReadingState.ABANDONED ? "Abandoned" : "Finished";
         final String labelText = String.format("%s %s", finishAction, finishedAt);
         viewHolder.textFinishedAt.setText(labelText);
