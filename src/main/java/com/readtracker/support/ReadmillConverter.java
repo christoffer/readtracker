@@ -49,7 +49,7 @@ public class ReadmillConverter {
     localReading.readmillTouchedAt = parseISO8601ToUnix(source.getString("touched_at"));
     localReading.readmillState = toIntegerState(source.getString("state"));
     localReading.progress = source.getDouble("progress");
-    localReading.lastReadAt = localReading.readmillTouchedAt;
+    localReading.setLastReadAt(localReading.readmillTouchedAt);
     localReading.readmillPrivate = source.getBoolean("private");
     localReading.startedAt = parseISO8601ToUnix(source.getString("started_at"));
 

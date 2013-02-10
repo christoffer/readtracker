@@ -78,7 +78,7 @@ public class LocalReading implements Parcelable {
   public long timeSpentMillis = 0;
 
   @DatabaseField(columnName = LAST_READ_AT_FIELD_NAME)
-  public long lastReadAt = 0;
+  protected long lastReadAt = 0;
 
   @DatabaseField(columnName = LOCALLY_CLOSED_AT_FIELD_NAME)
   protected long locallyClosedAt;
@@ -255,6 +255,34 @@ public class LocalReading implements Parcelable {
    */
   public boolean hasClosedAt() {
     return locallyClosedAt > 0;
+  }
+
+  /**
+   * Gets the last read at timestamp in Unix Epoch (seconds since 1970)
+   *
+   * @return the last read at timestamp
+   */
+  public long getLastReadAt() {
+    return lastReadAt;
+  }
+
+  /**
+   * Sets the time stamp for when the reading was last read in Unix Epoch
+   * (seconds since 1970).
+   *
+   * @param unixEpochSeconds timestamp when the reading was last read in seconds since 1970.
+   */
+  public void setLastReadAt(long unixEpochSeconds) {
+    lastReadAt = unixEpochSeconds;
+  }
+
+  /**
+   * Sets the time stamp for when the reading was last read from a Date object
+   *
+   * @param date time when the reading was last read
+   */
+  public void setLastReadAt(Date date) {
+    lastReadAt = date.getTime() / 1000;
   }
 
   public void setProgressStops(final List<LocalSession> sessions) {

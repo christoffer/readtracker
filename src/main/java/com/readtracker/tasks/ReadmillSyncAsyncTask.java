@@ -181,7 +181,7 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
       localReading.coverURL = coverURL;
     }
 
-    localReading.lastReadAt = Math.max(localReading.readmillTouchedAt, localReading.lastReadAt);
+    localReading.setLastReadAt(Math.max(localReading.readmillTouchedAt, localReading.getLastReadAt()));
 
     mReadingDao.update(localReading);
   }

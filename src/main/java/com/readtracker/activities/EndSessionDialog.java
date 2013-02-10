@@ -184,7 +184,7 @@ public class EndSessionDialog extends DialogFragment {
   private void saveSessionAndExit(long page, long durationMillis) {
     Log.v(TAG, "Exiting with page " + page + " and duration " + durationMillis);
     mLocalReading.setCurrentPage(page);
-    mLocalReading.lastReadAt = (new Date()).getTime() / 1000; // Convert to seconds
+    mLocalReading.setLastReadAt(new Date());
 
     // Send off to background task
     UpdateAndCreateSession.createSession(mLocalReading, durationMillis,
