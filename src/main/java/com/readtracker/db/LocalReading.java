@@ -6,6 +6,7 @@ import android.os.Parcelable;
 import com.j256.ormlite.field.DatabaseField;
 import com.readtracker.support.ReadmillApiHelper;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -114,7 +115,7 @@ public class LocalReading implements Parcelable {
     if(!isActive() || progress == 0 || timeSpentMillis == 0 || progress > 1.0f) {
       return 0;
     }
-    long estimatedMillisecondsLeft = (long)((1.0 - progress) * timeSpentMillis);
+    long estimatedMillisecondsLeft = (long) ((1.0 - progress) * timeSpentMillis);
     return (int) (estimatedMillisecondsLeft / 1000);
   }
 
@@ -170,7 +171,8 @@ public class LocalReading implements Parcelable {
   }
 
   public boolean isClosed() {
-    return readmillState == ReadmillApiHelper.ReadingState.FINISHED ||
+    return locallyClosedAt > 0 ||
+      readmillState == ReadmillApiHelper.ReadingState.FINISHED ||
       readmillState == ReadmillApiHelper.ReadingState.ABANDONED;
   }
 
@@ -192,6 +194,33 @@ public class LocalReading implements Parcelable {
 
   public String getClosingRemark() {
     return hasClosingRemark() ? readmillClosingRemark : null;
+  }
+
+  /**
+   * Sets the closed at timestamp by converting a Date object
+   *
+   * @param closedAt Date object of when the reading was closed
+   */
+  public void setClosedAt(Date closedAt) {
+    locallyClosedAt = closedAt.getTime() / 1000;
+  }
+
+  /**
+   * Returns the closed at timestamp as a Date object
+   *
+   * @return the closed at timestamp
+   */
+  public Date getClosedAtDate() {
+    return new Date(locallyClosedAt * 1000);
+  }
+
+  /**
+   * Checks if a local reading has a locally closed timestamp
+   *
+   * @return true if the LocalReading has a locally closed timestamp
+   */
+  public boolean hasClosedAt() {
+    return locallyClosedAt > 0;
   }
 
   public void setProgressStops(final List<LocalSession> sessions) {

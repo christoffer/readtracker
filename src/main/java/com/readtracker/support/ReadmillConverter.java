@@ -55,8 +55,8 @@ public class ReadmillConverter {
 
     localReading.readmillClosingRemark = optString("closing_remark", null, source);
 
-    if(localReading.locallyClosedAt == 0) {
-      localReading.locallyClosedAt = parseISO8601ToUnix(source.getString("ended_at"));
+    if(!localReading.hasClosedAt()) {
+      localReading.setClosedAt(parseISO8601(source.getString("ended_at")));
     }
 
     // Extract book

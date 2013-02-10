@@ -428,7 +428,7 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
    * @throws JSONException if the response from Readmill is not properly formatted
    */
   private boolean closedLocallyButNotRemotely(LocalReading localReading, JSONObject remoteReading) throws JSONException {
-    boolean isClosedLocally = localReading.locallyClosedAt != 0;
+    boolean isClosedLocally = localReading.hasClosedAt();
 
     String remoteState = remoteReading.getString("state");
     boolean isClosedRemotely = remoteState.equals("finished") || remoteState.equals("abandoned");
