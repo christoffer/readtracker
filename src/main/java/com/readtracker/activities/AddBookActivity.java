@@ -162,6 +162,7 @@ public class AddBookActivity extends ReadTrackerActivity {
     localReading.title = mEditTitle.getText().toString();
     localReading.author = mEditAuthor.getText().toString();
     localReading.startedAt = (new Date()).getTime();
+    localReading.lastReadAt = localReading.startedAt;
     localReading.coverURL = mCoverURL;
 
     ReadTrackerUser user = getApp().getCurrentUser();
