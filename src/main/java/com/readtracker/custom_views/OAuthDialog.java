@@ -101,14 +101,28 @@ public class OAuthDialog extends DialogFragment {
     webView.setWebChromeClient(new WebChromeClient() {
       @Override public void onProgressChanged(WebView view, int newProgress) {
         if(newProgress == 100 && mStatusVisible) {
-          Animation hide = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_out);
-          hide.setFillAfter(true);
-          mProgressBar.startAnimation(hide);
+          try {
+            Animation hide = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_out);
+            hide.setFillAfter(true);
+            mProgressBar.startAnimation(hide);
+          } catch(NullPointerException ex) {
+            // It is observed that the getActivity() sometimes does not yield a
+            // context (instead it is null) on 2.3.4.
+            // For these cases we just fall back to hiding / showing the
+            // progress bar.
+            mProgressBar.setAnimation(null);
+            mProgressBar.setVisibility(View.GONE);
+          }
           mStatusVisible = false;
         } else if(newProgress < 100 && !mStatusVisible) {
-          Animation show = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_in);
-          show.setFillAfter(true);
-          mProgressBar.startAnimation(show);
+          try {
+            Animation show = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_in);
+            show.setFillAfter(true);
+            mProgressBar.startAnimation(show);
+          } catch(NullPointerException ignored) {
+            mProgressBar.setAnimation(null);
+            mProgressBar.setVisibility(View.VISIBLE);
+          }
           mStatusVisible = true;
         }
       }
