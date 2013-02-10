@@ -21,13 +21,16 @@ public class TimeSpinner extends View {
 
   private Paint mTickPaint;
 
+  @SuppressWarnings("UnusedDeclaration")
   public TimeSpinner(Context context) {
     super(context, null);
   }
 
+  @SuppressWarnings("UnusedDeclaration")
   public TimeSpinner(Context context, AttributeSet attrs) {
     super(context, attrs);
     initialize();
+    setDrawingCacheEnabled(true);
   }
 
   @Override protected void onDraw(Canvas canvas) {
