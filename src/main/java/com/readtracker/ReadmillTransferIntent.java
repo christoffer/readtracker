@@ -203,6 +203,9 @@ public class ReadmillTransferIntent extends IntentService {
       if(status == 404 || status == 401) {
         Log.d(TAG, "Marking session with id: " + session.id + " as needing reconnect");
         session.needsReconnect = true;
+      } else if(status == 422) {
+        Log.w(TAG, "Server did not accept session. Stop trying to sync it.", e);
+        session.syncedWithReadmill = true;
       } else {
         Log.w(TAG, "Failed to upload Readmill Session", e);
         // Do not modify the session at all, causing it to be picked up and
