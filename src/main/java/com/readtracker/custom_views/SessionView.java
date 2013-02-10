@@ -154,7 +154,7 @@ public class SessionView extends View {
     final float innerWidth = getWidth() - (getPaddingLeft() + getPaddingRight());
 
     int nodeColor = mNodePaint.getColor();
-    int lineColor = (0x00ffffff & nodeColor) + (0x44 << 24);
+    int lineColor = (0x00ffffff & nodeColor) + (0x88 << 24);
     mNodePaint.setColor(lineColor);
     for(int i = 0, mNodesLength = mNodes.length; i < mNodesLength; i++) {
       Node node = mNodes[i];
