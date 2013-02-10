@@ -8,10 +8,13 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
 import com.readtracker.R;
-import com.readtracker.support.Utils;
 import com.readtracker.db.LocalSession;
+import com.readtracker.support.Utils;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Draws a history of reading sessions on a time line.
@@ -27,10 +30,12 @@ public class SessionView extends View {
   private static final int SEGMENT_HEIGHT = 96; // Height between each node
   private static final int TEXT_PADDING = 5; // Distance from text to node
 
+  @SuppressWarnings("UnusedDeclaration")
   public SessionView(Context context) {
     this(context, null, 0);
   }
 
+  @SuppressWarnings("UnusedDeclaration")
   public SessionView(Context context, AttributeSet attrs) {
     this(context, attrs, 0);
   }
@@ -38,6 +43,7 @@ public class SessionView extends View {
   public SessionView(Context context, AttributeSet attrs, int defStyle) {
     super(context, attrs, defStyle);
     initializePaints();
+    setDrawingCacheEnabled(true);
   }
 
   @Override
