@@ -106,7 +106,7 @@ public class LocalReading implements Parcelable {
   public long readmillUserId = -1;
 
   @DatabaseField(columnName = READMILL_TOUCHED_AT_FIELD_NAME)
-  public long readmillTouchedAt = 0;
+  protected long readmillTouchedAt = 0;
 
   @DatabaseField(columnName = READMILL_STATE_FIELD_NAME)
   public int readmillState = ReadmillApiHelper.ReadingState.READING;
@@ -234,7 +234,7 @@ public class LocalReading implements Parcelable {
     locallyClosedAt = closedAt.getTime() / 1000;
   }
 
-  public Date getClosedAtDate() {
+  public Date getClosedAt() {
     return new Date(locallyClosedAt * 1000);
   }
 
@@ -242,8 +242,8 @@ public class LocalReading implements Parcelable {
     return locallyClosedAt > 0;
   }
 
-  public long getLastReadAt() {
-    return lastReadAt;
+  public Date getLastReadAt() {
+    return new Date(lastReadAt * 1000);
   }
 
   public void setLastReadAt(long unixEpochSeconds) {
@@ -264,6 +264,19 @@ public class LocalReading implements Parcelable {
 
   public boolean hasStartedAt() {
     return startedAt > 0;
+  }
+
+  public void setTouchedAt(Date date) {
+    readmillTouchedAt = date.getTime() / 1000;
+  }
+
+  public Date getTouchedAt() {
+    return new Date(readmillTouchedAt * 1000);
+  }
+
+  // Returns the touchedAt timestamp as a unix epoch (seconds since 1970)
+  public long getTouchedAtUnixSeconds() {
+    return readmillTouchedAt;
   }
 
   public void setProgressStops(final List<LocalSession> sessions) {

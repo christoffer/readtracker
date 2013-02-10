@@ -53,7 +53,7 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
   // Sort readings by freshness
   private Comparator<LocalReading> mLocalReadingComparator = new Comparator<LocalReading>() {
     @Override public int compare(LocalReading localReadingA, LocalReading localReadingB) {
-      return (int) (localReadingB.getLastReadAt() - localReadingA.getLastReadAt());
+      return localReadingB.getLastReadAt().compareTo(localReadingA.getLastReadAt());
     }
   };
 

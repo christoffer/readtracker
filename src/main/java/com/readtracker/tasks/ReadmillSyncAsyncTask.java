@@ -169,7 +169,7 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
 
     localReading.title = remoteBook.getString("title");
     localReading.author = remoteBook.getString("author");
-    localReading.readmillTouchedAt = ReadmillApiHelper.parseISO8601ToUnix(remoteReading.getString("touched_at"));
+    localReading.setTouchedAt(ReadmillApiHelper.parseISO8601(remoteReading.getString("touched_at")));
     localReading.readmillState = ReadmillApiHelper.toIntegerState(remoteReading.getString("state"));
     localReading.readmillClosingRemark = ReadmillConverter.optString("closing_remark", null, remoteReading);
 
@@ -181,7 +181,9 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
       localReading.coverURL = coverURL;
     }
 
-    localReading.setLastReadAt(Math.max(localReading.readmillTouchedAt, localReading.getLastReadAt()));
+    if(localReading.getTouchedAt().after(localReading.getLastReadAt())) {
+      localReading.setLastReadAt(localReading.getTouchedAt());
+    }
 
     mReadingDao.update(localReading);
   }
@@ -333,9 +335,9 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
         } else if(closedLocallyButNotRemotely(localReading, remoteReading)) {
           Log.d(TAG, "Local reading has been closed, readmill id:" + remoteReadingId);
           pushClosedStateList.add(localReading);
-        } else if(fullSync || (remoteTouchedAt != localReading.readmillTouchedAt)) {
+        } else if(fullSync || (remoteTouchedAt != localReading.getTouchedAtUnixSeconds())) {
           Log.d(TAG, "Remote reading has changed, readmill id: " + remoteReadingId);
-          Log.d(TAG, " - Local timestamp: " + localReading.readmillTouchedAt + " vs remote: " + remoteTouchedAt);
+          Log.d(TAG, " - Local timestamp: " + localReading.getTouchedAtUnixSeconds() + " vs remote: " + remoteTouchedAt);
           pullChangesList.put(localReading, remoteReading);
         } else {
           Log.d(TAG, "No changes detected, readmill id: " + remoteReadingId);

@@ -46,10 +46,10 @@ public class ReadmillConverter {
     JSONObject jsonUser = source.getJSONObject("user");
 
     localReading.readmillReadingId = source.getLong("id");
-    localReading.readmillTouchedAt = parseISO8601ToUnix(source.getString("touched_at"));
+    localReading.setTouchedAt(parseISO8601(source.getString("touched_at")));
     localReading.readmillState = toIntegerState(source.getString("state"));
     localReading.progress = source.getDouble("progress");
-    localReading.setLastReadAt(localReading.readmillTouchedAt);
+    localReading.setLastReadAt(localReading.getTouchedAt());
     localReading.readmillPrivate = source.getBoolean("private");
     localReading.setStartedAt(parseISO8601(source.getString("started_at")));
 
