@@ -226,10 +226,6 @@ public class BookActivity extends ReadTrackerActivity implements EndSessionDialo
     mBookFragmentAdapter = new BookFragmentAdapter(getSupportFragmentManager(), bundle);
     mBookFragmentAdapter.setBrowserMode(browserMode);
 
-    SessionTimer activeSessionTimer = getIntent().getExtras().getParcelable(IntentKeys.READING_SESSION_STATE);
-    Log.d(TAG, "Received reading session state " + activeSessionTimer);
-    mBookFragmentAdapter.setReadingState(activeSessionTimer);
-
     mViewPagerReading.setAdapter(mBookFragmentAdapter);
     // The default for off-screen page limit is 1, which means that the session/highlight view
     // is unloaded when going away from the center (reading) page.

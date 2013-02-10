@@ -53,9 +53,6 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
   // Handles UI handling of Readmill Sync process
   private ReadmillSyncStatusUIHandler mSyncStatusHandler;
 
-  // Keep a reference to the active session so the user can go back to it
-  private static SessionTimer mActiveSessionTimer;
-
   // Sort readings by freshness
   private Comparator<LocalReading> mLocalReadingComparator = new Comparator<LocalReading>() {
     @Override public int compare(LocalReading localReadingA, LocalReading localReadingB) {
@@ -170,13 +167,6 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     switch(resultCode) {
-      case ActivityCodes.RESULT_CANCELED:
-        // Save the canceled reading state so the user can get back to it
-        if(data != null) {
-          mActiveSessionTimer = data.getParcelableExtra(IntentKeys.READING_SESSION_STATE);
-          Log.v(TAG, "Cancelled with session timer: " + mActiveSessionTimer);
-        }
-        break;
       case ActivityCodes.RESULT_OK:
         // Refresh the list of readings after a session, and start a sync
         // with Readmill to send the new data
@@ -356,11 +346,10 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
   // Private
 
   private void exitToBookSearch() {
-    mActiveSessionTimer = null; // Clear any paused sessions
     startActivityForResult(new Intent(this, BookSearchActivity.class), ActivityCodes.REQUEST_ADD_BOOK);
   }
 
-  private void exitToPreferences() {
+  private void exitToSettings() {
     Intent intentSettings = new Intent(this, SettingsActivity.class);
     startActivityForResult(intentSettings, ActivityCodes.SETTINGS);
   }
@@ -368,16 +357,6 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
   private void exitToActivityBook(int localReadingId) {
     Intent intentReadingSession = new Intent(this, BookActivity.class);
     intentReadingSession.putExtra(IntentKeys.READING_ID, localReadingId);
-
-    if(mActiveSessionTimer != null) {
-      Log.d(TAG, "Has Active Reading state: " + mActiveSessionTimer);
-      if(mActiveSessionTimer.getLocalReadingId() == localReadingId) {
-        Log.v(TAG, "Passing active state for reading " + localReadingId + ": " + mActiveSessionTimer);
-        intentReadingSession.putExtra(IntentKeys.READING_SESSION_STATE, mActiveSessionTimer);
-      }
-
-      mActiveSessionTimer = null;
-    }
 
     startActivityForResult(intentReadingSession, ActivityCodes.REQUEST_READING_SESSION);
   }
