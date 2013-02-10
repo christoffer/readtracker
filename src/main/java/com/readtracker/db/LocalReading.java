@@ -87,7 +87,7 @@ public class LocalReading implements Parcelable {
   public boolean deletedByUser = false;
 
   @DatabaseField(columnName = STARTED_AT_FIELD_NAME)
-  public long startedAt = 0;
+  protected long startedAt = 0;
 
   // TODO These should be in another object
   @DatabaseField(columnName = READMILL_RECOMMENDED_FIELD_NAME)
@@ -230,59 +230,40 @@ public class LocalReading implements Parcelable {
     return hasClosingRemark() ? readmillClosingRemark : null;
   }
 
-  /**
-   * Sets the closed at timestamp by converting a Date object
-   *
-   * @param closedAt Date object of when the reading was closed
-   */
   public void setClosedAt(Date closedAt) {
     locallyClosedAt = closedAt.getTime() / 1000;
   }
 
-  /**
-   * Returns the closed at timestamp as a Date object
-   *
-   * @return the closed at timestamp
-   */
   public Date getClosedAtDate() {
     return new Date(locallyClosedAt * 1000);
   }
 
-  /**
-   * Checks if a local reading has a locally closed timestamp
-   *
-   * @return true if the LocalReading has a locally closed timestamp
-   */
   public boolean hasClosedAt() {
     return locallyClosedAt > 0;
   }
 
-  /**
-   * Gets the last read at timestamp in Unix Epoch (seconds since 1970)
-   *
-   * @return the last read at timestamp
-   */
   public long getLastReadAt() {
     return lastReadAt;
   }
 
-  /**
-   * Sets the time stamp for when the reading was last read in Unix Epoch
-   * (seconds since 1970).
-   *
-   * @param unixEpochSeconds timestamp when the reading was last read in seconds since 1970.
-   */
   public void setLastReadAt(long unixEpochSeconds) {
     lastReadAt = unixEpochSeconds;
   }
 
-  /**
-   * Sets the time stamp for when the reading was last read from a Date object
-   *
-   * @param date time when the reading was last read
-   */
   public void setLastReadAt(Date date) {
     lastReadAt = date.getTime() / 1000;
+  }
+
+  public void setStartedAt(Date date) {
+    startedAt = date.getTime() / 1000;
+  }
+
+  public Date getStartedAt() {
+    return new Date(startedAt * 1000);
+  }
+
+  public boolean hasStartedAt() {
+    return startedAt > 0;
   }
 
   public void setProgressStops(final List<LocalSession> sessions) {

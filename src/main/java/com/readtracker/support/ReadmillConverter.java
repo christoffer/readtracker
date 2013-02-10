@@ -51,7 +51,7 @@ public class ReadmillConverter {
     localReading.progress = source.getDouble("progress");
     localReading.setLastReadAt(localReading.readmillTouchedAt);
     localReading.readmillPrivate = source.getBoolean("private");
-    localReading.startedAt = parseISO8601ToUnix(source.getString("started_at"));
+    localReading.setStartedAt(parseISO8601(source.getString("started_at")));
 
     localReading.readmillClosingRemark = optString("closing_remark", null, source);
 
