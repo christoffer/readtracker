@@ -146,10 +146,10 @@ public class LocalReading implements Parcelable {
    * @return The estimated time left in seconds.
    */
   public int estimateTimeLeft() {
-    if(!isActive() || progress == 0 || timeSpentMillis == 0 || progress > 1.0f) {
+    if(!isActive() || progress == 0 || timeSpentMillis == 0 || progress > 1.0) {
       return 0;
     }
-    long estimatedMillisecondsLeft = (long) ((1.0 - progress) * timeSpentMillis);
+    long estimatedMillisecondsLeft = (long) ((timeSpentMillis / progress) - timeSpentMillis);
     return (int) (estimatedMillisecondsLeft / 1000);
   }
 

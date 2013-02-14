@@ -28,7 +28,7 @@ public class LocalReadingTest {
   public void estimateTimeLeftWhenHalfRead() {
     localReading.progress = 0.5;
     localReading.timeSpentMillis = 10 * SECONDS;
-    assertEquals(5, localReading.estimateTimeLeft());
+    assertEquals(10, localReading.estimateTimeLeft());
   }
 
   @Test
@@ -41,22 +41,30 @@ public class LocalReadingTest {
 
   @Test
   public void estimateTimeLeftWhenReadTwoThirds() {
-    localReading.progress = 0.666667;
+    localReading.progress = 2.0 / 3.0;
     localReading.timeSpentMillis = 100 * SECONDS;
-    assertEquals(33, localReading.estimateTimeLeft());
+    assertEquals(50, localReading.estimateTimeLeft());
   }
 
   @Test
   public void estimateTimeLeftWhenReadOneThird() {
-    localReading.progress = 0.333334;
-    localReading.timeSpentMillis = 100 * SECONDS;
-    assertEquals(66, localReading.estimateTimeLeft());
+    localReading.progress = 1.0 / 3.0;
+    localReading.timeSpentMillis = 200 * SECONDS;
+    assertEquals(400, localReading.estimateTimeLeft());
   }
 
   @Test
   public void estimateTimeLeftWhenRead99Percent() {
     localReading.progress = 0.99;
-    localReading.timeSpentMillis = 100 * SECONDS;
+    localReading.timeSpentMillis = 99 * SECONDS;
     assertEquals(1, localReading.estimateTimeLeft());
+  }
+
+  @Test
+  public void estimateTimeLeftRealScenario() {
+    localReading.progress = 0.273743;
+    localReading.timeSpentMillis = 6805 * SECONDS;
+    // 5 Hours and 54 seconds
+    assertEquals(5 * 60 * 60 + 54, localReading.estimateTimeLeft());
   }
 }
