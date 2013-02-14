@@ -56,7 +56,7 @@ public class OAuthDialog extends DialogFragment {
 
     RelativeLayout.LayoutParams layoutFill = new RelativeLayout.LayoutParams(
       LayoutParams.FILL_PARENT,
-      LayoutParams.WRAP_CONTENT);
+      LayoutParams.FILL_PARENT);
     layoutFill.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
     webView.setLayoutParams(layoutFill);
 
@@ -113,6 +113,7 @@ public class OAuthDialog extends DialogFragment {
             mProgressBar.setAnimation(null);
             mProgressBar.setVisibility(View.GONE);
           }
+
           mStatusVisible = false;
         } else if(newProgress < 100 && !mStatusVisible) {
           try {
