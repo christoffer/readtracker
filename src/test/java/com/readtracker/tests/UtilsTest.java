@@ -185,4 +185,24 @@ public class UtilsTest {
     assertEquals("on Dec 11, 2010", Utils.humanPastDate(now, anotherWhileAgo));
   }
 
+  @Test
+  public void coarseHumanTime() {
+    long ms = 300;
+    assertEquals("0 seconds", Utils.longCoarseHumanTimeFromMillis(ms));
+
+    ms = 1600;
+    assertEquals("1 second", Utils.longCoarseHumanTimeFromMillis(ms));
+
+    ms = 43734;
+    assertEquals("43 seconds", Utils.longCoarseHumanTimeFromMillis(ms));
+
+    ms = 5293856;
+    assertEquals("1 hour and 28 minutes", Utils.longCoarseHumanTimeFromMillis(ms));
+
+    ms = 16709000;
+    assertEquals("4 hours and 38 minutes", Utils.longCoarseHumanTimeFromMillis(ms));
+
+    ms = 6805000;
+    assertEquals("1 hour and 53 minutes", Utils.longCoarseHumanTimeFromMillis(ms));
+  }
 }
