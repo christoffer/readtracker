@@ -161,22 +161,22 @@ public class ReadingSessionsFragment extends Fragment {
     mTextSummary.setText(summary);
 
     String pepTalk = null;
-    float hoursLeft = estimatedSecondsLeft / (60 * 60);
-    if(hoursLeft < 1) {
+    float hoursLeft = (float) estimatedSecondsLeft / (60.0f * 60.0f);
+    if(hoursLeft < 1.0f) {
       pepTalk = "Why not finish it today?";
-    } else if(hoursLeft < 4) {
+    } else if(hoursLeft < 4.0f) {
       // hours per day to finish in 3 days
-      final int secondsPerDayForGoal = (int) ((hoursLeft / 3) * 3600);
+      final int secondsPerDayForGoal = (int) ((hoursLeft / 3.0f) * 3600);
       pepTalk = String.format("That's about %s per day to finish it in three days.",
         Utils.longCoarseHumanTimeFromMillis(secondsPerDayForGoal * 1000));
     } else if(hoursLeft < 10) {
       // hours per day to finish in a week
-      final int secondsPerDayForGoal = (int) ((hoursLeft / 7) * 3600);
+      final int secondsPerDayForGoal = (int) ((hoursLeft / 7.0f) * 3600);
       pepTalk = String.format("That's about %s per day to finish it in a week.",
         Utils.longCoarseHumanTimeFromMillis(secondsPerDayForGoal * 1000));
     } else if(hoursLeft < 20) {
       // hours per day to finish in two weeks
-      final int secondsPerDayForGoal = (int) ((hoursLeft / 14) * 3600);
+      final int secondsPerDayForGoal = (int) ((hoursLeft / 14.0f) * 3600);
       pepTalk = String.format("That's about %s per day to finish it in two weeks.",
         Utils.longCoarseHumanTimeFromMillis(secondsPerDayForGoal * 1000));
     }
