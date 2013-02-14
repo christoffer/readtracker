@@ -369,7 +369,6 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
       if(verifyReadingNotOnReadmill(localReading.readmillReadingId)) {
         Log.v(TAG, "Verified reading not on Readmill: " + localReading);
         Log.i(TAG, "Deleting remotely deleted reading: " + localReading);
-        final long deletedReadingId = localReading.id;
         mReadingDao.delete(localReading);
         postProgressUpdateDeletedReading(localReading);
       } else {
