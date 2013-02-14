@@ -596,6 +596,8 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
       }
     }
 
+    localReading.setProgressStops(sessions);
+
     mReadingDao.update(localReading);
   }
 

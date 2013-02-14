@@ -15,16 +15,25 @@ public class ReadmillSyncProgressMessage {
   private LocalReading mLocalReading;
   private String mMessage;
 
+  /**
+   * A progress update stating that a reading has been added or changed
+   */
   public static ReadmillSyncProgressMessage readingChanged(LocalReading localReading) {
     return new ReadmillSyncProgressMessage(MessageType.READING_CHANGED, "", localReading, null);
   }
 
+  /**
+   * A progress update stating that a reading has been deleted.
+   */
   public static ReadmillSyncProgressMessage readingDeleted(LocalReading localReading) {
     return new ReadmillSyncProgressMessage(MessageType.READING_DELETED, "", localReading, null);
   }
 
+  /**
+   * A simple progress update with a progress and a message
+   */
   public static ReadmillSyncProgressMessage syncProgress(float progress, String message) {
-    return new ReadmillSyncProgressMessage(MessageType.SYNC_PROGRESS, message, null, null);
+    return new ReadmillSyncProgressMessage(MessageType.SYNC_PROGRESS, message, null, progress);
   }
 
   private ReadmillSyncProgressMessage(MessageType messageType, String message, LocalReading localReading, Float progress) {
