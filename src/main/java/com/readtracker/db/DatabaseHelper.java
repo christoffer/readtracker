@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteException;
 import android.util.Log;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
@@ -19,7 +20,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
   }
 
   public static final String DATABASE_NAME = "readtracker.db";
-  public static final int DATABASE_VERSION = 8;
+  public static final int DATABASE_VERSION = 9;
   private static final String TAG = DatabaseHelper.class.getName();
 
   private Dao<LocalReading, Integer> readingDao = null;
@@ -92,8 +93,12 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         _upgradeToVersion8(db, connectionSource);
         runningVersion++;
       }
+      if(runningVersion == 8) {
+        _upgradeToVersion9(db, connectionSource);
+        runningVersion++;
+      }
       Log.d(TAG, "Ended on running version: " + runningVersion);
-    } catch(SQLiteException e) {
+    } catch(SQLException e) {
       Log.e(TAG, "Failed to upgrade database: " + DATABASE_NAME, e);
       throw new RuntimeException(e);
     }
@@ -219,5 +224,47 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     db.execSQL("ALTER TABLE LocalReading ADD COLUMN " + LocalReading.DELETED_BY_USER_FIELD_NAME + " INTEGER NOT NULL DEFAULT 0;");
     db.execSQL("ALTER TABLE LocalReading ADD COLUMN " + LocalReading.READMILL_IS_PRIVATE_FIELD_NAME + " INTEGER NOT NULL DEFAULT 0;");
     db.execSQL("ALTER TABLE LocalReading ADD COLUMN " + LocalReading.STARTED_AT_FIELD_NAME + " INTEGER NOT NULL DEFAULT 0;");
+  }
+
+  private void _upgradeToVersion9(SQLiteDatabase db, ConnectionSource connectionSource) throws SQLException {
+    Log.i(TAG, "Running database upgrade 9");
+
+    // Get local sessions where reading reading id is -1
+    // For each local session, check if the parent reading has a readmill reading id
+    // If so set the session readmill reading id to that of the parent
+
+    // Repeat for highlights
+
+    List<LocalReading> connectedReadings = getReadingDao().queryBuilder()
+      .where()
+      .gt(LocalReading.READMILL_READING_ID_FIELD_NAME, 0).query();
+
+    Log.d(TAG, String.format("Found %d connected readings", connectedReadings.size()));
+
+    for(LocalReading localReading : connectedReadings) {
+      List<LocalSession> sessions = getSessionDao().queryBuilder().where()
+        .eq(LocalSession.READING_ID_FIELD_NAME, localReading.id).query();
+
+      Log.d(TAG, String.format("Found %d sessions for reading with id %d", sessions.size(), localReading.id));
+
+      for(LocalSession session : sessions) {
+        if(session.readmillReadingId > 0) continue;
+        Log.i(TAG, String.format("Updating session %s, setting Readmill Reading id to %d", session.sessionIdentifier, localReading.readmillReadingId));
+        session.readmillReadingId = localReading.readmillReadingId;
+        getSessionDao().update(session);
+      }
+
+      List<LocalHighlight> highlights = getHighlightDao().queryBuilder().where()
+        .eq(LocalHighlight.READING_ID_FIELD_NAME, localReading.id).query();
+
+      Log.d(TAG, String.format("Found %d highlights for reading with id %d", highlights.size(), localReading.id));
+
+      for(LocalHighlight highlight : highlights) {
+        if(highlight.readmillReadingId > 0) continue;
+        Log.i(TAG, String.format("Updating highlight %d, setting Readmill Reading id to %d", highlight.id, localReading.readmillReadingId));
+        highlight.readmillReadingId = localReading.readmillReadingId;
+        getHighlightDao().update(highlight);
+      }
+    }
   }
 }
