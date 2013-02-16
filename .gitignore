@@ -14,6 +14,7 @@ readmill.properties
 .project
 .settings
 settings.xml
+readtracker.sqlite
 
 R.java
 
