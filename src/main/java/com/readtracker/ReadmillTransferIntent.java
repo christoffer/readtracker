@@ -90,6 +90,9 @@ public class ReadmillTransferIntent extends IntentService {
 
           // Store locally
           readingDao.createOrUpdate(localReading);
+
+          updateReadmillReadingForSessionsOf(localReading);
+          updateReadmillReadingForHighlightsOf(localReading);
         } catch(ReadmillException e) {
           Log.w(TAG, "Failed to connect book to readmill", e);
         } catch(JSONException e) {
@@ -108,9 +111,9 @@ public class ReadmillTransferIntent extends IntentService {
     try {
       Dao<LocalHighlight, Integer> highlightDao = ApplicationReadTracker.getHighlightDao();
       Where<LocalHighlight, Integer> stmt = highlightDao.queryBuilder().where()
-          .isNull(LocalHighlight.SYNCED_AT_FIELD_NAME)
-          .and()
-          .gt(LocalHighlight.READMILL_READING_ID_FIELD_NAME, 0);
+        .isNull(LocalHighlight.SYNCED_AT_FIELD_NAME)
+        .and()
+        .gt(LocalHighlight.READMILL_READING_ID_FIELD_NAME, 0);
 
       List<LocalHighlight> highlightsToPush = stmt.query();
 
@@ -137,7 +140,6 @@ public class ReadmillTransferIntent extends IntentService {
     } catch(SQLException e) {
       Log.d(TAG, "Failed to persist unsent highlights", e);
     }
-
   }
 
   /**
@@ -151,19 +153,19 @@ public class ReadmillTransferIntent extends IntentService {
     try {
       Dao<LocalSession, Integer> sessionDao = ApplicationReadTracker.getSessionDao();
       Where<LocalSession, Integer> stmt = sessionDao.queryBuilder().where()
-          .eq(LocalSession.SYNCED_WITH_READMILL_FIELD_NAME, false)
-          .and()
-          .gt(LocalSession.READMILL_READING_ID_FIELD_NAME, 0);
+        .eq(LocalSession.SYNCED_WITH_READMILL_FIELD_NAME, false)
+        .and()
+        .gt(LocalSession.READMILL_READING_ID_FIELD_NAME, 0);
 
-      List<LocalSession> sessionsToProceses = stmt.query();
+      List<LocalSession> sessionsToProcess = stmt.query();
 
-      if(sessionsToProceses.size() < 1) {
+      if(sessionsToProcess.size() < 1) {
         Log.i(TAG, "No unprocessed sessions to send.");
         return;
       }
 
-      Log.i(TAG, "Sending " + sessionsToProceses.size() + " new sessions to readmill");
-      for(LocalSession session : sessionsToProceses) {
+      Log.i(TAG, "Sending " + sessionsToProcess.size() + " new sessions to readmill");
+      for(LocalSession session : sessionsToProcess) {
         syncWithRemote(session);
         sessionDao.update(session);
       }
@@ -182,16 +184,16 @@ public class ReadmillTransferIntent extends IntentService {
    */
   private void syncWithRemote(LocalSession session) {
     Log.d(TAG, "Processing session with id: " + session.id +
-        " occurred at: " + session.occurredAt +
-        " session id " + session.sessionIdentifier);
+      " occurred at: " + session.occurredAt +
+      " session id " + session.sessionIdentifier);
 
     try {
       readmillApi().createPing(
-          session.sessionIdentifier,
-          session.readmillReadingId,
-          session.progress,
-          session.durationSeconds,
-          session.occurredAt
+        session.sessionIdentifier,
+        session.readmillReadingId,
+        session.progress,
+        session.durationSeconds,
+        session.occurredAt
       );
       Log.d(TAG, "Marking session with id: " + session.id + " as synced");
       session.syncedWithReadmill = true;
@@ -212,6 +214,69 @@ public class ReadmillTransferIntent extends IntentService {
         // retried on the next sync
       }
     }
+  }
+
+  private void updateReadmillReadingForSessionsOf(LocalReading localReading) {
+    Log.d(TAG, "updateReadmillReadingForSessionsOf" + localReading.toString());
+    if(localReading == null || localReading.readmillReadingId < 1) {
+      return;
+    }
+
+    try {
+      Dao<LocalSession, Integer> sessionDao = ApplicationReadTracker.getSessionDao();
+      Where<LocalSession, Integer> stmt = sessionDao.queryBuilder().where()
+        .eq(LocalSession.READING_ID_FIELD_NAME, localReading.id)
+        .and()
+        .lt(LocalSession.READMILL_READING_ID_FIELD_NAME, 1);
+
+      List<LocalSession> sessionsToProcess = stmt.query();
+
+      if(sessionsToProcess.size() < 1) {
+        Log.i(TAG, "No sessions for LocalReading " + localReading.toString() + " needs connecting");
+        return;
+      }
+
+      for(LocalSession session : sessionsToProcess) {
+        session.readmillReadingId = localReading.readmillReadingId;
+        sessionDao.update(session);
+      }
+    } catch(SQLException e) {
+      Log.d(TAG, "Failed to get a DAO for queued pings", e);
+    }
+  }
+
+  private void updateReadmillReadingForHighlightsOf(LocalReading localReading) {
+    if(localReading == null || localReading.readmillReadingId < 1) {
+      return;
+    }
+
+    Log.d(TAG, "Searching for highlights without readmill reading id for local reading " + localReading.toString());
+
+    try {
+      Dao<LocalHighlight, Integer> highlightDao = ApplicationReadTracker.getHighlightDao();
+      Where<LocalHighlight, Integer> stmt = highlightDao.queryBuilder().where()
+        .eq(LocalHighlight.READING_ID_FIELD_NAME, localReading.id)
+        .and()
+        .lt(LocalHighlight.READMILL_READING_ID_FIELD_NAME, 1);
+
+      List<LocalHighlight> highlightsToProcess = stmt.query();
+
+      if(highlightsToProcess.size() < 1) {
+        Log.i(TAG, "No highlights without readmill reading id for reading " + localReading.toString() + " found. Exiting.");
+        return;
+      }
+
+      Log.i(TAG, "Updating " + highlightsToProcess.size() + " highlights");
+
+      for(LocalHighlight highlight : highlightsToProcess) {
+        Log.d(TAG, "Processing highlight with local id: " + highlight.id + " highlighted at: " + highlight.highlightedAt + " with content: " + highlight.content + " at position: " + highlight.position);
+        highlight.readmillReadingId = localReading.readmillReadingId;
+        highlightDao.update(highlight);
+      }
+    } catch(SQLException e) {
+      Log.d(TAG, "Failed to persist unsent highlights", e);
+    }
+
   }
 
   @Override
