@@ -85,8 +85,23 @@ public class ReadmillTransferIntent extends IntentService {
             localReading.coverURL = jsonBook.getString("cover_url");
           }
 
+          // Prevent a closed reading from being updated to reading by the
+          // readmill create call.
+          boolean wasClosed = localReading.isClosed();
+          int previousState = localReading.readmillState;
+          String previousClosingRemark = localReading.getClosingRemark();
+          boolean wasRecommended = localReading.readmillRecommended;
+
           // Include data from Readmill
           ReadmillConverter.mergeLocalReadingWithJSON(localReading, jsonReading);
+
+          // Put back the local data if necessary and let the sync task handle
+          // updating the Reading at a later point
+          if(wasClosed) {
+            localReading.readmillClosingRemark = previousClosingRemark;
+            localReading.readmillState = previousState;
+            localReading.readmillRecommended = wasRecommended;
+          }
 
           // Store locally
           readingDao.createOrUpdate(localReading);
