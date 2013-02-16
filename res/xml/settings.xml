@@ -14,9 +14,6 @@
       android:title="Compact finish list"
       android:summary="Hides the closing remarks for finished books"
       android:key="settings.compact_finish_list" />
-    <Preference
-      android:title="Sign out"
-      android:key="user.signout" />
   </PreferenceCategory>
 
   <PreferenceCategory android:title="About">
