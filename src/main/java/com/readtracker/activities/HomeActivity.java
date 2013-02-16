@@ -18,7 +18,6 @@ import com.readtracker.fragments.HomeFragmentAdapter;
 import com.readtracker.interfaces.LocalReadingInteractionListener;
 import com.readtracker.support.ReadmillApiHelper;
 import com.readtracker.support.ReadmillSyncStatusUIHandler;
-import com.readtracker.support.SessionTimer;
 import com.readtracker.tasks.ReadmillSyncAsyncTask;
 
 import java.sql.SQLException;
@@ -79,15 +78,7 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
     // Set correct font of header
     applyRoboto(R.id.textHeader);
 
-    // Initialize the adapter with empty list of readings (populated later)
-    initializeFragmentAdapter();
-
-    mPagerHomeActivity.setAdapter(mHomeFragmentAdapter);
-
-    mPagerHomeActivity.setCurrentItem(mHomeFragmentAdapter.getDefaultPage());
-
     bindEvents();
-
 
     PagerTabStrip pagerTabStrip = (PagerTabStrip) findViewById(R.id.pagerTabStrip);
     pagerTabStrip.setTabIndicatorColor(getResources().getColor(R.color.base_color));
@@ -109,11 +100,17 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
     super.onPostCreate(savedInstanceState);
     Log.d(TAG, "onPostCreate ReadingList");
 
+    initializeFragmentAdapter();
+    mPagerHomeActivity.setAdapter(mHomeFragmentAdapter);
+    mPagerHomeActivity.setCurrentItem(mHomeFragmentAdapter.getDefaultPage());
+
     // This is in onPostCreate instead of onCreate to avoid issues with un-dismissible dialogs
     // (as suggested at: http://stackoverflow.com/questions/891451/android-dialog-does-not-dismiss-the-dialog)
 
     if(savedInstanceState != null) {
-      mLocalReadings = savedInstanceState.getParcelableArrayList(IntentKeys.LOCAL_READINGS);
+      Log.d(TAG, "Restoring reading list from saved state");
+      List<LocalReading> frozenReadings = savedInstanceState.getParcelableArrayList(IntentKeys.LOCAL_READINGS);
+      resetLocalReadingList(frozenReadings);
       refreshLocalReadingLists();
     } else {
       fetchLocalReadings();
@@ -203,7 +200,8 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
     // Handler for showing sync status
     mSyncStatusHandler = new ReadmillSyncStatusUIHandler(R.id.stub_sync_progress, this, new SyncUpdateHandler() {
       @Override public void onReadingUpdate(LocalReading localReading) {
-        addLocalReading(localReading, true);
+        addLocalReading(localReading);
+        refreshLocalReadingLists();
       }
 
       @Override public void onReadingDelete(int localReadingId) {
@@ -255,18 +253,13 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
    * Add a local reading the lists. Handles duplication of readings.
    *
    * @param localReading  LocalReading to add
-   * @param shouldRefresh flag if the list fragments should be refreshed
    */
-  private void addLocalReading(LocalReading localReading, boolean shouldRefresh) {
+  private void addLocalReading(LocalReading localReading) {
     Log.v(TAG, String.format("addLocalReading(%s)", localReading.toString()));
 
     removeLocalReadingIfExists(localReading.id, false);
     mLocalReadings.add(localReading);
     mLocalReadingMap.put(localReading.id, localReading);
-
-    if(shouldRefresh) {
-      refreshLocalReadingLists();
-    }
   }
 
   /**
@@ -289,7 +282,23 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
   }
 
   /**
-   * Resort the local readings and tell lists to update themselves.
+   * Clear the managed list of local readings and add all of the provided
+   * readings. Handles duplicates.
+   *
+   * @param localReadings List of local readings to use (can be null).
+   */
+  private void resetLocalReadingList(List<LocalReading> localReadings) {
+    mLocalReadings.clear();
+    mLocalReadingMap.clear();
+    if(localReadings != null && localReadings.size() > 0) {
+      for(LocalReading localReading: localReadings) {
+        addLocalReading(localReading);
+      }
+    }
+  }
+
+  /**
+   * Reload the local readings and tell lists to update themselves.
    */
   private void refreshLocalReadingLists() {
     Collections.sort(mLocalReadings, mLocalReadingComparator);
@@ -381,14 +390,10 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
     Log.v(TAG, "onFetchedReadings()");
     Log.d(TAG, "Listing " + localReadings.size() + " existing readings");
 
-    mLocalReadings.clear();
-    mLocalReadingMap.clear();
-    for(LocalReading localReading: localReadings) {
-      addLocalReading(localReading, false);
-    }
+    resetLocalReadingList(localReadings);
+    refreshLocalReadingLists();
 
     getApp().clearProgressDialog();
-    refreshLocalReadingLists();
   }
 
   /**

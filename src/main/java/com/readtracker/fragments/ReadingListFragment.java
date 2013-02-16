@@ -92,6 +92,7 @@ public class ReadingListFragment extends ListFragment {
     );
 
     setListAdapter(listAdapterReadings);
+    notifyDataSetChanged(); // Trigger re-filtering
   }
 
   @Override public void onListItemClick(ListView listView, View clickedView, int position, long id) {
