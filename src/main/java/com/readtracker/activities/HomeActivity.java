@@ -164,8 +164,11 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     if(requestCode == ActivityCodes.SETTINGS) {
+      // Reset the adapter to get the (potentially) changed resources
       initializeFragmentAdapter();
       mPagerHomeActivity.setAdapter(mHomeFragmentAdapter);
+      refreshLocalReadingLists();
+      return;
     }
 
     switch(resultCode) {

@@ -77,11 +77,8 @@ public class LocalReadingAdapter extends ArrayAdapter<LocalReading> {
     super(context, resource, textViewResourceId, localReadings);
 
     mParentList = localReadings;
-    //noinspection unchecked
-    synchronized(mLock) {
-      mObjects = new ArrayList<LocalReading>();
-      mObjects.addAll(mParentList);
-    }
+    mObjects = new ArrayList<LocalReading>();
+    resetParentList();
 
     Log.d(TAG, "Creating adapter with set of " + (localReadings == null ? "NULL" : localReadings.size()) + " local readings");
     mLayoutResource = resource;
