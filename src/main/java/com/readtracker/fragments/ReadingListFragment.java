@@ -1,6 +1,5 @@
 package com.readtracker.fragments;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
@@ -16,7 +15,7 @@ import com.readtracker.adapters.LocalReadingAdapter;
 import com.readtracker.db.LocalReading;
 import com.readtracker.interfaces.LocalReadingInteractionListener;
 
-import java.util.*;
+import java.util.ArrayList;
 
 /**
  * Fragment for rendering a list of LocalReadings.
