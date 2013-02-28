@@ -8,6 +8,7 @@ exported/*
 bin/*
 tests/bin/*
 readmill.properties
+gen-external-apklibs
 
 .DS_Store
 .classpath
@@ -15,6 +16,7 @@ readmill.properties
 .settings
 settings.xml
 readtracker.sqlite
+.dropbox
 
 R.java
 
