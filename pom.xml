@@ -20,13 +20,15 @@
 
     bash ./install-android-support-for-maven.sh
 
+
   -->
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.christofferklang</groupId>
   <artifactId>readtracker</artifactId>
-  <version>3.0</version>
+  <version>3</version>
   <name>ReadTracker</name>
+  <packaging>apk</packaging>
 
   <repositories>
     <repository>
@@ -37,6 +39,7 @@
 
   <properties>
     <platform.version>2.3.3</platform.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
   <dependencies>
@@ -47,6 +50,7 @@
       <scope>provided</scope>
     </dependency>
 
+    <!-- Needs to be installed locally, see above -->
     <dependency>
       <groupId>com.google.android</groupId>
       <artifactId>support-v4</artifactId>
@@ -64,6 +68,7 @@
       <groupId>com.christofferklang</groupId>
       <artifactId>readmill-java-wrapper</artifactId>
       <version>0.1</version>
+      <scope>compile</scope>
     </dependency>
 
     <dependency>
@@ -111,7 +116,6 @@
   <profiles>
     <profile>
       <id>release</id>
-
       <build>
         <plugins>
           <plugin>
@@ -128,5 +132,4 @@
       </build>
     </profile>
   </profiles>
-
 </project>
