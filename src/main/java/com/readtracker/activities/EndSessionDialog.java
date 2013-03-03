@@ -145,9 +145,7 @@ public class EndSessionDialog extends DialogFragment {
     mProgressPicker.setOnProgressChangeListener(new ProgressPicker.OnProgressChangeListener() {
       @Override
       public void onChangeProgress(int newPage) {
-        Log.v(TAG, String.format("Total pages: %d, current page: %d", newPage, mProgressPicker.getTotalPageCount()));
         final boolean onLastPage = newPage == mLocalReading.totalPages;
-        Log.v(TAG, "onLastPage? " + (onLastPage ? "YES": "NO"));
 
         if(!onLastPage) {
           boolean hasChanged = mLocalReading.currentPage != newPage;

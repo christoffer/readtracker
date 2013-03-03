@@ -20,7 +20,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
   }
 
   public static final String DATABASE_NAME = "readtracker.db";
-  public static final int DATABASE_VERSION = 9;
+  public static final int DATABASE_VERSION = 10;
   private static final String TAG = DatabaseHelper.class.getName();
 
   private Dao<LocalReading, Integer> readingDao = null;
@@ -97,6 +97,10 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         _upgradeToVersion9(db, connectionSource);
         runningVersion++;
       }
+      if(runningVersion == 9) {
+        _upgradeToVersion10(db, connectionSource);
+        runningVersion++;
+      }
       Log.d(TAG, "Ended on running version: " + runningVersion);
     } catch(SQLException e) {
       Log.e(TAG, "Failed to upgrade database: " + DATABASE_NAME, e);
@@ -104,8 +108,9 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     }
   }
 
-  // Database Upgrade methods
-
+  /**
+   * This migration will extend and rename the session table.
+   */
   private void _upgradeToVersion2(SQLiteDatabase db, ConnectionSource cs) {
     Log.i(TAG, "Running database upgrade 2");
     db.execSQL("ALTER TABLE QueuedPing RENAME TO ReadingSession;");
@@ -116,7 +121,9 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     db.execSQL("ALTER TABLE ReadingSession ADD COLUMN " + LocalSession.IS_READTRACKER_SESSION_FIELD_NAME + " INTEGER NOT NULL DEFAULT 1;");
   }
 
-  // Database Upgrade methods
+  /**
+   * This migration will add highlights table and syncing fields to readings.
+   */
   private void _upgradeToVersion3(SQLiteDatabase db, ConnectionSource cs) {
     Log.i(TAG, "Running database upgrade 3");
     db.execSQL("ALTER TABLE LocalReading ADD COLUMN " + LocalReading.LAST_READ_AT_FIELD_NAME + " INTEGER NULL;");
@@ -141,6 +148,12 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     }
   }
 
+  /**
+   * This migration will fix an issue with duplicate highlights being created
+   * once they were synced to Readmill.
+   * A local one would be created, and then the sync failed to match it against
+   * the remote one once, causing an identical highlight to be created.
+   */
   private void _upgradeToVersion4(SQLiteDatabase db, ConnectionSource connectionSource) {
     Log.i(TAG, "Running database upgrade 4");
     try {
@@ -197,21 +210,28 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     }
   }
 
+  /**
+   * This migration will rename all tables to a new naming scheme.
+   */
   private void _upgradeToVersion5(SQLiteDatabase db, ConnectionSource connectionSource) {
     Log.i(TAG, "Running database upgrade 5");
-    // Major refactoring - name tables to distinguish them from the "Remote"
-    // data (from Readmill).
     db.execSQL("ALTER TABLE ReadingData RENAME TO LocalReading;");
     db.execSQL("ALTER TABLE ReadingHighlight RENAME TO LocalHighlight;");
     db.execSQL("ALTER TABLE ReadingSession RENAME TO LocalSession;");
   }
 
+  /**
+   * This migration will add the measure in percent flag to readings.
+   */
   private void _upgradeToVersion6(SQLiteDatabase db, ConnectionSource connectionSource) {
     Log.i(TAG, "Running database upgrade 6");
-    // Add measure in percent flag
     db.execSQL("ALTER TABLE LocalReading ADD COLUMN " + LocalReading.MEASURE_IN_PERCENT + " INTEGER NOT NULL DEFAULT 0;");
   }
 
+  /**
+   * This migration will add counters to highlights and a recommended flag to
+   * readings.
+   */
   private void _upgradeToVersion7(SQLiteDatabase db, ConnectionSource connectionSource) {
     Log.i(TAG, "Running database upgrade 7");
     db.execSQL("ALTER TABLE LocalHighlight ADD COLUMN " + LocalHighlight.COMMENT_COUNT_FIELD_NAME + " INTEGER NOT NULL DEFAULT 0;");
@@ -226,14 +246,17 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     db.execSQL("ALTER TABLE LocalReading ADD COLUMN " + LocalReading.STARTED_AT_FIELD_NAME + " INTEGER NOT NULL DEFAULT 0;");
   }
 
+  /**
+    This upgrade fixes an issue where sessions and highlights for readings that
+    were started offline never got the readmill reading id set on them once the
+    reading was connected to Readmill.
+
+    It goes through all sessions and highlights with a missing readmill reading
+    id. For each of these it adopts the readmill reading id of the parent reading
+    (if set).
+   */
   private void _upgradeToVersion9(SQLiteDatabase db, ConnectionSource connectionSource) throws SQLException {
     Log.i(TAG, "Running database upgrade 9");
-
-    // Get local sessions where reading reading id is -1
-    // For each local session, check if the parent reading has a readmill reading id
-    // If so set the session readmill reading id to that of the parent
-
-    // Repeat for highlights
 
     List<LocalReading> connectedReadings = getReadingDao().queryBuilder()
       .where()
@@ -266,5 +289,13 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         getHighlightDao().update(highlight);
       }
     }
+  }
+
+  /**
+   * This upgrade adds the comment field to highlights.
+   */
+  private void _upgradeToVersion10(SQLiteDatabase db, ConnectionSource connectionSource) throws SQLException {
+    Log.i(TAG, "Running database upgrade 10");
+    db.execSQL("ALTER TABLE LocalHighlight ADD COLUMN " + LocalHighlight.COMMENT_FIELD_NAME + " TEXT NULL;");
   }
 }

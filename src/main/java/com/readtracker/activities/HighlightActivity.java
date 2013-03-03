@@ -24,6 +24,7 @@ import java.util.Date;
  */
 public class HighlightActivity extends ReadTrackerActivity {
   private static EditText mEditHighlightText;
+  private static EditText mEditHighlightComment;
   private static Button mButtonSaveHighlight;
 
   private static ProgressPicker mProgressPicker;
@@ -60,8 +61,13 @@ public class HighlightActivity extends ReadTrackerActivity {
       findViewById(R.id.textLabelEnterPosition).setVisibility(View.GONE);
     }
 
-    Drawable drawable = DrawableGenerator.generateEditTextOutline(mLocalReading.getColor(), getPixels(1), getPixels(3));
-    mEditHighlightText.setBackgroundDrawable(drawable);
+    if(getCurrentUser() == null) {
+      // Hide commenting for anonymous users
+      findViewById(R.id.layoutHighlightComment).setVisibility(View.GONE);
+    }
+
+    setBackgroundDrawable(mEditHighlightText);
+    setBackgroundDrawable(mEditHighlightComment);
     mButtonSaveHighlight.setBackgroundDrawable(DrawableGenerator.generateButtonBackground(mLocalReading.getColor()));
 
     ViewBindingBookHeader.bindWithDefaultClickHandler(this, mLocalReading);
@@ -78,8 +84,14 @@ public class HighlightActivity extends ReadTrackerActivity {
     }
   }
 
+  @Override
+  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
+  }
+
   private void bindViews() {
     mEditHighlightText = (EditText) findViewById(R.id.editHighlight);
+    mEditHighlightComment = (EditText) findViewById(R.id.editHighlightComment);
     mButtonSaveHighlight = (Button) findViewById(R.id.buttonSaveHighlight);
     mProgressPicker = (ProgressPicker) findViewById(R.id.progressPicker);
   }
@@ -93,9 +105,18 @@ public class HighlightActivity extends ReadTrackerActivity {
     });
   }
 
+  private void setBackgroundDrawable(View view) {
+    Drawable backgroundDrawable;
+    backgroundDrawable = DrawableGenerator.generateEditTextOutline(
+      mLocalReading.getColor(), getPixels(1), getPixels(3)
+    );
+    view.setBackgroundDrawable(backgroundDrawable);
+  }
+
   private void saveHighlight() {
     Log.i(TAG, "Saving highlight for LocalReading with id:" + mLocalReading.id);
     String content = mEditHighlightText.getText().toString();
+    String comment = mEditHighlightComment.getText().toString();
 
     if(!validateHighlightContent(content)) {
       return;
@@ -117,6 +138,10 @@ public class HighlightActivity extends ReadTrackerActivity {
     highlight.readmillUserId = readmillUserId;
     highlight.position = position;
     highlight.highlightedAt = new Date();
+
+    if(comment.length() > 0) {
+      highlight.comment = comment;
+    }
 
     new CreateHighlightAsyncTask(new CreateHighlightTaskListener() {
       @Override
@@ -155,10 +180,5 @@ public class HighlightActivity extends ReadTrackerActivity {
     }
 
     return true;
-  }
-
-  @Override
-  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    super.onActivityResult(requestCode, resultCode, data);
   }
 }
