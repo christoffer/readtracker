@@ -48,6 +48,8 @@ public class LocalReading implements Parcelable {
   public static final String DELETED_BY_USER_FIELD_NAME = "user_deleted";
   public static final String STARTED_AT_FIELD_NAME = "started_at";
 
+  public static final String UPDATED_AT_FIELD_NAME = "updated_at";
+
   // Database => Member bindings
 
   @DatabaseField(generatedId = true)
@@ -82,6 +84,9 @@ public class LocalReading implements Parcelable {
 
   @DatabaseField(columnName = LOCALLY_CLOSED_AT_FIELD_NAME)
   protected long locallyClosedAt;
+
+  @DatabaseField(columnName = UPDATED_AT_FIELD_NAME)
+  protected long updatedAt;
 
   @DatabaseField(columnName = DELETED_BY_USER_FIELD_NAME)
   public boolean deletedByUser = false;
@@ -280,6 +285,10 @@ public class LocalReading implements Parcelable {
 
   public Date getRemoteTouchedAt() {
     return _unixSecondsToDate(readmillTouchedAt);
+  }
+
+  public boolean getUpdatedAt() {
+    return updatedAt;
   }
 
   public boolean touchedAtDifferentFrom(long other) {
