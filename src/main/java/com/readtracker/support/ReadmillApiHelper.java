@@ -3,6 +3,7 @@ package com.readtracker.support;
 import android.util.Log;
 import com.readmill.api.*;
 import com.readtracker.db.LocalHighlight;
+import com.readtracker.db.LocalReading;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -166,6 +167,26 @@ public class ReadmillApiHelper {
     }
     try {
       sendRequest(request, "close reading", 200);
+      return true;
+    } catch(ReadmillException e) {
+      Log.w(TAG, "Failed to update Reading", e);
+      return false;
+    }
+  }
+
+  /**
+   * Updates a Readmill reading by setting the privacy flag.
+   *
+   * @return true if the reading was successfully updated.
+   */
+  public boolean updateReading(long readmillReadingId, boolean isPrivate) {
+    Log.i(TAG, "Update reading, setting privacy: " + isPrivate);
+
+    String endpoint = String.format("/readings/%d", readmillReadingId);
+
+    RequestBuilder request = mWrapper.put(endpoint).readingPrivate(isPrivate);
+    try {
+      sendRequest(request, "update reading", 200);
       return true;
     } catch(ReadmillException e) {
       Log.w(TAG, "Failed to update Reading", e);

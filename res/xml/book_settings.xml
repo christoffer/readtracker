@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-  <PreferenceCategory android:title="Social">
+  <PreferenceCategory android:title="Social" android:key="readmill">
     <CheckBoxPreference
       android:title="Visible on Readmill"
-      android:summary="Let others view your progress on your Readmill profile (Not yet implemented)"
+      android:summary="Let others view your progress on your Readmill profile"
       android:checked="true"
-      android:enabled="false"
       android:key="readmill.privacy" />
 
   </PreferenceCategory>

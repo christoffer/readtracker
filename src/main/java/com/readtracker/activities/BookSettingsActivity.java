@@ -7,14 +7,18 @@ import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceCategory;
 import android.util.Log;
 import android.widget.Toast;
+import com.readtracker.ApplicationReadTracker;
 import com.readtracker.IntentKeys;
 import com.readtracker.R;
 import com.readtracker.SettingsKeys;
 import com.readtracker.db.LocalReading;
 import com.readtracker.interfaces.SaveLocalReadingListener;
 import com.readtracker.tasks.SaveLocalReadingTask;
+
+import java.util.Date;
 
 public class BookSettingsActivity extends PreferenceActivity {
   private static final String TAG = BookSettingsActivity.class.getName();
@@ -31,16 +35,27 @@ public class BookSettingsActivity extends PreferenceActivity {
       mLocalReading = savedInstanceState.getParcelable(IntentKeys.LOCAL_READING);
     }
 
-    CheckBoxPreference checkboxReadmillPrivacy = (CheckBoxPreference) findPreference(SettingsKeys.READMILL_PRIVACY);
     Preference prefDeleteBook = findPreference(SettingsKeys.BOOK_DELETE_BOOK);
     Preference prefEditBookPages = findPreference(SettingsKeys.BOOK_EDIT_PAGES);
 
-    checkboxReadmillPrivacy.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-      @Override public boolean onPreferenceChange(Preference preference, Object o) {
-        toastNotImplemented();
-        return false;
-      }
-    });
+
+    if(((ApplicationReadTracker) getApplication()).getCurrentUser() == null) {
+      // Remove Readmill settings for anonymous users
+      PreferenceCategory readmillCategory = (PreferenceCategory) findPreference(SettingsKeys.READMILL);
+      getPreferenceScreen().removePreference(readmillCategory);
+    } else {
+      final CheckBoxPreference checkboxReadmillPrivacy = (CheckBoxPreference) findPreference(SettingsKeys.READMILL_PRIVACY);
+      checkboxReadmillPrivacy.setChecked(!mLocalReading.readmillPrivate);
+      checkboxReadmillPrivacy.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+        @Override public boolean onPreferenceChange(Preference preference, Object newValue) {
+          boolean isPrivate = !((Boolean) newValue);
+          Log.d(TAG, "Changed privacy to: " + (isPrivate ? "private" : "public"));
+
+          toggleReadingPrivate(isPrivate);
+          return true;
+        }
+      });
+    }
 
     prefDeleteBook.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
       @Override public boolean onPreferenceClick(Preference preference) {
@@ -62,8 +77,11 @@ public class BookSettingsActivity extends PreferenceActivity {
     outState.putParcelable(IntentKeys.LOCAL_READING, mLocalReading);
   }
 
-  private void toastNotImplemented() {
-    Toast.makeText(this, "Not yet implemented", Toast.LENGTH_SHORT).show();
+  private void toastPrivacyChanged() {
+    String message = "Reading is now " + (mLocalReading.readmillPrivate ? "private" : "public") + ".\n";
+    message += "Changes to Readmill will be applied on next sync.";
+
+    Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
   }
 
   private void toastDeleted(boolean isConnected) {
@@ -97,6 +115,20 @@ public class BookSettingsActivity extends PreferenceActivity {
     builder.setNegativeButton("Cancel", null);
 
     builder.show();
+  }
+
+  private void toggleReadingPrivate(boolean newIsPrivate) {
+    if(newIsPrivate == mLocalReading.readmillPrivate) {
+      return;
+    }
+
+    mLocalReading.readmillPrivate = newIsPrivate;
+    mLocalReading.setUpdatedAt(new Date());
+    SaveLocalReadingTask.save(mLocalReading, new SaveLocalReadingListener() {
+      @Override public void onLocalReadingSaved(LocalReading localReading) {
+        toastPrivacyChanged();
+      }
+    });
   }
 
   private void deleteReading(LocalReading localReading) {

@@ -172,6 +172,7 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
     localReading.setTouchedAt(ReadmillApiHelper.parseISO8601(remoteReading.getString("touched_at")));
     localReading.readmillState = ReadmillApiHelper.toIntegerState(remoteReading.getString("state"));
     localReading.readmillClosingRemark = ReadmillConverter.optString("closing_remark", null, remoteReading);
+    localReading.readmillPrivate = remoteReading.getBoolean("private");
 
     String coverURL = remoteBook.getString("cover_url");
     if(coverURL.matches("default-cover")) {
@@ -281,6 +282,7 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
     throws JSONException, SQLException, ReadmillException {
     Map<LocalReading, JSONObject> pullChangesList = new HashMap<LocalReading, JSONObject>();
     List<LocalReading> pushClosedStateList = new ArrayList<LocalReading>();
+    List<LocalReading> pushLocallyChangedList = new ArrayList<LocalReading>();
     List<JSONObject> pullReadingsList = new ArrayList<JSONObject>();
     List<LocalReading> readingsToDelete = new ArrayList<LocalReading>();
     List<LocalReading> possibleOrphans = new ArrayList<LocalReading>();
@@ -332,15 +334,22 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
         if(localReading.deletedByUser) {
           Log.d(TAG, "Local reading has been deleted: " + localReading.readmillReadingId);
           readingsToDelete.add(localReading);
-        } else if(closedLocallyButNotRemotely(localReading, remoteReading)) {
-          Log.d(TAG, "Local reading has been closed, readmill id:" + remoteReadingId);
-          pushClosedStateList.add(localReading);
-        } else if(fullSync || localReading.hasRemoteChangedFrom(remoteTouchedAt)) {
-          Log.d(TAG, "Remote reading has changed, readmill id: " + remoteReadingId);
-          Log.d(TAG, " - Local timestamp: " + (0.001 * localReading.getTouchedAt().getTime()) + " vs remote: " + remoteTouchedAt);
-          pullChangesList.put(localReading, remoteReading);
         } else {
-          Log.d(TAG, "No changes detected, readmill id: " + remoteReadingId);
+          if(hasLocalChanges(localReading, remoteReading)) {
+            Log.d(TAG, "Local reading has changes that will be pushed to remote reading: " + remoteReadingId);
+            pushLocallyChangedList.add(localReading);
+          }
+
+          if(closedLocallyButNotRemotely(localReading, remoteReading)) {
+            Log.d(TAG, "Local reading has been closed, readmill id:" + remoteReadingId);
+            pushClosedStateList.add(localReading);
+          }
+
+          if(fullSync || localReading.hasRemoteChangedFrom(remoteTouchedAt)) {
+            Log.d(TAG, "Remote reading has changed, readmill id: " + remoteReadingId);
+            Log.d(TAG, " - Local timestamp: " + (0.001 * localReading.getRemoteTouchedAt().getTime()) + " vs remote: " + remoteTouchedAt);
+            pullChangesList.put(localReading, remoteReading);
+          }
         }
 
         break;
@@ -354,6 +363,7 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
 
     confirmAndDeleteOrphans(possibleOrphans);
     pushDeletions(readingsToDelete);
+    pushLocallyChanged(pushLocallyChangedList);
     pushClosedStates(pushClosedStateList);
     pullChanges(pullChangesList);
     createLocalReadings(pullReadingsList);
@@ -389,6 +399,21 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
       mReadmillApi.deleteReading(localReading.readmillReadingId);
       Log.v(TAG, "Reading deleted on Readmill. Deleting locally: " + localReading);
       mReadingDao.delete(localReading);
+    }
+  }
+
+  /**
+   * Push changes from the device into Readmill.
+   *
+   * Currently only pushes the Readmill privacy.
+   *
+   * @param localReadings changed readings to push.
+   */
+  private void pushLocallyChanged(List<LocalReading> localReadings) {
+    Log.d(TAG, "Changing privacy on the server for " + localReadings.size() + " readings");
+    for(LocalReading localReading : localReadings) {
+      Log.v(TAG, "Changing privacy on Readmill for LocalReading: " + localReading.toString());
+      mReadmillApi.updateReading(localReading.readmillReadingId, localReading.readmillPrivate);
     }
   }
 
@@ -435,6 +460,28 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
     boolean isClosedRemotely = remoteState.equals("finished") || remoteState.equals("abandoned");
 
     return isClosedLocally && !isClosedRemotely;
+  }
+
+  /**
+   * Check if a local reading has data that has been changed by the user and not
+   * yet pushed to the server.
+   * @param localReading LocalReading to check
+   * @param remoteReading Reading object on readmill to compare against
+   * @return true if the local reading has any changes that should be pushed.
+   * @throws JSONException if the readmill object is not properly formatted
+   */
+  private boolean hasLocalChanges(LocalReading localReading, JSONObject remoteReading) throws JSONException {
+    // Currently the only local data that can fall out of sync (except the state)
+    // is privacy. Extend this guard if/when more fields are added later.
+    if(localReading.readmillPrivate == remoteReading.getBoolean("private")) {
+      return false;
+    }
+
+    // Push a local change only if it's newer than the servers. This relies on
+    // the fact that the device time is (somewhat) correct.
+    long locallyChangedAt = (localReading.getUpdatedAt().getTime() / 1000); // Convert to seconds
+    long remotelyChangedAt = ReadmillApiHelper.parseISO8601ToUnix(remoteReading.getString("touched_at"));
+    return locallyChangedAt > remotelyChangedAt;
   }
 
   /**
