@@ -21,4 +21,5 @@ class ActivityCodes {
   public static final int REQUEST_BOOK_SETTINGS = 10;
 
   public static final int RESULT_REQUESTED_BOOK_SETTINGS = 11;
+  public static final int RESULT_LOCAL_READING_UPDATED = 12;
 }

@@ -109,8 +109,7 @@ public class BookActivity extends ReadTrackerActivity implements EndSessionDialo
         if(resultCode == ActivityCodes.RESULT_REQUESTED_BOOK_SETTINGS) {
           exitToBookEditScreen((LocalReading) data.getParcelableExtra(IntentKeys.LOCAL_READING));
         } else if(resultCode == ActivityCodes.RESULT_DELETED_BOOK) {
-          // finish with success to have the home screen reload
-          shutdownWithResult(ActivityCodes.RESULT_OK);
+          shutdownWithResult(ActivityCodes.RESULT_LOCAL_READING_UPDATED);
         } else if(resultCode == ActivityCodes.RESULT_OK) {
           Log.d(TAG, "Came back from changing the book settings");
           // Something changed
@@ -142,11 +141,7 @@ public class BookActivity extends ReadTrackerActivity implements EndSessionDialo
   @Override
   public void onSessionCreated(LocalSession localSession) {
     Log.d(TAG, "Created a local session");
-    // Fire off a transfer of the new session
-    startService(new Intent(this, ReadmillTransferIntent.class));
-
-    // And bail out
-    shutdownWithResult(ActivityCodes.RESULT_OK);
+    shutdownWithResult(ActivityCodes.RESULT_LOCAL_READING_UPDATED);
   }
 
   /**

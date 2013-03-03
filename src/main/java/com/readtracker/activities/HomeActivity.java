@@ -160,28 +160,27 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
 
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    final boolean needReloadDueToReadingSession = (
+      requestCode == ActivityCodes.REQUEST_READING_SESSION &&
+      resultCode == ActivityCodes.RESULT_LOCAL_READING_UPDATED
+    );
+    final boolean needReloadDueToAddedBook = requestCode == ActivityCodes.REQUEST_ADD_BOOK;
+    // Handle coming back from settings
     if(requestCode == ActivityCodes.SETTINGS) {
-      // Reset the adapter to get the (potentially) changed resources
-      initializeFragmentAdapter();
-      mPagerHomeActivity.setAdapter(mHomeFragmentAdapter);
-      refreshLocalReadingLists();
-      return;
-    }
-
-    switch(resultCode) {
-      case ActivityCodes.RESULT_OK:
-        // Refresh the list of readings after a session, and start a sync
-        // with Readmill to send the new data
-        Log.v(TAG, "Result OK from :" + requestCode);
-        fetchLocalReadings();
-        sync(false);
-        break;
-      case ActivityCodes.RESULT_SIGN_OUT:
-        if(requestCode == ActivityCodes.SETTINGS) {
-          getApp().signOut();
-          finish();
-        }
-        break;
+      if(resultCode == ActivityCodes.RESULT_SIGN_OUT) {
+        getApp().signOut();
+        finish();
+      } else {
+        // Reset the adapter to refresh views if the user toggled compact mode
+        initializeFragmentAdapter();
+        mPagerHomeActivity.setAdapter(mHomeFragmentAdapter);
+        refreshLocalReadingLists();
+      }
+    } else if(needReloadDueToReadingSession || needReloadDueToAddedBook) {
+      // Push new changes and reload local lists
+      startService(new Intent(this, ReadmillTransferIntent.class));
+      fetchLocalReadings();
+      sync(false);
     }
   }
 
@@ -237,7 +236,7 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
    * @param localReading clicked local reading
    */
   @Override public void onLocalReadingClicked(LocalReading localReading) {
-    exitToActivityBook(localReading.id);
+    exitToBookActivity(localReading.id);
   }
 
   /**
@@ -373,7 +372,7 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
     startActivityForResult(intentSettings, ActivityCodes.SETTINGS);
   }
 
-  private void exitToActivityBook(int localReadingId) {
+  private void exitToBookActivity(int localReadingId) {
     Intent intentReadingSession = new Intent(this, BookActivity.class);
     intentReadingSession.putExtra(IntentKeys.READING_ID, localReadingId);
 
