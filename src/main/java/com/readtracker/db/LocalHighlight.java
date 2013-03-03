@@ -23,6 +23,7 @@ public class LocalHighlight implements Parcelable {
   public static final String READMILL_READING_ID_FIELD_NAME = "rm_reading_id";
   public static final String READMILL_PERMALINK_URL_FIELD_NAME = "rm_permalink";
 
+  public static final String COMMENT_FIELD_NAME = "comment";
   public static final String COMMENT_COUNT_FIELD_NAME = "comment_count";
   public static final String LIKE_COUNT_FIELD_NAME = "like_count";
 
@@ -42,6 +43,7 @@ public class LocalHighlight implements Parcelable {
   @DatabaseField(columnName = READMILL_USER_ID_FIELD_NAME)        public long readmillUserId = -1;
   @DatabaseField(columnName = READMILL_PERMALINK_URL_FIELD_NAME)  public String readmillPermalinkUrl;
 
+  @DatabaseField(columnName = COMMENT_FIELD_NAME)                 public String comment;
   @DatabaseField(columnName = COMMENT_COUNT_FIELD_NAME)           public int commentCount = 0;
   @DatabaseField(columnName = LIKE_COUNT_FIELD_NAME)              public int likeCount = 0;
 
