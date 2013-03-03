@@ -139,8 +139,16 @@ public class AddBookActivity extends ReadTrackerActivity {
     mEditTitle.setText(localReading.title);
     mEditAuthor.setText(localReading.author);
 
-    long pageCount = localReading.totalPages;
-    setInitialPageCount(pageCount);
+    if(localReading.isMeasuredInPercent()) {
+      mEditPageCount.setText("");
+      mSwitchPagesPercent.setChecked(false);
+    } else {
+      if(localReading.totalPages > 0) {
+        mEditPageCount.setText(String.valueOf(localReading.totalPages));
+      }
+      mSwitchPagesPercent.setChecked(true);
+    }
+
     mCoverURL = localReading.coverURL;
   }
 
@@ -182,6 +190,11 @@ public class AddBookActivity extends ReadTrackerActivity {
     } else {
       localReading.totalPages = 1000;
       localReading.measureInPercent = true;
+    }
+
+    // Recalculate the current page based on the progress if needed
+    if(localReading.currentPage > 0 && localReading.progress > 0.0) {
+      localReading.currentPage = (long)(localReading.totalPages * localReading.progress);
     }
 
     saveLocalReading(localReading);
