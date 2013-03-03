@@ -61,8 +61,8 @@ public class HighlightActivity extends ReadTrackerActivity {
       findViewById(R.id.textLabelEnterPosition).setVisibility(View.GONE);
     }
 
-    Drawable drawable = DrawableGenerator.generateEditTextOutline(mLocalReading.getColor(), getPixels(1), getPixels(3));
-    mEditHighlightText.setBackgroundDrawable(drawable);
+    setBackgroundDrawable(mEditHighlightText);
+    setBackgroundDrawable(mEditHighlightComment);
     mButtonSaveHighlight.setBackgroundDrawable(DrawableGenerator.generateButtonBackground(mLocalReading.getColor()));
 
     ViewBindingBookHeader.bindWithDefaultClickHandler(this, mLocalReading);
@@ -79,6 +79,11 @@ public class HighlightActivity extends ReadTrackerActivity {
     }
   }
 
+  @Override
+  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
+  }
+
   private void bindViews() {
     mEditHighlightText = (EditText) findViewById(R.id.editHighlight);
     mEditHighlightComment = (EditText) findViewById(R.id.editHighlightComment);
@@ -93,6 +98,14 @@ public class HighlightActivity extends ReadTrackerActivity {
         saveHighlight();
       }
     });
+  }
+
+  private void setBackgroundDrawable(View view) {
+    Drawable backgroundDrawable;
+    backgroundDrawable = DrawableGenerator.generateEditTextOutline(
+      mLocalReading.getColor(), getPixels(1), getPixels(3)
+    );
+    view.setBackgroundDrawable(backgroundDrawable);
   }
 
   private void saveHighlight() {
@@ -162,10 +175,5 @@ public class HighlightActivity extends ReadTrackerActivity {
     }
 
     return true;
-  }
-
-  @Override
-  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    super.onActivityResult(requestCode, resultCode, data);
   }
 }
