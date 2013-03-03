@@ -24,6 +24,7 @@ import java.util.Date;
  */
 public class HighlightActivity extends ReadTrackerActivity {
   private static EditText mEditHighlightText;
+  private static EditText mEditHighlightComment;
   private static Button mButtonSaveHighlight;
 
   private static ProgressPicker mProgressPicker;
@@ -80,6 +81,7 @@ public class HighlightActivity extends ReadTrackerActivity {
 
   private void bindViews() {
     mEditHighlightText = (EditText) findViewById(R.id.editHighlight);
+    mEditHighlightComment = (EditText) findViewById(R.id.editHighlightComment);
     mButtonSaveHighlight = (Button) findViewById(R.id.buttonSaveHighlight);
     mProgressPicker = (ProgressPicker) findViewById(R.id.progressPicker);
   }
@@ -96,6 +98,7 @@ public class HighlightActivity extends ReadTrackerActivity {
   private void saveHighlight() {
     Log.i(TAG, "Saving highlight for LocalReading with id:" + mLocalReading.id);
     String content = mEditHighlightText.getText().toString();
+    String comment = mEditHighlightComment.getText().toString();
 
     if(!validateHighlightContent(content)) {
       return;
@@ -117,6 +120,10 @@ public class HighlightActivity extends ReadTrackerActivity {
     highlight.readmillUserId = readmillUserId;
     highlight.position = position;
     highlight.highlightedAt = new Date();
+
+    if(comment.length() > 0) {
+      highlight.comment = comment;
+    }
 
     new CreateHighlightAsyncTask(new CreateHighlightTaskListener() {
       @Override
