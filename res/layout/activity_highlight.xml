@@ -44,7 +44,7 @@
           style="@style/default_text"
           android:layout_marginTop="24dp"
           android:layout_marginBottom="6dp"
-          android:text="Leave a comment" />
+          android:text="Share with comment" />
 
         <EditText
           android:id="@+id/editHighlightComment"

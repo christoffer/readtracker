@@ -61,6 +61,11 @@ public class HighlightActivity extends ReadTrackerActivity {
       findViewById(R.id.textLabelEnterPosition).setVisibility(View.GONE);
     }
 
+    if(getCurrentUser() == null) {
+      // Hide commenting for anonymous users
+      findViewById(R.id.layoutHighlightComment).setVisibility(View.GONE);
+    }
+
     setBackgroundDrawable(mEditHighlightText);
     setBackgroundDrawable(mEditHighlightComment);
     mButtonSaveHighlight.setBackgroundDrawable(DrawableGenerator.generateButtonBackground(mLocalReading.getColor()));
