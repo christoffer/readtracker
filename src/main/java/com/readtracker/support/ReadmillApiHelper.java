@@ -103,6 +103,10 @@ public class ReadmillApiHelper {
       highlightLocators(_buildLocator(localHighlight)).
       highlightHighlightedAt(localHighlight.highlightedAt);
 
+    if(localHighlight.hasComment()) {
+      request.commentContent(localHighlight.comment);
+    }
+
     JSONObject remoteHighlight = null;
     try {
       remoteHighlight = sendRequest(request, "create a highlight", 200, 201).

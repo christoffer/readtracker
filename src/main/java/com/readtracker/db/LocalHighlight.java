@@ -62,8 +62,13 @@ public class LocalHighlight implements Parcelable {
     public LocalHighlight[] newArray(int size) { return new LocalHighlight[size]; }
   };
 
-  public boolean isConnected() {
-    return readmillReadingId > 0;
+  /**
+   * Checks the presence of a comment on the highlight.
+   *
+   * @return true if the highlight has a comment attached.
+   */
+  public boolean hasComment() {
+    return comment != null && comment.length() > 0;
   }
 
   @Override
