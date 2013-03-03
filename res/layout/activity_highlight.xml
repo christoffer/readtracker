@@ -7,42 +7,73 @@
 
   <include layout="@layout/_book_header" />
 
-  <TextView
-    android:id="@+id/textLabelEnterHighlight"
-    style="@style/default_text"
+  <ScrollView
+    android:layout_height="fill_parent"
+    android:layout_width="fill_parent"
     android:layout_below="@id/_bookHeader"
-    android:layout_marginTop="6dp"
-    android:layout_marginBottom="6dp"
-    android:text="Highlight text" />
-
-  <EditText
-    android:id="@+id/editHighlight"
-    style="@style/free_text_input"
     android:layout_above="@+id/textLabelEnterPosition"
-    android:layout_below="@+id/textLabelEnterHighlight"
-    android:hint="" />
-
-  <TextView
-    android:id="@+id/textLabelEnterPosition"
-    style="@style/default_text"
-    android:layout_above="@+id/progressPicker"
     android:layout_marginTop="6dp"
-    android:layout_marginBottom="6dp"
-    android:text="Position in book" />
+    android:layout_marginBottom="6dp">
 
-  <com.readtracker.custom_views.ProgressPicker
-    android:id="@+id/progressPicker"
-    android:layout_width="wrap_content"
-    android:layout_centerHorizontal="true"
-    android:layout_height="wrap_content"
-    android:layout_above="@+id/buttonSaveHighlight"
-    android:layout_marginTop="12dp"
-    android:layout_marginBottom="12dp" />
+    <LinearLayout
+      android:id="@+id/layoutHighlightEntry"
+      android:layout_height="wrap_content"
+      android:layout_width="fill_parent"
+      android:orientation="vertical">
 
-  <Button
-    android:id="@+id/buttonSaveHighlight"
-    style="@style/default_button"
-    android:text="Save"
-    android:layout_alignParentBottom="true" />
+      <TextView
+        android:id="@+id/textLabelEnterHighlight"
+        style="@style/default_text"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="6dp"
+        android:text="Highlight text" />
 
+      <EditText
+        android:id="@+id/editHighlight"
+        style="@style/free_text_input"
+        android:minHeight="128dp"
+        android:hint="" />
+
+      <LinearLayout
+        android:id="@+id/layoutHighlightComment"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:orientation="vertical">
+
+        <TextView
+          style="@style/default_text"
+          android:layout_marginTop="24dp"
+          android:layout_marginBottom="6dp"
+          android:text="Leave a comment" />
+
+        <EditText
+          android:id="@+id/editHighlightComment"
+          style="@style/free_text_input"
+          android:minHeight="64dp"
+          android:hint="" />
+
+      </LinearLayout>
+
+      <TextView
+        android:id="@+id/textLabelEnterPosition"
+        style="@style/default_text"
+        android:layout_above="@+id/progressPicker"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="6dp"
+        android:text="Position in book" />
+
+      <com.readtracker.custom_views.ProgressPicker
+        android:id="@+id/progressPicker"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp" />
+
+      <Button
+        android:id="@+id/buttonSaveHighlight"
+        style="@style/default_button"
+        android:text="Save" />
+    </LinearLayout>
+  </ScrollView>
 </RelativeLayout>
