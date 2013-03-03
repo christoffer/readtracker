@@ -181,8 +181,8 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
       localReading.coverURL = coverURL;
     }
 
-    if(localReading.getTouchedAt().after(localReading.getLastReadAt())) {
-      localReading.setLastReadAt(localReading.getTouchedAt());
+    if(localReading.getRemoteTouchedAt().after(localReading.getLastReadAt())) {
+      localReading.setLastReadAt(localReading.getRemoteTouchedAt());
     }
 
     mReadingDao.update(localReading);

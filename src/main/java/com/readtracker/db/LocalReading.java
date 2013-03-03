@@ -278,7 +278,7 @@ public class LocalReading implements Parcelable {
     readmillTouchedAt = _dateToUnixSeconds(date);
   }
 
-  public Date getTouchedAt() {
+  public Date getRemoteTouchedAt() {
     return _unixSecondsToDate(readmillTouchedAt);
   }
 
