@@ -291,7 +291,7 @@ public class LocalReading implements Parcelable {
     return updatedAt;
   }
 
-  public boolean touchedAtDifferentFrom(long other) {
+  public boolean hasRemoteChangedFrom(long other) {
     return readmillTouchedAt != other;
   }
 
