@@ -253,11 +253,11 @@ public class LocalReadingAdapter extends ArrayAdapter<LocalReading> {
     @Override
     protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
       Log.v(TAG, "publishResults()");
-      notifyDataSetChanged();
       synchronized(mLock) {
         mObjects = new ArrayList<LocalReading>(filterResults.count);
         mObjects.addAll((ArrayList<LocalReading>) filterResults.values);
       }
+      notifyDataSetChanged();
     }
   }
 }
