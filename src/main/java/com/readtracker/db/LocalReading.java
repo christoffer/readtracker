@@ -287,8 +287,12 @@ public class LocalReading implements Parcelable {
     return _unixSecondsToDate(readmillTouchedAt);
   }
 
-  public boolean getUpdatedAt() {
-    return updatedAt;
+  public void setUpdatedAt(Date date) {
+    updatedAt = _dateToUnixSeconds(date);
+  }
+
+  public Date getUpdatedAt() {
+    return _unixSecondsToDate(updatedAt);
   }
 
   public boolean hasRemoteChangedFrom(long other) {
