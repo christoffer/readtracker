@@ -2,6 +2,7 @@ package com.readtracker.activities;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
@@ -31,7 +32,8 @@ public class BookSettingsActivity extends PreferenceActivity {
     }
 
     CheckBoxPreference checkboxReadmillPrivacy = (CheckBoxPreference) findPreference(SettingsKeys.READMILL_PRIVACY);
-    Preference prefDeleteBook = findPreference(SettingsKeys.OTHER_DELETE_BOOK);
+    Preference prefDeleteBook = findPreference(SettingsKeys.BOOK_DELETE_BOOK);
+    Preference prefEditBookPages = findPreference(SettingsKeys.BOOK_EDIT_PAGES);
 
     checkboxReadmillPrivacy.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
       @Override public boolean onPreferenceChange(Preference preference, Object o) {
@@ -43,6 +45,13 @@ public class BookSettingsActivity extends PreferenceActivity {
     prefDeleteBook.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
       @Override public boolean onPreferenceClick(Preference preference) {
         showConfirmDeleteDialog();
+        return true;
+      }
+    });
+
+    prefEditBookPages.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+      @Override public boolean onPreferenceClick(Preference preference) {
+        exitWithRequestPageEdit();
         return true;
       }
     });
@@ -100,5 +109,14 @@ public class BookSettingsActivity extends PreferenceActivity {
         finish();
       }
     });
+  }
+
+  private void exitWithRequestPageEdit() {
+    Intent data = new Intent();
+    // We need to pass the reading back here since the original activity
+    // might have been destroyed, and thus lost it's reference to the LocalReading.
+    data.putExtra(IntentKeys.LOCAL_READING, mLocalReading);
+    setResult(ActivityCodes.RESULT_REQUESTED_BOOK_SETTINGS, data);
+    finish();
   }
 }

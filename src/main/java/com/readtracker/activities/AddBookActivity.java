@@ -40,7 +40,7 @@ public class AddBookActivity extends ReadTrackerActivity {
 
   private static ViewGroup mLayoutReadmill;
 
-  private boolean mCameFromReadingSession = false;
+  private boolean mEditBookMode = false;
 
   // Store the cover url from the intent that starts the activity
   private String mCoverURL;
@@ -69,11 +69,9 @@ public class AddBookActivity extends ReadTrackerActivity {
         setupCreateMode(extras);
       }
 
-      mCameFromReadingSession = extras.getBoolean(IntentKeys.FROM_READING_SESSION, false);
-      if(mCameFromReadingSession) {
+      mEditBookMode = extras.getBoolean(IntentKeys.EDIT_MODE, false);
+      if(mEditBookMode) {
         mEditPageCount.requestFocus();
-      } else {
-
       }
     }
   }
@@ -228,7 +226,7 @@ public class AddBookActivity extends ReadTrackerActivity {
 
   private void exitToReadingSession(LocalReading localReading) {
     Intent readingSessionIntent = new Intent(this, BookActivity.class);
-    if(mCameFromReadingSession) {
+    if(mEditBookMode) {
       Intent data = new Intent();
       data.putExtra(IntentKeys.READING_ID, localReading.id);
       setResult(ActivityCodes.RESULT_OK, data);

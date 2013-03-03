@@ -415,7 +415,7 @@ public class ReadingFragment extends Fragment {
   private void onClickedStart() {
     // Handle clicking "Edit book"
     if(!mLocalReading.hasPageInfo()) {
-      ((BookActivity) getActivity()).exitToBookInfoScreen(mLocalReading);
+      ((BookActivity) getActivity()).exitToBookEditScreen(mLocalReading);
       return;
     }
 

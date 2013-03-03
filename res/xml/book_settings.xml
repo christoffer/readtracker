@@ -10,12 +10,17 @@
 
   </PreferenceCategory>
 
-  <PreferenceCategory android:title="Other">
+  <PreferenceCategory android:title="Book">
+
+    <Preference
+      android:title="Edit pages"
+      android:summary="Edit the the book pages"
+      android:key="book.edit_pages" />
 
     <Preference
       android:title="Delete book"
       android:summary="Remove book from your device and/or Readmill profile."
-      android:key="other.delete_book" />
+      android:key="book.delete_book" />
 
   </PreferenceCategory>
 

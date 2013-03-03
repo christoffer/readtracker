@@ -89,9 +89,9 @@ public class BookActivity extends ReadTrackerActivity implements EndSessionDialo
 
     Log.v(TAG, "onActivityResult: requestCode: " + requestCode + ", resultCode: " + resultCode);
     switch(requestCode) {
-      case ActivityCodes.REQUEST_ADD_PAGE_NUMBERS:
+      case ActivityCodes.REQUEST_EDIT_PAGE_NUMBERS:
         if(resultCode == RESULT_OK) {
-          Log.d(TAG, "Came back from adding page number");
+          Log.d(TAG, "Came back from editing page number");
           mInitialPageForFragmentAdapter = PAGE_READING;
           int updateReadingId = data.getIntExtra(IntentKeys.READING_ID, -1);
           reloadLocalData(updateReadingId);
@@ -106,13 +106,15 @@ public class BookActivity extends ReadTrackerActivity implements EndSessionDialo
         }
         break;
       case ActivityCodes.REQUEST_BOOK_SETTINGS:
-        if(resultCode == ActivityCodes.RESULT_OK) {
-          Log.d(TAG, "Came back from changing the book settings");
-          // Something changed
-          reloadLocalData(data.getIntExtra(IntentKeys.READING_ID, -1));
+        if(resultCode == ActivityCodes.RESULT_REQUESTED_BOOK_SETTINGS) {
+          exitToBookEditScreen((LocalReading) data.getParcelableExtra(IntentKeys.LOCAL_READING));
         } else if(resultCode == ActivityCodes.RESULT_DELETED_BOOK) {
           // finish with success to have the home screen reload
           shutdownWithResult(ActivityCodes.RESULT_OK);
+        } else if(resultCode == ActivityCodes.RESULT_OK) {
+          Log.d(TAG, "Came back from changing the book settings");
+          // Something changed
+          reloadLocalData(data.getIntExtra(IntentKeys.READING_ID, -1));
         }
     }
     super.onActivityResult(requestCode, resultCode, data);
@@ -249,11 +251,12 @@ public class BookActivity extends ReadTrackerActivity implements EndSessionDialo
 
   // Private
 
-  public void exitToBookInfoScreen(LocalReading localReading) {
+  public void exitToBookEditScreen(LocalReading localReading) {
+    Log.d(TAG, String.format("Exiting to edit book: %s", localReading.toString()));
     Intent intentEditBook = new Intent(this, AddBookActivity.class);
     intentEditBook.putExtra(IntentKeys.LOCAL_READING, localReading);
-    intentEditBook.putExtra(IntentKeys.FROM_READING_SESSION, true);
-    startActivityForResult(intentEditBook, ActivityCodes.REQUEST_ADD_PAGE_NUMBERS);
+    intentEditBook.putExtra(IntentKeys.EDIT_MODE, true);
+    startActivityForResult(intentEditBook, ActivityCodes.REQUEST_EDIT_PAGE_NUMBERS);
   }
 
   public void exitToCreateHighlightScreen() {

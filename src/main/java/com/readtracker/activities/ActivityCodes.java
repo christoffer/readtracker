@@ -16,8 +16,9 @@ class ActivityCodes {
   public static final int CREATE_HIGHLIGHT = 5;
   public static final int REQUEST_CREATE_ACCOUNT = 6;
   public static final int REQUEST_SIGN_IN = 7;
-  public static final int REQUEST_ADD_PAGE_NUMBERS = 8;
+  public static final int REQUEST_EDIT_PAGE_NUMBERS = 8;
   public static final int REQUEST_FINISH_READING = 9;
   public static final int REQUEST_BOOK_SETTINGS = 10;
 
+  public static final int RESULT_REQUESTED_BOOK_SETTINGS = 11;
 }
