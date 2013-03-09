@@ -73,6 +73,26 @@ public class LocalHighlight implements Parcelable {
     return comment != null && comment.length() > 0;
   }
 
+  /**
+   * Determine if the highlight is synced up and until the given timestamp.
+   *
+   * @param when Date to compare with
+   * @return true if when is null or the highlight is synced at or after the date. False otherwise.
+   */
+  public boolean lastSyncedBefore(Date when) {
+    return syncedAt != null && syncedAt.before(when);
+  }
+
+  /**
+   * Determine if this highlight is edited after the given instant.
+   *
+   * @param when Instant to compare with
+   * @return true if the highlight has been edited after the given instant
+   */
+  public boolean isEditedAfter(Date when) {
+    return editedAt != null && editedAt.after(when);
+  }
+
   @Override
   public void writeToParcel(Parcel parcel, int i) {
     parcel.writeInt(id);
