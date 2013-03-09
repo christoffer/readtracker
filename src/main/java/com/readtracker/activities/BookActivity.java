@@ -256,9 +256,10 @@ public class BookActivity extends ReadTrackerActivity implements EndSessionDialo
     startActivityForResult(intentEditBook, ActivityCodes.REQUEST_ADD_PAGE_NUMBERS);
   }
 
-  public void exitToCreateHighlightScreen() {
+  public void exitToCreateHighlightScreen(LocalHighlight highlight) {
     Intent activityAddHighlight = new Intent(this, HighlightActivity.class);
     activityAddHighlight.putExtra(IntentKeys.LOCAL_READING, mLocalReading);
+    activityAddHighlight.putExtra(IntentKeys.LOCAL_HIGHLIGHT, highlight);
     startActivityForResult(activityAddHighlight, ActivityCodes.CREATE_HIGHLIGHT);
   }
 

@@ -30,6 +30,9 @@ public class HighlightActivity extends ReadTrackerActivity {
   private static ProgressPicker mProgressPicker;
 
   private LocalReading mLocalReading;
+  private LocalHighlight mLocalHighlight;
+
+  private boolean mEditMode = false;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -44,13 +47,25 @@ public class HighlightActivity extends ReadTrackerActivity {
     if(savedInstanceState != null) {
       Log.d(TAG, "unfreezing state");
       mLocalReading = savedInstanceState.getParcelable(IntentKeys.LOCAL_READING);
+      mLocalHighlight = savedInstanceState.getParcelable(IntentKeys.LOCAL_HIGHLIGHT);
       mEditHighlightText.setText(savedInstanceState.getString(IntentKeys.TEXT));
       currentPage = savedInstanceState.getInt(IntentKeys.PAGE);
     } else {
       Bundle extras = getIntent().getExtras();
       mLocalReading = (LocalReading) extras.get(IntentKeys.LOCAL_READING);
-      mEditHighlightText.setText("");
-      currentPage = (int) mLocalReading.currentPage;
+      mLocalHighlight = (LocalHighlight) extras.get(IntentKeys.LOCAL_HIGHLIGHT);
+
+      if(mLocalHighlight == null) {
+        mEditMode = false;
+        mEditHighlightText.setText("");
+        currentPage = (int) mLocalReading.currentPage;
+      } else {
+        mEditMode = true;
+        mEditHighlightText.setText(mLocalHighlight.content);
+        currentPage = (int) (mLocalHighlight.position * mLocalReading.totalPages);
+      }
+
+      Log.d(TAG, "Starting activity in " + (mEditMode ? "edit" : "creation") + " mode");
     }
 
     if(mLocalReading.hasPageInfo()) {
@@ -78,6 +93,7 @@ public class HighlightActivity extends ReadTrackerActivity {
     super.onSaveInstanceState(outState);
     Log.d(TAG, "freezing state");
     outState.putParcelable(IntentKeys.LOCAL_READING, mLocalReading);
+    outState.putParcelable(IntentKeys.LOCAL_HIGHLIGHT, mLocalHighlight);
     outState.putString(IntentKeys.TEXT, mEditHighlightText.getText().toString());
     if(mLocalReading.hasPageInfo()) {
       outState.putInt(IntentKeys.PAGE, mProgressPicker.getCurrentPage());

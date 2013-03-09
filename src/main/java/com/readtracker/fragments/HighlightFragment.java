@@ -62,7 +62,6 @@ public class HighlightFragment extends Fragment {
     Log.d(TAG, "onAttach()");
   }
 
-
   @Override
   public void onResume() {
     super.onResume();
@@ -101,7 +100,7 @@ public class HighlightFragment extends Fragment {
 
     mButtonAddHighlight.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View view) {
-        ((BookActivity) getActivity()).exitToCreateHighlightScreen();
+        ((BookActivity) getActivity()).exitToCreateHighlightScreen(null);
       }
     });
 
@@ -127,12 +126,8 @@ public class HighlightFragment extends Fragment {
       @Override
       public void onItemClick(AdapterView<?> adapterView, View view, int position, long itemId) {
         HighlightItem highlightItem = mHighlightAdapter.getItem(position);
-        if(highlightItem.getPermalink() != null) {
-          Intent browserIntent = new Intent(Intent.ACTION_VIEW, highlightItem.getPermalink());
-          startActivity(browserIntent);
-        } else {
-          Toast.makeText(getActivity(), "Once this highlight is synced you'll be taken to it's web page", Toast.LENGTH_SHORT).show();
-        }
+        LocalHighlight clickedHighlight = highlightItem.getLocalHighlight();
+        ((BookActivity) getActivity()).exitToCreateHighlightScreen(clickedHighlight);
       }
     });
   }
