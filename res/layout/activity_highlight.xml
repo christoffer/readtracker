@@ -32,6 +32,7 @@
         android:id="@+id/editHighlight"
         style="@style/free_text_input"
         android:minHeight="128dp"
+        android:layout_marginBottom="12dp"
         android:hint="" />
 
       <LinearLayout
@@ -42,7 +43,7 @@
 
         <TextView
           style="@style/default_text"
-          android:layout_marginTop="24dp"
+          android:layout_marginTop="12dp"
           android:layout_marginBottom="6dp"
           android:text="Share with comment" />
 
@@ -50,6 +51,7 @@
           android:id="@+id/editHighlightComment"
           style="@style/free_text_input"
           android:minHeight="64dp"
+          android:layout_marginBottom="12dp"
           android:hint="" />
 
       </LinearLayout>
@@ -58,7 +60,7 @@
         android:id="@+id/textLabelEnterPosition"
         style="@style/default_text"
         android:layout_above="@+id/progressPicker"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="12dp"
         android:layout_marginBottom="6dp"
         android:text="Position in book" />
 

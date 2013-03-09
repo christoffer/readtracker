@@ -77,8 +77,7 @@ public class HighlightActivity extends ReadTrackerActivity {
       findViewById(R.id.textLabelEnterPosition).setVisibility(View.GONE);
     }
 
-    if(getCurrentUser() == null) {
-      // Hide commenting for anonymous users
+    if(getCurrentUser() == null || !mCreateMode) {
       findViewById(R.id.layoutHighlightComment).setVisibility(View.GONE);
     }
 
