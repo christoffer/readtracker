@@ -17,6 +17,7 @@ public class LocalHighlight implements Parcelable {
   public static final String HIGHLIGHTED_AT_FIELD_NAME = "highlighted_at";
   public static final String POSITION_FIELD_NAME = "position";
 
+  public static final String EDITED_AT_FIELD_NAME = "edited_at";
   public static final String SYNCED_AT_FIELD_NAME = "synced_at";
   public static final String READMILL_HIGHLIGHT_ID_FIELD_NAME = "rm_highlight_id";
   public static final String READMILL_USER_ID_FIELD_NAME = "rm_user_id";
@@ -37,6 +38,7 @@ public class LocalHighlight implements Parcelable {
   @DatabaseField(columnName = HIGHLIGHTED_AT_FIELD_NAME)          public Date highlightedAt = null;
   @DatabaseField(columnName = POSITION_FIELD_NAME)                public double position = 0.0f;
 
+  @DatabaseField(columnName = EDITED_AT_FIELD_NAME)               public Date editedAt = null;
   @DatabaseField(columnName = SYNCED_AT_FIELD_NAME)               public Date syncedAt = null;
   @DatabaseField(columnName = READMILL_HIGHLIGHT_ID_FIELD_NAME)   public long readmillHighlightId = -1;
   @DatabaseField(columnName = READMILL_READING_ID_FIELD_NAME)     public long readmillReadingId = -1;
@@ -78,6 +80,7 @@ public class LocalHighlight implements Parcelable {
     parcel.writeString(content);
     parcel.writeLong(highlightedAt.getTime());
     parcel.writeDouble(position);
+    parcel.writeLong(editedAt == null ? 0 : editedAt.getTime());
     parcel.writeLong(syncedAt == null ? 0 : syncedAt.getTime());
     parcel.writeLong(readmillHighlightId);
     parcel.writeLong(readmillReadingId);
@@ -91,8 +94,13 @@ public class LocalHighlight implements Parcelable {
     content = parcel.readString();
     highlightedAt = new Date(parcel.readLong());
     position = parcel.readDouble();
+
+    long storedEditedAt = parcel.readLong();
+    editedAt = storedEditedAt == 0 ? null : new Date(storedEditedAt);
+
     long storedSyncedAt = parcel.readLong();
     syncedAt = storedSyncedAt == 0 ? null : new Date(storedSyncedAt);
+
     readmillHighlightId = parcel.readLong();
     readmillReadingId = parcel.readLong();
     readmillUserId = parcel.readLong();
