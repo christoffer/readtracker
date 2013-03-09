@@ -19,6 +19,8 @@ public class LocalHighlight implements Parcelable {
 
   public static final String EDITED_AT_FIELD_NAME = "edited_at";
   public static final String SYNCED_AT_FIELD_NAME = "synced_at";
+  public static final String DELETED_BY_USER_FIELD_NAME = "user_deleted";
+
   public static final String READMILL_HIGHLIGHT_ID_FIELD_NAME = "rm_highlight_id";
   public static final String READMILL_USER_ID_FIELD_NAME = "rm_user_id";
   public static final String READMILL_READING_ID_FIELD_NAME = "rm_reading_id";
@@ -40,6 +42,8 @@ public class LocalHighlight implements Parcelable {
 
   @DatabaseField(columnName = EDITED_AT_FIELD_NAME)               public Date editedAt = null;
   @DatabaseField(columnName = SYNCED_AT_FIELD_NAME)               public Date syncedAt = null;
+  @DatabaseField(columnName = DELETED_BY_USER_FIELD_NAME)         public boolean deletedByUser = false;
+
   @DatabaseField(columnName = READMILL_HIGHLIGHT_ID_FIELD_NAME)   public long readmillHighlightId = -1;
   @DatabaseField(columnName = READMILL_READING_ID_FIELD_NAME)     public long readmillReadingId = -1;
   @DatabaseField(columnName = READMILL_USER_ID_FIELD_NAME)        public long readmillUserId = -1;
@@ -102,6 +106,7 @@ public class LocalHighlight implements Parcelable {
     parcel.writeDouble(position);
     parcel.writeLong(editedAt == null ? 0 : editedAt.getTime());
     parcel.writeLong(syncedAt == null ? 0 : syncedAt.getTime());
+    parcel.writeInt(deletedByUser ? 1 : 0);
     parcel.writeLong(readmillHighlightId);
     parcel.writeLong(readmillReadingId);
     parcel.writeLong(readmillUserId);
@@ -121,6 +126,7 @@ public class LocalHighlight implements Parcelable {
     long storedSyncedAt = parcel.readLong();
     syncedAt = storedSyncedAt == 0 ? null : new Date(storedSyncedAt);
 
+    deletedByUser = parcel.readInt() == 1;
     readmillHighlightId = parcel.readLong();
     readmillReadingId = parcel.readLong();
     readmillUserId = parcel.readLong();

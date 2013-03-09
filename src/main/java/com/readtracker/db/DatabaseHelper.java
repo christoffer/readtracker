@@ -298,5 +298,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     Log.i(TAG, "Running database upgrade 10");
     db.execSQL("ALTER TABLE LocalHighlight ADD COLUMN " + LocalHighlight.COMMENT_FIELD_NAME + " TEXT NULL;");
     db.execSQL("ALTER TABLE LocalHighlight ADD COLUMN " + LocalHighlight.EDITED_AT_FIELD_NAME + " INTEGER NULL;");
+    db.execSQL("ALTER TABLE LocalHighlight ADD COLUMN " + LocalHighlight.DELETED_BY_USER_FIELD_NAME + " INTEGER NOT NULL DEFAULT 0;");
   }
 }
