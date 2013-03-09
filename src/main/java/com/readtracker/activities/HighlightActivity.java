@@ -13,9 +13,9 @@ import com.readtracker.ReadmillTransferIntent;
 import com.readtracker.custom_views.ProgressPicker;
 import com.readtracker.db.LocalHighlight;
 import com.readtracker.db.LocalReading;
-import com.readtracker.interfaces.CreateHighlightTaskListener;
+import com.readtracker.interfaces.PersistLocalHighlightListener;
 import com.readtracker.support.DrawableGenerator;
-import com.readtracker.tasks.CreateHighlightAsyncTask;
+import com.readtracker.tasks.PersistLocalHighlightTask;
 
 import java.util.Date;
 
@@ -32,7 +32,7 @@ public class HighlightActivity extends ReadTrackerActivity {
   private LocalReading mLocalReading;
   private LocalHighlight mLocalHighlight;
 
-  private boolean mEditMode = false;
+  private boolean mCreateMode = false;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -56,16 +56,17 @@ public class HighlightActivity extends ReadTrackerActivity {
       mLocalHighlight = (LocalHighlight) extras.get(IntentKeys.LOCAL_HIGHLIGHT);
 
       if(mLocalHighlight == null) {
-        mEditMode = false;
+        mLocalHighlight = new LocalHighlight();
+        mCreateMode = true;
         mEditHighlightText.setText("");
         currentPage = (int) mLocalReading.currentPage;
       } else {
-        mEditMode = true;
+        mCreateMode = false;
         mEditHighlightText.setText(mLocalHighlight.content);
         currentPage = (int) (mLocalHighlight.position * mLocalReading.totalPages);
       }
 
-      Log.d(TAG, "Starting activity in " + (mEditMode ? "edit" : "creation") + " mode");
+      Log.d(TAG, "Starting activity in " + (mCreateMode ? "creation" : "edit") + " mode");
     }
 
     if(mLocalReading.hasPageInfo()) {
@@ -116,7 +117,7 @@ public class HighlightActivity extends ReadTrackerActivity {
     mButtonSaveHighlight.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
-        saveHighlight();
+        saveOrCreateHighlight();
       }
     });
   }
@@ -129,8 +130,8 @@ public class HighlightActivity extends ReadTrackerActivity {
     view.setBackgroundDrawable(backgroundDrawable);
   }
 
-  private void saveHighlight() {
-    Log.i(TAG, "Saving highlight for LocalReading with id:" + mLocalReading.id);
+  private void saveOrCreateHighlight() {
+    Log.i(TAG, "Save/Create highlight for LocalReading with id:" + mLocalReading.id);
     String content = mEditHighlightText.getText().toString();
     String comment = mEditHighlightComment.getText().toString();
 
@@ -139,35 +140,44 @@ public class HighlightActivity extends ReadTrackerActivity {
     }
 
     long readmillUserId = getCurrentUserId();
-
     double position = 0.0f;
 
     if(mLocalReading.hasPageInfo()) {
       position = mProgressPicker.getProgress();
     }
 
-    LocalHighlight highlight = new LocalHighlight();
-
-    highlight.content = content;
-    highlight.readingId = mLocalReading.id;
-    highlight.readmillReadingId = mLocalReading.readmillReadingId;
-    highlight.readmillUserId = readmillUserId;
-    highlight.position = position;
-    highlight.highlightedAt = new Date();
+    mLocalHighlight.content = content;
+    mLocalHighlight.position = position;
 
     if(comment.length() > 0) {
-      highlight.comment = comment;
+      mLocalHighlight.comment = comment;
     }
 
-    new CreateHighlightAsyncTask(new CreateHighlightTaskListener() {
-      @Override
-      public void onReadingHighlightCreated(boolean result) {
-        onHighlightCreated(result);
-      }
-    }).execute(highlight);
+    if(mCreateMode) {
+      mLocalHighlight.highlightedAt = new Date();
+      mLocalHighlight.readingId = mLocalReading.id;
+      mLocalHighlight.readmillReadingId = mLocalReading.readmillReadingId;
+      mLocalHighlight.readmillUserId = readmillUserId;
+    }
+
+    persistHighlight(mLocalHighlight);
   }
 
-  private void onHighlightCreated(boolean success) {
+  private void persistHighlight(LocalHighlight localHighlight) {
+    new PersistLocalHighlightTask(new PersistLocalHighlightListener() {
+      @Override public void onLocalHighlightPersisted(int id, boolean created) {
+        Log.d(TAG, "Persisted local highlight, id: " + id + " created: " + created);
+        onHighlightPersisted(true);
+      }
+
+      @Override public void onLocalHighlightPersistedFailed() {
+        Log.d(TAG, "Failed to persist local highlight");
+        onHighlightPersisted(false);
+      }
+    }).execute(localHighlight);
+  }
+
+  private void onHighlightPersisted(boolean success) {
     if(!success) {
       toastLong("An error occurred. The highlight could not be saved.");
       return;
