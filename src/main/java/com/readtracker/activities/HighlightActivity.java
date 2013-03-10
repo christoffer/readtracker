@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -131,8 +132,8 @@ public class HighlightActivity extends ReadTrackerActivity {
 
   private void saveOrCreateHighlight() {
     Log.i(TAG, "Save/Create highlight for LocalReading with id:" + mLocalReading.id);
-    String content = mEditHighlightText.getText().toString();
-    String comment = mEditHighlightComment.getText().toString();
+    String content = mEditHighlightText.getText().toString().trim();
+    String comment = mEditHighlightComment.getText().toString().trim();
 
     if(!validateHighlightContent(content)) {
       return;
@@ -157,13 +158,15 @@ public class HighlightActivity extends ReadTrackerActivity {
       mLocalHighlight.readingId = mLocalReading.id;
       mLocalHighlight.readmillReadingId = mLocalReading.readmillReadingId;
       mLocalHighlight.readmillUserId = readmillUserId;
+    } else {
+      mLocalHighlight.editedAt = new Date();
     }
 
     persistHighlight(mLocalHighlight);
   }
 
   private void persistHighlight(LocalHighlight localHighlight) {
-    new PersistLocalHighlightTask(new PersistLocalHighlightListener() {
+    PersistLocalHighlightTask.persist(localHighlight, new PersistLocalHighlightListener() {
       @Override public void onLocalHighlightPersisted(int id, boolean created) {
         Log.d(TAG, "Persisted local highlight, id: " + id + " created: " + created);
         onHighlightPersisted(true);
@@ -173,7 +176,7 @@ public class HighlightActivity extends ReadTrackerActivity {
         Log.d(TAG, "Failed to persist local highlight");
         onHighlightPersisted(false);
       }
-    }).execute(localHighlight);
+    });
   }
 
   private void onHighlightPersisted(boolean success) {
@@ -181,9 +184,6 @@ public class HighlightActivity extends ReadTrackerActivity {
       toastLong("An error occurred. The highlight could not be saved.");
       return;
     }
-
-    // Push the changes to Readmill
-    startService(new Intent(this, ReadmillTransferIntent.class));
 
     Intent resultIntent = new Intent();
     resultIntent.putExtra(IntentKeys.READING_ID, mLocalReading.id);

@@ -379,7 +379,10 @@ public class BookActivity extends ReadTrackerActivity implements EndSessionDialo
       return new ArrayList<LocalHighlight>(
         highlightDao.queryBuilder()
           .orderByRaw("datetime(" + orderField + ") DESC")
-          .where().eq(LocalHighlight.READING_ID_FIELD_NAME, readingId)
+          .where()
+          .eq(LocalHighlight.READING_ID_FIELD_NAME, readingId)
+          .and()
+          .eq(LocalHighlight.DELETED_BY_USER_FIELD_NAME, false)
           .query()
       );
     }
@@ -399,6 +402,5 @@ public class BookActivity extends ReadTrackerActivity implements EndSessionDialo
       return localReading != null && localSessions != null && localHighlights != null;
     }
   }
-
 }
 

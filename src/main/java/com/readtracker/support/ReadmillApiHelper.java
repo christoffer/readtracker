@@ -1,5 +1,6 @@
 package com.readtracker.support;
 
+import android.graphics.LightingColorFilter;
 import android.util.Log;
 import com.readmill.api.*;
 import com.readtracker.db.LocalHighlight;
@@ -116,6 +117,39 @@ public class ReadmillApiHelper {
     } catch(JSONException e) {
       throw new ReadmillException("Unexpected JSON response: " + dumpJSON(remoteHighlight));
     }
+  }
+
+  /**
+   * Deletes a highlight on Readmill.
+   *
+   * @param highlightId The Readmill highlight id
+   */
+  public void deleteHighlight(long highlightId) throws ReadmillException {
+    Log.i(TAG, "Deleting highlight with Readmill id: " + highlightId);
+
+    String endpoint = String.format("/highlights/%d", highlightId);
+    RequestBuilder request = mWrapper.delete(endpoint);
+    sendRequest(request, "delete a highlight", 200);
+  }
+
+  /**
+   * Updates a Highlight on Readmill.
+   *
+   * @param readmillHighlightId Readmill Highlight Id
+   * @param content The new content of the highlight
+   * @param position Position of the highlight
+   */
+  public void updateHighlight(long readmillHighlightId, String content, double position) throws ReadmillException {
+    Log.i(TAG, "Updating highlight on Readmill. Highlight id: " + readmillHighlightId + ", content: " + content);
+
+    String endpoint = String.format("/highlights/%d", readmillHighlightId);
+    RequestBuilder request = mWrapper
+      .put(endpoint)
+      .highlightContent(content)
+      .highlightPosition(position);
+
+    sendRequest(request, "updated the highlight", 200);
+    Log.i(TAG, "Updated highlight with id: " + readmillHighlightId);
   }
 
   /**
