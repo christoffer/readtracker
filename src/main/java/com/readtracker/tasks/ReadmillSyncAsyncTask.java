@@ -122,6 +122,9 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
     ArrayList<JSONObject> remoteReadings = getAllRemoteReadingsForUserId(readmillUserId);
 
     syncLocalReadingsWithRemoteReadings(localReadings, remoteReadings, fullSync);
+
+    ArrayList<LocalHighlight> localHighlightsToEdit = getEditedConnectedHighlights();
+    pushEditedHighlights(localHighlightsToEdit);
   }
 
   /**
@@ -176,7 +179,7 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
     String coverURL = remoteBook.getString("cover_url");
     if(coverURL.matches("default-cover")) {
       Log.v(TAG, "Not replacing with default cover");
-    } else {
+    } else if(!localReading.coverURL.equals(coverURL)) {
       Log.i(TAG, "Replacing old cover url: " + localReading.coverURL + " with server cover: " + coverURL);
       localReading.coverURL = coverURL;
     }
@@ -367,12 +370,11 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
   private void confirmAndDeleteOrphans(List<LocalReading> maybeOrphanLocalReadings) throws SQLException {
     for(LocalReading localReading : maybeOrphanLocalReadings) {
       if(verifyReadingNotOnReadmill(localReading.readmillReadingId)) {
-        Log.v(TAG, "Verified reading not on Readmill: " + localReading);
         Log.i(TAG, "Deleting remotely deleted reading: " + localReading);
         mReadingDao.delete(localReading);
         postProgressUpdateDeletedReading(localReading);
       } else {
-        Log.v(TAG, "Could not verify that reading is not readmill: " + localReading);
+        Log.i(TAG, "Could not verify that reading is not readmill: " + localReading);
       }
     }
   }
@@ -405,6 +407,34 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
       if(isCancelled()) { return; }
       postProgressUpdateMessage("Updating " + localReading.title, currentCount++, totalCount - 1);
       mReadmillApi.closeReading(localReading.readmillReadingId, localReading.readmillState, localReading.readmillClosingRemark);
+    }
+  }
+
+  /**
+   * Updates highlights on the server with local edits made to highlights.
+   *
+   * @param editedLocalHighlights List of highlights to push edits for.
+   */
+  private void pushEditedHighlights(List<LocalHighlight> editedLocalHighlights) throws ReadmillException, SQLException {
+    Log.d(TAG, "Pushing " + editedLocalHighlights.size() + " edited highlights");
+    for(LocalHighlight localHighlight : editedLocalHighlights) {
+      updateHighlight(localHighlight);
+    }
+  }
+
+  private void updateHighlight(LocalHighlight localHighlight) throws ReadmillException, SQLException {
+    try {
+      mReadmillApi.updateHighlight(localHighlight.readmillHighlightId, localHighlight.content, localHighlight.position);
+      localHighlight.editedAt = null;
+      localHighlight.syncedAt = new Date();
+      mHighlightDao.update(localHighlight);
+    } catch(ReadmillException ex) {
+      if(ex.getStatusCode() == 404) {
+        Log.d(TAG, "Tried updating a removed highlight. Removing from device.");
+        mHighlightDao.delete(localHighlight);
+      } else {
+        throw ex;
+      }
     }
   }
 
@@ -473,11 +503,11 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
     Log.i(TAG, "Syncing all highlights for local reading " + localReading.toString() + " with remote reading: " + remoteId);
 
     ArrayList<LocalHighlight> localHighlights = (ArrayList<LocalHighlight>) mHighlightDao.queryBuilder()
-      .where().eq(LocalHighlight.READMILL_READING_ID_FIELD_NAME, remoteId)
+      .where()
+      .eq(LocalHighlight.READMILL_READING_ID_FIELD_NAME, remoteId)
       .query();
 
-    ArrayList<JSONObject> remoteHighlights =
-      mReadmillApi.getHighlightsWithReadingId(remoteId);
+    ArrayList<JSONObject> remoteHighlights = mReadmillApi.getHighlightsWithReadingId(remoteId);
 
     mergeHighlights(localReading, localHighlights, remoteHighlights);
     return true;
@@ -550,6 +580,23 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
       gt(LocalReading.READMILL_READING_ID_FIELD_NAME, 0);
     ArrayList<LocalReading> result = (ArrayList<LocalReading>) stmt.query();
     Log.i(TAG, "Found " + result.size() + " local connected readings");
+    return result;
+  }
+
+  /**
+   * Gets a list of local highlights that are connected to Readmill and have been edited.
+   *
+   * @return all connected and edited highlights
+   */
+  public ArrayList<LocalHighlight> getEditedConnectedHighlights() throws SQLException {
+    Where<LocalHighlight, Integer> stmt = mHighlightDao.queryBuilder()
+      .where()
+      .gt(LocalHighlight.READMILL_READING_ID_FIELD_NAME, 0)
+      .and()
+      .isNotNull(LocalHighlight.EDITED_AT_FIELD_NAME);
+
+    ArrayList<LocalHighlight> result = (ArrayList<LocalHighlight>) stmt.query();
+    Log.i(TAG, "Found " + result.size() + " connected highlights with edits");
     return result;
   }
 
