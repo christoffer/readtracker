@@ -58,4 +58,16 @@ public class LocalHighlightTest {
     assertFalse(localHighlight.lastSyncedBefore(new Date(FIRST_DAY_OF_2012)));
     assertFalse(localHighlight.lastSyncedBefore(new Date(FIRST_DAY_OF_2012 + 1)));
   }
+
+  @Test
+  public void testIsOfflineOnlyWhenOffline() {
+    localHighlight.readmillHighlightId = -1;
+    assertFalse(localHighlight.isOfflineOnly());
+  }
+
+  @Test
+  public void testIsOfflineOnlyWhenOnline() {
+    localHighlight.readmillHighlightId = 123;
+    assertTrue(localHighlight.isOfflineOnly());
+  }
 }

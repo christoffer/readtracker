@@ -2,6 +2,7 @@ package com.readtracker.db;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 
 import java.util.Date;
@@ -95,6 +96,14 @@ public class LocalHighlight implements Parcelable {
    */
   public boolean isEditedAfter(Date when) {
     return editedAt != null && editedAt.after(when);
+  }
+
+  /**
+   * Checks whether the highlight is connected to Readmill or not.
+   * @return true if the highlight is connected to Readmill.
+   */
+  public boolean isOfflineOnly() {
+    return readmillHighlightId < 1;
   }
 
   @Override
