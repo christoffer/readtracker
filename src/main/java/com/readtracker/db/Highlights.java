@@ -15,9 +15,24 @@ public class Highlights {
   public static Dao.CreateOrUpdateStatus createOrUpdate(LocalHighlight localHighlight) {
     try {
       return ApplicationReadTracker.getHighlightDao().createOrUpdate(localHighlight);
-    } catch(SQLException e) {
-      Log.e(TAG, "Failed to persist Highlight", e);
+    } catch(SQLException ex) {
+      Log.e(TAG, "Failed to persist Highlight", ex);
       return null;
     }
+  }
+
+  /**
+   * Deletes a highlight.
+   * @param localHighlight highlight to delete
+   * @return true if the highlight was deleted, false otherwise
+   */
+  public static boolean delete(LocalHighlight localHighlight) {
+    try {
+      ApplicationReadTracker.getHighlightDao().delete(localHighlight);
+      return true;
+    } catch(SQLException ex) {
+      Log.e(TAG, "Failed to delete highlight: " + String.valueOf(localHighlight));
+    }
+    return false;
   }
 }

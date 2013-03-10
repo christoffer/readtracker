@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.util.Log;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.Where;
+import com.readtracker.db.Highlights;
 import com.readtracker.db.LocalHighlight;
 import com.readtracker.db.LocalReading;
 import com.readtracker.db.LocalSession;
@@ -69,12 +70,16 @@ public class ReadmillTransferIntent extends IntentService {
 
         try {
           readmillApi().deleteHighlight(highlight.readmillHighlightId);
-          highlightDao.delete(highlight);
         } catch(ReadmillException e) {
           Log.w(TAG, "Failed to delete highlight: " + highlight, e);
-        } catch(SQLException e) {
-          Log.d(TAG, "Failed to remove deleted highlight from database", e);
+          if(e.getStatusCode() == 404) {
+            Log.d(TAG, "Was 404, still deleting locally");
+          } else {
+            continue; // skip to next highlight
+          }
         }
+
+        Highlights.delete(highlight);
       }
     } catch(SQLException e) {
       Log.d(TAG, "Failed get highlights from database", e);

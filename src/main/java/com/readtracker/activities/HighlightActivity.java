@@ -2,15 +2,14 @@ package com.readtracker.activities;
 
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import com.readtracker.IntentKeys;
 import com.readtracker.R;
-import com.readtracker.ReadmillTransferIntent;
 import com.readtracker.custom_views.ProgressPicker;
 import com.readtracker.db.LocalHighlight;
 import com.readtracker.db.LocalReading;
@@ -27,6 +26,7 @@ public class HighlightActivity extends ReadTrackerActivity {
   private static EditText mEditHighlightText;
   private static EditText mEditHighlightComment;
   private static Button mButtonSaveHighlight;
+  private static Button mButtonReadmillWeb;
 
   private static ProgressPicker mProgressPicker;
 
@@ -82,9 +82,15 @@ public class HighlightActivity extends ReadTrackerActivity {
       findViewById(R.id.layoutHighlightComment).setVisibility(View.GONE);
     }
 
-    setBackgroundDrawable(mEditHighlightText);
-    setBackgroundDrawable(mEditHighlightComment);
-    mButtonSaveHighlight.setBackgroundDrawable(DrawableGenerator.generateButtonBackground(mLocalReading.getColor()));
+    setEditTextBackground(mEditHighlightText);
+    setEditTextBackground(mEditHighlightComment);
+    setButtonBackground(mButtonSaveHighlight);
+
+    if(mLocalHighlight.hasVisitablePermalink()) {
+      setButtonBackground(mButtonReadmillWeb);
+    } else {
+      mButtonReadmillWeb.setVisibility(View.GONE);
+    }
 
     ViewBindingBookHeader.bindWithDefaultClickHandler(this, mLocalReading);
   }
@@ -110,6 +116,7 @@ public class HighlightActivity extends ReadTrackerActivity {
     mEditHighlightText = (EditText) findViewById(R.id.editHighlight);
     mEditHighlightComment = (EditText) findViewById(R.id.editHighlightComment);
     mButtonSaveHighlight = (Button) findViewById(R.id.buttonSaveHighlight);
+    mButtonReadmillWeb = (Button) findViewById(R.id.buttonReadmillWeb);
     mProgressPicker = (ProgressPicker) findViewById(R.id.progressPicker);
   }
 
@@ -120,14 +127,28 @@ public class HighlightActivity extends ReadTrackerActivity {
         saveOrCreateHighlight();
       }
     });
+
+    mButtonReadmillWeb.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View view) {
+        if(mLocalHighlight.hasVisitablePermalink()) {
+          Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(mLocalHighlight.readmillPermalinkUrl));
+          startActivity(browserIntent);
+        }
+      }
+    });
   }
 
-  private void setBackgroundDrawable(View view) {
+  private void setEditTextBackground(EditText editText) {
     Drawable backgroundDrawable;
     backgroundDrawable = DrawableGenerator.generateEditTextOutline(
       mLocalReading.getColor(), getPixels(1), getPixels(3)
     );
-    view.setBackgroundDrawable(backgroundDrawable);
+    editText.setBackgroundDrawable(backgroundDrawable);
+  }
+
+  private void setButtonBackground(Button button) {
+    final Drawable background = DrawableGenerator.generateButtonBackground(mLocalReading.getColor());
+    button.setBackgroundDrawable(background);
   }
 
   private void saveOrCreateHighlight() {
