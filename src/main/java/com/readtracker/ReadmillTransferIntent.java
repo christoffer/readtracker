@@ -39,10 +39,46 @@ public class ReadmillTransferIntent extends IntentService {
   @Override
   protected void onHandleIntent(Intent intent) {
     Log.d(TAG, "Processing unsent items...");
+    deleteMarkedHighlights();
     uploadNewReadings();
     uploadNewSessions();
     uploadNewHighlights();
     sendBroadcast(new Intent(IntentKeys.READMILL_TRANSFER_COMPLETE));
+  }
+
+  private void deleteMarkedHighlights() {
+    Log.d(TAG, "deleteMarkedHighlights()");
+    try {
+      Dao<LocalHighlight, Integer> highlightDao = ApplicationReadTracker.getHighlightDao();
+      Where<LocalHighlight, Integer> stmt = highlightDao.queryBuilder().where()
+        .gt(LocalHighlight.READMILL_READING_ID_FIELD_NAME, 0)
+        .and()
+        .eq(LocalHighlight.DELETED_BY_USER_FIELD_NAME, true);
+
+      List<LocalHighlight> highlightsToDelete = stmt.query();
+
+      if(highlightsToDelete.size() < 1) {
+        Log.i(TAG, "No highlights to delete. Exiting.");
+        return;
+      }
+
+      Log.i(TAG, "Found " + highlightsToDelete.size() + " highlights marked for deletion");
+
+      for(LocalHighlight highlight : highlightsToDelete) {
+        Log.d(TAG, "Deleting highlight with readmill Id: " + highlight.readmillHighlightId + " url:" + highlight.readmillPermalinkUrl);
+
+        try {
+          readmillApi().deleteHighlight(highlight.readmillHighlightId);
+          highlightDao.delete(highlight);
+        } catch(ReadmillException e) {
+          Log.w(TAG, "Failed to delete highlight: " + highlight, e);
+        } catch(SQLException e) {
+          Log.d(TAG, "Failed to remove deleted highlight from database", e);
+        }
+      }
+    } catch(SQLException e) {
+      Log.d(TAG, "Failed get highlights from database", e);
+    }
   }
 
   private void uploadNewReadings() {
@@ -128,6 +164,8 @@ public class ReadmillTransferIntent extends IntentService {
       Where<LocalHighlight, Integer> stmt = highlightDao.queryBuilder().where()
         .isNull(LocalHighlight.SYNCED_AT_FIELD_NAME)
         .and()
+        .eq(LocalHighlight.DELETED_BY_USER_FIELD_NAME, false)
+        .and()
         .gt(LocalHighlight.READMILL_READING_ID_FIELD_NAME, 0);
 
       List<LocalHighlight> highlightsToPush = stmt.query();
@@ -145,11 +183,13 @@ public class ReadmillTransferIntent extends IntentService {
         try {
           JSONObject readmillHighlight = readmillApi().createHighlight(highlight);
           Log.d(TAG, "Marking highlight with id: " + highlight.id + " as synced");
+          ReadmillConverter.mergeLocalHighlightWithJson(highlight, readmillHighlight);
           highlight.syncedAt = new Date();
-          highlight.readmillHighlightId = readmillHighlight.optInt("id");
           highlightDao.update(highlight);
         } catch(ReadmillException e) {
           Log.w(TAG, "Failed to upload highlight: " + highlight, e);
+        } catch(JSONException e) {
+          Log.w(TAG, "Failed to update highlight due to malformed response from Readmill", e);
         }
       }
     } catch(SQLException e) {
@@ -233,7 +273,7 @@ public class ReadmillTransferIntent extends IntentService {
 
   private void updateReadmillReadingForSessionsOf(LocalReading localReading) {
     Log.d(TAG, "updateReadmillReadingForSessionsOf" + localReading.toString());
-    if(localReading == null || localReading.readmillReadingId < 1) {
+    if(localReading.readmillReadingId < 1) {
       return;
     }
 
