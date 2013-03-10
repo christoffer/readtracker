@@ -62,12 +62,30 @@ public class LocalHighlightTest {
   @Test
   public void testIsOfflineOnlyWhenOffline() {
     localHighlight.readmillHighlightId = -1;
-    assertFalse(localHighlight.isOfflineOnly());
+    assertTrue(localHighlight.isOfflineOnly());
   }
 
   @Test
   public void testIsOfflineOnlyWhenOnline() {
     localHighlight.readmillHighlightId = 123;
-    assertTrue(localHighlight.isOfflineOnly());
+    assertFalse(localHighlight.isOfflineOnly());
+  }
+
+  @Test
+  public void testHasVisitablePermalinkWhenAbsolute() {
+    localHighlight.readmillPermalinkUrl = "http://readmill.com/some/path";
+    assertTrue(localHighlight.hasVisitablePermalink());
+  }
+
+  @Test
+  public void testHasVisitablePermalinkWhenRelative() {
+    localHighlight.readmillPermalinkUrl = "/some/path";
+    assertFalse(localHighlight.hasVisitablePermalink());
+  }
+
+  @Test
+  public void testHasVisitablePermalinkWhenNull() {
+    localHighlight.readmillPermalinkUrl = null;
+    assertFalse(localHighlight.hasVisitablePermalink());
   }
 }

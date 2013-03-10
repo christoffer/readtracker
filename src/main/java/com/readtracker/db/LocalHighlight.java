@@ -5,6 +5,8 @@ import android.os.Parcelable;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Date;
 
 /**
@@ -104,6 +106,20 @@ public class LocalHighlight implements Parcelable {
    */
   public boolean isOfflineOnly() {
     return readmillHighlightId < 1;
+  }
+
+  /**
+   * Check for the existence of a visitable (absolute) permalink
+   *
+   * @return true if the permalink of the highlight can be visited.
+   */
+  public boolean hasVisitablePermalink() {
+    try {
+      if(readmillPermalinkUrl != null) {
+        return new URI(readmillPermalinkUrl).isAbsolute();
+      }
+    } catch(URISyntaxException ignored) {}
+    return false;
   }
 
   @Override
