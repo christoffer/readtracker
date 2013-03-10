@@ -42,6 +42,11 @@ public class BookActivity extends ReadTrackerActivity implements EndSessionDialo
   private ViewPager mViewPagerReading;
 
   private boolean mManualShutdown;
+
+  // Flag that controls the return value of the activity to indicate
+  // a need for syncing with Readmill.
+  private boolean mShouldSync = false;
+
   private int mInitialPageForFragmentAdapter = PAGE_UNSPECIFIED;
 
   public void onCreate(Bundle in) {
@@ -103,6 +108,7 @@ public class BookActivity extends ReadTrackerActivity implements EndSessionDialo
           mInitialPageForFragmentAdapter = PAGE_HIGHLIGHTS;
           int updateReadingId = data.getIntExtra(IntentKeys.READING_ID, -1);
           reloadLocalData(updateReadingId); // TODO optimally we should only reload the highlights here
+          mShouldSync = true; // Ask for sync when returning to HomeActivity
         }
         break;
       case ActivityCodes.REQUEST_BOOK_SETTINGS:
@@ -254,9 +260,10 @@ public class BookActivity extends ReadTrackerActivity implements EndSessionDialo
     startActivityForResult(intentEditBook, ActivityCodes.REQUEST_EDIT_PAGE_NUMBERS);
   }
 
-  public void exitToCreateHighlightScreen() {
+  public void exitToCreateHighlightScreen(LocalHighlight highlight) {
     Intent activityAddHighlight = new Intent(this, HighlightActivity.class);
     activityAddHighlight.putExtra(IntentKeys.LOCAL_READING, mLocalReading);
+    activityAddHighlight.putExtra(IntentKeys.LOCAL_HIGHLIGHT, highlight);
     startActivityForResult(activityAddHighlight, ActivityCodes.CREATE_HIGHLIGHT);
   }
 
@@ -272,7 +279,7 @@ public class BookActivity extends ReadTrackerActivity implements EndSessionDialo
       toast("Pausing " + mLocalReading.title + "\n\nClick it again to resume");
       finish();
     } else {
-      shutdownWithResult(ActivityCodes.RESULT_CANCELED);
+      shutdownWithResult(mShouldSync ? ActivityCodes.RESULT_OK : ActivityCodes.RESULT_CANCELED);
     }
   }
 
@@ -376,7 +383,10 @@ public class BookActivity extends ReadTrackerActivity implements EndSessionDialo
       return new ArrayList<LocalHighlight>(
         highlightDao.queryBuilder()
           .orderByRaw("datetime(" + orderField + ") DESC")
-          .where().eq(LocalHighlight.READING_ID_FIELD_NAME, readingId)
+          .where()
+          .eq(LocalHighlight.READING_ID_FIELD_NAME, readingId)
+          .and()
+          .eq(LocalHighlight.DELETED_BY_USER_FIELD_NAME, false)
           .query()
       );
     }
@@ -396,6 +406,5 @@ public class BookActivity extends ReadTrackerActivity implements EndSessionDialo
       return localReading != null && localSessions != null && localHighlights != null;
     }
   }
-
 }
 

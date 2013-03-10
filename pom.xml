@@ -5,21 +5,29 @@
 
   NOTES:
 
-  ReadTracker depends on the Android Support Library version 11.
+  ReadTracker depends on the Android Support Library.
 
-  Unfortunately the latest version available in Maven Central is r6, and the EULA does
-  not allow redistributing the Android Support Library as binaries.
+  Unfortunately the latest version available in Maven Central at the moment is the rather outdated r7 (unclear why
+  Google does not release newer versions).
 
-  It is easily installed using the Android SDK though, but requires a little work
-  to setup for Maven.
+  It is easily installed using the Android SDK though, but requires a little work to setup for Maven.
 
-  In this repo you will find a shell script for installing the android support jar into
-  your local maven repository.
+  In this repo you will find a shell script for installing the android support jar into your local maven repository.
 
   run this command to setup maven:
 
     bash ./install-android-support-for-maven.sh
 
+  This will copy the support library into your local maven repository so that Maven can resolve the dependency below.
+
+  Alternatively you could manually run the command:
+
+    mvn install:install-file \
+      -DgroupId=com.google.android \
+      -DartifactId=support-v4 \
+      -Dversion=11.0 \
+      -Dpackaging=jar \
+      -Dfile=<path to android-support-v4.jar>
 
   -->
   <modelVersion>4.0.0</modelVersion>
@@ -67,7 +75,7 @@
     <dependency>
       <groupId>com.christofferklang</groupId>
       <artifactId>readmill-java-wrapper</artifactId>
-      <version>0.1</version>
+      <version>1.0</version>
       <scope>compile</scope>
     </dependency>
 

@@ -2,6 +2,7 @@ package com.readtracker.activities;
 
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -9,13 +10,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import com.readtracker.IntentKeys;
 import com.readtracker.R;
-import com.readtracker.ReadmillTransferIntent;
 import com.readtracker.custom_views.ProgressPicker;
 import com.readtracker.db.LocalHighlight;
 import com.readtracker.db.LocalReading;
-import com.readtracker.interfaces.CreateHighlightTaskListener;
+import com.readtracker.interfaces.PersistLocalHighlightListener;
 import com.readtracker.support.DrawableGenerator;
-import com.readtracker.tasks.CreateHighlightAsyncTask;
+import com.readtracker.tasks.PersistLocalHighlightTask;
 
 import java.util.Date;
 
@@ -26,10 +26,14 @@ public class HighlightActivity extends ReadTrackerActivity {
   private static EditText mEditHighlightText;
   private static EditText mEditHighlightComment;
   private static Button mButtonSaveHighlight;
+  private static Button mButtonReadmillWeb;
 
   private static ProgressPicker mProgressPicker;
 
   private LocalReading mLocalReading;
+  private LocalHighlight mLocalHighlight;
+
+  private boolean mCreateMode = false;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -44,13 +48,26 @@ public class HighlightActivity extends ReadTrackerActivity {
     if(savedInstanceState != null) {
       Log.d(TAG, "unfreezing state");
       mLocalReading = savedInstanceState.getParcelable(IntentKeys.LOCAL_READING);
+      mLocalHighlight = savedInstanceState.getParcelable(IntentKeys.LOCAL_HIGHLIGHT);
       mEditHighlightText.setText(savedInstanceState.getString(IntentKeys.TEXT));
       currentPage = savedInstanceState.getInt(IntentKeys.PAGE);
     } else {
       Bundle extras = getIntent().getExtras();
       mLocalReading = (LocalReading) extras.get(IntentKeys.LOCAL_READING);
-      mEditHighlightText.setText("");
-      currentPage = (int) mLocalReading.currentPage;
+      mLocalHighlight = (LocalHighlight) extras.get(IntentKeys.LOCAL_HIGHLIGHT);
+
+      if(mLocalHighlight == null) {
+        mLocalHighlight = new LocalHighlight();
+        mCreateMode = true;
+        mEditHighlightText.setText("");
+        currentPage = (int) mLocalReading.currentPage;
+      } else {
+        mCreateMode = false;
+        mEditHighlightText.setText(mLocalHighlight.content);
+        currentPage = (int) (mLocalHighlight.position * mLocalReading.totalPages);
+      }
+
+      Log.d(TAG, "Starting activity in " + (mCreateMode ? "creation" : "edit") + " mode");
     }
 
     if(mLocalReading.hasPageInfo()) {
@@ -61,14 +78,19 @@ public class HighlightActivity extends ReadTrackerActivity {
       findViewById(R.id.textLabelEnterPosition).setVisibility(View.GONE);
     }
 
-    if(getCurrentUser() == null) {
-      // Hide commenting for anonymous users
+    if(getCurrentUser() == null || !mCreateMode) {
       findViewById(R.id.layoutHighlightComment).setVisibility(View.GONE);
     }
 
-    setBackgroundDrawable(mEditHighlightText);
-    setBackgroundDrawable(mEditHighlightComment);
-    mButtonSaveHighlight.setBackgroundDrawable(DrawableGenerator.generateButtonBackground(mLocalReading.getColor()));
+    setEditTextBackground(mEditHighlightText);
+    setEditTextBackground(mEditHighlightComment);
+    setButtonBackground(mButtonSaveHighlight);
+
+    if(mLocalHighlight.hasVisitablePermalink()) {
+      setButtonBackground(mButtonReadmillWeb);
+    } else {
+      mButtonReadmillWeb.setVisibility(View.GONE);
+    }
 
     ViewBindingBookHeader.bindWithDefaultClickHandler(this, mLocalReading);
   }
@@ -78,6 +100,7 @@ public class HighlightActivity extends ReadTrackerActivity {
     super.onSaveInstanceState(outState);
     Log.d(TAG, "freezing state");
     outState.putParcelable(IntentKeys.LOCAL_READING, mLocalReading);
+    outState.putParcelable(IntentKeys.LOCAL_HIGHLIGHT, mLocalHighlight);
     outState.putString(IntentKeys.TEXT, mEditHighlightText.getText().toString());
     if(mLocalReading.hasPageInfo()) {
       outState.putInt(IntentKeys.PAGE, mProgressPicker.getCurrentPage());
@@ -93,6 +116,7 @@ public class HighlightActivity extends ReadTrackerActivity {
     mEditHighlightText = (EditText) findViewById(R.id.editHighlight);
     mEditHighlightComment = (EditText) findViewById(R.id.editHighlightComment);
     mButtonSaveHighlight = (Button) findViewById(R.id.buttonSaveHighlight);
+    mButtonReadmillWeb = (Button) findViewById(R.id.buttonReadmillWeb);
     mProgressPicker = (ProgressPicker) findViewById(R.id.progressPicker);
   }
 
@@ -100,65 +124,87 @@ public class HighlightActivity extends ReadTrackerActivity {
     mButtonSaveHighlight.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
-        saveHighlight();
+        saveOrCreateHighlight();
+      }
+    });
+
+    mButtonReadmillWeb.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View view) {
+        if(mLocalHighlight.hasVisitablePermalink()) {
+          Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(mLocalHighlight.readmillPermalinkUrl));
+          startActivity(browserIntent);
+        }
       }
     });
   }
 
-  private void setBackgroundDrawable(View view) {
+  private void setEditTextBackground(EditText editText) {
     Drawable backgroundDrawable;
     backgroundDrawable = DrawableGenerator.generateEditTextOutline(
       mLocalReading.getColor(), getPixels(1), getPixels(3)
     );
-    view.setBackgroundDrawable(backgroundDrawable);
+    editText.setBackgroundDrawable(backgroundDrawable);
   }
 
-  private void saveHighlight() {
-    Log.i(TAG, "Saving highlight for LocalReading with id:" + mLocalReading.id);
-    String content = mEditHighlightText.getText().toString();
-    String comment = mEditHighlightComment.getText().toString();
+  private void setButtonBackground(Button button) {
+    final Drawable background = DrawableGenerator.generateButtonBackground(mLocalReading.getColor());
+    button.setBackgroundDrawable(background);
+  }
+
+  private void saveOrCreateHighlight() {
+    Log.i(TAG, "Save/Create highlight for LocalReading with id:" + mLocalReading.id);
+    String content = mEditHighlightText.getText().toString().trim();
+    String comment = mEditHighlightComment.getText().toString().trim();
 
     if(!validateHighlightContent(content)) {
       return;
     }
 
     long readmillUserId = getCurrentUserId();
-
     double position = 0.0f;
 
     if(mLocalReading.hasPageInfo()) {
       position = mProgressPicker.getProgress();
     }
 
-    LocalHighlight highlight = new LocalHighlight();
-
-    highlight.content = content;
-    highlight.readingId = mLocalReading.id;
-    highlight.readmillReadingId = mLocalReading.readmillReadingId;
-    highlight.readmillUserId = readmillUserId;
-    highlight.position = position;
-    highlight.highlightedAt = new Date();
+    mLocalHighlight.content = content;
+    mLocalHighlight.position = position;
 
     if(comment.length() > 0) {
-      highlight.comment = comment;
+      mLocalHighlight.comment = comment;
     }
 
-    new CreateHighlightAsyncTask(new CreateHighlightTaskListener() {
-      @Override
-      public void onReadingHighlightCreated(boolean result) {
-        onHighlightCreated(result);
-      }
-    }).execute(highlight);
+    if(mCreateMode) {
+      mLocalHighlight.highlightedAt = new Date();
+      mLocalHighlight.readingId = mLocalReading.id;
+      mLocalHighlight.readmillReadingId = mLocalReading.readmillReadingId;
+      mLocalHighlight.readmillUserId = readmillUserId;
+    } else {
+      mLocalHighlight.editedAt = new Date();
+    }
+
+    persistHighlight(mLocalHighlight);
   }
 
-  private void onHighlightCreated(boolean success) {
+  private void persistHighlight(LocalHighlight localHighlight) {
+    PersistLocalHighlightTask.persist(localHighlight, new PersistLocalHighlightListener() {
+      @Override public void onLocalHighlightPersisted(int id, boolean created) {
+        Log.d(TAG, "Persisted local highlight, id: " + id + " created: " + created);
+        onHighlightPersisted(true);
+      }
+
+      @Override public void onLocalHighlightPersistedFailed() {
+        Log.d(TAG, "Failed to persist local highlight");
+        onHighlightPersisted(false);
+      }
+    });
+  }
+
+  private void onHighlightPersisted(boolean success) {
     if(!success) {
       toastLong("An error occurred. The highlight could not be saved.");
       return;
     }
-
-    // Push the changes to Readmill
-    startService(new Intent(this, ReadmillTransferIntent.class));
 
     Intent resultIntent = new Intent();
     resultIntent.putExtra(IntentKeys.READING_ID, mLocalReading.id);

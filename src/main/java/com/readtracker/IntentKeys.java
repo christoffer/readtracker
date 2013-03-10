@@ -25,4 +25,5 @@ public class IntentKeys {
   public static final String RECOMMENDED = "readmillRecommended";
   public static final String FORCE_RESULT_OK = "force-result-ok";
   public static final String SKIP_FULL_SYNC = "skip-full-sync";
+  public static final String LOCAL_HIGHLIGHT = "local-highlight";
 }

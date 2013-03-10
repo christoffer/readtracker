@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import com.readtracker.R;
+import com.readtracker.db.LocalHighlight;
 import com.readtracker.support.DrawableGenerator;
 import com.readtracker.support.Utils;
 
@@ -73,6 +74,23 @@ public class HighlightAdapter extends ArrayAdapter<HighlightItem> {
     return convertView;
   }
 
+  @Override
+  public void add(HighlightItem object) {
+    super.add(object);
+    sort(mReadingHighlightComparator);
+  }
+
+  public void remove(int localHighlightId) {
+    for(int i = 0; i < getCount(); i++) {
+      HighlightItem item = getItem(i);
+      if(item.getLocalHighlight().id == localHighlightId) {
+        remove(item);
+        notifyDataSetChanged();
+        return;
+      }
+    }
+  }
+
   private float textSizeForContent(String content) {
     if(content == null || content.length() < 100) {
       return textSizeFromDP(18);
@@ -85,11 +103,5 @@ public class HighlightAdapter extends ArrayAdapter<HighlightItem> {
 
   private float textSizeFromDP(int dp) {
     return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, getContext().getResources().getDisplayMetrics());
-  }
-
-  @Override
-  public void add(HighlightItem object) {
-    super.add(object);
-    sort(mReadingHighlightComparator);
   }
 }

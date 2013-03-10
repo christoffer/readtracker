@@ -8,6 +8,7 @@ class ActivityCodes {
 
   public static final int RESULT_SIGN_OUT = Activity.RESULT_FIRST_USER + 1;
   public static final int RESULT_DELETED_BOOK = Activity.RESULT_FIRST_USER + 2;
+  public static final int RESULT_SHOULD_SYNC = Activity.RESULT_FIRST_USER + 3;
 
   public static final int REQUEST_ADD_BOOK = 0;
   public static final int REQUEST_READING_SESSION = 1;
@@ -19,7 +20,6 @@ class ActivityCodes {
   public static final int REQUEST_EDIT_PAGE_NUMBERS = 8;
   public static final int REQUEST_FINISH_READING = 9;
   public static final int REQUEST_BOOK_SETTINGS = 10;
-
   public static final int RESULT_REQUESTED_BOOK_SETTINGS = 11;
   public static final int RESULT_LOCAL_READING_UPDATED = 12;
 }

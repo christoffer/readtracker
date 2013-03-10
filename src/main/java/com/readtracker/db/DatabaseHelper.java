@@ -292,11 +292,13 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
   }
 
   /**
-   * This upgrade adds the comment field to highlights and updatedAt to readings
+   * This upgrade adds the comment, editedAt and deletedByUser field to highlights and updatedAt to readings
    */
   private void _upgradeToVersion10(SQLiteDatabase db, ConnectionSource connectionSource) throws SQLException {
     Log.i(TAG, "Running database upgrade 10");
     db.execSQL("ALTER TABLE LocalHighlight ADD COLUMN " + LocalHighlight.COMMENT_FIELD_NAME + " TEXT NULL;");
     db.execSQL("ALTER TABLE LocalReading ADD COLUMN " + LocalReading.UPDATED_AT_FIELD_NAME + " INTEGER NULL;");
+    db.execSQL("ALTER TABLE LocalHighlight ADD COLUMN " + LocalHighlight.EDITED_AT_FIELD_NAME + " INTEGER NULL;");
+    db.execSQL("ALTER TABLE LocalHighlight ADD COLUMN " + LocalHighlight.DELETED_BY_USER_FIELD_NAME + " INTEGER NOT NULL DEFAULT 0;");
   }
 }

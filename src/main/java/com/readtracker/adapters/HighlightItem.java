@@ -15,6 +15,7 @@ public class HighlightItem {
   private Date highlightedAt;
   private int likeCount;
   private int commentCount;
+  private LocalHighlight localHighlight;
 
   public HighlightItem(LocalHighlight highlight) {
     content = highlight.content;
@@ -23,10 +24,15 @@ public class HighlightItem {
     highlightedAt = highlight.highlightedAt;
     likeCount = highlight.likeCount;
     commentCount = highlight.commentCount;
+    localHighlight = highlight;
   }
 
   public String getContent() {
     return content;
+  }
+
+  public LocalHighlight getLocalHighlight() {
+    return localHighlight;
   }
 
   public int getId() {
