@@ -14,6 +14,8 @@ import org.json.JSONObject;
 import java.sql.SQLException;
 import java.util.*;
 
+import static com.readtracker.support.ReadmillApiHelper.dumpJSON;
+
 /**
  * Syncs data for the current user with their Readmill profile.
  */
@@ -117,6 +119,12 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
    */
   private void syncUser(long readmillUserId, boolean fullSync) throws ReadmillException, JSONException, SQLException {
     Log.i(TAG, "Syncing user with Readmill id: " + readmillUserId);
+
+    deleteMarkedHighlights();
+    // deleteMarkedReadings(); TODO This step should be here instead of in the remote/local loop
+    uploadNewReadings();
+    uploadNewSessions();
+    uploadNewHighlights();
 
     ArrayList<LocalReading> localReadings = getAllConnectedLocalReadingForUserId(readmillUserId);
     ArrayList<JSONObject> remoteReadings = getAllRemoteReadingsForUserId(readmillUserId);
@@ -411,11 +419,17 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
    *
    * @param localReadings changed readings to push.
    */
-  private void pushLocallyChanged(List<LocalReading> localReadings) {
+  private void pushLocallyChanged(List<LocalReading> localReadings) throws SQLException {
     Log.d(TAG, "Changing privacy on the server for " + localReadings.size() + " readings");
     for(LocalReading localReading : localReadings) {
       Log.v(TAG, "Changing privacy on Readmill for LocalReading: " + localReading.toString());
       mReadmillApi.updateReading(localReading.readmillReadingId, localReading.readmillPrivate);
+
+      // Readmill does not set the touched_at when the reading is changed, so we have
+      // to reset the local timestamp to avoid falling into the same comparison (local vs. remote timestamp)
+      // on the next sync.
+      localReading.setUpdatedAt(null);
+      mReadingDao.update(localReading);
     }
   }
 
@@ -740,6 +754,313 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
 
     createdSessions.addAll(localSessions);
     return createdSessions;
+  }
+
+  /**
+   * Deletes all highlights that have been marked as deleted by the user.
+   */
+  private void deleteMarkedHighlights() {
+    Log.d(TAG, "deleteMarkedHighlights()");
+    try {
+      Dao<LocalHighlight, Integer> highlightDao = ApplicationReadTracker.getHighlightDao();
+      Where<LocalHighlight, Integer> stmt = highlightDao.queryBuilder().where()
+        .gt(LocalHighlight.READMILL_READING_ID_FIELD_NAME, 0)
+        .and()
+        .eq(LocalHighlight.DELETED_BY_USER_FIELD_NAME, true);
+
+      List<LocalHighlight> highlightsToDelete = stmt.query();
+
+      if(highlightsToDelete.size() < 1) {
+        Log.i(TAG, "No highlights to delete. Exiting.");
+        return;
+      }
+
+      Log.i(TAG, "Found " + highlightsToDelete.size() + " highlights marked for deletion");
+
+      for(LocalHighlight highlight : highlightsToDelete) {
+        Log.d(TAG, "Deleting highlight with readmill Id: " + highlight.readmillHighlightId + " url:" + highlight.readmillPermalinkUrl);
+
+        try {
+          mReadmillApi.deleteHighlight(highlight.readmillHighlightId);
+        } catch(ReadmillException e) {
+          Log.w(TAG, "Failed to delete highlight: " + highlight, e);
+          if(e.getStatusCode() == 404) {
+            Log.d(TAG, "Was 404, still deleting locally");
+          } else {
+            continue; // skip to next highlight
+          }
+        }
+
+        Highlights.delete(highlight);
+      }
+    } catch(SQLException e) {
+      Log.d(TAG, "Failed get highlights from database", e);
+    }
+  }
+
+  /**
+   * Upload all readings that are yet not connected to Readmill
+   */
+  private void uploadNewReadings() {
+    Log.v(TAG, "uploadNewReadings()");
+
+    try {
+      Dao<LocalReading, Integer> readingDao = ApplicationReadTracker.getReadingDao();
+
+      // Fetch readings that have an associated reading (not anonymous readings)
+      // that are not yet connected to Readmill
+      Where<LocalReading, Integer> stmt = readingDao.queryBuilder().where()
+        .le(LocalReading.READMILL_READING_ID_FIELD_NAME, 0)
+        .and()
+        .gt(LocalHighlight.READMILL_USER_ID_FIELD_NAME, 0);
+
+      List<LocalReading> readingsToPush = stmt.query();
+
+      if(readingsToPush.size() < 1) {
+        Log.v(TAG, "No new readings found.");
+        return;
+      }
+
+      Log.i(TAG, "Pushing " + readingsToPush.size() + " new readings");
+
+      for(LocalReading localReading : readingsToPush) {
+        Log.d(TAG, "Pushing reading: " + localReading.getInfo());
+
+        JSONObject jsonBook = null, jsonReading = null;
+
+        try {
+          jsonBook = mReadmillApi.createBook(localReading.title, localReading.author);
+
+          final Date startedAt = localReading.hasStartedAt() ? localReading.getStartedAt() : new Date();
+          final long id = jsonBook.getLong("id");
+          final boolean isPublic = !localReading.readmillPrivate;
+          jsonReading = mReadmillApi.createReading(id, isPublic, startedAt);
+
+          // Keep the provided cover if any
+          if(localReading.coverURL == null) {
+            localReading.coverURL = jsonBook.getString("cover_url");
+          }
+
+          // Prevent a closed reading from being updated to reading by the
+          // readmill create call.
+          boolean wasClosed = localReading.isClosed();
+          int previousState = localReading.readmillState;
+          String previousClosingRemark = localReading.getClosingRemark();
+          boolean wasRecommended = localReading.readmillRecommended;
+
+          // Include data from Readmill
+          ReadmillConverter.mergeLocalReadingWithJSON(localReading, jsonReading);
+
+          // Put back the local data if necessary and let the sync task handle
+          // updating the Reading at a later point
+          if(wasClosed) {
+            localReading.readmillClosingRemark = previousClosingRemark;
+            localReading.readmillState = previousState;
+            localReading.readmillRecommended = wasRecommended;
+          }
+
+          // Store locally
+          readingDao.createOrUpdate(localReading);
+
+          updateReadmillReadingForSessionsOf(localReading);
+          updateReadmillReadingForHighlightsOf(localReading);
+        } catch(ReadmillException e) {
+          Log.w(TAG, "Failed to connect book to readmill", e);
+        } catch(JSONException e) {
+          Log.w(TAG, "Unexpected result from Readmill when creating LocalReading. book: " +
+            dumpJSON(jsonBook) + " and reading: " + dumpJSON(jsonReading), e);
+        } catch(SQLException e) {
+          Log.w(TAG, "SQL Error while trying to save LocalReading", e);
+        }
+      }
+    } catch(SQLException e) {
+      Log.d(TAG, "Failed to save local reading", e);
+    }
+  }
+
+  /**
+   * Upload all new highlights that are not yet on Readmill
+   */
+  private void uploadNewHighlights() {
+    try {
+      Dao<LocalHighlight, Integer> highlightDao = ApplicationReadTracker.getHighlightDao();
+      Where<LocalHighlight, Integer> stmt = highlightDao.queryBuilder().where()
+        .isNull(LocalHighlight.SYNCED_AT_FIELD_NAME)
+        .and()
+        .eq(LocalHighlight.DELETED_BY_USER_FIELD_NAME, false)
+        .and()
+        .gt(LocalHighlight.READMILL_READING_ID_FIELD_NAME, 0);
+
+      List<LocalHighlight> highlightsToPush = stmt.query();
+
+      if(highlightsToPush.size() < 1) {
+        Log.i(TAG, "No new highlights found. Exiting.");
+        return;
+      }
+
+      Log.i(TAG, "Found " + highlightsToPush.size() + " new highlights");
+
+      for(LocalHighlight highlight : highlightsToPush) {
+        Log.d(TAG, "Processing highlight with local id: " + highlight.id + " highlighted at: " + highlight.highlightedAt + " with content: " + highlight.content + " at position: " + highlight.position);
+
+        try {
+          JSONObject readmillHighlight = mReadmillApi.createHighlight(highlight);
+          Log.d(TAG, "Marking highlight with id: " + highlight.id + " as synced");
+          ReadmillConverter.mergeLocalHighlightWithJson(highlight, readmillHighlight);
+          highlight.syncedAt = new Date();
+          highlightDao.update(highlight);
+        } catch(ReadmillException e) {
+          Log.w(TAG, "Failed to upload highlight: " + highlight, e);
+        } catch(JSONException e) {
+          Log.w(TAG, "Failed to update highlight due to malformed response from Readmill", e);
+        }
+      }
+    } catch(SQLException e) {
+      Log.d(TAG, "Failed to persist unsent highlights", e);
+    }
+  }
+
+  /**
+   * Transfers all sessions on the device that have not been marked as already
+   * being synced.
+   * <p/>
+   * Note that this transfers all sessions, not just the ones for the current
+   * user.
+   */
+  private void uploadNewSessions() {
+    try {
+      Dao<LocalSession, Integer> sessionDao = ApplicationReadTracker.getSessionDao();
+      Where<LocalSession, Integer> stmt = sessionDao.queryBuilder().where()
+        .eq(LocalSession.SYNCED_WITH_READMILL_FIELD_NAME, false)
+        .and()
+        .gt(LocalSession.READMILL_READING_ID_FIELD_NAME, 0);
+
+      List<LocalSession> sessionsToProcess = stmt.query();
+
+      if(sessionsToProcess.size() < 1) {
+        Log.i(TAG, "No unprocessed sessions to send.");
+        return;
+      }
+
+      Log.i(TAG, "Sending " + sessionsToProcess.size() + " new sessions to readmill");
+      for(LocalSession session : sessionsToProcess) {
+        syncWithRemote(session);
+        sessionDao.update(session);
+      }
+    } catch(SQLException e) {
+      Log.d(TAG, "Failed to get a DAO for queued pings", e);
+    }
+  }
+
+  /**
+   * Sync a session to Readmill.
+   * <p/>
+   * Potentially modifies the provided ReadingSession with a new state as a
+   * result of the sync (marking it as synced or in need of reconnect).
+   *
+   * @param session ReadingSession to sync
+   */
+  private void syncWithRemote(LocalSession session) {
+    Log.d(TAG, "Processing session with id: " + session.id +
+      " occurred at: " + session.occurredAt +
+      " session id " + session.sessionIdentifier);
+
+    try {
+      mReadmillApi.createPing(
+        session.sessionIdentifier,
+        session.readmillReadingId,
+        session.progress,
+        session.durationSeconds,
+        session.occurredAt
+      );
+      Log.d(TAG, "Marking session with id: " + session.id + " as synced");
+      session.syncedWithReadmill = true;
+    } catch(ReadmillException e) {
+      // Keep the local data if the reading has been removed on reading, or
+      // if the token has expired, but mark it as needing a reconnect to avoid
+      // repeatedly trying to re-send it.
+      int status = e.getStatusCode();
+      if(status == 404 || status == 401) {
+        Log.d(TAG, "Marking session with id: " + session.id + " as needing reconnect");
+        session.needsReconnect = true;
+      } else if(status == 422) {
+        Log.w(TAG, "Server did not accept session. Stop trying to sync it.", e);
+        session.syncedWithReadmill = true;
+      } else {
+        Log.w(TAG, "Failed to upload Readmill Session", e);
+        // Do not modify the session at all, causing it to be picked up and
+        // retried on the next sync
+      }
+    }
+  }
+
+  /**
+   * Update all sessions of a LocalReading with the Readmill Reading id.
+   *
+   * @param localReading LocalReading to update sessions for
+   *
+   * TODO This is horribly hackish. Should be - at the very least - a method on the LocalReading
+   */
+  private void updateReadmillReadingForSessionsOf(LocalReading localReading) {
+    Log.d(TAG, "updateReadmillReadingForSessionsOf" + localReading.toString());
+    if(localReading.readmillReadingId < 1) {
+      return;
+    }
+
+    try {
+      Dao<LocalSession, Integer> sessionDao = ApplicationReadTracker.getSessionDao();
+      Where<LocalSession, Integer> stmt = sessionDao.queryBuilder().where()
+        .eq(LocalSession.READING_ID_FIELD_NAME, localReading.id)
+        .and()
+        .lt(LocalSession.READMILL_READING_ID_FIELD_NAME, 1);
+
+      List<LocalSession> sessionsToProcess = stmt.query();
+
+      if(sessionsToProcess.size() < 1) {
+        Log.i(TAG, "No sessions for LocalReading " + localReading.toString() + " needs connecting");
+        return;
+      }
+
+      for(LocalSession session : sessionsToProcess) {
+        session.readmillReadingId = localReading.readmillReadingId;
+        sessionDao.update(session);
+      }
+    } catch(SQLException e) {
+      Log.d(TAG, "Failed to get a DAO for queued pings", e);
+    }
+  }
+
+  private void updateReadmillReadingForHighlightsOf(LocalReading localReading) {
+    if(localReading == null || localReading.readmillReadingId < 1) {
+      return;
+    }
+
+    Log.d(TAG, "Searching for highlights without readmill reading id for local reading " + localReading.toString());
+
+    try {
+      Dao<LocalHighlight, Integer> highlightDao = ApplicationReadTracker.getHighlightDao();
+      Where<LocalHighlight, Integer> stmt = highlightDao.queryBuilder().where()
+        .eq(LocalHighlight.READING_ID_FIELD_NAME, localReading.id)
+        .and()
+        .lt(LocalHighlight.READMILL_READING_ID_FIELD_NAME, 1);
+
+      List<LocalHighlight> highlightsToProcess = stmt.query();
+
+      if(highlightsToProcess.size() < 1) {
+        Log.i(TAG, "No highlights without readmill reading id for reading " + localReading.toString() + " found. Exiting.");
+        return;
+      }
+
+      Log.i(TAG, "Updating " + highlightsToProcess.size() + " highlights");
+
+      for(LocalHighlight highlight : highlightsToProcess) {
+        Log.d(TAG, "Processing highlight with local id: " + highlight.id + " highlighted at: " + highlight.highlightedAt + " with content: " + highlight.content + " at position: " + highlight.position);
+        highlight.readmillReadingId = localReading.readmillReadingId;
+        highlightDao.update(highlight);
+      }
+    } catch(SQLException e) {
+      Log.d(TAG, "Failed to persist unsent highlights", e);
+    }
   }
 }
 

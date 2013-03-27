@@ -178,7 +178,6 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
       }
     } else if(needReloadDueToReadingSession || needReloadDueToAddedBook) {
       // Push new changes and reload local lists
-      startService(new Intent(this, ReadmillTransferIntent.class));
       fetchLocalReadings();
       sync(false);
     }
@@ -312,10 +311,6 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
       return;
     }
     Log.i(TAG, "Performing " + (fullSync ? "full" : "partial") + " sync");
-
-    startService(new Intent(this, ReadmillTransferIntent.class));
-
-    Log.i(TAG, "Starting ASyncTask for Syncing Readmill Readings");
 
     ReadmillApiHelper api = ApplicationReadTracker.getReadmillApiHelper();
     mReadmillSyncTask = new ReadmillSyncAsyncTask(mSyncStatusHandler, api, fullSync);
