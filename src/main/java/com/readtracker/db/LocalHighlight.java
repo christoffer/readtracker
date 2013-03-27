@@ -127,7 +127,7 @@ public class LocalHighlight implements Parcelable {
     parcel.writeInt(id);
     parcel.writeLong(readingId);
     parcel.writeString(content);
-    parcel.writeLong(highlightedAt.getTime());
+    parcel.writeLong(highlightedAt == null ? 0 : highlightedAt.getTime());
     parcel.writeDouble(position);
     parcel.writeLong(editedAt == null ? 0 : editedAt.getTime());
     parcel.writeLong(syncedAt == null ? 0 : syncedAt.getTime());
