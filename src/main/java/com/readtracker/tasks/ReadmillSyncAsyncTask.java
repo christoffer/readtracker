@@ -261,7 +261,7 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
       LocalReading localReading = entry.getKey();
       JSONObject remoteReading = entry.getValue();
 
-      postProgressUpdateMessage("Updating " + localReading.title, currentCount++, totalCount - 1);
+      postProgressUpdateMessage("Refreshing " + localReading.title, currentCount++, totalCount - 1);
       try {
         updateLocalReadingMetadata(localReading, remoteReading);
         syncDependentObjects(localReading, remoteReading);
