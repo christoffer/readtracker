@@ -38,8 +38,6 @@
 
     <activity android:name=".activities.BookActivity" />
 
-    <service android:name=".ReadmillTransferIntent" />
-
     <activity android:name=".activities.AddBookActivity"
               android:noHistory="true"
               android:windowSoftInputMode="adjustPan" />
