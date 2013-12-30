@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+
+  android:layout_height="fill_parent"
+  android:layout_width="fill_parent"
+  android:fillViewport="true">
+
+  <LinearLayout
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:padding="12dp"
+    android:orientation="vertical">
+
+    <TextView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="0dp"
+      android:layout_marginBottom="6dp"
+      android:textColor="@color/text_color_secondary"
+      android:text="Book information" />
+
+    <EditText
+      android:id="@+id/editTitle"
+      style="@style/default_input_field"
+      android:layout_marginBottom="12dp"
+      android:hint="Title" />
+
+    <EditText
+      android:id="@+id/editAuthor"
+      style="@style/default_input_field"
+      android:layout_marginBottom="12dp"
+      android:hint="Author" />
+
+    <TextView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="24dp"
+      android:textColor="@color/text_color_secondary"
+      android:text="Length used for tracking" />
+
+    <LinearLayout
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="12dp"
+      android:layout_marginBottom="12dp"
+      android:gravity="center_vertical">
+
+      <EditText
+        android:id="@+id/editPageCount"
+        style="@style/centered_number_input_field"
+        android:textSize="30dp"
+        android:layout_width="fill_parent"
+        android:layout_weight="1"
+        android:paddingLeft="24dp"
+        android:paddingRight="24dp"
+        android:inputType="number"
+        android:hint="0"
+        android:gravity="center_horizontal"
+        android:ellipsize="end" />
+
+      <com.readtracker.thirdparty.views.Switch
+        android:id="@+id/togglePagesPercent"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_weight="1"
+        app:textOn="Pages"
+        app:textOff="%"
+        android:checked="true" />
+
+    </LinearLayout>
+
+    <LinearLayout
+      android:id="@+id/layoutReadmill"
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="12dp"
+      android:layout_marginBottom="12dp">
+
+    <TextView
+        android:text="Readmill privacy"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp" />
+
+      <com.readtracker.thirdparty.views.Switch
+        android:id="@+id/togglePublicPrivate"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_weight="1"
+        app:textOn="Shared"
+        app:textOff="Private"
+        android:checked="true" />
+
+    </LinearLayout>
+
+    <TextView
+      android:id="@+id/textReadmillPrivacyHint"
+      style="@style/ui_hint"
+      android:layout_width="fill_parent"
+      android:text="@string/readmill_shared" />
+
+    <View
+      android:layout_width="fill_parent"
+      android:layout_height="0dp"
+      android:layout_weight="1" />
+
+    <Button
+      android:id="@+id/buttonAddBook"
+      style="@style/default_button"
+      android:layout_marginTop="24dp"
+      android:text="Add" />
+
+  </LinearLayout>
+</ScrollView>

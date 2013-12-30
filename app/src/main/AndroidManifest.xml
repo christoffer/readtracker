@@ -1,0 +1,55 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="com.readtracker.android"
+          android:versionCode="15"
+          android:versionName="3.0.4">
+
+  <uses-permission android:name="android.permission.INTERNET" />
+  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+  <supports-screens android:largeScreens="true"
+                    android:normalScreens="true"
+                    android:smallScreens="false" />
+
+  <uses-sdk
+    android:minSdkVersion="10"
+    android:targetSdkVersion="10" />
+
+  <application android:icon="@drawable/icon"
+               android:label="@string/app_name"
+               android:name=".ApplicationReadTracker"
+               android:theme="@style/ReadTrackerTheme">
+
+    <activity android:label="ReadTracker"
+              android:name=".activities.WelcomeActivity" />
+
+    <activity android:name=".activities.FinishBookActivity" />
+
+    <activity android:name=".activities.HomeActivity">
+
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+        <category android:name="android.intent.category.LAUNCHER" />
+      </intent-filter>
+
+    </activity>
+
+    <activity android:name=".activities.BookSearchActivity" />
+
+    <activity android:name=".activities.BookActivity" />
+
+    <activity android:name=".activities.AddBookActivity"
+              android:noHistory="true"
+              android:windowSoftInputMode="adjustPan" />
+
+    <activity android:name=".activities.SettingsActivity" />
+
+    <activity android:name=".activities.BookSettingsActivity" />
+
+    <activity android:name=".activities.InAppBrowserActivity" />
+
+    <activity android:name=".activities.HighlightActivity" />
+
+  </application>
+
+</manifest>

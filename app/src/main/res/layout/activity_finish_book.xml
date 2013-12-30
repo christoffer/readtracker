@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:layout_height="fill_parent"
+  android:layout_width="fill_parent"
+  android:padding="12dp">
+
+  <include layout="@layout/_book_header" />
+
+  <EditText
+    android:id="@+id/editClosingRemark"
+    style="@style/free_text_input"
+    android:layout_below="@id/_bookHeader"
+    android:layout_above="@+id/switchRecommended"
+    android:hint="What did you think of the book?"
+    android:maxLength="999" />
+
+  <com.readtracker.thirdparty.views.Switch
+    android:id="@+id/switchRecommended"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_centerHorizontal="true"
+    android:layout_marginTop="24dp"
+    android:layout_marginBottom="24dp"
+    android:layout_above="@+id/buttonFinishBook"
+    app:textOff="Just finish"
+    android:checked="true"
+    app:textOn="Recommend" />
+
+  <Button
+    android:id="@+id/buttonFinishBook"
+    style="@style/default_button"
+    android:layout_alignParentBottom="true"
+    android:text="Finish" />
+
+</RelativeLayout>

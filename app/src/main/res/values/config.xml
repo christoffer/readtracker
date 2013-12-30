@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Create your own app at https://readmill.com/you/apps -->
+    <string name="config_readmill_api_host">api.readmill.com</string>
+    <string name="config_readmill_web_host">readmill.com</string>
+    <string name="config_readmill_client_id">my-readmill-app-client-id</string>
+    <string name="config_readmill_client_secret">my-readmill-app-client-secret</string>
+    <bool name="config_readmill_use_https">true</bool>
+
+    <string name="config_readmill_callback_url">readtracker://connected</string>
+</resources>
