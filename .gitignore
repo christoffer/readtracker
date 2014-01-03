@@ -11,3 +11,5 @@ R.java
 project.properties
 /app/src/debug/res/values/config.xml
 /app/build
+local.properties
+.gradle/*
