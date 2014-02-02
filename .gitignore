@@ -4,7 +4,6 @@ proguard/*
 .classpath
 .project
 .settings
-settings.xml
 R.java
 *.iml
 *.apk
