@@ -133,7 +133,8 @@ public class BookActivity extends ReadTrackerActivity implements EndSessionDialo
     return true;
   }
 
-  @Override public boolean onMenuItemSelected(int featureId, MenuItem item) {
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
     switch(item.getItemId()) {
       case MENU_EDIT_BOOK_SETTINGS:
         exitToBookSettings();

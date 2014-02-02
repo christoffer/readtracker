@@ -1,6 +1,6 @@
 <resources>
 
-  <style name="ReadTrackerTheme" parent="android:Theme.Black.NoTitleBar">
+  <style name="ReadTrackerTheme" parent="@style/Theme.AppCompat">
     <item name="switchStyle">@style/switch_dark</item>
     <item name="textAppearance">@style/TextAppearance</item>
   </style>

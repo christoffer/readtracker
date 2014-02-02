@@ -7,6 +7,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.ActionBarActivity;
 import android.util.TypedValue;
 import android.view.Window;
 import android.widget.ImageView;
@@ -21,7 +22,7 @@ import com.readtracker.android.support.ReadTrackerUser;
  * <p/>
  * Hides the title from child applications.
  */
-public class ReadTrackerActivity extends FragmentActivity {
+public class ReadTrackerActivity extends ActionBarActivity {
   protected final String TAG = this.getClass().getName();
   private ApplicationReadTracker mApplication;
 
