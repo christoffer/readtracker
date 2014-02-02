@@ -23,7 +23,7 @@
       android:text=""
       android:gravity="center" />
 
-    <com.readtracker.thirdparty.widget.WheelView
+    <com.readtracker.android.thirdparty.widget.WheelView
       android:id="@+id/wheelDuration"
       android:minWidth="220dp"
       android:minHeight="80dp"

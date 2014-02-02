@@ -16,7 +16,7 @@
     android:hint="What did you think of the book?"
     android:maxLength="999" />
 
-  <com.readtracker.thirdparty.views.Switch
+  <com.readtracker.android.thirdparty.views.Switch
     android:id="@+id/switchRecommended"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"

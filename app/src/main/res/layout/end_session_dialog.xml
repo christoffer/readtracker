@@ -24,7 +24,7 @@
     android:layout_width="fill_parent"
     android:layout_gravity="center_horizontal" />
 
-  <com.readtracker.thirdparty.SafeViewFlipper
+  <com.readtracker.android.thirdparty.SafeViewFlipper
     android:id="@+id/flipperActionButtons"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
@@ -41,5 +41,5 @@
       style="@style/default_button"
       android:text="Finish book" />
 
-  </com.readtracker.thirdparty.SafeViewFlipper>
+  </com.readtracker.android.thirdparty.SafeViewFlipper>
 </LinearLayout>
