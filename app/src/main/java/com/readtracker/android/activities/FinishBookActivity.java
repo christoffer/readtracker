@@ -18,7 +18,7 @@ import com.readtracker.android.thirdparty.views.Switch;
 
 import java.util.Date;
 
-public class FinishBookActivity extends ReadTrackerActivity {
+public class FinishBookActivity extends BookBaseActivity {
   private LocalReading mLocalReading;
   private static EditText mEditClosingRemark;
   private static Button mButtonFinish;
@@ -47,7 +47,7 @@ public class FinishBookActivity extends ReadTrackerActivity {
 
     mButtonFinish.setBackgroundDrawable(DrawableGenerator.generateButtonBackground(mLocalReading.getColor()));
 
-    ViewBindingBookHeader.bindWithDefaultClickHandler(this, mLocalReading);
+    setReading(mLocalReading);
   }
 
   @Override

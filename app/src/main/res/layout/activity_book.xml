@@ -4,15 +4,12 @@
   android:layout_height="fill_parent"
   android:layout_width="fill_parent">
 
-  <include layout="@layout/_book_header" />
-
   <!-- container for pages of the book activity -->
 
   <android.support.v4.view.ViewPager
     android:id="@+id/pagerBookActivity"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:layout_below="@id/_bookHeader">
+    android:layout_height="fill_parent">
 
     <android.support.v4.view.PagerTabStrip
       style="@style/pager_title"

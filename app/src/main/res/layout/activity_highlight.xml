@@ -5,13 +5,9 @@
   android:layout_width="fill_parent"
   android:padding="12dp">
 
-  <include layout="@layout/_book_header" />
-
   <ScrollView
     android:layout_height="fill_parent"
     android:layout_width="fill_parent"
-    android:layout_below="@id/_bookHeader"
-    android:layout_above="@+id/textLabelEnterPosition"
     android:layout_marginTop="6dp"
     android:layout_marginBottom="6dp">
 

@@ -23,7 +23,7 @@ import java.util.Date;
 /**
  * Screen for adding a highlight
  */
-public class HighlightActivity extends ReadTrackerActivity {
+public class HighlightActivity extends BookBaseActivity {
   private static EditText mEditHighlightText;
   private static EditText mEditHighlightComment;
   private static Button mButtonSaveHighlight;
@@ -93,7 +93,7 @@ public class HighlightActivity extends ReadTrackerActivity {
       mButtonReadmillWeb.setVisibility(View.GONE);
     }
 
-    ViewBindingBookHeader.bindWithDefaultClickHandler(this, mLocalReading);
+    setReading(mLocalReading);
   }
 
   @Override

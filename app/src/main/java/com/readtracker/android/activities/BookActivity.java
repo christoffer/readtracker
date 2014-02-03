@@ -2,12 +2,15 @@ package com.readtracker.android.activities;
 
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 
 import com.j256.ormlite.dao.Dao;
 import com.readtracker.android.ApplicationReadTracker;
@@ -20,6 +23,7 @@ import com.readtracker.android.fragments.BookFragmentAdapter;
 import com.readtracker.android.interfaces.EndSessionDialogListener;
 import com.readtracker.android.support.SessionTimer;
 import com.readtracker.android.support.SessionTimerStore;
+import com.readtracker.android.thirdparty.DrawableManager;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -27,7 +31,7 @@ import java.util.ArrayList;
 /**
  * Fragmented screen for browsing and reading a book
  */
-public class BookActivity extends ReadTrackerActivity implements EndSessionDialogListener {
+public class BookActivity extends BookBaseActivity implements EndSessionDialogListener {
   // Fragment pages
   public static final int PAGE_UNSPECIFIED = -1;
   public static final int PAGE_SESSIONS = 0;
@@ -64,7 +68,7 @@ public class BookActivity extends ReadTrackerActivity implements EndSessionDialo
 
     mViewPagerReading = (ViewPager) findViewById(R.id.pagerBookActivity);
 
-    // When a book is thrown of to the reading session immediately after being
+    // When a book is thrown off to the reading session immediately after being
     // created we want to finish the activity with result OK to induce the home screen
     // to reload the list of readings
     mForceResultOK = getIntent().getBooleanExtra(IntentKeys.FORCE_RESULT_OK, false);
@@ -204,12 +208,7 @@ public class BookActivity extends ReadTrackerActivity implements EndSessionDialo
 
     Log.d(TAG, "Got " + localSessions.size() + " reading sessions and " + localHighlights.size() + " highlights");
 
-    // Book info
-    ViewBindingBookHeader.bind(this, mLocalReading, new ViewBindingBookHeader.BookHeaderClickListener() {
-      public void onBackButtonClick() {
-        exitToHomeScreen();
-      }
-    });
+    setReading(mLocalReading);
 
     if(mInitialPageForFragmentAdapter == PAGE_UNSPECIFIED) {
       if(mLocalReading.isActive()) {
