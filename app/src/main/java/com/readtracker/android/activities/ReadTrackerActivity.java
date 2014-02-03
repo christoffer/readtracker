@@ -95,7 +95,7 @@ public class ReadTrackerActivity extends ActionBarActivity {
    * Override this method to change what features that gets requested for the activity.
    */
   protected void requestWindowFeatures() {
-    requestWindowFeature(Window.FEATURE_NO_TITLE);
+    // NOOP
   }
 
   /**

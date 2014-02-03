@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/add_book_menu"
+        android:title="@string/home_menu_add_book"
+        android:titleCondensed="@string/home_menu_add"
+        android:showAsAction="always"
+        android:icon="@drawable/icon_add"/>
+
+    <item
+        android:id="@+id/sync_menu"
+        android:title="@string/home_menu_sync_with_readmill"
+        android:titleCondensed="@string/home_menu_sync"/>
+
+    <item
+        android:id="@+id/settings_menu"
+        android:title="@string/home_menu_settings"
+        android:showAsAction="never" />
+
+</menu>

@@ -11,35 +11,14 @@
     android:layout_height="wrap_content"
     android:layout_alignParentBottom="true" />
 
-  <RelativeLayout
-    android:id="@+id/layoutActionBar"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content">
-
-    <TextView
-      android:id="@+id/textHeader"
-      style="@style/header_main_text"
-      android:text="ReadTracker" />
-
-    <!-- add reading button -->
-    <ImageButton
-      android:id="@+id/buttonAddBook"
-      android:layout_width="48dp"
-      android:layout_height="48dp"
-      android:background="@drawable/default_toggle_button_background"
-      android:src="@drawable/icon_add"
-      android:layout_alignParentRight="true"
-      android:contentDescription="Add new Reading" />
-  </RelativeLayout>
-
   <android.support.v4.view.ViewPager
     android:id="@+id/pagerHomeActivity"
     android:layout_width="fill_parent"
-    android:layout_below="@id/layoutActionBar"
     android:layout_height="fill_parent">
 
     <android.support.v4.view.PagerTabStrip
       style="@style/pager_title"
       android:id="@+id/pagerTabStrip" />
+
   </android.support.v4.view.ViewPager>
 </RelativeLayout>

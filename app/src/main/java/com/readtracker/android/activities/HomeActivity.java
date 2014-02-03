@@ -7,9 +7,9 @@ import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageButton;
 
 import com.j256.ormlite.dao.Dao;
 import com.readtracker.android.ApplicationReadTracker;
@@ -35,8 +35,6 @@ import static com.readtracker.android.support.ReadmillSyncStatusUIHandler.SyncSt
 import static com.readtracker.android.support.ReadmillSyncStatusUIHandler.SyncUpdateHandler;
 
 public class HomeActivity extends ReadTrackerActivity implements LocalReadingInteractionListener {
-  private static ImageButton mButtonAddBook;
-  private static MenuItem mMenuReadmillSync;
   private static ViewPager mPagerHomeActivity;
 
   // A list of all the reading for the current user
@@ -44,9 +42,6 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
 
   // Cache lookup of readings by ID
   private HashMap<Integer, LocalReading> mLocalReadingMap = new HashMap<Integer, LocalReading>();
-
-  private static final int MENU_SYNC_BOOKS = 1;
-  private static final int MENU_SETTINGS = 2;
 
   private ReadmillSyncAsyncTask mReadmillSyncTask;
 
@@ -62,6 +57,7 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
       return localReadingB.getLastReadAt().compareTo(localReadingA.getLastReadAt());
     }
   };
+  private boolean mSyncIsEnabled;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -81,9 +77,6 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
     setContentView(R.layout.activity_home);
 
     bindViews();
-
-    // Set correct font of header
-    applyRoboto(R.id.textHeader);
 
     bindEvents();
 
@@ -136,30 +129,31 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
-    Log.d(TAG, "Creating Options menu for reading list");
-
-    if(getCurrentUser() != null) {
-      mMenuReadmillSync = menu.add(0, MENU_SYNC_BOOKS, 1, "Sync list with Readmill");
-      mMenuReadmillSync.setTitleCondensed("Sync");
-    }
-
-    MenuItem menuSettings = menu.add(0, MENU_SETTINGS, 3, "Settings");
-    menuSettings.setTitleCondensed("Settings");
+    MenuInflater inflater = getMenuInflater();
+    inflater.inflate(R.menu.home, menu);
     return true;
+  }
+
+  @Override
+  protected boolean onPrepareOptionsPanel(View view, Menu menu) {
+    MenuItem item = menu.findItem(R.id.sync_menu);
+    if(item != null) item.setEnabled(mSyncIsEnabled);
+
+    return super.onPrepareOptionsPanel(view, menu);
   }
 
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
     int clickedId = item.getItemId();
 
-    switch(clickedId) {
-      case MENU_SYNC_BOOKS:
-        sync(false);
-        break;
-      case MENU_SETTINGS:
-        exitToSettings();
-      default:
-        return false;
+    if (clickedId == R.id.sync_menu) {
+      sync(false);
+    } else if (clickedId == R.id.settings_menu) {
+      exitToSettings();
+    } else if(clickedId == R.id.add_book_menu) {
+      exitToBookSearch();
+    } else {
+      return false;
     }
 
     return true;
@@ -197,7 +191,6 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
   }
 
   private void bindViews() {
-    mButtonAddBook = (ImageButton) findViewById(R.id.buttonAddBook);
     mPagerHomeActivity = (ViewPager) findViewById(R.id.pagerHomeActivity);
   }
 
@@ -224,10 +217,6 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
           finish();
         }
       }
-    });
-
-    mButtonAddBook.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View view) { exitToBookSearch(); }
     });
   }
 
@@ -358,9 +347,8 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
    * @param enabled the enabled state of the sync menu option
    */
   private void toggleSyncMenuOption(boolean enabled) {
-    if(mMenuReadmillSync != null) {
-      mMenuReadmillSync.setEnabled(enabled);
-    }
+    mSyncIsEnabled = enabled;
+    supportInvalidateOptionsMenu();
   }
 
   // Private
