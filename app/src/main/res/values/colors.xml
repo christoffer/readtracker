@@ -39,5 +39,5 @@
   <color name="default_button_color_outline_focused">#ff2e5873</color>
 
   <color name="actionbar_text">#ffffffff</color>
-  <color name="actionbar_background">#ff000000</color>
+  <color name="activity_background">#ff000000</color>
 </resources>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">ReadTracker</string>
+    <string name="app_name">ReadTracker 3</string>
 
     <string name="redirect_scheme">readtracker</string>
 
