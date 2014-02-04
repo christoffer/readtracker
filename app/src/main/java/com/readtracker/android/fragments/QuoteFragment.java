@@ -20,7 +20,7 @@ import android.widget.Toast;
 import com.readtracker.android.IntentKeys;
 import com.readtracker.android.R;
 import com.readtracker.android.activities.BookActivity;
-import com.readtracker.android.adapters.HighlightAdapter;
+import com.readtracker.android.adapters.QuoteAdapter;
 import com.readtracker.android.adapters.HighlightItem;
 import com.readtracker.android.db.LocalHighlight;
 import com.readtracker.android.db.LocalReading;
@@ -33,8 +33,8 @@ import com.readtracker.android.tasks.PersistLocalHighlightTask;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HighlightFragment extends Fragment {
-  private static final String TAG = HighlightFragment.class.getName();
+public class QuoteFragment extends Fragment {
+  private static final String TAG = QuoteFragment.class.getName();
 
   private static ListView mListHighlights;
   private static TextView mTextBlankState;
@@ -42,7 +42,7 @@ public class HighlightFragment extends Fragment {
 
   private LocalReading mLocalReading;
   private ArrayList<LocalHighlight> mLocalHighlights;
-  private HighlightAdapter mHighlightAdapter;
+  private QuoteAdapter mQuoteAdapter;
 
   private boolean mForceReinitialize = false;
 
@@ -50,7 +50,7 @@ public class HighlightFragment extends Fragment {
 
   public static Fragment newInstance(LocalReading localReading, ArrayList<LocalHighlight> localHighlights) {
     Log.d(TAG, "newInstance() called with " + localHighlights.size() + " highlights ");
-    HighlightFragment instance = new HighlightFragment();
+    QuoteFragment instance = new QuoteFragment();
     instance.setLocalReading(localReading);
     instance.setReadingHighlights(localHighlights);
     instance.setForceInitialize(true);
@@ -101,7 +101,7 @@ public class HighlightFragment extends Fragment {
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    return inflater.inflate(R.layout.fragment_highlights, container, false);
+    return inflater.inflate(R.layout.quote_fragment, container, false);
   }
 
   @Override
@@ -112,7 +112,7 @@ public class HighlightFragment extends Fragment {
 
     mButtonAddHighlight.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View view) {
-        ((BookActivity) getActivity()).exitToCreateHighlightScreen(null);
+        ((BookActivity) getActivity()).exitToAddQuoteScreen(null);
       }
     });
 
@@ -126,15 +126,15 @@ public class HighlightFragment extends Fragment {
     mListHighlights.setDivider(divider);
     mListHighlights.setDividerHeight(1);
 
-    mHighlightAdapter = new HighlightAdapter(getActivity(), R.layout.highlight_list_item, highlightItems);
-    mHighlightAdapter.setColor(mLocalReading.getColor());
-    mListHighlights.setAdapter(mHighlightAdapter);
+    mQuoteAdapter = new QuoteAdapter(getActivity(), R.layout.highlight_list_item, highlightItems);
+    mQuoteAdapter.setColor(mLocalReading.getColor());
+    mListHighlights.setAdapter(mQuoteAdapter);
     mListHighlights.setOnItemClickListener(new AdapterView.OnItemClickListener() {
       @Override
       public void onItemClick(AdapterView<?> adapterView, View view, int position, long itemId) {
-        HighlightItem highlightItem = mHighlightAdapter.getItem(position);
+        HighlightItem highlightItem = mQuoteAdapter.getItem(position);
         LocalHighlight clickedHighlight = highlightItem.getLocalHighlight();
-        ((BookActivity) getActivity()).exitToCreateHighlightScreen(clickedHighlight);
+        ((BookActivity) getActivity()).exitToAddQuoteScreen(clickedHighlight);
       }
     });
     registerForContextMenu(mListHighlights);
@@ -152,11 +152,12 @@ public class HighlightFragment extends Fragment {
     super.onCreateContextMenu(menu, view, menuInfo);
     if(view.getId() == mListHighlights.getId()) {
       final AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-      menu.setHeaderTitle("Highlight " + info.position);
-      MenuItem item = menu.add(Menu.NONE, MENU_DELETE_HIGHLIGHT, Menu.NONE, "Delete highlight");
+      menu.setHeaderTitle(getActivity().getString(R.string.quote_fragment_item_header, info.position));
+      final String itemText = getActivity().getString(R.string.quote_fragment_delete_quote);
+      MenuItem item = menu.add(Menu.NONE, MENU_DELETE_HIGHLIGHT, Menu.NONE, itemText);
       item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
         @Override public boolean onMenuItemClick(MenuItem menuItem) {
-          LocalHighlight localHighlight = mHighlightAdapter.getItem(info.position).getLocalHighlight();
+          LocalHighlight localHighlight = mQuoteAdapter.getItem(info.position).getLocalHighlight();
           deleteHighlight(localHighlight);
           return true;
         }
@@ -165,9 +166,9 @@ public class HighlightFragment extends Fragment {
   }
 
   private void bindViews(View view) {
-    mTextBlankState = (TextView) view.findViewById(R.id.textBlankState);
-    mListHighlights = (ListView) view.findViewById(R.id.listHighlights);
-    mButtonAddHighlight = (Button) view.findViewById(R.id.buttonAddHighlight);
+    mTextBlankState = (TextView) view.findViewById(R.id.blank_text);
+    mListHighlights = (ListView) view.findViewById(R.id.quotes_list);
+    mButtonAddHighlight = (Button) view.findViewById(R.id.add_quote_button);
   }
 
   private List<HighlightItem> itemize(List<LocalHighlight> localHighlights) {
@@ -192,7 +193,7 @@ public class HighlightFragment extends Fragment {
    * TODO this fragment should be a ListFragment which handles this automatically.
    */
   private void refreshHighlightBlankState() {
-    if(mHighlightAdapter.getCount() == 0) {
+    if(mQuoteAdapter.getCount() == 0) {
       mTextBlankState.setVisibility(View.VISIBLE);
       mListHighlights.setVisibility(View.GONE);
     } else {
@@ -224,7 +225,7 @@ public class HighlightFragment extends Fragment {
     DeleteLocalHighlightTask.delete(localHighlight, new DeleteLocalHighlightListener() {
       @Override public void onLocalHighlightDeleted(LocalHighlight deletedHighlight) {
         Log.d(TAG, "Deleting highlight with id: " + deletedHighlight.id);
-        mHighlightAdapter.remove(deletedHighlight.id);
+        mQuoteAdapter.remove(deletedHighlight.id);
         refreshHighlightBlankState();
       }
 
@@ -244,7 +245,7 @@ public class HighlightFragment extends Fragment {
     localHighlight.deletedByUser = true;
     PersistLocalHighlightTask.persist(localHighlight, new PersistLocalHighlightListener() {
       @Override public void onLocalHighlightPersisted(int id, boolean created) {
-        mHighlightAdapter.remove(id);
+        mQuoteAdapter.remove(id);
         refreshHighlightBlankState();
       }
 

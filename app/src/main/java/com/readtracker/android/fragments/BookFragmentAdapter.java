@@ -1,9 +1,11 @@
 package com.readtracker.android.fragments;
 
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
+import com.readtracker.android.R;
 import com.readtracker.android.activities.BookActivity;
 import com.readtracker.android.db.LocalHighlight;
 import com.readtracker.android.db.LocalReading;
@@ -16,6 +18,7 @@ import java.util.ArrayList;
  * Handles the fragments for the book activity
  */
 public class BookFragmentAdapter extends FragmentStatePagerAdapter {
+  private final Context mContext;
   private boolean mBrowseMode;
 
   private ReadingFragment mReadingFragmentInstance;
@@ -25,8 +28,9 @@ public class BookFragmentAdapter extends FragmentStatePagerAdapter {
   private ArrayList<LocalHighlight> mLocalHighlights;
   private SessionTimer mSessionTimer;
 
-  public BookFragmentAdapter(FragmentManager fm, BookActivity.LocalReadingBundle bundle) {
+  public BookFragmentAdapter(Context context, FragmentManager fm, BookActivity.LocalReadingBundle bundle) {
     super(fm);
+    mContext = context;
     setBundle(bundle);
   }
 
@@ -45,8 +49,8 @@ public class BookFragmentAdapter extends FragmentStatePagerAdapter {
       // interrogate for the current session state
       mReadingFragmentInstance = (ReadingFragment) ReadingFragment.newInstance(mLocalReading, mSessionTimer);
       return mReadingFragmentInstance;
-    } else if(position == getHighlightsPageIndex()) {
-      return HighlightFragment.newInstance(mLocalReading, mLocalHighlights);
+    } else if(position == getQuotesPageIndex()) {
+      return QuoteFragment.newInstance(mLocalReading, mLocalHighlights);
     }
     return null;
   }
@@ -58,11 +62,11 @@ public class BookFragmentAdapter extends FragmentStatePagerAdapter {
 
   @Override public CharSequence getPageTitle(int position) {
     if(position == getSessionsPageIndex()) {
-      return "Summary";
+      return mContext.getString(R.string.book_fragment_header_summary);
     } else if(position == getReadingPageIndex()) {
-      return "Read";
-    } else if(position == getHighlightsPageIndex()) {
-      return "Highlights";
+      return mContext.getString(R.string.book_fragment_header_read);
+    } else if(position == getQuotesPageIndex()) {
+      return mContext.getString(R.string.book_fragment_header_quotes);
     }
     return "";
   }
@@ -75,7 +79,7 @@ public class BookFragmentAdapter extends FragmentStatePagerAdapter {
     return mBrowseMode ? -1 : 1;
   }
 
-  public int getHighlightsPageIndex() {
+  public int getQuotesPageIndex() {
     return mBrowseMode ? 1 : 2;
   }
 

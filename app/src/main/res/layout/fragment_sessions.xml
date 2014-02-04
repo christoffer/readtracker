@@ -8,7 +8,7 @@
 
   <TextView
     style="@style/text_blank_state"
-    android:id="@+id/textBlankState"
+    android:id="@+id/blank_text"
     android:text="No reading history to display" />
 
   <ScrollView

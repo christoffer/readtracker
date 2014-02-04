@@ -41,4 +41,16 @@
   <string name="welcome_start_using">Start using ReadTracker</string>
   <string name="welcome_welcome_to_readtracker">Welcome to ReadTracker!</string>
 
+  <string name="quote_text">Quote text</string>
+  <string name="quote_share_with_comment">Comment when sharing</string>
+  <string name="book_fragment_header_summary">Summary</string>
+  <string name="book_fragment_header_read">Read</string>
+  <string name="book_fragment_header_quotes">Quotes</string>
+  <string name="quote_fragment_item_header">Quote %1$d</string>
+  <string name="quote_fragment_delete_quote">Delete quote</string>
+  <string name="quote_fragment_add_new_quote">Add quote from book</string>
+  <string name="quote_fragment_no_quotes">No quotes added yet</string>
+  <string name="quote_activity_position">Page in book where the quote starts</string>
+  <string name="quote_activity_add">Add</string>
+
 </resources>

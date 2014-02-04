@@ -2,15 +2,12 @@ package com.readtracker.android.activities;
 
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ImageView;
 
 import com.j256.ormlite.dao.Dao;
 import com.readtracker.android.ApplicationReadTracker;
@@ -23,7 +20,6 @@ import com.readtracker.android.fragments.BookFragmentAdapter;
 import com.readtracker.android.interfaces.EndSessionDialogListener;
 import com.readtracker.android.support.SessionTimer;
 import com.readtracker.android.support.SessionTimerStore;
-import com.readtracker.android.thirdparty.DrawableManager;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -36,7 +32,7 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialogLi
   public static final int PAGE_UNSPECIFIED = -1;
   public static final int PAGE_SESSIONS = 0;
   public static final int PAGE_READING = 1;
-  public static final int PAGE_HIGHLIGHTS = 2;
+  public static final int PAGE_QUOTES = 2;
 
   private static final int NO_GROUP = 0;
   private static final int MENU_EDIT_BOOK_SETTINGS = 1;
@@ -116,10 +112,10 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialogLi
           reloadLocalData(updateReadingId);
         }
         break;
-      case ActivityCodes.CREATE_HIGHLIGHT:
+      case ActivityCodes.ADD_QUOTE:
         if(resultCode == RESULT_OK) {
-          Log.d(TAG, "Came back from creating a highlight");
-          mInitialPageForFragmentAdapter = PAGE_HIGHLIGHTS;
+          Log.d(TAG, "Came back from adding a quote");
+          mInitialPageForFragmentAdapter = PAGE_QUOTES;
           int updateReadingId = data.getIntExtra(IntentKeys.READING_ID, -1);
           reloadLocalData(updateReadingId); // TODO optimally we should only reload the highlights here
           mShouldSync = true; // Ask for sync when returning to HomeActivity
@@ -236,7 +232,7 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialogLi
     boolean browserMode = !mLocalReading.isActive();
 
     // (re-)create the book adapter
-    mBookFragmentAdapter = new BookFragmentAdapter(getSupportFragmentManager(), bundle);
+    mBookFragmentAdapter = new BookFragmentAdapter(getApplicationContext(), getSupportFragmentManager(), bundle);
     mBookFragmentAdapter.setBrowserMode(browserMode);
 
     mViewPagerReading.setAdapter(mBookFragmentAdapter);
@@ -253,8 +249,8 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialogLi
       case PAGE_READING:
         page = mBookFragmentAdapter.getReadingPageIndex();
         break;
-      case PAGE_HIGHLIGHTS:
-        page = mBookFragmentAdapter.getHighlightsPageIndex();
+      case PAGE_QUOTES:
+        page = mBookFragmentAdapter.getQuotesPageIndex();
         break;
     }
     mViewPagerReading.setCurrentItem(page, false);
@@ -270,11 +266,11 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialogLi
     startActivityForResult(intentEditBook, ActivityCodes.REQUEST_EDIT_PAGE_NUMBERS);
   }
 
-  public void exitToCreateHighlightScreen(LocalHighlight highlight) {
-    Intent activityAddHighlight = new Intent(this, HighlightActivity.class);
+  public void exitToAddQuoteScreen(LocalHighlight highlight) {
+    Intent activityAddHighlight = new Intent(this, AddQuoteActivity.class);
     activityAddHighlight.putExtra(IntentKeys.LOCAL_READING, mLocalReading);
     activityAddHighlight.putExtra(IntentKeys.LOCAL_HIGHLIGHT, highlight);
-    startActivityForResult(activityAddHighlight, ActivityCodes.CREATE_HIGHLIGHT);
+    startActivityForResult(activityAddHighlight, ActivityCodes.ADD_QUOTE);
   }
 
   /**

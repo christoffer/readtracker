@@ -7,25 +7,25 @@
   android:padding="12dp">
 
   <Button
-    android:id="@+id/buttonAddHighlight"
+    android:id="@+id/add_quote_button"
     style="@style/default_button"
     android:layout_width="fill_parent"
-    android:text="Add new highlight"
+    android:text="@string/quote_fragment_add_new_quote"
     android:layout_alignParentBottom="true" />
 
   <TextView
-    android:id="@+id/textBlankState"
+    android:id="@+id/blank_text"
     style="@style/text_blank_state"
-    android:text="No highlights created for this book"
+    android:text="@string/quote_fragment_no_quotes"
     android:layout_alignParentTop="true"
-    android:layout_above="@id/buttonAddHighlight" />
+    android:layout_above="@id/add_quote_button" />
 
   <ListView
-    android:id="@+id/listHighlights"
+    android:id="@+id/quotes_list"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:layout_alignParentTop="true"
-    android:layout_above="@id/buttonAddHighlight"
+    android:layout_above="@id/add_quote_button"
     android:layout_marginLeft="0dp"
     android:layout_marginTop="0dp"
     android:cacheColorHint="#0000"

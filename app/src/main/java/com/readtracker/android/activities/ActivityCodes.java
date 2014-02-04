@@ -14,7 +14,7 @@ class ActivityCodes {
   public static final int REQUEST_READING_SESSION = 1;
   public static final int CREATE_PING = 2;
   public static final int SETTINGS = 3;
-  public static final int CREATE_HIGHLIGHT = 5;
+  public static final int ADD_QUOTE = 5;
   public static final int REQUEST_CREATE_ACCOUNT = 6;
   public static final int REQUEST_SIGN_IN = 7;
   public static final int REQUEST_EDIT_PAGE_NUMBERS = 8;

@@ -5,7 +5,6 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,14 +20,12 @@ import com.readtracker.android.tasks.PersistLocalHighlightTask;
 
 import java.util.Date;
 
-/**
- * Screen for adding a highlight
- */
-public class HighlightActivity extends BookBaseActivity {
-  private static EditText mEditHighlightText;
-  private static EditText mEditHighlightComment;
-  private static Button mButtonSaveHighlight;
-  private static Button mButtonReadmillWeb;
+/** Screen for adding a quote */
+public class AddQuoteActivity extends BookBaseActivity {
+  private static EditText mQuoteTextEdit;
+  private static EditText mQuoteCommentEdit;
+  private static Button mButtonSaveQuote;
+  private static Button mVisitWebButton;
 
   private static ProgressPicker mProgressPicker;
 
@@ -40,7 +37,7 @@ public class HighlightActivity extends BookBaseActivity {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_highlight);
+    setContentView(R.layout.add_quote_activity);
 
     bindViews();
     bindButtonEvents();
@@ -51,7 +48,7 @@ public class HighlightActivity extends BookBaseActivity {
       Log.d(TAG, "unfreezing state");
       mLocalReading = savedInstanceState.getParcelable(IntentKeys.LOCAL_READING);
       mLocalHighlight = savedInstanceState.getParcelable(IntentKeys.LOCAL_HIGHLIGHT);
-      mEditHighlightText.setText(savedInstanceState.getString(IntentKeys.TEXT));
+      mQuoteTextEdit.setText(savedInstanceState.getString(IntentKeys.TEXT));
       currentPage = savedInstanceState.getInt(IntentKeys.PAGE);
     } else {
       Bundle extras = getIntent().getExtras();
@@ -61,11 +58,11 @@ public class HighlightActivity extends BookBaseActivity {
       if(mLocalHighlight == null) {
         mLocalHighlight = new LocalHighlight();
         mCreateMode = true;
-        mEditHighlightText.setText("");
+        mQuoteTextEdit.setText("");
         currentPage = (int) mLocalReading.currentPage;
       } else {
         mCreateMode = false;
-        mEditHighlightText.setText(mLocalHighlight.content);
+        mQuoteTextEdit.setText(mLocalHighlight.content);
         currentPage = (int) (mLocalHighlight.position * mLocalReading.totalPages);
       }
 
@@ -84,14 +81,14 @@ public class HighlightActivity extends BookBaseActivity {
       findViewById(R.id.layoutHighlightComment).setVisibility(View.GONE);
     }
 
-    setEditTextBackground(mEditHighlightText);
-    setEditTextBackground(mEditHighlightComment);
-    setButtonBackground(mButtonSaveHighlight);
+    setEditTextBackground(mQuoteTextEdit);
+    setEditTextBackground(mQuoteCommentEdit);
+    setButtonBackground(mButtonSaveQuote);
 
     if(mLocalHighlight.hasVisitablePermalink()) {
-      setButtonBackground(mButtonReadmillWeb);
+      setButtonBackground(mVisitWebButton);
     } else {
-      mButtonReadmillWeb.setVisibility(View.GONE);
+      mVisitWebButton.setVisibility(View.GONE);
     }
 
     setReading(mLocalReading);
@@ -103,7 +100,7 @@ public class HighlightActivity extends BookBaseActivity {
     Log.d(TAG, "freezing state");
     outState.putParcelable(IntentKeys.LOCAL_READING, mLocalReading);
     outState.putParcelable(IntentKeys.LOCAL_HIGHLIGHT, mLocalHighlight);
-    outState.putString(IntentKeys.TEXT, mEditHighlightText.getText().toString());
+    outState.putString(IntentKeys.TEXT, mQuoteTextEdit.getText().toString());
     if(mLocalReading.hasPageInfo()) {
       outState.putInt(IntentKeys.PAGE, mProgressPicker.getCurrentPage());
     }
@@ -115,24 +112,25 @@ public class HighlightActivity extends BookBaseActivity {
   }
 
   private void bindViews() {
-    mEditHighlightText = (EditText) findViewById(R.id.editHighlight);
-    mEditHighlightComment = (EditText) findViewById(R.id.editHighlightComment);
-    mButtonSaveHighlight = (Button) findViewById(R.id.buttonSaveHighlight);
-    mButtonReadmillWeb = (Button) findViewById(R.id.buttonReadmillWeb);
+    mQuoteTextEdit = (EditText) findViewById(R.id.quote_text_edit);
+    mQuoteCommentEdit = (EditText) findViewById(R.id.quote_comment_edit);
+    mButtonSaveQuote = (Button) findViewById(R.id.save_button);
+    mVisitWebButton = (Button) findViewById(R.id.visit_web_button);
     mProgressPicker = (ProgressPicker) findViewById(R.id.progressPicker);
   }
 
   private void bindButtonEvents() {
-    mButtonSaveHighlight.setOnClickListener(new View.OnClickListener() {
+    mButtonSaveQuote.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
         saveOrCreateHighlight();
       }
     });
 
-    mButtonReadmillWeb.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View view) {
-        if(mLocalHighlight.hasVisitablePermalink()) {
+    mVisitWebButton.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        if (mLocalHighlight.hasVisitablePermalink()) {
           Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(mLocalHighlight.readmillPermalinkUrl));
           startActivity(browserIntent);
         }
@@ -155,8 +153,8 @@ public class HighlightActivity extends BookBaseActivity {
 
   private void saveOrCreateHighlight() {
     Log.i(TAG, "Save/Create highlight for LocalReading with id:" + mLocalReading.id);
-    String content = mEditHighlightText.getText().toString().trim();
-    String comment = mEditHighlightComment.getText().toString().trim();
+    String content = mQuoteTextEdit.getText().toString().trim();
+    String comment = mQuoteCommentEdit.getText().toString().trim();
 
     if(!validateHighlightContent(content)) {
       return;

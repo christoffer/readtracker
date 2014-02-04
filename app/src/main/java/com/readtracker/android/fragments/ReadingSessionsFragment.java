@@ -88,7 +88,7 @@ public class ReadingSessionsFragment extends Fragment {
       presentClosingRemark(mLocalReading.getClosingRemark());
       presentSummary(mLocalReading.timeSpentMillis, mLocalReading.estimateTimeLeft(), mLocalSessions.size(), mLocalReading.readmillState);
     } else {
-      view.findViewById(R.id.textBlankState).setVisibility(View.VISIBLE);
+      view.findViewById(R.id.blank_text).setVisibility(View.VISIBLE);
       view.findViewById(R.id.scrollView).setVisibility(View.GONE);
     }
 

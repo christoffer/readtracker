@@ -16,23 +16,21 @@ import com.readtracker.android.support.Utils;
 import java.util.Comparator;
 import java.util.List;
 
-/**
- * Shows a list of highlights
- */
-public class HighlightAdapter extends ArrayAdapter<HighlightItem> {
+/** Shows a list of quotes */
+public class QuoteAdapter extends ArrayAdapter<HighlightItem> {
   private int mColor;
   private LayoutInflater mInflater;
 
-  private Comparator<HighlightItem> mReadingHighlightComparator = new Comparator<HighlightItem>() {
+  private Comparator<HighlightItem> mQuoteComparator = new Comparator<HighlightItem>() {
     @Override
     public int compare(HighlightItem highlightA, HighlightItem highlightB) {
       return highlightA.getHighlightedAt().after(highlightB.getHighlightedAt()) ? -1 : 1;
     }
   };
 
-  public HighlightAdapter(Context context, int textViewResourceId, List<HighlightItem> highlights) {
+  public QuoteAdapter(Context context, int textViewResourceId, List<HighlightItem> highlights) {
     super(context, textViewResourceId, highlights);
-    sort(mReadingHighlightComparator);
+    sort(mQuoteComparator);
     mInflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
   }
 
@@ -77,7 +75,7 @@ public class HighlightAdapter extends ArrayAdapter<HighlightItem> {
   @Override
   public void add(HighlightItem object) {
     super.add(object);
-    sort(mReadingHighlightComparator);
+    sort(mQuoteComparator);
   }
 
   public void remove(int localHighlightId) {
