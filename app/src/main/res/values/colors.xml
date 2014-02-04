@@ -40,4 +40,6 @@
 
   <color name="actionbar_text">#ffffffff</color>
   <color name="activity_background">#ff000000</color>
+
+  <color name="overlay_background">#dd000000</color>
 </resources>

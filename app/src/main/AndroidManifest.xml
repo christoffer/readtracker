@@ -19,11 +19,6 @@
     android:name=".ApplicationReadTracker"
     android:theme="@style/ReadTrackerTheme">
 
-    <activity
-      android:label="ReadTracker"
-      android:name=".activities.WelcomeActivity"
-      android:theme="@style/ReadTrackerTheme.NoActionBar"/>
-
     <activity android:name=".activities.HomeActivity">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>

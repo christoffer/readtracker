@@ -21,4 +21,11 @@
       android:id="@+id/pagerTabStrip" />
 
   </android.support.v4.view.ViewPager>
+
+  <ViewStub
+    android:id="@+id/introduction_stub"
+    android:layout="@layout/introduction_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"/>
+
 </RelativeLayout>

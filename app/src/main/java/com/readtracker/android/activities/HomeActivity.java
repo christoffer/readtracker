@@ -5,11 +5,16 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewStub;
+import android.widget.Button;
+import android.widget.TextView;
 
 import com.j256.ormlite.dao.Dao;
 import com.readtracker.android.ApplicationReadTracker;
@@ -66,15 +71,13 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
     final boolean cameFromSignIn = getIntent().getBooleanExtra(IntentKeys.SIGNED_IN, false);
     Log.d(TAG, "Came from sign in? " + (cameFromSignIn ? "YES" : "NO"));
 
-    // Show welcome screen for first time users
-    if(getApp().getFirstTimeFlag() || (getCurrentUser() == null && !cameFromSignIn)) {
-      Log.d(TAG, "First time user or not logged in, bouncing to Welcome");
-      getApp().signOut();
-      finish();
-      return;
-    }
-
     setContentView(R.layout.activity_home);
+
+    // Show welcome screen for first time users
+    if(getApp().getFirstTimeFlag()) {
+      Log.d(TAG, "First time opening the app, showing introduction.");
+      showIntroduction();
+    }
 
     bindViews();
 
@@ -88,6 +91,23 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
       Log.d(TAG, "Fresh from sign in, doing initial full sync.");
       sync(true);
     }
+  }
+
+  private void showIntroduction() {
+    ViewStub stub = (ViewStub) findViewById(R.id.introduction_stub);
+    final View root = stub.inflate();
+    TextView introText = (TextView) root.findViewById(R.id.introduction_text);
+    introText.setText(Html.fromHtml(getString(R.string.introduction_text)));
+    introText.setMovementMethod(LinkMovementMethod.getInstance());
+
+    Button dismissButton = (Button) root.findViewById(R.id.start_using_button);
+    dismissButton.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        root.setVisibility(View.GONE);
+        getApp().removeFirstTimeFlag();
+      }
+    });
   }
 
   @Override protected void onSaveInstanceState(Bundle outState) {

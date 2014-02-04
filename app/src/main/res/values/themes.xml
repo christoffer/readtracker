@@ -5,12 +5,14 @@
     <item name="textAppearance">@style/TextAppearance</item>
     <item name="android:actionBarStyle">@style/ReadTrackerActionBar</item>
     <item name="android:windowBackground">@color/activity_background</item>
+
     <item name="actionBarStyle">@style/ReadTrackerActionBar</item>
   </style>
 
   <style name="ReadTrackerTheme.NoActionBar" parent="@style/ReadTrackerTheme">
     <item name="android:windowActionBar">false</item>
     <item name="android:windowNoTitle">true</item>
+
     <item name="windowActionBar">false</item>
   </style>
 
