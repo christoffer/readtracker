@@ -1,7 +1,9 @@
 package com.readtracker.android.activities;
 
 import android.os.Build;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
+import android.view.MenuItem;
 import android.widget.ImageView;
 
 import com.readtracker.android.ApplicationReadTracker;
@@ -36,6 +38,14 @@ public class BookBaseActivity extends ReadTrackerActivity {
     actionBar.setTitle(localReading.title);
     actionBar.setSubtitle(localReading.author);
     actionBar.setDisplayHomeAsUpEnabled(true);
-    actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE);
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    if(item.getItemId() == android.R.id.home) {
+      NavUtils.navigateUpFromSameTask(this);
+      return true;
+    }
+    return super.onOptionsItemSelected(item);
   }
 }

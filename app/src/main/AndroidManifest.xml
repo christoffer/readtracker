@@ -3,59 +3,94 @@
           android:versionCode="15"
           android:versionName="3.0.4">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+  <uses-permission android:name="android.permission.INTERNET"/>
+  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
-    <supports-screens
-        android:largeScreens="true"
-        android:normalScreens="true"
-        android:smallScreens="false"/>
+  <supports-screens
+    android:largeScreens="true"
+    android:normalScreens="true"
+    android:smallScreens="false"/>
 
-    <uses-sdk
-        android:minSdkVersion="10"
-        android:targetSdkVersion="10"/>
+  <application
+    android:allowBackup="true"
+    android:icon="@drawable/icon"
+    android:label="@string/app_name"
+    android:name=".ApplicationReadTracker"
+    android:theme="@style/ReadTrackerTheme">
 
-    <application
-        android:icon="@drawable/icon"
-        android:label="@string/app_name"
-        android:name=".ApplicationReadTracker"
-        android:theme="@style/ReadTrackerTheme">
+    <activity
+      android:label="ReadTracker"
+      android:name=".activities.WelcomeActivity"
+      android:theme="@style/ReadTrackerTheme.NoActionBar"/>
 
-        <activity
-            android:label="ReadTracker"
-            android:name=".activities.WelcomeActivity"/>
+    <activity android:name=".activities.HomeActivity">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN"/>
+        <category android:name="android.intent.category.LAUNCHER"/>
+      </intent-filter>
+    </activity>
 
-        <activity android:name=".activities.FinishBookActivity"/>
+    <activity
+      android:name=".activities.BookSearchActivity"
+      android:label="@string/activity_label_add_book"
+      android:parentActivityName=".activities.HomeActivity"
+      android:launchMode="singleTop">
+      <meta-data
+        android:name="android.support.PARENT_ACTIVITY"
+        android:value=".activities.HomeActivity"/>
+    </activity>
 
-        <activity android:name=".activities.HomeActivity">
+    <activity
+      android:name=".activities.AddBookActivity"
+      android:noHistory="true"
+      android:windowSoftInputMode="adjustPan"/>
 
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
+    <activity
+      android:name=".activities.BookActivity"
+      android:parentActivityName=".activities.HomeActivity"
+      android:label=""
+      android:launchMode="singleTop">
+      <!-- Parent activity meta-data to support 4.0 and lower -->
+      <meta-data
+        android:name="android.support.PARENT_ACTIVITY"
+        android:value=".activities.HomeActivity"/>
+    </activity>
 
-        </activity>
+    <activity
+      android:name=".activities.FinishBookActivity"
+      android:parentActivityName=".activities.BookActivity">
+      <meta-data
+        android:name="android.support.PARENT_ACTIVITY"
+        android:value=".activities.BookActivity"/>
+    </activity>
 
-        <activity
-            android:name=".activities.BookSearchActivity"
-            android:label="@string/activity_label_add_book"/>
+    <activity
+      android:name=".activities.SettingsActivity"
+      android:parentActivityName=".activities.HomeActivity">
+      <meta-data
+        android:name="android.support.PARENT_ACTIVITY"
+        android:value=".activities.HomeActivity"/>>
+    </activity>
 
-        <activity android:name=".activities.BookActivity"/>
+    <activity
+      android:name=".activities.BookSettingsActivity"
+      android:parentActivityName=".activities.BookActivity">
+      <meta-data
+        android:name="android.support.PARENT_ACTIVITY"
+        android:value=".activities.BookActivity"/>
+    </activity>
 
-        <activity
-            android:name=".activities.AddBookActivity"
-            android:noHistory="true"
-            android:windowSoftInputMode="adjustPan"/>
+    <activity android:name=".activities.InAppBrowserActivity"/>
 
-        <activity android:name=".activities.SettingsActivity"/>
+    <activity
+      android:name=".activities.HighlightActivity"
+      android:parentActivityName=".activities.BookActivity">
+      <meta-data
+        android:name="android.support.PARENT_ACTIVITY"
+        android:value=".activities.BookActivity"/>
+    </activity>
 
-        <activity android:name=".activities.BookSettingsActivity"/>
-
-        <activity android:name=".activities.InAppBrowserActivity"/>
-
-        <activity android:name=".activities.HighlightActivity"/>
-
-    </application>
+  </application>
 
 </manifest>

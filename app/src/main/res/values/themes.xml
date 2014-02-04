@@ -8,6 +8,12 @@
     <item name="actionBarStyle">@style/ReadTrackerActionBar</item>
   </style>
 
+  <style name="ReadTrackerTheme.NoActionBar" parent="@style/ReadTrackerTheme">
+    <item name="android:windowActionBar">false</item>
+    <item name="android:windowNoTitle">true</item>
+    <item name="windowActionBar">false</item>
+  </style>
+
   <style name="ReadTrackerActionBar" parent="@style/Widget.AppCompat.ActionBar">
     <item name="android:titleTextStyle">@style/ActionBarText</item>
     <item name="android:background">@color/activity_background</item>

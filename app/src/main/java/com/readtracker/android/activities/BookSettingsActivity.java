@@ -9,6 +9,7 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.readtracker.android.ApplicationReadTracker;
@@ -71,6 +72,16 @@ public class BookSettingsActivity extends PreferenceActivity {
         return true;
       }
     });
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    if(item.getItemId() == android.R.id.home) {
+      finish();
+      return true;
+    }
+
+    return super.onOptionsItemSelected(item);
   }
 
   @Override protected void onSaveInstanceState(Bundle outState) {

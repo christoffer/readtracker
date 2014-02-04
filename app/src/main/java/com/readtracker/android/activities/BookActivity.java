@@ -74,7 +74,13 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialogLi
     mForceResultOK = getIntent().getBooleanExtra(IntentKeys.FORCE_RESULT_OK, false);
 
     // Load information from database
-    int readingId = getIntent().getExtras().getInt(IntentKeys.READING_ID);
+    int readingId;
+    if(in == null) {
+      readingId = getIntent().getExtras().getInt(IntentKeys.READING_ID);
+    } else {
+      readingId = in.getInt(IntentKeys.READING_ID);
+    }
+
     reloadLocalData(readingId);
   }
 
@@ -85,6 +91,7 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialogLi
     if(mViewPagerReading != null) {
       outState.putInt(IntentKeys.INITIAL_FRAGMENT_PAGE, mViewPagerReading.getCurrentItem());
     }
+    outState.putInt(IntentKeys.READING_ID, mLocalReading.id);
   }
 
   @Override
