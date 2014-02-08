@@ -18,9 +18,8 @@
       style="@style/default_text"
       android:layout_width="fill_parent"
       android:layout_height="wrap_content"
-      android:textSize="20dp"
+      android:textSize="20sp"
       android:layout_centerInParent="true"
-      android:text=""
       android:gravity="center" />
 
     <com.readtracker.android.thirdparty.widget.WheelView

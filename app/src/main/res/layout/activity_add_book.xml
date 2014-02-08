@@ -19,26 +19,26 @@
       android:layout_marginTop="0dp"
       android:layout_marginBottom="6dp"
       android:textColor="@color/text_color_secondary"
-      android:text="Book information" />
+      android:text="@string/add_book_book_info" />
 
     <EditText
       android:id="@+id/editTitle"
       style="@style/default_input_field"
       android:layout_marginBottom="12dp"
-      android:hint="Title" />
+      android:hint="@string/general_title" />
 
     <EditText
       android:id="@+id/editAuthor"
       style="@style/default_input_field"
       android:layout_marginBottom="12dp"
-      android:hint="Author" />
+      android:hint="@string/general_author" />
 
     <TextView
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_marginTop="24dp"
       android:textColor="@color/text_color_secondary"
-      android:text="Length used for tracking" />
+      android:text="@string/add_book_number_of_pages" />
 
     <LinearLayout
       android:layout_width="fill_parent"
@@ -50,7 +50,7 @@
       <EditText
         android:id="@+id/editPageCount"
         style="@style/centered_number_input_field"
-        android:textSize="30dp"
+        android:textSize="30sp"
         android:layout_width="fill_parent"
         android:layout_weight="1"
         android:paddingLeft="24dp"
@@ -79,7 +79,7 @@
       android:layout_marginBottom="12dp">
 
     <TextView
-        android:text="Readmill privacy"
+        android:text="@string/add_book_readmill_privacy"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -91,8 +91,8 @@
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
         android:layout_weight="1"
-        app:textOn="Shared"
-        app:textOff="Private"
+        app:textOn="@string/add_book_shared"
+        app:textOff="@string/add_book_private"
         android:checked="true" />
 
     </LinearLayout>
@@ -112,7 +112,7 @@
       android:id="@+id/buttonAddBook"
       style="@style/default_button"
       android:layout_marginTop="24dp"
-      android:text="Add" />
+      android:text="@string/add_book_add" />
 
   </LinearLayout>
 </ScrollView>

@@ -10,7 +10,7 @@
     android:id="@+id/editClosingRemark"
     style="@style/free_text_input"
     android:layout_above="@+id/switchRecommended"
-    android:hint="What did you think of the book?"
+    android:hint="@string/finish_book_hint"
     android:maxLength="999" />
 
   <com.readtracker.android.thirdparty.views.Switch
@@ -29,6 +29,6 @@
     android:id="@+id/buttonFinishBook"
     style="@style/default_button"
     android:layout_alignParentBottom="true"
-    android:text="Finish" />
+    android:text="@string/finish_book_finish" />
 
 </RelativeLayout>

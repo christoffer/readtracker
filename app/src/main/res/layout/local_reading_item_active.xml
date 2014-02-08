@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="fill_parent"
   android:layout_height="wrap_content"
   android:paddingTop="24dp"
@@ -14,7 +15,7 @@
     android:layout_height="36dp"
     android:layout_alignParentRight="true"
     android:scaleType="centerCrop"
-    android:contentDescription="Book cover" />
+    android:contentDescription="@string/reading_item_cover_content_desc" />
 
   <TextView
     android:id="@+id/textTitle"
@@ -25,7 +26,7 @@
     android:layout_width="fill_parent"
     android:singleLine="true"
     android:textColor="@color/text_color_primary"
-    android:text="Metamorphosis" />
+    tools:text="Metamorphosis" />
 
   <TextView
     android:id="@+id/textAuthor"
@@ -36,7 +37,7 @@
     android:layout_width="fill_parent"
     android:textColor="@color/text_color_secondary"
     android:singleLine="true"
-    android:text="Franz Kafka" />
+    tools:text="Franz Kafka" />
 
   <com.readtracker.android.custom_views.SegmentBar
     android:id="@+id/progressReadingProgress"

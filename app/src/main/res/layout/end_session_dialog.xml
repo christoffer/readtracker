@@ -8,12 +8,12 @@
 
   <TextView
     style="@style/default_text"
-    android:text="Where did you end?"
+    android:text="@string/end_session_where_did_you_end"
     android:layout_gravity="center_horizontal" />
 
   <TextView
     style="@style/ui_hint"
-    android:text="Scroll to the very end if you finished the book"
+    android:text="@string/end_session_scroll_to_end_to_finish"
     android:gravity="center_horizontal" />
 
   <com.readtracker.android.custom_views.ProgressPicker
@@ -34,12 +34,12 @@
     <Button
       android:id="@+id/buttonSaveProgress"
       style="@style/default_button"
-      android:text="Save" />
+      android:text="@string/general_save" />
 
     <Button
       android:id="@+id/buttonFinishBook"
       style="@style/default_button"
-      android:text="Finish book" />
+      android:text="@string/end_session_finish_book" />
 
   </com.readtracker.android.thirdparty.SafeViewFlipper>
 </LinearLayout>

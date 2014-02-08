@@ -11,7 +11,7 @@
     style="@style/default_input_field"
     android:layout_width="fill_parent"
     android:layout_gravity="top|center_horizontal"
-    android:hint="Search Google Books..."
+    android:hint="@string/book_search_search_google_books"
     android:inputType="text|textCapSentences|textAutoCorrect"
     android:imeOptions="actionSearch" />
 
@@ -35,12 +35,12 @@
 
     <Button
       android:id="@+id/buttonNew"
-      android:text="New book..."
+      android:text="@string/book_search_new_book"
       style="@style/default_button" />
 
     <Button
       android:id="@+id/buttonSearch"
-      android:text="Search"
+      android:text="@string/book_search_search"
       style="@style/default_button" />
 
   </com.readtracker.android.thirdparty.SafeViewFlipper>

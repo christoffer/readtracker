@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="fill_parent"
   android:layout_height="wrap_content"
   android:paddingTop="13dip"
@@ -19,7 +20,7 @@
     android:singleLine="false"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:text="Metamorphosis"
+    tools:text="Metamorphosis"
     android:layout_toRightOf="@id/imageCover" />
 
   <TextView
@@ -27,7 +28,7 @@
     style="@style/single_line_author"
     android:singleLine="false"
     android:maxLines="2"
-    android:text="By Franz KafkaBy Franz KafkaBy Franz KafkaBy Franz KafkaBy Franz KafkaBy Franz Kafka"
+    tools:text="By Franz KafkaBy Franz KafkaBy Franz KafkaBy Franz KafkaBy Franz KafkaBy Franz Kafka"
     android:layout_toRightOf="@id/imageCover"
     android:layout_below="@id/textTitle" />
 

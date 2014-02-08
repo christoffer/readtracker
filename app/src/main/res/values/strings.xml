@@ -92,5 +92,26 @@ Sorry about that.</string>
   <string name="settings_sign_in_subtext">Click to sign in to Readmill</string>
   <string name="settings_not_logged_in">Not logged in to Readmill</string>
   <string name="settings_logged_in_as">Logged in as %1$s</string>
+  <string name="reading_done">Done</string>
+  <string name="add_book_book_info">Book information</string>
+  <string name="general_author">Author</string>
+  <string name="general_title">Title</string>
+  <string name="add_book_number_of_pages">Length used for tracking</string>
+  <string name="add_book_readmill_privacy">Readmill privacy</string>
+  <string name="add_book_shared">Shared</string>
+  <string name="add_book_private">Private</string>
+  <string name="book_search_search_google_books">Search Google Books...</string>
+  <string name="book_search_new_book">New book...</string>
+  <string name="book_search_search">Search</string>
+  <string name="finish_book_hint">What did you think of the book?</string>
+  <string name="finish_book_finish">Finish</string>
+  <string name="end_session_where_did_you_end">Where did you end?</string>
+  <string name="end_session_scroll_to_end_to_finish">Scroll to the very end if you finished the book</string>
+  <string name="general_save">Save</string>
+  <string name="end_session_finish_book">Finish book</string>
+  <string name="reading_list_blank_content_desc">Blank reading list</string>
+  <string name="reading_list_blank">No books</string>
+  <string name="sessions_blank_text">No reading history to display</string>
+  <string name="reading_item_cover_content_desc">Book cover</string>
 
 </resources>

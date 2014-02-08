@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="fill_parent"
   android:layout_height="fill_parent"
   android:orientation="vertical"
@@ -11,10 +12,10 @@
     android:layout_height="wrap_content"
     android:layout_width="fill_parent"
     android:textColor="@color/text_color_primary"
-    android:textSize="12dp"
+    android:textSize="12sp"
     android:textStyle="italic"
     android:typeface="serif"
-    android:text="a small piece of the book, and an interesting piece of content, that has been lifted up into a higher level of visiblity to provide a context for discussion"
+    tools:text="a small piece of the book, and an interesting piece of content, that has been lifted up into a higher level of visiblity to provide a context for discussion"
     android:singleLine="false"
     android:paddingLeft="12dp"
     android:paddingTop="12dp"
@@ -26,10 +27,10 @@
     android:layout_height="wrap_content"
     android:layout_width="fill_parent"
     android:textColor="@color/text_color_secondary"
-    android:textSize="10dp"
+    android:textSize="10sp"
     android:textStyle="italic"
     android:typeface="serif"
-    android:text="Nov 11th, 2012"
+    tools:text="Nov 11th, 2012"
     android:singleLine="false"
     android:paddingLeft="12dp"
     android:paddingRight="12dp" />
