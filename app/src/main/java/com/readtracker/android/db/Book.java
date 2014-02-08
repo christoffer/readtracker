@@ -7,7 +7,7 @@ import com.j256.ormlite.table.DatabaseTable;
  * Represents a book in the users list of books that are being read.
  */
 @DatabaseTable(tableName = "books")
-public class Book {
+public class Book extends Model {
   @DatabaseField(columnName = "title") private String mTitle;
   @DatabaseField(columnName = "author") private String mAuthor;
   @DatabaseField(columnName = "cover_url") private String mCoverUrl;

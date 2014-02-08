@@ -2,7 +2,10 @@ package com.readtracker.android.db;
 
 import com.j256.ormlite.field.DatabaseField;
 
-public class Quote {
+/**
+ * Represents a quote from a book.
+ */
+public class Quote extends Model {
   @DatabaseField(columnName = "quote") private String mQuote;
   @DatabaseField(columnName = "added_at") private Long mAddedAt;
   @DatabaseField(columnName = "quote_position") private Float mQuotePosition;
