@@ -3,17 +3,17 @@ package com.readtracker.android.db;
 import com.j256.ormlite.field.DatabaseField;
 
 public class Quote {
-  @DatabaseField(columnName = "book_id", foreign = true) private Book mBookId;
   @DatabaseField(columnName = "quote") private String mQuote;
   @DatabaseField(columnName = "added_at") private Long mAddedAt;
   @DatabaseField(columnName = "quote_position") private Float mQuotePosition;
+  @DatabaseField(columnName = "book_id", foreign = true) private Book mBook;
 
   public Quote() {
   }
 
-  public Book getBookId() { return mBookId; }
+  public Book getBook() { return mBook; }
 
-  public void setBookId(Book bookId) { mBookId = bookId; }
+  public void setBook(Book book) { mBook = book; }
 
   public String getQuote() { return mQuote; }
 

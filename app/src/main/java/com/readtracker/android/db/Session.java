@@ -10,7 +10,7 @@ public class Session {
   @DatabaseField(columnName = "end_position") private Float mEndPosition;
   @DatabaseField(columnName = "duration_seconds") private Long mDurationSeconds;
   @DatabaseField(columnName = "started_at") private Long mStartedAt;
-  @DatabaseField(columnName = "book_id", foreign = true) private Book mBookId;
+  @DatabaseField(columnName = "book_id", foreign = true) private Book mBook;
 
   public Session() {
   }
@@ -31,7 +31,7 @@ public class Session {
 
   public void setStartedAt(Long startedAt) { mStartedAt = startedAt; }
 
-  public Book getBookId() { return mBookId; }
+  public Book getBook() { return mBook; }
 
-  public void setBookId(Book bookId) { mBookId = bookId; }
+  public void setBook(Book book) { mBook = book; }
 }
