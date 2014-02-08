@@ -2,6 +2,7 @@ package com.readtracker.android.adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +18,7 @@ import com.readtracker.android.db.LocalReading;
 import com.readtracker.android.support.DrawableGenerator;
 import com.readtracker.android.support.ReadmillApiHelper;
 import com.readtracker.android.support.Utils;
-import com.readtracker.android.thirdparty.DrawableManager;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -39,9 +40,6 @@ public class LocalReadingAdapter extends ArrayAdapter<LocalReading> {
 
   // Layout to inflate when rendering items
   private int mLayoutResource;
-
-  // Drawable manager used for getting or downloading covers
-  private static DrawableManager mDrawableManager;
 
   // Reference to the list used in the activity
   private ArrayList<LocalReading> mParentList;
@@ -72,7 +70,6 @@ public class LocalReadingAdapter extends ArrayAdapter<LocalReading> {
   public LocalReadingAdapter(Context context,
                              int resource,
                              int textViewResourceId,
-                             DrawableManager drawableMgr,
                              ArrayList<LocalReading> localReadings) {
     super(context, resource, textViewResourceId, localReadings);
 
@@ -84,7 +81,6 @@ public class LocalReadingAdapter extends ArrayAdapter<LocalReading> {
     mLayoutResource = resource;
 
     mInflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-    mDrawableManager = drawableMgr;
   }
 
   @Override public Filter getFilter() {
@@ -183,9 +179,9 @@ public class LocalReadingAdapter extends ArrayAdapter<LocalReading> {
     if(viewHolder.imageCover != null) {
       // TODO nicer default cover
       viewHolder.imageCover.setImageResource(android.R.drawable.ic_menu_gallery);
-      if(localReading.coverURL != null) {
+      if(!TextUtils.isEmpty(localReading.coverURL)) {
         viewHolder.imageCover.setVisibility(View.VISIBLE);
-        mDrawableManager.fetchDrawableOnThread(localReading.coverURL, viewHolder.imageCover);
+        Picasso.with(getContext()).load(localReading.coverURL).into(viewHolder.imageCover);
       }
     }
 

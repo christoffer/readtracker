@@ -117,17 +117,6 @@ public class ReadTrackerActivity extends ActionBarActivity {
   }
 
   /**
-   * Sets the content of an image view to the content of an URL through the
-   * globally available drawable manager.
-   *
-   * @param imageView Image view to set image for.
-   * @param url       The url of the image to set. Will be downloaded if not cached.
-   */
-  protected void setImageViewUrl(ImageView imageView, String url) {
-    ApplicationReadTracker.getDrawableManager().fetchDrawableOnThread(url, imageView);
-  }
-
-  /**
    * Converts a device independent pixel value to pixels.
    *
    * @param dpValue The value in DIP

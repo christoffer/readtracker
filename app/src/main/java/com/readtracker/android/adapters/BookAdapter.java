@@ -2,6 +2,7 @@ package com.readtracker.android.adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.readtracker.android.R;
-import com.readtracker.android.thirdparty.DrawableManager;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -22,7 +23,6 @@ import java.util.List;
 public class BookAdapter extends ArrayAdapter<BookItem> {
   protected static final String TAG = null;
   protected static LayoutInflater mInflater;
-  protected static DrawableManager mDrawableManager = new DrawableManager();
 
   /**
    * Cache item to avoid repeated view look-ups
@@ -38,20 +38,19 @@ public class BookAdapter extends ArrayAdapter<BookItem> {
     mInflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
   }
 
-  public void cleanUpDrawables() {
-    mDrawableManager.recycleAll();
-  }
-
   @Override
   public View getView(int position, View convertView, ViewGroup parent) {
     final BookItem item = getItem(position);
     final ViewHolder viewHolder;
 
     // Inflate the view of it's not yet initialized
-    if(convertView == null) {
+    if (convertView == null) {
       convertView = mInflater.inflate(R.layout.list_item_book, null);
+
       // Cache the items view look-ups
       viewHolder = new ViewHolder();
+
+      //noinspection ConstantConditions
       viewHolder.textTitle = (TextView) convertView.findViewById(R.id.textTitle);
       viewHolder.textAuthor = (TextView) convertView.findViewById(R.id.tvAuthor);
       viewHolder.imageCover = (ImageView) convertView.findViewById(R.id.imageCover);
@@ -65,10 +64,12 @@ public class BookAdapter extends ArrayAdapter<BookItem> {
     viewHolder.textAuthor.setText(item.author);
     viewHolder.imageCover.setImageResource(android.R.drawable.ic_menu_gallery);
 
-    if(item.coverURL != null) {
+    if (item.coverURL != null) {
       viewHolder.imageCover.setImageResource(android.R.drawable.ic_menu_gallery);
       viewHolder.imageCover.setVisibility(View.VISIBLE);
-      mDrawableManager.fetchDrawableOnThread(item.coverURL, viewHolder.imageCover);
+      if(!TextUtils.isEmpty(item.coverURL)) {
+        Picasso.with(getContext()).load(item.coverURL).into(viewHolder.imageCover);
+      }
     } else {
       viewHolder.imageCover.setImageResource(0);
       viewHolder.imageCover.setVisibility(View.GONE);

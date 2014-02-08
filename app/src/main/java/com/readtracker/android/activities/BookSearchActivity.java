@@ -68,12 +68,6 @@ public class BookSearchActivity extends ReadTrackerActivity {
   }
 
   @Override
-  protected void onDestroy() {
-    mBookSearchAdapter.cleanUpDrawables(); // recycles images in drawable manager
-    super.onDestroy();
-  }
-
-  @Override
   public boolean onSearchRequested() {
     mEditTextSearch.requestFocus();
     return true;
