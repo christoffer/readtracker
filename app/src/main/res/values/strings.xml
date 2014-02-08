@@ -4,7 +4,7 @@
 
   <string name="redirect_scheme">readtracker</string>
 
-  <string name="enter_page_count">Please enter the number of pages or toggle percent tracking</string>
+  <string name="add_book_missing_page_count">Please enter the number of pages or toggle percent tracking</string>
 
   <string name="textOn">ON</string>
   <string name="textOff">OFF</string>
@@ -52,5 +52,19 @@
   <string name="quote_fragment_no_quotes">No quotes added yet</string>
   <string name="quote_activity_position">Page in book where the quote starts</string>
   <string name="quote_activity_add">Add</string>
+
+  <string name="add_book_missing_title">Please enter the title</string>
+  <string name="add_book_missing_author">Please enter the author</string>
+  <string name="add_book_saving_book">Saving book...</string>
+
+  <string name="book_pausing_book">Pausing %1$s\n\nClick it again to resume</string>
+  <string name="book_error_reading_book">An error occurred while reading the book</string><string name="book_error_session_failed">Failed to save your reading session.
+
+Please report this to the developer.</string>
+  <string name="add_quote_error_could_not_be_saved">An error occurred. The highlight could not be saved.</string>
+  <string name="add_book_enter_quote">Type in the quote from the book</string>
+  <string name="book_error_loading">An error occurred while loading data for this book</string>
+  <string name="book_search_no_results">No results</string><string name="home_activity_error_require_sign_in_again">An error occurred, which requires you to sign in to Readmill again.
+Sorry about that.</string>
 
 </resources>

@@ -208,13 +208,13 @@ public class AddBookActivity extends BaseActivity {
    */
   private boolean validateFields() {
     if(mEditTitle.getText().length() < 1) {
-      toast("Please enter the title");
+      toast(R.string.add_book_missing_title);
       mEditTitle.requestFocus();
       return false;
     }
 
     if(mEditAuthor.getText().length() < 1) {
-      toast("Please enter the author");
+      toast(R.string.add_book_missing_author);
       mEditAuthor.requestFocus();
       return false;
     }
@@ -229,7 +229,7 @@ public class AddBookActivity extends BaseActivity {
       }
 
       if(pageCount < 1) {
-        toast(getString(R.string.enter_page_count));
+        toast(R.string.add_book_missing_page_count);
         mEditPageCount.requestFocus();
         return false;
       }
@@ -253,7 +253,7 @@ public class AddBookActivity extends BaseActivity {
   }
 
   private void saveLocalReading(LocalReading localReading) {
-    getApp().showProgressDialog(this, "Saving book...");
+    getApp().showProgressDialog(this, getString(R.string.add_book_saving_book));
     SaveLocalReadingTask.save(localReading, new SaveLocalReadingListener() {
       @Override public void onLocalReadingSaved(LocalReading localReading) {
         getApp().clearProgressDialog();

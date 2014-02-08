@@ -215,7 +215,7 @@ public class BookSearchActivity extends BaseActivity {
     mBookSearchAdapter.clear();
 
     if(foundBooks == null) {
-      toastLong("No results");
+      toastLong(getString(R.string.book_search_no_results));
       foundBooks = new ArrayList<GoogleBook>();
     }
 

@@ -234,7 +234,7 @@ public class HomeActivity extends BaseActivity implements LocalReadingInteractio
         mReadmillSyncTask = null;
 
         if(status == SyncStatus.INVALID_TOKEN) {
-          toastLong("An error occurred, which requires you to sign in to Readmill again.\nSorry about that.");
+          toastLong(getString(R.string.home_activity_error_require_sign_in_again));
           getApp().signOut();
           finish();
         }

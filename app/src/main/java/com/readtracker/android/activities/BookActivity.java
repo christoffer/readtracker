@@ -166,7 +166,7 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialogLi
    */
   @Override
   public void onSessionFailed() {
-    toast("Failed to save your reading session.\n\nPlease report this to the developer.");
+    toast(getString(R.string.book_error_session_failed));
   }
 
   /**
@@ -200,7 +200,7 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialogLi
     }
 
     if(!bundle.isValid()) {
-      toastLong("An error occurred while loading data for this book");
+      toastLong(getString(R.string.book_error_loading));
       shutdownWithResult(ActivityCodes.RESULT_CANCELED);
       return;
     }
@@ -282,7 +282,8 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialogLi
       currentSession.stop();
       setResult(RESULT_CANCELED);
       mManualShutdown = false; // prevent session clearing
-      toast("Pausing " + mLocalReading.title + "\n\nClick it again to resume");
+
+      toast(getString(R.string.book_pausing_book, mLocalReading.title));
       finish();
     } else {
       shutdownWithResult(mShouldSync ? ActivityCodes.RESULT_OK : ActivityCodes.RESULT_CANCELED);
@@ -318,7 +319,7 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialogLi
   }
 
   private void finishWithGenericError() {
-    toast("An error occurred while reading the book");
+    toast(getString(R.string.book_error_reading_book));
     shutdownWithResult(ActivityCodes.RESULT_CANCELED);
   }
 
