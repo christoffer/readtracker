@@ -22,7 +22,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
   }
 
   public static final String DATABASE_NAME = "readtracker.db";
-  public static final int DATABASE_VERSION = 10;
+  public static final int DATABASE_VERSION = 11;
   private static final String TAG = DatabaseHelper.class.getName();
 
   private Dao<LocalReading, Integer> readingDao = null;
@@ -122,6 +122,12 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         _upgradeToVersion10(db, connectionSource);
         runningVersion++;
       }
+
+      if(runningVersion == 10) {
+        _upgradeToVersion11(db, connectionSource);
+        runningVersion++;
+      }
+
       Log.d(TAG, "Ended on running version: " + runningVersion);
     } catch(SQLException e) {
       Log.e(TAG, "Failed to upgrade database: " + DATABASE_NAME, e);
@@ -321,5 +327,27 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     db.execSQL("ALTER TABLE LocalReading ADD COLUMN " + LocalReading.UPDATED_AT_FIELD_NAME + " INTEGER NULL;");
     db.execSQL("ALTER TABLE LocalHighlight ADD COLUMN " + LocalHighlight.EDITED_AT_FIELD_NAME + " INTEGER NULL;");
     db.execSQL("ALTER TABLE LocalHighlight ADD COLUMN " + LocalHighlight.DELETED_BY_USER_FIELD_NAME + " INTEGER NOT NULL DEFAULT 0;");
+  }
+
+  private void _upgradeToVersion11(SQLiteDatabase db, ConnectionSource connectionSource) throws SQLException {
+    TableUtils.createTableIfNotExists(connectionSource, Book.class);
+    TableUtils.createTableIfNotExists(connectionSource, Session.class);
+    TableUtils.createTableIfNotExists(connectionSource, Quote.class);
+
+    convertLocalReadingsToBook();
+    convertLocalSessionToSession();
+    convertLocalHighlightToQuote();
+  }
+
+  private void convertLocalHighlightToQuote() {
+    // TODO
+  }
+
+  private void convertLocalSessionToSession() {
+    // TODO
+  }
+
+  private void convertLocalReadingsToBook() {
+    // TODO
   }
 }
