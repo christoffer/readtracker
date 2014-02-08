@@ -148,7 +148,6 @@ public class LocalReadingAdapter extends ArrayAdapter<LocalReading> {
     viewHolder.textAuthor = (TextView) view.findViewById(R.id.textAuthor);
     viewHolder.progressReadingProgress = (SegmentBar) view.findViewById(R.id.progressReadingProgress);
     viewHolder.imageCover = (ImageView) view.findViewById(R.id.imageCover);
-    viewHolder.textFoundVia = (TextView) view.findViewById(R.id.textFoundVia);
     viewHolder.textClosingRemark = (TextView) view.findViewById(R.id.textClosingRemark);
     viewHolder.textFinishedAt = (TextView) view.findViewById(R.id.textFinishedAt);
     return viewHolder;
