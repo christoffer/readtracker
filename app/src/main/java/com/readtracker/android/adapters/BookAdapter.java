@@ -2,6 +2,7 @@ package com.readtracker.android.adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,7 +67,9 @@ public class BookAdapter extends ArrayAdapter<BookItem> {
     if (item.coverURL != null) {
       viewHolder.imageCover.setImageResource(android.R.drawable.ic_menu_gallery);
       viewHolder.imageCover.setVisibility(View.VISIBLE);
-      Picasso.with(getContext()).load(item.coverURL).into(viewHolder.imageCover);
+      if(!TextUtils.isEmpty(item.coverURL)) {
+        Picasso.with(getContext()).load(item.coverURL).into(viewHolder.imageCover);
+      }
     } else {
       viewHolder.imageCover.setImageResource(0);
       viewHolder.imageCover.setVisibility(View.GONE);

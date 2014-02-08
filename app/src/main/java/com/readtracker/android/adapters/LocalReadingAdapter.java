@@ -2,6 +2,7 @@ package com.readtracker.android.adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -178,7 +179,7 @@ public class LocalReadingAdapter extends ArrayAdapter<LocalReading> {
     if(viewHolder.imageCover != null) {
       // TODO nicer default cover
       viewHolder.imageCover.setImageResource(android.R.drawable.ic_menu_gallery);
-      if(localReading.coverURL != null) {
+      if(!TextUtils.isEmpty(localReading.coverURL)) {
         viewHolder.imageCover.setVisibility(View.VISIBLE);
         Picasso.with(getContext()).load(localReading.coverURL).into(viewHolder.imageCover);
       }

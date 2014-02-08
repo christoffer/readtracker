@@ -3,9 +3,12 @@ package com.readtracker.android.activities;
 import android.os.Build;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
+import android.text.TextUtils;
+import android.util.TypedValue;
 import android.view.MenuItem;
 import android.widget.ImageView;
 
+import com.readtracker.android.R;
 import com.readtracker.android.db.LocalReading;
 import com.squareup.picasso.Picasso;
 
@@ -28,8 +31,11 @@ public class BookBaseActivity extends ReadTrackerActivity {
     // the imageview from the actionbar pre-11. So Gingerbread will be stuck with the default image...
     if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
       ImageView homeIcon = (ImageView) findViewById(android.R.id.home);
-      if(homeIcon != null) {
-        Picasso.with(getApplicationContext()).load(localReading.coverURL).into(homeIcon);
+      if(homeIcon != null && !TextUtils.isEmpty(localReading.coverURL)) {
+        int size = getActionBarHeight();
+        if(size == 0) size = 48; // Arbitrary default value
+        Picasso.with(this).load(localReading.coverURL).placeholder(R.drawable.readmill_sync).resize(size, size).centerCrop().into(homeIcon);
+        actionBar.setDisplayShowHomeEnabled(true);
       }
     }
 
@@ -45,5 +51,14 @@ public class BookBaseActivity extends ReadTrackerActivity {
       return true;
     }
     return super.onOptionsItemSelected(item);
+  }
+
+  public int getActionBarHeight() {
+    // Calculate ActionBar height
+    TypedValue tv = new TypedValue();
+    if(getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
+      return TypedValue.complexToDimensionPixelSize(tv.data, getResources().getDisplayMetrics());
+    }
+    return 0;
   }
 }
