@@ -6,11 +6,8 @@ import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBarActivity;
 import android.util.TypedValue;
-import android.view.Window;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,8 +23,6 @@ public class ReadTrackerActivity extends ActionBarActivity {
   protected final String TAG = this.getClass().getName();
   private ApplicationReadTracker mApplication;
 
-  private static Typeface mRoboto;
-
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -35,28 +30,6 @@ public class ReadTrackerActivity extends ActionBarActivity {
     requestWindowFeatures();
 
     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-  }
-
-  /**
-   * Lazily loads the custom typeface
-   *
-   * @return
-   */
-  public Typeface getRoboto() {
-    if(mRoboto == null) {
-      mRoboto = Typeface.createFromAsset(getAssets(), "Roboto-Light.ttf");
-    }
-    return mRoboto;
-  }
-
-  /**
-   * Applies the custom font to a given text view.
-   *
-   * @param textViewId id of text view to apply custom font on
-   */
-  protected void applyRoboto(int textViewId) {
-    TextView textView = (TextView) findViewById(textViewId);
-    textView.setTypeface(getRoboto());
   }
 
   public final ApplicationReadTracker getApp() {
