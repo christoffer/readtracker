@@ -1,15 +1,21 @@
 package com.readtracker.android.db;
 
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 
 /**
  * Represents a quote from a book.
  */
+@DatabaseTable(tableName = "quotes")
 public class Quote extends Model {
   @DatabaseField(columnName = "quote") private String mQuote;
   @DatabaseField(columnName = "added_at") private Long mAddedAt;
   @DatabaseField(columnName = "quote_position") private Float mQuotePosition;
-  @DatabaseField(columnName = "book_id", foreign = true) private Book mBook;
+  @DatabaseField(
+    columnName = "book_id",
+    foreign = true,
+    columnDefinition = "integer references books (_id) on delete cascade"
+  ) private Book mBook;
 
   public Quote() {
   }

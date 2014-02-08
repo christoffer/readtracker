@@ -1,16 +1,22 @@
 package com.readtracker.android.db;
 
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 
 /**
  * Represents one reading session.
  */
+@DatabaseTable(tableName = "sessions")
 public class Session extends Model {
   @DatabaseField(columnName = "start_position") private Float mStartPosition;
   @DatabaseField(columnName = "end_position") private Float mEndPosition;
   @DatabaseField(columnName = "duration_seconds") private Long mDurationSeconds;
   @DatabaseField(columnName = "started_at") private Long mStartedAt;
-  @DatabaseField(columnName = "book_id", foreign = true) private Book mBook;
+  @DatabaseField(
+    columnName = "book_id",
+    foreign = true,
+    columnDefinition = "integer references books (_id) on delete cascade"
+  ) private Book mBook;
 
   public Session() {
   }
