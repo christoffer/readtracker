@@ -56,7 +56,7 @@ public class BookBaseActivity extends ReadTrackerActivity {
   public int getActionBarHeight() {
     // Calculate ActionBar height
     TypedValue tv = new TypedValue();
-    if(getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
+    if(getTheme() != null && getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
       return TypedValue.complexToDimensionPixelSize(tv.data, getResources().getDisplayMetrics());
     }
     return 0;
