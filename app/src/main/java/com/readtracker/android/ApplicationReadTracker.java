@@ -240,7 +240,7 @@ public class ApplicationReadTracker extends Application implements TokenChangeLi
 
   public static Dao<LocalSession, Integer> getSessionDao() throws SQLException {
     assertInstance();
-    return mInstance.getDatabaseHelper().getSessionDao();
+    return mInstance.getDatabaseHelper().getLocalSessionDao();
   }
 
   public static Dao<LocalHighlight, Integer> getHighlightDao() throws SQLException {

@@ -35,7 +35,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     return readingDao;
   }
 
-  public Dao<LocalSession, Integer> getSessionDao() throws SQLException {
+  public Dao<LocalSession, Integer> getLocalSessionDao() throws SQLException {
     if(sessionDao == null) {
       sessionDao = getDao(LocalSession.class);
     }
@@ -266,7 +266,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     Log.d(TAG, String.format("Found %d connected readings", connectedReadings.size()));
 
     for(LocalReading localReading : connectedReadings) {
-      List<LocalSession> sessions = getSessionDao().queryBuilder().where()
+      List<LocalSession> sessions = getLocalSessionDao().queryBuilder().where()
         .eq(LocalSession.READING_ID_FIELD_NAME, localReading.id).query();
 
       Log.d(TAG, String.format("Found %d sessions for reading with id %d", sessions.size(), localReading.id));
@@ -275,7 +275,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         if(session.readmillReadingId > 0) continue;
         Log.i(TAG, String.format("Updating session %s, setting Readmill Reading id to %d", session.sessionIdentifier, localReading.readmillReadingId));
         session.readmillReadingId = localReading.readmillReadingId;
-        getSessionDao().update(session);
+        getLocalSessionDao().update(session);
       }
 
       List<LocalHighlight> highlights = getHighlightDao().queryBuilder().where()
