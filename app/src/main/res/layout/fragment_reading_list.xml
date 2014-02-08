@@ -26,13 +26,13 @@
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_gravity="center_horizontal"
-      android:contentDescription="Blank reading list" />
+      android:contentDescription="@string/reading_list_blank_content_desc" />
 
     <TextView
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_gravity="center_horizontal"
-      android:text="No books"
+      android:text="@string/reading_list_blank"
       android:gravity="center"
       android:layout_marginTop="12dp"
       style="@style/default_text" />

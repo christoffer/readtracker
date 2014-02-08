@@ -29,10 +29,11 @@ public class SettingsActivity extends PreferenceActivity {
 
     // Current user info
     if(currentUser == null) {
-      emailPreference.setSummary("Not logged in to Readmill");
+      emailPreference.setSummary(R.string.settings_not_logged_in);
       emailPreference.setEnabled(false);
     } else {
-      emailPreference.setSummary("Logged in as " + currentUser.getDisplayName());
+      emailPreference.setSummary(getString(R.string.settings_logged_in_as, currentUser.getDisplayName()));
+      //emailPreference.setSummary("Logged in as " + currentUser.getDisplayName());
       emailPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
         @Override public boolean onPreferenceClick(Preference preference) {
           Uri userUri = Uri.parse(currentUser.getWebURL());
@@ -47,10 +48,10 @@ public class SettingsActivity extends PreferenceActivity {
 
     Preference signOutPreference = findPreference(SettingsKeys.USER_SIGN_OUT);
     if(currentUser == null) {
-      signOutPreference.setTitle("Sign in");
-      signOutPreference.setSummary("Click to sign in to Readmill");
+      signOutPreference.setTitle(R.string.settings_sign_in);
+      signOutPreference.setSummary(R.string.settings_sign_in_subtext);
     } else {
-      signOutPreference.setTitle("Sign out");
+      signOutPreference.setTitle(R.string.settings_sign_out);
     }
 
     signOutPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="fill_parent"
   android:layout_height="wrap_content"
   android:paddingTop="12dp"
@@ -15,7 +16,7 @@
     android:scaleType="centerCrop"
     android:layout_marginLeft="12dp"
     android:layout_alignParentRight="true"
-    android:contentDescription="Book cover" />
+    android:contentDescription="@string/reading_item_cover_content_desc" />
 
   <!--
     note that textTitle and textAuthor will have their text size set dynamically
@@ -28,7 +29,7 @@
     android:layout_marginTop="-3dp"
     android:singleLine="true"
     android:textColor="@color/text_color_primary"
-    android:text="Metamorphosis" />
+    tools:text="Metamorphosis" />
 
   <TextView
     android:id="@+id/textAuthor"
@@ -39,7 +40,7 @@
     android:layout_marginTop="3dp"
     android:singleLine="true"
     android:textColor="@color/text_color_secondary"
-    android:text="Franz Kafka" />
+    tools:text="Franz Kafka" />
 
   <TextView
     android:id="@+id/textClosingRemark"
@@ -49,9 +50,9 @@
     android:layout_marginTop="18dp"
     android:background="@drawable/quote_background"
     android:paddingLeft="12dp"
-    android:textSize="12dp"
+    android:textSize="12sp"
     android:textColor="@color/text_color_secondary"
-    android:text="– Something something something something smething seomthjigs"
+    tools:text="– Something something something something smething seomthjigs"
     android:typeface="serif" />
 
   <TextView
@@ -59,8 +60,8 @@
     style="@style/default_text"
     android:layout_below="@id/textClosingRemark"
     android:layout_marginTop="12dp"
-    android:textSize="10dp"
+    android:textSize="10sp"
     android:textColor="@color/text_color_secondary"
-    android:text="Finished Nov 13th, 2012" />
+    tools:text="Finished Nov 13th, 2012" />
 
 </RelativeLayout>

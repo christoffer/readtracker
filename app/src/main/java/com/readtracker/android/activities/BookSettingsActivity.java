@@ -101,7 +101,7 @@ public class BookSettingsActivity extends PreferenceActivity {
   }
 
   private void toastDeleted(boolean isConnected) {
-    String message = "Book deleted.";
+    String message = getString(R.string.book_settings_book_deleted);
 
     if(isConnected) {
       message += " Changes to Readmill will be applied on next sync.";
@@ -112,7 +112,7 @@ public class BookSettingsActivity extends PreferenceActivity {
 
   private void showConfirmDeleteDialog() {
     AlertDialog.Builder builder = new AlertDialog.Builder(this);
-    builder.setTitle("Delete book and all data?");
+    builder.setTitle(getString(R.string.book_settings_delete_book_title));
 
     if(mLocalReading.isConnected()) {
       builder.setMessage(R.string.delete_reading_connected);
@@ -122,13 +122,13 @@ public class BookSettingsActivity extends PreferenceActivity {
 
     builder.setCancelable(true);
 
-    builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+    builder.setPositiveButton(R.string.general_delete, new DialogInterface.OnClickListener() {
       @Override public void onClick(DialogInterface dialog, int id) {
         deleteReading(mLocalReading);
       }
     });
 
-    builder.setNegativeButton("Cancel", null);
+    builder.setNegativeButton(R.string.general_cancel, null);
 
     builder.show();
   }

@@ -156,7 +156,7 @@ public class AddQuoteActivity extends BookBaseActivity {
     String content = mQuoteTextEdit.getText().toString().trim();
     String comment = mQuoteCommentEdit.getText().toString().trim();
 
-    if(!validateHighlightContent(content)) {
+    if(!validateFields()) {
       return;
     }
 
@@ -202,7 +202,7 @@ public class AddQuoteActivity extends BookBaseActivity {
 
   private void onHighlightPersisted(boolean success) {
     if(!success) {
-      toastLong("An error occurred. The highlight could not be saved.");
+      toastLong(getString(R.string.add_quote_error_could_not_be_saved));
       return;
     }
 
@@ -212,16 +212,12 @@ public class AddQuoteActivity extends BookBaseActivity {
     finish();
   }
 
-  private boolean validateHighlightContent(String content) {
-    content = content.trim();
+  private boolean validateFields() {
+    final String quoteText = mQuoteTextEdit.getText().toString().trim();
 
-    if(content.length() == 0) {
-      toastLong("Please enter some text for the highlight.");
-      return false;
-    }
-
-    if(content.length() > 2000) {
-      toastLong("The highlight is " + (content.length() - 2000) + " characters to long.");
+    if(quoteText.length() == 0) {
+      toastLong(getString(R.string.add_book_enter_quote));
+      mQuoteTextEdit.requestFocus();
       return false;
     }
 

@@ -10,7 +10,6 @@
   <TextView
     android:id="@+id/textProgressMessage"
     android:layout_width="fill_parent"
-    android:text=""
     style="@style/small_content_text"
     android:lines="1"
     android:lineSpacingMultiplier="1.0"

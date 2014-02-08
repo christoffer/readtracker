@@ -4,7 +4,7 @@
 
   <string name="redirect_scheme">readtracker</string>
 
-  <string name="enter_page_count">Please enter the number of pages or toggle percent tracking</string>
+  <string name="add_book_missing_page_count">Please enter the number of pages or toggle percent tracking</string>
 
   <string name="textOn">ON</string>
   <string name="textOff">OFF</string>
@@ -52,5 +52,66 @@
   <string name="quote_fragment_no_quotes">No quotes added yet</string>
   <string name="quote_activity_position">Page in book where the quote starts</string>
   <string name="quote_activity_add">Add</string>
+
+  <string name="add_book_missing_title">Please enter the title</string>
+  <string name="add_book_missing_author">Please enter the author</string>
+  <string name="add_book_saving_book">Saving book...</string>
+
+  <string name="book_pausing_book">Pausing %1$s\n\nClick it again to resume</string>
+  <string name="book_error_reading_book">An error occurred while reading the book</string><string name="book_error_session_failed">Failed to save your reading session.
+
+Please report this to the developer.</string>
+  <string name="add_quote_error_could_not_be_saved">An error occurred. The highlight could not be saved.</string>
+  <string name="add_book_enter_quote">Type in the quote from the book</string>
+  <string name="book_error_loading">An error occurred while loading data for this book</string>
+  <string name="book_search_no_results">No results</string><string name="home_activity_error_require_sign_in_again">An error occurred, which requires you to sign in to Readmill again.
+Sorry about that.</string>
+  <string name="add_book_add">Add</string>
+  <string name="add_book_save">Save</string>
+  <string name="sync_ui_syncing_with_readmill">Syncing with Readmill...</string>
+  <string name="sync_ui_synchronized">Synchronized</string>
+
+  <string name="reading_one_more_step">Just one more step...</string>
+  <string name="reading_set_book_lenght">Set book length</string>
+  <string name="reading_start">Start</string>
+  <string name="reading_resume">Resume</string>
+  <string name="reading_pause">Pause</string>
+  <string name="reading_click_to_start">Click to start reading</string>
+  <string name="reading_last_at">Last at %1$d.%2$d%%</string>
+  <string name="reading_last_on">Last on page %1$d</string>
+  <string name="reading_adapter_found_via">Found via: %1$s</string>
+  <string name="reading_adapter_abandoned">Abandoned</string>
+  <string name="reading_adapter_finished">Finished</string>
+  <string name="book_settings_book_deleted">Book deleted.</string>
+  <string name="book_settings_delete_book_title">Delete book and all data?</string>
+  <string name="general_delete">Delete</string>
+  <string name="general_cancel">Cancel</string>
+  <string name="quote_error_failed_to_delete">Failed to delete the quote</string>
+  <string name="settings_sign_in">Sign in</string>
+  <string name="settings_sign_out">Sign out</string>
+  <string name="settings_sign_in_subtext">Click to sign in to Readmill</string>
+  <string name="settings_not_logged_in">Not logged in to Readmill</string>
+  <string name="settings_logged_in_as">Logged in as %1$s</string>
+  <string name="reading_done">Done</string>
+  <string name="add_book_book_info">Book information</string>
+  <string name="general_author">Author</string>
+  <string name="general_title">Title</string>
+  <string name="add_book_number_of_pages">Length used for tracking</string>
+  <string name="add_book_readmill_privacy">Readmill privacy</string>
+  <string name="add_book_shared">Shared</string>
+  <string name="add_book_private">Private</string>
+  <string name="book_search_search_google_books">Search Google Books...</string>
+  <string name="book_search_new_book">New book...</string>
+  <string name="book_search_search">Search</string>
+  <string name="finish_book_hint">What did you think of the book?</string>
+  <string name="finish_book_finish">Finish</string>
+  <string name="end_session_where_did_you_end">Where did you end?</string>
+  <string name="end_session_scroll_to_end_to_finish">Scroll to the very end if you finished the book</string>
+  <string name="general_save">Save</string>
+  <string name="end_session_finish_book">Finish book</string>
+  <string name="reading_list_blank_content_desc">Blank reading list</string>
+  <string name="reading_list_blank">No books</string>
+  <string name="sessions_blank_text">No reading history to display</string>
+  <string name="reading_item_cover_content_desc">Book cover</string>
 
 </resources>

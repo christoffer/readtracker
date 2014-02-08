@@ -13,7 +13,7 @@
       style="@style/default_button"
       android:id="@+id/buttonStart"
       android:layout_gravity="center"
-      android:text="Start" />
+      android:text="@string/reading_start" />
 
     <!-- group of pause/resume and done button -->
 
@@ -27,14 +27,14 @@
         android:id="@+id/buttonPause"
         android:layout_weight="1"
         android:layout_marginRight="6dp"
-        android:text="Pause" />
+        android:text="@string/reading_pause" />
 
       <Button
         style="@style/default_button"
         android:id="@+id/buttonDone"
         android:layout_weight="1"
         android:layout_marginLeft="6dp"
-        android:text="Done" />
+        android:text="@string/reading_done" />
 
     </LinearLayout>
 

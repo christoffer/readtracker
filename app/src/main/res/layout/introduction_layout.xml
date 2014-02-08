@@ -20,7 +20,7 @@
 
     <TextView
       style="@style/default_text"
-      android:textSize="20dp"
+      android:textSize="20sp"
       android:text="@string/welcome_welcome_to_readtracker"/>
 
     <TextView

@@ -68,10 +68,14 @@ public class BaseActivity extends ActionBarActivity {
   /**
    * Display a short toast message to the user
    *
-   * @param toastMessage Message to be displayed
+   * @param toastMessageId String resources to be displayed
    */
-  protected void toast(String toastMessage) {
-    Toast.makeText(this, toastMessage, Toast.LENGTH_SHORT).show();
+  protected void toast(int toastMessageId) {
+    toast(getString(toastMessageId));
+  }
+
+  protected void toast(String message) {
+    Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
   }
 
   /**
