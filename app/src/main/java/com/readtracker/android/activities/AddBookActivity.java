@@ -118,7 +118,7 @@ public class AddBookActivity extends BaseActivity {
   }
 
   private void setupCreateMode(Bundle extras) {
-    mButtonAddBook.setText("Add");
+    mButtonAddBook.setText(R.string.add_book_add);
     mSwitchPublicPrivate.setVisibility(View.VISIBLE);
 
     mEditTitle.setText(extras.getString(IntentKeys.TITLE));
@@ -128,7 +128,7 @@ public class AddBookActivity extends BaseActivity {
   }
 
   private void setupEditMode(LocalReading localReading) {
-    mButtonAddBook.setText("Save");
+    mButtonAddBook.setText(R.string.add_book_save);
 
     mEditTitle.setEnabled(false);
     mEditAuthor.setEnabled(false);

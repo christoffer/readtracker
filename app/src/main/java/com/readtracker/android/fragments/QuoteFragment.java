@@ -230,7 +230,7 @@ public class QuoteFragment extends Fragment {
       }
 
       @Override public void onLocalHighlightDeletedFailed(LocalHighlight deletedHighlight) {
-        Toast.makeText(getActivity(), "Failed to delete the highlight", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), R.string.quote_error_failed_to_delete, Toast.LENGTH_SHORT).show();
       }
     });
   }
@@ -250,7 +250,7 @@ public class QuoteFragment extends Fragment {
       }
 
       @Override public void onLocalHighlightPersistedFailed() {
-        Toast.makeText(getActivity(), "Failed to delete the Highlight", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), R.string.quote_error_failed_to_delete, Toast.LENGTH_SHORT).show();
       }
     });
   }

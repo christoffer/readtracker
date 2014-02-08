@@ -186,7 +186,8 @@ public class LocalReadingAdapter extends ArrayAdapter<LocalReading> {
     }
 
     if(viewHolder.textFoundVia != null) {
-      viewHolder.textFoundVia.setText("Found via: " + localReading.getFoundVia());
+      viewHolder.textFoundVia.setText(
+        getContext().getString(R.string.reading_adapter_found_via, localReading.getFoundVia()));
     }
 
     if(viewHolder.textClosingRemark != null) {
@@ -202,7 +203,8 @@ public class LocalReadingAdapter extends ArrayAdapter<LocalReading> {
     if(viewHolder.textFinishedAt != null) {
       if(localReading.hasClosedAt()) {
         final String finishedAt = Utils.humanPastDate(localReading.getClosedAt());
-        final String finishAction = localReading.readmillState == ReadmillApiHelper.ReadingState.ABANDONED ? "Abandoned" : "Finished";
+        final boolean isAbandoned = localReading.readmillState == ReadmillApiHelper.ReadingState.ABANDONED;
+        final String finishAction = getContext().getString(isAbandoned ? R.string.reading_adapter_abandoned : R.string.reading_adapter_finished);
         final String labelText = String.format("%s %s", finishAction, finishedAt);
         viewHolder.textFinishedAt.setText(labelText);
         viewHolder.textFinishedAt.setVisibility(View.VISIBLE);

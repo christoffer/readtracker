@@ -86,13 +86,13 @@ public class ReadmillSyncStatusUIHandler implements ReadmillSyncProgressListener
     Log.d(TAG, "Readmill sync started");
     inflateSyncBar();
     showSyncBar();
-    mProgressMessage.setText("Syncing with Readmill...");
+    mProgressMessage.setText(getString(R.string.sync_ui_syncing_with_readmill));
     mProgressSync.setProgress(0);
   }
 
   @Override public void onSyncDone() {
     Log.d(TAG, "Readmill sync done");
-    mProgressMessage.setText("Synchronized");
+    mProgressMessage.setText(getString(R.string.sync_ui_synchronized));
     mProgressSync.setProgress(100);
     hideSyncBar();
     mSyncUpdateHandler.onSyncComplete(SyncStatus.OK);
@@ -174,83 +174,12 @@ public class ReadmillSyncStatusUIHandler implements ReadmillSyncProgressListener
     });
     mLayoutSyncProgress.startAnimation(slide);
   }
-}
 
-//  public void onReadmillSyncStart() {
-//    Log.i(TAG, "Readmill sync started");
-//
-//    if(mMenuReadmillSync != null) {
-//      mMenuReadmillSync.setEnabled(false);
-//      mButtonSyncReadmill.setEnabled(false);
-//    }
-//
-//    if(mLayoutSyncProgress == null) {
-//      mLayoutSyncProgress = (LinearLayout) ((ViewStub) findViewById(R.id.stub_sync_progress)).inflate();
-//      mLayoutSyncProgress.bringToFront();
-//      findViewById(R.id.layoutActionBar).bringToFront();
-//      mProgressSync = (ProgressBar) mLayoutSyncProgress.findViewById(R.id.progressProgress);
-//      mProgressMessage = (TextView) mLayoutSyncProgress.findViewById(R.id.textProgressMessage);
-//      Animation slide = AnimationUtils.loadAnimation(this, R.anim.slide_up_appear);
-//      slide.setFillAfter(true);
-//      mLayoutSyncProgress.clearAnimation();
-//      mLayoutSyncProgress.startAnimation(slide);
-//    }
-//    mLayoutSyncProgress.setVisibility(View.VISIBLE);
-//    mProgressMessage.setText("Syncing with Readmill...");
-//    mProgressSync.setProgress(0);
-//  }
-//
-//  public void onReadmillSyncDone(Boolean success) {
-//    if(success == null) {
-//      Log.i(TAG, "Sync aborted");
-//    }
-//
-//    Log.d(TAG, "Readmill Sync Completed with success: " + success);
-//
-//    if(mProgressMessage != null && success != null) {
-//      if(mProgressSync != null) {
-//        mProgressSync.setProgress(mProgressSync.getMax());
-//      }
-//      if(success) {
-//        mProgressMessage.setText("Sync complete");
-//      } else {
-//        mProgressMessage.setText("There was an error syncing your data. Maybe bad internet connection?");
-//      }
-//      Animation slide = AnimationUtils.loadAnimation(this, R.anim.slide_down_appear);
-//      slide.setFillAfter(true);
-//      slide.setStartOffset(1000);
-//      mLayoutSyncProgress.clearAnimation();
-//      mLayoutSyncProgress.startAnimation(slide);
-//    } else {
-//      mLayoutSyncProgress.clearAnimation();
-//    }
-//
-//    if(mMenuReadmillSync != null) {
-//      mMenuReadmillSync.setEnabled(true);
-//      mButtonSyncReadmill.setEnabled(true);
-//      //      if(mReadingListAdapter.getCount() == 0) {
-//      //        mButtonSyncReadmill.startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_half));
-//      //      }
-//    }
-//
-//  }
-//
-//  /**
-//   * Called when an ongoing sync with readmill has a new update message
-//   *
-//   * @param message The update message
-//   */
-//  public void onReadmillSyncUpdate(ReadmillSyncProgressMessage message) {
-//    if(message.toString().length() > 0 && mProgressMessage != null) {
-//      mProgressMessage.setText(message.toString());
-//    }
-//
-//    if(message.getProgress() != null && mProgressSync != null) {
-//      mProgressSync.setProgress((int) (message.getProgress() * 100));
-//    }
-//
-//    if(message.getLocalReading() != null) {
-//      Log.i(TAG, "Add or update LocalReading: " + message.getLocalReading().toString());
-//      mHomeFragmentAdapter.put(message.getLocalReading());
-//    }
-//  }
+  private String getString(int stringId) {
+    return mParentActivity.getString(stringId);
+  }
+
+  private String getString(int stringId, Object... params) {
+    return mParentActivity.getString(stringId, params);
+  }
+}

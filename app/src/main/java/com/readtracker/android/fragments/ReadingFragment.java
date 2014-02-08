@@ -377,9 +377,9 @@ public class ReadingFragment extends Fragment {
    * Sets up the UI for asking the user for the number of pages in the book.
    */
   private void setupForMissingPages() {
-    mTextBillboard.setText("Just one more step...");
+    mTextBillboard.setText(R.string.reading_one_more_step);
     mTextBillboard.setEnabled(false);
-    mButtonStart.setText("Set book length");
+    mButtonStart.setText(R.string.reading_set_book_lenght);
   }
 
   /**
@@ -392,16 +392,16 @@ public class ReadingFragment extends Fragment {
     boolean isFirstRead = localReading.currentPage == 0;
 
     if(isFirstRead) {
-      mTextBillboard.setText("Click to start reading");
+      mTextBillboard.setText(R.string.reading_click_to_start);
       return;
     }
 
     if(localReading.measureInPercent) {
       int currentInteger = (int) localReading.currentPage / 10;
       int currentFraction = (int) localReading.currentPage - currentInteger * 10;
-      mTextBillboard.setText(String.format("Last at %d.%d%%", currentInteger, currentFraction));
+      mTextBillboard.setText(getString(R.string.reading_last_at, currentInteger, currentFraction));
     } else {
-      mTextBillboard.setText(String.format("Last on page %d", localReading.currentPage));
+      mTextBillboard.setText(getString(R.string.reading_last_on, localReading.currentPage));
     }
   }
 
@@ -500,7 +500,7 @@ public class ReadingFragment extends Fragment {
    * Changes UI to start mode
    */
   private void setupStartMode() {
-    mButtonStart.setText("Start");
+    mButtonStart.setText(R.string.reading_start);
     flipToButtonPage(FLIPPER_PAGE_START_BUTTON);
   }
 
@@ -508,7 +508,7 @@ public class ReadingFragment extends Fragment {
    * Changes UI to pause mode
    */
   private void displayResumableControls() {
-    mButtonPause.setText("Resume");
+    mButtonPause.setText(R.string.reading_resume);
     mWheelDuration.setEnabled(false);
     flipToButtonPage(FLIPPER_PAGE_READING_BUTTONS);
     Animation pulse = AnimationUtils.loadAnimation(getActivity(), R.anim.pulse);
@@ -519,7 +519,7 @@ public class ReadingFragment extends Fragment {
    * Changes UI to resumed mode
    */
   private void displayPausableControls() {
-    mButtonPause.setText("Pause");
+    mButtonPause.setText(R.string.reading_pause);
     flipToButtonPage(FLIPPER_PAGE_READING_BUTTONS);
     mLayoutTimeSpinnerWrapper.setAnimation(null); // Cancel the pulse
   }

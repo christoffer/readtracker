@@ -66,5 +66,31 @@ Please report this to the developer.</string>
   <string name="book_error_loading">An error occurred while loading data for this book</string>
   <string name="book_search_no_results">No results</string><string name="home_activity_error_require_sign_in_again">An error occurred, which requires you to sign in to Readmill again.
 Sorry about that.</string>
+  <string name="add_book_add">Add</string>
+  <string name="add_book_save">Save</string>
+  <string name="sync_ui_syncing_with_readmill">Syncing with Readmill...</string>
+  <string name="sync_ui_synchronized">Synchronized</string>
+
+  <string name="reading_one_more_step">Just one more step...</string>
+  <string name="reading_set_book_lenght">Set book length</string>
+  <string name="reading_start">Start</string>
+  <string name="reading_resume">Resume</string>
+  <string name="reading_pause">Pause</string>
+  <string name="reading_click_to_start">Click to start reading</string>
+  <string name="reading_last_at">Last at %1$d.%2$d%%</string>
+  <string name="reading_last_on">Last on page %1$d</string>
+  <string name="reading_adapter_found_via">Found via: %1$s</string>
+  <string name="reading_adapter_abandoned">Abandoned</string>
+  <string name="reading_adapter_finished">Finished</string>
+  <string name="book_settings_book_deleted">Book deleted.</string>
+  <string name="book_settings_delete_book_title">Delete book and all data?</string>
+  <string name="general_delete">Delete</string>
+  <string name="general_cancel">Cancel</string>
+  <string name="quote_error_failed_to_delete">Failed to delete the quote</string>
+  <string name="settings_sign_in">Sign in</string>
+  <string name="settings_sign_out">Sign out</string>
+  <string name="settings_sign_in_subtext">Click to sign in to Readmill</string>
+  <string name="settings_not_logged_in">Not logged in to Readmill</string>
+  <string name="settings_logged_in_as">Logged in as %1$s</string>
 
 </resources>
