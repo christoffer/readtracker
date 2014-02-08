@@ -47,16 +47,19 @@ public class SettingsActivity extends PreferenceActivity {
     // Hook up the sign out button
 
     Preference signOutPreference = findPreference(SettingsKeys.USER_SIGN_OUT);
+    final boolean accountSettingsButtonIsSignIn;
     if(currentUser == null) {
       signOutPreference.setTitle(R.string.settings_sign_in);
       signOutPreference.setSummary(R.string.settings_sign_in_subtext);
+      accountSettingsButtonIsSignIn = true;
     } else {
       signOutPreference.setTitle(R.string.settings_sign_out);
+      accountSettingsButtonIsSignIn = false;
     }
 
     signOutPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
       @Override public boolean onPreferenceClick(Preference preference) {
-        setResult(ActivityCodes.RESULT_SIGN_OUT);
+        setResult(accountSettingsButtonIsSignIn ? ActivityCodes.RESULT_SIGN_IN : ActivityCodes.RESULT_SIGN_OUT);
         finish();
         return true;
       }

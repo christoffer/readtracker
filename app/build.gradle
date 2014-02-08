@@ -28,6 +28,11 @@ android {
             runProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
         }
+
+        debug {
+            packageNameSuffix ".debug"
+            versionNameSuffix "-debug"
+        }
     }
 }
 

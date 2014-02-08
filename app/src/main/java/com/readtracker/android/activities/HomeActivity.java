@@ -22,10 +22,12 @@ import com.readtracker.android.ApplicationReadTracker;
 import com.readtracker.android.IntentKeys;
 import com.readtracker.android.R;
 import com.readtracker.android.SettingsKeys;
+import com.readtracker.android.custom_views.OAuthDialog;
 import com.readtracker.android.db.LocalReading;
 import com.readtracker.android.db.LocalSession;
 import com.readtracker.android.fragments.HomeFragmentAdapter;
 import com.readtracker.android.interfaces.LocalReadingInteractionListener;
+import com.readtracker.android.interfaces.OAuthDialogResultListener;
 import com.readtracker.android.support.ReadmillApiHelper;
 import com.readtracker.android.support.ReadmillSyncStatusUIHandler;
 import com.readtracker.android.tasks.ReadmillSyncAsyncTask;
@@ -40,7 +42,7 @@ import java.util.List;
 import static com.readtracker.android.support.ReadmillSyncStatusUIHandler.SyncStatus;
 import static com.readtracker.android.support.ReadmillSyncStatusUIHandler.SyncUpdateHandler;
 
-public class HomeActivity extends BaseActivity implements LocalReadingInteractionListener {
+public class HomeActivity extends BaseActivity implements LocalReadingInteractionListener, OAuthDialogResultListener {
   private static ViewPager mPagerHomeActivity;
 
   // A list of all the reading for the current user
@@ -60,7 +62,8 @@ public class HomeActivity extends BaseActivity implements LocalReadingInteractio
 
   // Sort readings by freshness
   private Comparator<LocalReading> mLocalReadingComparator = new Comparator<LocalReading>() {
-    @Override public int compare(LocalReading localReadingA, LocalReading localReadingB) {
+    @Override
+    public int compare(LocalReading localReadingA, LocalReading localReadingB) {
       return localReadingB.getLastReadAt().compareTo(localReadingA.getLastReadAt());
     }
   };
@@ -112,7 +115,8 @@ public class HomeActivity extends BaseActivity implements LocalReadingInteractio
     });
   }
 
-  @Override protected void onSaveInstanceState(Bundle outState) {
+  @Override
+  protected void onSaveInstanceState(Bundle outState) {
     outState.putParcelableArrayList(IntentKeys.LOCAL_READINGS, mLocalReadings);
     outState.putBoolean(IntentKeys.SKIP_FULL_SYNC, true);
   }
@@ -168,9 +172,9 @@ public class HomeActivity extends BaseActivity implements LocalReadingInteractio
   public boolean onOptionsItemSelected(MenuItem item) {
     int clickedId = item.getItemId();
 
-    if (clickedId == R.id.sync_menu) {
+    if(clickedId == R.id.sync_menu) {
       sync(false);
-    } else if (clickedId == R.id.settings_menu) {
+    } else if(clickedId == R.id.settings_menu) {
       exitToSettings();
     } else if(clickedId == R.id.add_book_menu) {
       exitToBookSearch();
@@ -185,7 +189,7 @@ public class HomeActivity extends BaseActivity implements LocalReadingInteractio
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     final boolean needReloadDueToReadingSession = (
       requestCode == ActivityCodes.REQUEST_READING_SESSION &&
-      resultCode == ActivityCodes.RESULT_LOCAL_READING_UPDATED
+        resultCode == ActivityCodes.RESULT_LOCAL_READING_UPDATED
     );
     final boolean needReloadDueToAddedBook = requestCode == ActivityCodes.REQUEST_ADD_BOOK;
     // Handle coming back from settings
@@ -193,6 +197,8 @@ public class HomeActivity extends BaseActivity implements LocalReadingInteractio
       if(resultCode == ActivityCodes.RESULT_SIGN_OUT) {
         getApp().signOut();
         finish();
+      } else if(resultCode == ActivityCodes.RESULT_SIGN_IN) {
+        OAuthDialog.show(getSupportFragmentManager());
       } else {
         // Reset the adapter to refresh views if the user toggled compact mode
         initializeFragmentAdapter();
@@ -219,16 +225,19 @@ public class HomeActivity extends BaseActivity implements LocalReadingInteractio
   private void bindEvents() {
     // Handler for showing sync status
     mSyncStatusHandler = new ReadmillSyncStatusUIHandler(R.id.stub_sync_progress, this, new SyncUpdateHandler() {
-      @Override public void onReadingUpdate(LocalReading localReading) {
+      @Override
+      public void onReadingUpdate(LocalReading localReading) {
         addLocalReading(localReading);
         refreshLocalReadingLists();
       }
 
-      @Override public void onReadingDelete(int localReadingId) {
+      @Override
+      public void onReadingDelete(int localReadingId) {
         removeLocalReadingIfExists(localReadingId, true);
       }
 
-      @Override public void onSyncComplete(SyncStatus status) {
+      @Override
+      public void onSyncComplete(SyncStatus status) {
         Log.d(TAG, "Sync is complete with " + status);
         toggleSyncMenuOption(true);
         mReadmillSyncTask = null;
@@ -252,7 +261,8 @@ public class HomeActivity extends BaseActivity implements LocalReadingInteractio
    *
    * @param localReading clicked local reading
    */
-  @Override public void onLocalReadingClicked(LocalReading localReading) {
+  @Override
+  public void onLocalReadingClicked(LocalReading localReading) {
     exitToBookActivity(localReading.id);
   }
 
@@ -268,7 +278,7 @@ public class HomeActivity extends BaseActivity implements LocalReadingInteractio
   /**
    * Add a local reading the lists. Handles duplication of readings.
    *
-   * @param localReading  LocalReading to add
+   * @param localReading LocalReading to add
    */
   private void addLocalReading(LocalReading localReading) {
     Log.v(TAG, String.format("addLocalReading(%s)", localReading.toString()));
@@ -307,7 +317,7 @@ public class HomeActivity extends BaseActivity implements LocalReadingInteractio
     mLocalReadings.clear();
     mLocalReadingMap.clear();
     if(localReadings != null && localReadings.size() > 0) {
-      for(LocalReading localReading: localReadings) {
+      for(LocalReading localReading : localReadings) {
         addLocalReading(localReading);
       }
     }
@@ -407,6 +417,16 @@ public class HomeActivity extends BaseActivity implements LocalReadingInteractio
     getApp().clearProgressDialog();
   }
 
+  @Override
+  public void onOAuthFailure() {
+    // NOOP
+  }
+
+  @Override
+  public void onOAuthSuccess() {
+    sync(true);
+  }
+
   /**
    * Reloads readings for a given user
    */
@@ -419,7 +439,8 @@ public class HomeActivity extends BaseActivity implements LocalReadingInteractio
       return loadLocalReadingsForUser(readmillUserId);
     }
 
-    @Override protected void onPostExecute(List<LocalReading> localReadings) {
+    @Override
+    protected void onPostExecute(List<LocalReading> localReadings) {
       onFetchedReadings(localReadings);
     }
 

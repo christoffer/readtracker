@@ -7,6 +7,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -78,6 +80,14 @@ public class OAuthDialog extends DialogFragment {
   public void onViewCreated(View view, Bundle savedInstanceState) {
     getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
     super.onViewCreated(view, savedInstanceState);
+  }
+
+  /** Show the dialog. */
+  public static void show(FragmentManager fragmentManager) {
+    OAuthDialog dialog = new OAuthDialog();
+    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+    fragmentTransaction.add(dialog, "oauth-dialog");
+    fragmentTransaction.commitAllowingStateLoss();
   }
 
   private WebView createWebContentView(Context context) {
