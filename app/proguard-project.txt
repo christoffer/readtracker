@@ -70,3 +70,6 @@
 -dontwarn **CompatCreatorHoneycombMR2
 -dontwarn **ActivityCompatHoneycomb
 -dontwarn **MenuCompatHoneycomb
+
+# Picasso
+-dontwarn com.squareup.okhttp.**
