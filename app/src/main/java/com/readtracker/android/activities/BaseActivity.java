@@ -12,12 +12,8 @@ import android.widget.Toast;
 import com.readtracker.android.ApplicationReadTracker;
 import com.readtracker.android.support.ReadTrackerUser;
 
-/**
- * Base of read tracker's activities.
- * <p/>
- * Hides the title from child applications.
- */
-public class ReadTrackerActivity extends ActionBarActivity {
+/** Base activity */
+public class BaseActivity extends ActionBarActivity {
   protected final String TAG = this.getClass().getName();
   private ApplicationReadTracker mApplication;
 

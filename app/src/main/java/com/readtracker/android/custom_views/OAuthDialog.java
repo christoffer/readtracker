@@ -23,7 +23,7 @@ import android.widget.RelativeLayout;
 
 import com.readtracker.android.ApplicationReadTracker;
 import com.readtracker.android.R;
-import com.readtracker.android.activities.ReadTrackerActivity;
+import com.readtracker.android.activities.BaseActivity;
 import com.readtracker.android.interfaces.OAuthDialogResultListener;
 import com.readtracker.android.support.ReadmillApiHelper;
 
@@ -153,7 +153,7 @@ public class OAuthDialog extends DialogFragment {
     ProgressBar indicator = new ProgressBar(getActivity());
     indicator.setIndeterminate(true);
 
-    int indicatorSize = ((ReadTrackerActivity) getActivity()).getPixels(24);
+    int indicatorSize = ((BaseActivity) getActivity()).getPixels(24);
     RelativeLayout.LayoutParams lpSpinner = new RelativeLayout.LayoutParams(
       indicatorSize,
       indicatorSize
@@ -162,16 +162,16 @@ public class OAuthDialog extends DialogFragment {
     lpSpinner.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
     lpSpinner.addRule(RelativeLayout.CENTER_HORIZONTAL, RelativeLayout.TRUE);
 
-    int margin = ((ReadTrackerActivity) getActivity()).getPixels(24);
+    int margin = ((BaseActivity) getActivity()).getPixels(24);
     lpSpinner.setMargins(margin, margin, margin, margin);
 
-    int padding = ((ReadTrackerActivity) getActivity()).getPixels(6);
+    int padding = ((BaseActivity) getActivity()).getPixels(6);
     indicator.setPadding(padding, padding, padding, padding);
 
     int color = Color.parseColor("#88000000");
 
     GradientDrawable backgroundDrawable = new GradientDrawable();
-    backgroundDrawable.setCornerRadius(((ReadTrackerActivity) getActivity()).getPixels(24));
+    backgroundDrawable.setCornerRadius(((BaseActivity) getActivity()).getPixels(24));
     backgroundDrawable.setColor(color);
 
     indicator.setBackgroundDrawable(backgroundDrawable);

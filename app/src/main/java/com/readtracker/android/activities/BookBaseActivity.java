@@ -12,7 +12,7 @@ import com.readtracker.android.R;
 import com.readtracker.android.db.LocalReading;
 import com.squareup.picasso.Picasso;
 
-public class BookBaseActivity extends ReadTrackerActivity {
+public class BookBaseActivity extends BaseActivity {
   private LocalReading mReading;
 
   void setReading(LocalReading reading) {

@@ -23,7 +23,7 @@ import java.util.Date;
 /**
  * Screen for adding a new book manually
  */
-public class AddBookActivity extends ReadTrackerActivity {
+public class AddBookActivity extends BaseActivity {
   public static final String TAG = AddBookActivity.class.getName();
 
   private LocalReading mLocalReading;

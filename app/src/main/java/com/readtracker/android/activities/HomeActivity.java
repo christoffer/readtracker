@@ -40,7 +40,7 @@ import java.util.List;
 import static com.readtracker.android.support.ReadmillSyncStatusUIHandler.SyncStatus;
 import static com.readtracker.android.support.ReadmillSyncStatusUIHandler.SyncUpdateHandler;
 
-public class HomeActivity extends ReadTrackerActivity implements LocalReadingInteractionListener {
+public class HomeActivity extends BaseActivity implements LocalReadingInteractionListener {
   private static ViewPager mPagerHomeActivity;
 
   // A list of all the reading for the current user

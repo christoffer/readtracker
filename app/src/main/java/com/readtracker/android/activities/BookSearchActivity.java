@@ -34,7 +34,7 @@ import java.util.ArrayList;
 /**
  * Screen for searching for books on Google Books
  */
-public class BookSearchActivity extends ReadTrackerActivity {
+public class BookSearchActivity extends BaseActivity {
   private static ListView mListSearchResults;
   private static EditText mEditTextSearch;
 
