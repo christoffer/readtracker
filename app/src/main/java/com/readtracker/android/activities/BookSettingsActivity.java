@@ -32,14 +32,16 @@ public class BookSettingsActivity extends PreferenceActivity {
     addPreferencesFromResource(R.xml.book_settings);
 
     if(savedInstanceState == null) {
-      mLocalReading = getIntent().getExtras().getParcelable(IntentKeys.LOCAL_READING);
+      if(!getIntent().hasExtra(IntentKeys.LOCAL_READING)) {
+        throw new IllegalArgumentException("Missing reading id in the intent");
+      }
+      mLocalReading = getIntent().getParcelableExtra(IntentKeys.LOCAL_READING);
     } else {
       mLocalReading = savedInstanceState.getParcelable(IntentKeys.LOCAL_READING);
     }
 
     Preference prefDeleteBook = findPreference(SettingsKeys.BOOK_DELETE_BOOK);
     Preference prefEditBookPages = findPreference(SettingsKeys.BOOK_EDIT_PAGES);
-
 
     if(((ApplicationReadTracker) getApplication()).getCurrentUser() == null) {
       // Remove Readmill settings for anonymous users
@@ -59,6 +61,7 @@ public class BookSettingsActivity extends PreferenceActivity {
       });
     }
 
+    //noinspection ConstantConditions
     prefDeleteBook.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
       @Override public boolean onPreferenceClick(Preference preference) {
         showConfirmDeleteDialog();
@@ -66,6 +69,7 @@ public class BookSettingsActivity extends PreferenceActivity {
       }
     });
 
+    //noinspection ConstantConditions
     prefEditBookPages.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
       @Override public boolean onPreferenceClick(Preference preference) {
         exitWithRequestPageEdit();

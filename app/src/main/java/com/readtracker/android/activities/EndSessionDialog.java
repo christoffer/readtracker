@@ -110,9 +110,13 @@ public class EndSessionDialog extends DialogFragment {
         if(resultCode == ActivityCodes.RESULT_OK) {
           // User finished the reading, fall through
           Log.v(TAG, "Reading was finished, exit with success");
-          mLocalReading = data.getExtras().getParcelable(IntentKeys.LOCAL_READING);
-          final long page = mLocalReading.totalPages;
-          saveSessionAndExit(page, mSessionDuration);
+          mLocalReading = data.getParcelableExtra(IntentKeys.LOCAL_READING);
+          if(mLocalReading != null) {
+            final long page = mLocalReading.totalPages;
+            saveSessionAndExit(page, mSessionDuration);
+          } else {
+            Log.w(TAG, "Did not receive expected intent extra for local reading ");
+          }
         } else {
           // User cancelled the finish
           Log.v(TAG, "Reading was not finished. Ignoring.");

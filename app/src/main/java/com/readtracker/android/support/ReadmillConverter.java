@@ -7,7 +7,6 @@ import com.readtracker.android.db.LocalSession;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import static com.readtracker.android.support.ReadmillApiHelper.*;
 import static com.readtracker.android.support.ReadmillApiHelper.parseISO8601;
 import static com.readtracker.android.support.ReadmillApiHelper.toIntegerState;
 

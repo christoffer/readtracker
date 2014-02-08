@@ -23,7 +23,6 @@ import android.view.ViewConfiguration;
 import android.widget.CompoundButton;
 
 import com.readtracker.android.R;
-import com.readtracker.android.thirdparty.text.method.AllCapsTransformationMethod;
 import com.readtracker.android.thirdparty.text.method.TransformationMethodCompat2;
 
 /**

@@ -6,9 +6,14 @@ import android.util.Log;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.Where;
 import com.readtracker.android.ApplicationReadTracker;
-import com.readtracker.android.db.*;
+import com.readtracker.android.db.Highlights;
+import com.readtracker.android.db.LocalHighlight;
+import com.readtracker.android.db.LocalReading;
+import com.readtracker.android.db.LocalSession;
 import com.readtracker.android.interfaces.ReadmillSyncProgressListener;
-import com.readtracker.android.support.*;
+import com.readtracker.android.support.ReadmillApiHelper;
+import com.readtracker.android.support.ReadmillConverter;
+import com.readtracker.android.support.ReadmillException;
 
 import org.json.JSONException;
 import org.json.JSONObject;

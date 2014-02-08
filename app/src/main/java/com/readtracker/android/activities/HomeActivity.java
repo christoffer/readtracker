@@ -1,5 +1,6 @@
 package com.readtracker.android.activities;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -46,6 +47,7 @@ public class HomeActivity extends ReadTrackerActivity implements LocalReadingInt
   private ArrayList<LocalReading> mLocalReadings = new ArrayList<LocalReading>();
 
   // Cache lookup of readings by ID
+  @SuppressLint("UseSparseArrays")
   private HashMap<Integer, LocalReading> mLocalReadingMap = new HashMap<Integer, LocalReading>();
 
   private ReadmillSyncAsyncTask mReadmillSyncTask;

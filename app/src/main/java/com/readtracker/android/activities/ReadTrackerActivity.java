@@ -2,13 +2,11 @@ package com.readtracker.android.activities;
 
 import android.content.Context;
 import android.content.pm.ActivityInfo;
-import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.TypedValue;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.readtracker.android.ApplicationReadTracker;
