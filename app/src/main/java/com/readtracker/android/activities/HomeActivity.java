@@ -67,6 +67,7 @@ public class HomeActivity extends BaseActivity implements LocalReadingInteractio
       return localReadingB.getLastReadAt().compareTo(localReadingA.getLastReadAt());
     }
   };
+
   private boolean mSyncIsEnabled;
 
   @Override
@@ -96,6 +97,8 @@ public class HomeActivity extends BaseActivity implements LocalReadingInteractio
       Log.d(TAG, "Fresh from sign in, doing initial full sync.");
       sync(true);
     }
+
+    setSyncEnabled(getCurrentUser() != null);
   }
 
   private void showIntroduction() {
@@ -239,7 +242,7 @@ public class HomeActivity extends BaseActivity implements LocalReadingInteractio
       @Override
       public void onSyncComplete(SyncStatus status) {
         Log.d(TAG, "Sync is complete with " + status);
-        toggleSyncMenuOption(true);
+        setSyncEnabled(true);
         mReadmillSyncTask = null;
 
         if(status == SyncStatus.INVALID_TOKEN) {
@@ -344,7 +347,7 @@ public class HomeActivity extends BaseActivity implements LocalReadingInteractio
     mReadmillSyncTask = new ReadmillSyncAsyncTask(mSyncStatusHandler, api, fullSync);
 
     // Prevent starting another sync while this is ongoing
-    toggleSyncMenuOption(false);
+    setSyncEnabled(false);
 
     long readmillUserId = getCurrentUserId();
     mReadmillSyncTask.execute(readmillUserId);
@@ -378,7 +381,7 @@ public class HomeActivity extends BaseActivity implements LocalReadingInteractio
    *
    * @param enabled the enabled state of the sync menu option
    */
-  private void toggleSyncMenuOption(boolean enabled) {
+  private void setSyncEnabled(boolean enabled) {
     mSyncIsEnabled = enabled;
     supportInvalidateOptionsMenu();
   }
