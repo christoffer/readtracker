@@ -8,6 +8,7 @@ import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
+import com.readtracker.android.IntentKeys;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -27,6 +28,25 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
   private Dao<LocalReading, Integer> readingDao = null;
   private Dao<LocalSession, Integer> sessionDao = null;
   private Dao<LocalHighlight, Integer> highlightDao = null;
+
+  private Dao<Book, IntentKeys> mBookDao = null;
+  private Dao<Quote, IntentKeys> mQuoteDao = null;
+  private Dao<Session, IntentKeys> mSessionDao = null;
+
+  public Dao<Book, IntentKeys> getBookDao() throws SQLException {
+    if(mBookDao == null) mBookDao = getDao(Book.class);
+    return mBookDao;
+  }
+
+  public Dao<Quote, IntentKeys> getQuoteDao() throws SQLException {
+    if(mQuoteDao == null) mQuoteDao = getDao(Quote.class);
+    return mQuoteDao;
+  }
+
+  public Dao<Session, IntentKeys> getSessionDao() throws SQLException {
+    if(mSessionDao == null) mSessionDao = getDao(Session.class);
+    return mSessionDao;
+  }
 
   public Dao<LocalReading, Integer> getReadingDao() throws SQLException {
     if(readingDao == null) {
