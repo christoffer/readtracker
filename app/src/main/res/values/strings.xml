@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="app_name">ReadTracker 3</string>
+  <string name="activity_label_add_book">Add book</string>
+  <string name="activity_label_settings">Settings</string>
+  <string name="activity_label_book_settings">Book settings</string>
 
   <string name="redirect_scheme">readtracker</string>
 
@@ -36,7 +39,6 @@
   <string name="home_menu_settings">Settings</string>
   <string name="home_menu_add">Add</string>
   <string name="home_menu_add_book">Add book</string>
-  <string name="activity_label_add_book">Add book</string>
 
   <string name="welcome_start_using">Start using ReadTracker</string>
   <string name="welcome_welcome_to_readtracker">Welcome to ReadTracker!</string>
@@ -113,5 +115,6 @@ Sorry about that.</string>
   <string name="reading_list_blank">No books</string>
   <string name="sessions_blank_text">No reading history to display</string>
   <string name="reading_item_cover_content_desc">Book cover</string>
+
 
 </resources>

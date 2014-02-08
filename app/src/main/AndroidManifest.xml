@@ -39,6 +39,7 @@
     <activity
       android:name=".activities.AddBookActivity"
       android:noHistory="true"
+      android:label="@string/activity_label_add_book"
       android:windowSoftInputMode="adjustPan"/>
 
     <activity
@@ -61,7 +62,16 @@
     </activity>
 
     <activity
+      android:name=".activities.AddQuoteActivity"
+      android:parentActivityName=".activities.BookActivity">
+      <meta-data
+        android:name="android.support.PARENT_ACTIVITY"
+        android:value=".activities.BookActivity"/>
+    </activity>
+
+    <activity
       android:name=".activities.SettingsActivity"
+      android:label="@string/activity_label_settings"
       android:parentActivityName=".activities.HomeActivity">
       <meta-data
         android:name="android.support.PARENT_ACTIVITY"
@@ -70,6 +80,7 @@
 
     <activity
       android:name=".activities.BookSettingsActivity"
+      android:label="@string/activity_label_book_settings"
       android:parentActivityName=".activities.BookActivity">
       <meta-data
         android:name="android.support.PARENT_ACTIVITY"
@@ -77,14 +88,6 @@
     </activity>
 
     <activity android:name=".activities.InAppBrowserActivity"/>
-
-    <activity
-      android:name=".activities.AddQuoteActivity"
-      android:parentActivityName=".activities.BookActivity">
-      <meta-data
-        android:name="android.support.PARENT_ACTIVITY"
-        android:value=".activities.BookActivity"/>
-    </activity>
 
   </application>
 
