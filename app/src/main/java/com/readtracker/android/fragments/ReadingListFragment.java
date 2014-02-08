@@ -88,7 +88,6 @@ public class ReadingListFragment extends ListFragment {
       getActivity(),
       itemLayoutResourceId,
       R.id.textTitle,
-      ApplicationReadTracker.getDrawableManager(),
       getLocalReadings()
     );
 

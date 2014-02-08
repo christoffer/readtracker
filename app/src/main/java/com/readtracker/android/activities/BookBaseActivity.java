@@ -6,9 +6,8 @@ import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
 import android.widget.ImageView;
 
-import com.readtracker.android.ApplicationReadTracker;
 import com.readtracker.android.db.LocalReading;
-import com.readtracker.android.thirdparty.DrawableManager;
+import com.squareup.picasso.Picasso;
 
 public class BookBaseActivity extends ReadTrackerActivity {
   private LocalReading mReading;
@@ -30,8 +29,7 @@ public class BookBaseActivity extends ReadTrackerActivity {
     if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
       ImageView homeIcon = (ImageView) findViewById(android.R.id.home);
       if(homeIcon != null) {
-        DrawableManager drawMgr = ApplicationReadTracker.getDrawableManager();
-        drawMgr.fetchDrawableOnThread(localReading.coverURL, homeIcon);
+        Picasso.with(getApplicationContext()).load(localReading.coverURL).into(homeIcon);
       }
     }
 

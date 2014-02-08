@@ -19,7 +19,6 @@ import com.readtracker.android.db.LocalReading;
 import com.readtracker.android.db.LocalSession;
 import com.readtracker.android.support.ReadTrackerUser;
 import com.readtracker.android.support.ReadmillApiHelper;
-import com.readtracker.android.thirdparty.DrawableManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -48,9 +47,6 @@ public class ApplicationReadTracker extends Application implements TokenChangeLi
 
   // Store reference to allow cheaper look-ups
   private SharedPreferences mPreferences;
-
-  // Global drawable manager for keeping cached images across activities
-  private DrawableManager mDrawableManager;
 
   // Access to database
   private DatabaseHelper mDatabaseHelper;
@@ -185,24 +181,6 @@ public class ApplicationReadTracker extends Application implements TokenChangeLi
 
     storeToken(token);
     storeReadmillUser(mCurrentUser);
-  }
-
-  /**
-   * Globally drawable manager (share caching of Drawables)
-   *
-   * @return the global DrawableManager instance
-   */
-  public static DrawableManager getDrawableManager() {
-    if (mInstance == null) {
-      throw new RuntimeException("getDrawableManager() called before Application initialized");
-    }
-
-    if (mInstance.mDrawableManager == null) {
-      mInstance.mDrawableManager = new DrawableManager();
-      mInstance.mDrawableManager.persistDrawables(true);
-    }
-
-    return mInstance.mDrawableManager;
   }
 
   /**
