@@ -1,5 +1,6 @@
 package com.readtracker.android.db;
 
+import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
@@ -8,12 +9,14 @@ import com.j256.ormlite.table.DatabaseTable;
  */
 @DatabaseTable(tableName = "books")
 public class Book extends Model {
+  public static enum State { Uknown, Finshed, Reading}
+
   @DatabaseField(columnName = "title") private String mTitle;
   @DatabaseField(columnName = "author") private String mAuthor;
   @DatabaseField(columnName = "cover_url") private String mCoverUrl;
   @DatabaseField(columnName = "number_pages") private Float mNumberPages;
-  @DatabaseField(columnName = "current_position") private Float mCurrentPosition;
-  @DatabaseField(columnName = "highest_position") private Float mHighestPosition;
+  @DatabaseField(columnName = "state", dataType = DataType.ENUM_STRING) private State mState;
+  @DatabaseField(columnName = "last_position") private Float mCurrentPosition;
   @DatabaseField(columnName = "last_opened_at") private Long mLastOpenedAt;
   @DatabaseField(columnName = "first_position_at") private Long mFirstPositionAt;
   @DatabaseField(columnName = "closing_remark") private String mClosingRemark;
@@ -37,13 +40,13 @@ public class Book extends Model {
 
   public void setNumberPages(Float numberPages) { mNumberPages = numberPages; }
 
+  public State getState() { return mState; }
+
+  public void setState(State state) { mState = state; }
+
   public Float getCurrentPosition() { return mCurrentPosition; }
 
   public void setCurrentPosition(Float currentPosition) { mCurrentPosition = currentPosition; }
-
-  public Float getHighestPosition() { return mHighestPosition; }
-
-  public void setHighestPosition(Float highestPosition) { mHighestPosition = highestPosition; }
 
   public Long getLastOpenedAt() { return mLastOpenedAt; }
 
