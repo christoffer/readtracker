@@ -16,10 +16,11 @@ import com.readtracker.android.custom_views.SegmentBar;
 import com.readtracker.android.custom_views.SessionView;
 import com.readtracker.android.db.LocalReading;
 import com.readtracker.android.db.LocalSession;
-import com.readtracker.android.support.ReadmillApiHelper;
 import com.readtracker.android.support.Utils;
 
 import java.util.ArrayList;
+
+import static com.readtracker.android.db.LocalReading.ReadingState;
 
 /**
  * Fragment for showing a reading history of a book
@@ -116,18 +117,18 @@ public class ReadingSessionsFragment extends Fragment {
     mSegmentBar = (SegmentBar) view.findViewById(R.id.segmentBar);
   }
 
-  private void presentReadingState(int readingStateValue, int color) {
-    if(readingStateValue == ReadmillApiHelper.ReadingState.READING ||
-      readingStateValue == ReadmillApiHelper.ReadingState.INTERESTING) {
+  private void presentReadingState(ReadingState readingStateValue, int color) {
+    if(readingStateValue == ReadingState.READING ||
+      readingStateValue == ReadingState.INTERESTING) {
       mTextReadingState.setVisibility(View.GONE);
       return;
     }
 
     String readingState = "";
 
-    if(readingStateValue == ReadmillApiHelper.ReadingState.FINISHED) {
+    if(readingStateValue == ReadingState.FINISHED) {
       readingState = "Finished";
-    } else if(readingStateValue == ReadmillApiHelper.ReadingState.ABANDONED) {
+    } else if(readingStateValue == ReadingState.ABANDONED) {
       readingState = "Abandoned";
     }
 
@@ -148,8 +149,8 @@ public class ReadingSessionsFragment extends Fragment {
     }
   }
 
-  private void presentSummary(long timeSpentMillis, int estimatedSecondsLeft, int sessionCount, int readingState) {
-    if(readingState != ReadmillApiHelper.ReadingState.READING) {
+  private void presentSummary(long timeSpentMillis, int estimatedSecondsLeft, int sessionCount, ReadingState readingState) {
+    if(readingState != ReadingState.READING) {
       final String summary = String.format("%s / %d sessions", Utils.longCoarseHumanTimeFromMillis(timeSpentMillis), sessionCount);
       mTextSummary.setText(summary);
       mSegmentBar.setVisibility(View.GONE);

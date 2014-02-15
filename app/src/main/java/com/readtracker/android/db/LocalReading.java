@@ -5,7 +5,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.j256.ormlite.field.DatabaseField;
-import com.readtracker.android.support.ReadmillApiHelper;
 
 import java.util.Date;
 import java.util.List;
@@ -18,6 +17,11 @@ import java.util.List;
  * reading (like page numbers).
  */
 public class LocalReading implements Parcelable {
+
+  public static enum ReadingState {
+    INTERESTING, READING, FINISHED, ABANDONED
+  }
+
   private int mColor = -1; // Cache of the calculated color for this Reading
 
   // Database Column names
@@ -115,7 +119,7 @@ public class LocalReading implements Parcelable {
   protected long readmillTouchedAt = 0;
 
   @DatabaseField(columnName = READMILL_STATE_FIELD_NAME)
-  public int readmillState = ReadmillApiHelper.ReadingState.READING;
+  public ReadingState readmillState = ReadingState.READING;
 
   @DatabaseField(columnName = READMILL_CLOSING_REMARK)
   public String readmillClosingRemark = "";
@@ -207,13 +211,13 @@ public class LocalReading implements Parcelable {
   }
 
   public boolean isActive() {
-    return readmillState == ReadmillApiHelper.ReadingState.READING;
+    return readmillState == ReadingState.READING;
   }
 
   public boolean isClosed() {
     return locallyClosedAt > 0 ||
-      readmillState == ReadmillApiHelper.ReadingState.FINISHED ||
-      readmillState == ReadmillApiHelper.ReadingState.ABANDONED;
+      readmillState == ReadingState.FINISHED ||
+      readmillState == ReadingState.ABANDONED;
   }
 
   public boolean isMeasuredInPercent() {
@@ -221,7 +225,7 @@ public class LocalReading implements Parcelable {
   }
 
   public boolean isInteresting() {
-    return readmillState == ReadmillApiHelper.ReadingState.INTERESTING;
+    return readmillState == ReadingState.INTERESTING;
   }
 
   public boolean isConnected() {
@@ -382,7 +386,7 @@ public class LocalReading implements Parcelable {
     parcel.writeLong(readmillBookId);
     parcel.writeLong(readmillUserId);
     parcel.writeLong(readmillTouchedAt);
-    parcel.writeInt(readmillState);
+    parcel.writeString(readmillState.toString());
     parcel.writeString(readmillClosingRemark);
   }
 
@@ -416,7 +420,7 @@ public class LocalReading implements Parcelable {
     readmillBookId = parcel.readLong();
     readmillUserId = parcel.readLong();
     readmillTouchedAt = parcel.readLong();
-    readmillState = parcel.readInt();
+    readmillState = ReadingState.valueOf(parcel.readString());
     readmillClosingRemark = parcel.readString();
   }
 

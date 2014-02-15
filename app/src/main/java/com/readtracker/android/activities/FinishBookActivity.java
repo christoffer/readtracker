@@ -12,7 +12,6 @@ import com.readtracker.android.R;
 import com.readtracker.android.db.LocalReading;
 import com.readtracker.android.interfaces.SaveLocalReadingListener;
 import com.readtracker.android.support.DrawableGenerator;
-import com.readtracker.android.support.ReadmillApiHelper;
 import com.readtracker.android.tasks.SaveLocalReadingTask;
 import com.readtracker.android.thirdparty.views.Switch;
 
@@ -77,7 +76,7 @@ public class FinishBookActivity extends BookBaseActivity {
 
   private void finishReading(LocalReading localReading, String closingRemark, boolean isRecommended) {
     localReading.readmillClosingRemark = closingRemark;
-    localReading.readmillState = ReadmillApiHelper.ReadingState.FINISHED;
+    localReading.readmillState = LocalReading.ReadingState.FINISHED;
     localReading.setClosedAt(new Date());
     localReading.readmillRecommended = isRecommended;
     (new SaveLocalReadingTask(new SaveLocalReadingListener() {

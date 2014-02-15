@@ -16,11 +16,12 @@ import com.readtracker.android.R;
 import com.readtracker.android.custom_views.SegmentBar;
 import com.readtracker.android.db.LocalReading;
 import com.readtracker.android.support.DrawableGenerator;
-import com.readtracker.android.support.ReadmillApiHelper;
 import com.readtracker.android.support.Utils;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+
+import static com.readtracker.android.db.LocalReading.ReadingState;
 
 /**
  * Lists the local reading entity on the home screen with a progress bar,
@@ -202,7 +203,7 @@ public class LocalReadingAdapter extends ArrayAdapter<LocalReading> {
     if(viewHolder.textFinishedAt != null) {
       if(localReading.hasClosedAt()) {
         final String finishedAt = Utils.humanPastDate(localReading.getClosedAt());
-        final boolean isAbandoned = localReading.readmillState == ReadmillApiHelper.ReadingState.ABANDONED;
+        final boolean isAbandoned = localReading.readmillState == ReadingState.ABANDONED;
         final String finishAction = getContext().getString(isAbandoned ? R.string.reading_adapter_abandoned : R.string.reading_adapter_finished);
         final String labelText = String.format("%s %s", finishAction, finishedAt);
         viewHolder.textFinishedAt.setText(labelText);
