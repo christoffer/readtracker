@@ -10,7 +10,6 @@ import android.util.TypedValue;
 import android.widget.Toast;
 
 import com.readtracker.android.ApplicationReadTracker;
-import com.readtracker.android.support.ReadTrackerUser;
 
 /** Base activity */
 public class BaseActivity extends ActionBarActivity {
@@ -28,25 +27,6 @@ public class BaseActivity extends ActionBarActivity {
 
   public final ApplicationReadTracker getApp() {
     return mApplication;
-  }
-
-  /**
-   * Gets the currently logged in user.
-   *
-   * @return the currently logged in user or null.
-   */
-  public ReadTrackerUser getCurrentUser() {
-    return getApp().getCurrentUser();
-  }
-
-  /**
-   * Gets the readmill id of the current user.
-   *
-   * @return the id of the current user or -1 if no user is signed in.
-   */
-  public long getCurrentUserId() {
-    ReadTrackerUser currentUser = getCurrentUser();
-    return currentUser == null ? -1 : currentUser.getReadmillId();
   }
 
   /**

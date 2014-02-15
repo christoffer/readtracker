@@ -305,10 +305,6 @@ public class ApplicationReadTracker extends Application implements TokenChangeLi
     editor.commit();
   }
 
-  public final ReadTrackerUser getCurrentUser() {
-    return mCurrentUser;
-  }
-
   /**
    * Clears both the token and the user from settings
    */

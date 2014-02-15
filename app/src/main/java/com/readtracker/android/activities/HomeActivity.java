@@ -274,7 +274,7 @@ public class HomeActivity extends BaseActivity implements LocalReadingInteractio
   private void fetchLocalReadings() {
     Log.v(TAG, "fetchLocalReadings()");
     getApp().showProgressDialog(this, "Reloading books...");
-    (new RefreshBookListTask()).execute(getCurrentUserId());
+    (new RefreshBookListTask()).execute();
   }
 
   private void onFetchedReadings(List<LocalReading> localReadings) {
@@ -290,13 +290,11 @@ public class HomeActivity extends BaseActivity implements LocalReadingInteractio
   /**
    * Reloads readings for a given user
    */
-  class RefreshBookListTask extends AsyncTask<Long, Void, List<LocalReading>> {
+  class RefreshBookListTask extends AsyncTask<Void, Void, List<LocalReading>> {
 
     @Override
-    protected List<LocalReading> doInBackground(Long... readmillIds) {
-      long readmillUserId = readmillIds[0];
-      Log.d(TAG, "Fetching list of readings for user " + readmillUserId + " from database...");
-      return loadLocalReadingsForUser(readmillUserId);
+    protected List<LocalReading> doInBackground(Void... ignored) {
+      return loadLocalReadings();
     }
 
     @Override
@@ -304,12 +302,12 @@ public class HomeActivity extends BaseActivity implements LocalReadingInteractio
       onFetchedReadings(localReadings);
     }
 
-    private List<LocalReading> loadLocalReadingsForUser(long readmillUserId) {
+    private List<LocalReading> loadLocalReadings() {
       try {
         Dao<LocalReading, Integer> readingDao = ApplicationReadTracker.getReadingDao();
         Dao<LocalSession, Integer> sessionDao = ApplicationReadTracker.getLocalSessionDao();
 
-        ArrayList<LocalReading> localReadings = fetchLocalReadingsForUser(readmillUserId, readingDao);
+        ArrayList<LocalReading> localReadings = fetchLocalReadings(readingDao);
         return readingsWithPopulateSessionSegments(localReadings, sessionDao);
       } catch (SQLException e) {
         Log.d(TAG, "Failed to get list of existing readings", e);
@@ -317,10 +315,9 @@ public class HomeActivity extends BaseActivity implements LocalReadingInteractio
       }
     }
 
-    private ArrayList<LocalReading> fetchLocalReadingsForUser(long readmillUserId, Dao<LocalReading, Integer> dao) throws SQLException {
+    private ArrayList<LocalReading> fetchLocalReadings(Dao<LocalReading, Integer> dao) throws SQLException {
       return (ArrayList<LocalReading>) dao.queryBuilder()
-        .where().eq(LocalReading.READMILL_USER_ID_FIELD_NAME, readmillUserId)
-        .and().eq(LocalReading.DELETED_BY_USER_FIELD_NAME, false)
+        .where().eq(LocalReading.DELETED_BY_USER_FIELD_NAME, false)
         .query();
     }
 

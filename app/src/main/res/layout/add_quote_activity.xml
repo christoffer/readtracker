@@ -26,27 +26,6 @@
       android:layout_marginBottom="12dp"
       android:hint=""/>
 
-    <LinearLayout
-      android:id="@+id/layoutHighlightComment"
-      android:layout_height="wrap_content"
-      android:layout_width="fill_parent"
-      android:orientation="vertical">
-
-      <TextView
-        style="@style/default_text"
-        android:layout_marginTop="12dp"
-        android:layout_marginBottom="6dp"
-        android:text="@string/quote_share_with_comment"/>
-
-      <EditText
-        android:id="@+id/quote_comment_edit"
-        style="@style/free_text_input"
-        android:minHeight="64dp"
-        android:layout_marginBottom="12dp"
-        android:hint=""/>
-
-    </LinearLayout>
-
     <TextView
       android:id="@+id/textLabelEnterPosition"
       style="@style/default_text"
@@ -61,15 +40,6 @@
       android:layout_height="wrap_content"
       android:layout_marginTop="12dp"
       android:layout_marginBottom="12dp"/>
-
-    <Button
-      android:id="@+id/visit_web_button"
-      style="@style/default_button"
-      android:layout_marginTop="12dp"
-      android:layout_marginBottom="12dp"
-      android:text="View on Readmill"
-      android:drawableLeft="@drawable/icon_web"
-      android:drawablePadding="-32dp"/>
 
     <Button
       android:id="@+id/save_button"

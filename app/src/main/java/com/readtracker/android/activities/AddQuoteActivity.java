@@ -2,7 +2,6 @@ package com.readtracker.android.activities;
 
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -23,9 +22,7 @@ import java.util.Date;
 /** Screen for adding a quote */
 public class AddQuoteActivity extends BookBaseActivity {
   private static EditText mQuoteTextEdit;
-  private static EditText mQuoteCommentEdit;
   private static Button mButtonSaveQuote;
-  private static Button mVisitWebButton;
 
   private static ProgressPicker mProgressPicker;
 
@@ -44,7 +41,7 @@ public class AddQuoteActivity extends BookBaseActivity {
 
     int currentPage;
 
-    if(savedInstanceState != null) {
+    if (savedInstanceState != null) {
       Log.d(TAG, "unfreezing state");
       mLocalReading = savedInstanceState.getParcelable(IntentKeys.LOCAL_READING);
       mLocalHighlight = savedInstanceState.getParcelable(IntentKeys.LOCAL_HIGHLIGHT);
@@ -55,7 +52,7 @@ public class AddQuoteActivity extends BookBaseActivity {
       mLocalReading = (LocalReading) extras.get(IntentKeys.LOCAL_READING);
       mLocalHighlight = (LocalHighlight) extras.get(IntentKeys.LOCAL_HIGHLIGHT);
 
-      if(mLocalHighlight == null) {
+      if (mLocalHighlight == null) {
         mLocalHighlight = new LocalHighlight();
         mCreateMode = true;
         mQuoteTextEdit.setText("");
@@ -69,7 +66,7 @@ public class AddQuoteActivity extends BookBaseActivity {
       Log.d(TAG, "Starting activity in " + (mCreateMode ? "creation" : "edit") + " mode");
     }
 
-    if(mLocalReading.hasPageInfo()) {
+    if (mLocalReading.hasPageInfo()) {
       mProgressPicker.setupForLocalReading(mLocalReading);
       mProgressPicker.setCurrentPage(currentPage);
     } else {
@@ -77,19 +74,8 @@ public class AddQuoteActivity extends BookBaseActivity {
       findViewById(R.id.textLabelEnterPosition).setVisibility(View.GONE);
     }
 
-    if(getCurrentUser() == null || !mCreateMode) {
-      findViewById(R.id.layoutHighlightComment).setVisibility(View.GONE);
-    }
-
     setEditTextBackground(mQuoteTextEdit);
-    setEditTextBackground(mQuoteCommentEdit);
     setButtonBackground(mButtonSaveQuote);
-
-    if(mLocalHighlight.hasVisitablePermalink()) {
-      setButtonBackground(mVisitWebButton);
-    } else {
-      mVisitWebButton.setVisibility(View.GONE);
-    }
 
     setReading(mLocalReading);
   }
@@ -101,7 +87,7 @@ public class AddQuoteActivity extends BookBaseActivity {
     outState.putParcelable(IntentKeys.LOCAL_READING, mLocalReading);
     outState.putParcelable(IntentKeys.LOCAL_HIGHLIGHT, mLocalHighlight);
     outState.putString(IntentKeys.TEXT, mQuoteTextEdit.getText().toString());
-    if(mLocalReading.hasPageInfo()) {
+    if (mLocalReading.hasPageInfo()) {
       outState.putInt(IntentKeys.PAGE, mProgressPicker.getCurrentPage());
     }
   }
@@ -113,9 +99,7 @@ public class AddQuoteActivity extends BookBaseActivity {
 
   private void bindViews() {
     mQuoteTextEdit = (EditText) findViewById(R.id.quote_text_edit);
-    mQuoteCommentEdit = (EditText) findViewById(R.id.quote_comment_edit);
     mButtonSaveQuote = (Button) findViewById(R.id.save_button);
-    mVisitWebButton = (Button) findViewById(R.id.visit_web_button);
     mProgressPicker = (ProgressPicker) findViewById(R.id.progressPicker);
   }
 
@@ -124,16 +108,6 @@ public class AddQuoteActivity extends BookBaseActivity {
       @Override
       public void onClick(View view) {
         saveOrCreateHighlight();
-      }
-    });
-
-    mVisitWebButton.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
-        if (mLocalHighlight.hasVisitablePermalink()) {
-          Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(mLocalHighlight.readmillPermalinkUrl));
-          startActivity(browserIntent);
-        }
       }
     });
   }
@@ -154,31 +128,24 @@ public class AddQuoteActivity extends BookBaseActivity {
   private void saveOrCreateHighlight() {
     Log.i(TAG, "Save/Create highlight for LocalReading with id:" + mLocalReading.id);
     String content = mQuoteTextEdit.getText().toString().trim();
-    String comment = mQuoteCommentEdit.getText().toString().trim();
 
-    if(!validateFields()) {
+    if (!validateFields()) {
       return;
     }
 
-    long readmillUserId = getCurrentUserId();
     double position = 0.0f;
 
-    if(mLocalReading.hasPageInfo()) {
+    if (mLocalReading.hasPageInfo()) {
       position = mProgressPicker.getProgress();
     }
 
     mLocalHighlight.content = content;
     mLocalHighlight.position = position;
 
-    if(comment.length() > 0) {
-      mLocalHighlight.comment = comment;
-    }
-
-    if(mCreateMode) {
+    if (mCreateMode) {
       mLocalHighlight.highlightedAt = new Date();
       mLocalHighlight.readingId = mLocalReading.id;
       mLocalHighlight.readmillReadingId = mLocalReading.readmillReadingId;
-      mLocalHighlight.readmillUserId = readmillUserId;
     } else {
       mLocalHighlight.editedAt = new Date();
     }
@@ -201,7 +168,7 @@ public class AddQuoteActivity extends BookBaseActivity {
   }
 
   private void onHighlightPersisted(boolean success) {
-    if(!success) {
+    if (!success) {
       toastLong(getString(R.string.add_quote_error_could_not_be_saved));
       return;
     }
@@ -215,7 +182,7 @@ public class AddQuoteActivity extends BookBaseActivity {
   private boolean validateFields() {
     final String quoteText = mQuoteTextEdit.getText().toString().trim();
 
-    if(quoteText.length() == 0) {
+    if (quoteText.length() == 0) {
       toastLong(getString(R.string.add_book_enter_quote));
       mQuoteTextEdit.requestFocus();
       return false;

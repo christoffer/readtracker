@@ -2,19 +2,15 @@ package com.readtracker.android.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.readtracker.android.IntentKeys;
 import com.readtracker.android.R;
 import com.readtracker.android.db.LocalReading;
 import com.readtracker.android.interfaces.SaveLocalReadingListener;
-import com.readtracker.android.support.ReadTrackerUser;
 import com.readtracker.android.tasks.SaveLocalReadingTask;
 import com.readtracker.android.thirdparty.views.Switch;
 
@@ -35,11 +31,6 @@ public class AddBookActivity extends BaseActivity {
   private static Button mButtonAddBook;
 
   private static Switch mSwitchPagesPercent;
-  private static Switch mSwitchPublicPrivate;
-
-  private static TextView mTextReadmillPrivacyHint;
-
-  private static ViewGroup mLayoutReadmill;
 
   private boolean mEditBookMode = false;
 
@@ -54,24 +45,18 @@ public class AddBookActivity extends BaseActivity {
     bindViews();
     bindEvents();
 
-    if(getCurrentUser() == null) {
-      // No Readmill connection setup, hide related settings
-      findViewById(R.id.layoutReadmill).setVisibility(View.GONE);
-      findViewById(R.id.textReadmillPrivacyHint).setVisibility(View.GONE);
-    }
-
     Bundle extras = getIntent().getExtras();
-    if(extras != null) {
+    if (extras != null) {
       LocalReading localReading = extras.getParcelable(IntentKeys.LOCAL_READING);
 
-      if(localReading != null) {
+      if (localReading != null) {
         setupEditMode(localReading);
       } else {
         setupCreateMode(extras);
       }
 
       mEditBookMode = extras.getBoolean(IntentKeys.EDIT_MODE, false);
-      if(mEditBookMode) {
+      if (mEditBookMode) {
         mEditPageCount.requestFocus();
       }
     }
@@ -82,10 +67,7 @@ public class AddBookActivity extends BaseActivity {
     mEditAuthor = (EditText) findViewById(R.id.editAuthor);
     mEditPageCount = (EditText) findViewById(R.id.editPageCount);
     mSwitchPagesPercent = (Switch) findViewById(R.id.togglePagesPercent);
-    mSwitchPublicPrivate = (Switch) findViewById(R.id.togglePublicPrivate);
     mButtonAddBook = (Button) findViewById(R.id.buttonAddBook);
-    mTextReadmillPrivacyHint = (TextView) findViewById(R.id.textReadmillPrivacyHint);
-    mLayoutReadmill = (ViewGroup) findViewById(R.id.layoutReadmill);
   }
 
   private void bindEvents() {
@@ -100,7 +82,7 @@ public class AddBookActivity extends BaseActivity {
       public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
         mEditPageCount.setEnabled(checked);
         String rememberedValue = (String) mEditPageCount.getTag();
-        if(checked && rememberedValue != null) {
+        if (checked && rememberedValue != null) {
           mEditPageCount.setText(rememberedValue);
         } else {
           mEditPageCount.setTag(mEditPageCount.getText().toString());
@@ -108,19 +90,10 @@ public class AddBookActivity extends BaseActivity {
         }
       }
     });
-
-    mSwitchPublicPrivate.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-      @Override public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
-        final int textResource = checked ? R.string.readmill_shared : R.string.readmill_private;
-        mTextReadmillPrivacyHint.setText(getString(textResource));
-      }
-    });
   }
 
   private void setupCreateMode(Bundle extras) {
     mButtonAddBook.setText(R.string.add_book_add);
-    mSwitchPublicPrivate.setVisibility(View.VISIBLE);
-
     mEditTitle.setText(extras.getString(IntentKeys.TITLE));
     mEditAuthor.setText(extras.getString(IntentKeys.AUTHOR));
     mCoverURL = extras.getString(IntentKeys.COVER_URL);
@@ -132,19 +105,17 @@ public class AddBookActivity extends BaseActivity {
 
     mEditTitle.setEnabled(false);
     mEditAuthor.setEnabled(false);
-    mLayoutReadmill.setVisibility(View.GONE);
-    mTextReadmillPrivacyHint.setVisibility(View.GONE);
 
     mLocalReading = localReading;
 
     mEditTitle.setText(localReading.title);
     mEditAuthor.setText(localReading.author);
 
-    if(localReading.isMeasuredInPercent()) {
+    if (localReading.isMeasuredInPercent()) {
       mEditPageCount.setText("");
       mSwitchPagesPercent.setChecked(false);
     } else {
-      if(localReading.totalPages > 0) {
+      if (localReading.totalPages > 0) {
         mEditPageCount.setText(String.valueOf(localReading.totalPages));
       }
       mSwitchPagesPercent.setChecked(true);
@@ -154,13 +125,13 @@ public class AddBookActivity extends BaseActivity {
   }
 
   private void setInitialPageCount(long pageCount) {
-    if(pageCount > 0) {
+    if (pageCount > 0) {
       mEditPageCount.setText(Long.toString(pageCount));
     }
   }
 
   private void onAddBookClicked() {
-    if(!validateFields()) {
+    if (!validateFields()) {
       return;
     }
 
@@ -172,20 +143,7 @@ public class AddBookActivity extends BaseActivity {
     localReading.setLastReadAt(localReading.getStartedAt());
     localReading.coverURL = mCoverURL;
 
-    ReadTrackerUser user = getApp().getCurrentUser();
-    if(user != null && mLocalReading == null) {
-
-      Log.v(TAG, "Creating a reading that should be connected to Readmill. " +
-              "Setting user id: " + user.getReadmillId() +
-              " and privacy: " + (mSwitchPublicPrivate.isChecked() ? "public" : "private")
-      );
-
-      // Creating a reading that will connect to Readmill
-      localReading.readmillUserId = getApp().getCurrentUser().getReadmillId();
-      localReading.readmillPrivate = !mSwitchPublicPrivate.isChecked();
-    }
-
-    if(mSwitchPagesPercent.isChecked()) {
+    if (mSwitchPagesPercent.isChecked()) {
       localReading.totalPages = Integer.parseInt(mEditPageCount.getText().toString());
       localReading.measureInPercent = false;
     } else {
@@ -194,8 +152,8 @@ public class AddBookActivity extends BaseActivity {
     }
 
     // Recalculate the current page based on the progress if needed
-    if(localReading.currentPage > 0 && localReading.progress > 0.0) {
-      localReading.currentPage = (long)(localReading.totalPages * localReading.progress);
+    if (localReading.currentPage > 0 && localReading.progress > 0.0) {
+      localReading.currentPage = (long) (localReading.totalPages * localReading.progress);
     }
 
     saveLocalReading(localReading);
@@ -207,28 +165,28 @@ public class AddBookActivity extends BaseActivity {
    * @return true if all fields were valid, otherwise false
    */
   private boolean validateFields() {
-    if(mEditTitle.getText().length() < 1) {
+    if (mEditTitle.getText().length() < 1) {
       toast(R.string.add_book_missing_title);
       mEditTitle.requestFocus();
       return false;
     }
 
-    if(mEditAuthor.getText().length() < 1) {
+    if (mEditAuthor.getText().length() < 1) {
       toast(R.string.add_book_missing_author);
       mEditAuthor.requestFocus();
       return false;
     }
 
     // Validate a reasonable amount of page numbers
-    if(mSwitchPagesPercent.isChecked()) {
+    if (mSwitchPagesPercent.isChecked()) {
       int pageCount = 0;
 
       try {
         pageCount = Integer.parseInt(mEditPageCount.getText().toString());
-      } catch(NumberFormatException ignored) {
+      } catch (NumberFormatException ignored) {
       }
 
-      if(pageCount < 1) {
+      if (pageCount < 1) {
         toast(R.string.add_book_missing_page_count);
         mEditPageCount.requestFocus();
         return false;
@@ -240,7 +198,7 @@ public class AddBookActivity extends BaseActivity {
 
   private void exitToReadingSession(LocalReading localReading) {
     Intent readingSessionIntent = new Intent(this, BookActivity.class);
-    if(mEditBookMode) {
+    if (mEditBookMode) {
       Intent data = new Intent();
       data.putExtra(IntentKeys.READING_ID, localReading.id);
       setResult(ActivityCodes.RESULT_OK, data);
