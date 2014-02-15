@@ -13,10 +13,13 @@ import com.readmill.api.ReadmillWrapper;
 import com.readmill.api.Token;
 import com.readmill.api.TokenChangeListener;
 import com.readtracker.android.activities.HomeActivity;
+import com.readtracker.android.db.Book;
 import com.readtracker.android.db.DatabaseHelper;
 import com.readtracker.android.db.LocalHighlight;
 import com.readtracker.android.db.LocalReading;
 import com.readtracker.android.db.LocalSession;
+import com.readtracker.android.db.Quote;
+import com.readtracker.android.db.Session;
 import com.readtracker.android.support.ReadTrackerUser;
 import com.readtracker.android.support.ReadmillApiHelper;
 
@@ -233,12 +236,24 @@ public class ApplicationReadTracker extends Application implements TokenChangeLi
     }
   }
 
+  public static Dao<Quote, Integer> getQuoteDao() throws SQLException {
+    return mInstance.getDatabaseHelper().getQuoteDao();
+  }
+
+  public static Dao<Book, Integer> getBookDao() throws SQLException {
+    return mInstance.getDatabaseHelper().getBookDao();
+  }
+
+  public static Dao<Session, Integer> getSessionDao() throws SQLException {
+    return mInstance.getDatabaseHelper().getSessionDao();
+  }
+
   public static Dao<LocalReading, Integer> getReadingDao() throws SQLException {
     assertInstance();
     return mInstance.getDatabaseHelper().getReadingDao();
   }
 
-  public static Dao<LocalSession, Integer> getSessionDao() throws SQLException {
+  public static Dao<LocalSession, Integer> getLocalSessionDao() throws SQLException {
     assertInstance();
     return mInstance.getDatabaseHelper().getLocalSessionDao();
   }
