@@ -42,32 +42,45 @@ public class ReadTrackerApp extends Application {
   private boolean mFirstTimeFlag;
 
   public ReadTrackerApp() {
+  /** Gets the application class from a Context. */
+  public static ReadTrackerApp from(Context context) {
+    return (ReadTrackerApp) context.getApplicationContext();
+  }
+
   }
 
   @Override
   public void onCreate() {
     super.onCreate();
-    initApplication();
-  }
 
-  public DatabaseHelper getDatabaseHelper() {
-    return mDatabaseHelper;
-  }
+    Log.i(TAG, "Initializing ReadTrackerApp");
 
-  private void initApplication() {
-    Log.i(TAG, "Initializing application");
-    mPreferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
+    // TODO replace with settings helper
+    mPreferences = getSharedPreferences(PREFERENCES_FILE_NAME, MODE_PRIVATE);
 
+    // TODO add to settings helper
     // Flag first time starting the app
     mFirstTimeFlag = mPreferences.getBoolean(KEY_FIRST_TIME, true);
 
     // Setup persistence
     mDatabaseHelper = new DatabaseHelper(this);
 
+    mDatabaseManager = new DatabaseManager(mDatabaseHelper);
+
     // Assign singleton
     mInstance = this;
   }
 
+  // TODO don't expose this object, use database manager instead
+  public DatabaseHelper getDatabaseHelper() {
+    return mDatabaseHelper;
+  }
+
+  public DatabaseManager getDatabaseManager() {
+    return mDatabaseManager;
+  }
+
+  // TODO don't expose this object, use getAppSettings() instead
   public static SharedPreferences getApplicationPreferences() {
     return mInstance.mPreferences;
   }
@@ -124,10 +137,6 @@ public class ReadTrackerApp extends Application {
 
   public static Dao<Quote, Integer> getQuoteDao() throws SQLException {
     return mInstance.getDatabaseHelper().getQuoteDao();
-  }
-
-  public static Dao<Book, Integer> getBookDao() throws SQLException {
-    return mInstance.getDatabaseHelper().getBookDao();
   }
 
   public static Dao<Session, Integer> getSessionDao() throws SQLException {
