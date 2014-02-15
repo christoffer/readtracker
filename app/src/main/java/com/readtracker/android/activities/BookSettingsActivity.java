@@ -4,23 +4,18 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
-import android.preference.PreferenceCategory;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.readtracker.android.ApplicationReadTracker;
 import com.readtracker.android.IntentKeys;
 import com.readtracker.android.R;
 import com.readtracker.android.SettingsKeys;
 import com.readtracker.android.db.LocalReading;
 import com.readtracker.android.interfaces.SaveLocalReadingListener;
 import com.readtracker.android.tasks.SaveLocalReadingTask;
-
-import java.util.Date;
 
 public class BookSettingsActivity extends PreferenceActivity {
   private static final String TAG = BookSettingsActivity.class.getName();

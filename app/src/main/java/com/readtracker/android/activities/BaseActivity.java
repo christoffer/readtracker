@@ -9,23 +9,23 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.TypedValue;
 import android.widget.Toast;
 
-import com.readtracker.android.ApplicationReadTracker;
+import com.readtracker.android.ReadTrackerApp;
 
 /** Base activity */
 public class BaseActivity extends ActionBarActivity {
   protected final String TAG = this.getClass().getName();
-  private ApplicationReadTracker mApplication;
+  private ReadTrackerApp mApplication;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    mApplication = (ApplicationReadTracker) getApplication();
+    mApplication = (ReadTrackerApp) getApplication();
     requestWindowFeatures();
 
     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
   }
 
-  public final ApplicationReadTracker getApp() {
+  public final ReadTrackerApp getApp() {
     return mApplication;
   }
 

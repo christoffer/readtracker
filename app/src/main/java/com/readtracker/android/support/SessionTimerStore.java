@@ -3,7 +3,7 @@ package com.readtracker.android.support;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-import com.readtracker.android.ApplicationReadTracker;
+import com.readtracker.android.ReadTrackerApp;
 
 /**
  * Handles storing and loading of a session timer
@@ -26,7 +26,7 @@ public class SessionTimerStore {
       return;
     }
 
-    ApplicationReadTracker.getApplicationPreferences().
+    ReadTrackerApp.getApplicationPreferences().
       edit().
       putInt(KEY_LOCAL_READING_ID, sessionTimer.getLocalReadingId()).
       putLong(KEY_ELAPSED, sessionTimer.getElapsedBeforeTimestamp()).
@@ -41,7 +41,7 @@ public class SessionTimerStore {
    */
   public static SessionTimer load() {
     Log.v(TAG, "Loading reading state");
-    SharedPreferences pref = ApplicationReadTracker.getApplicationPreferences();
+    SharedPreferences pref = ReadTrackerApp.getApplicationPreferences();
 
     int localReadingId = pref.getInt(KEY_LOCAL_READING_ID, -1);
     long elapsedMilliseconds = pref.getLong(KEY_ELAPSED, 0);
@@ -59,7 +59,7 @@ public class SessionTimerStore {
 
   public static void clear() {
     Log.v(TAG, "Clearing reading state");
-    ApplicationReadTracker.getApplicationPreferences().
+    ReadTrackerApp.getApplicationPreferences().
       edit().
       remove(KEY_LOCAL_READING_ID).
       remove(KEY_ELAPSED).

@@ -18,7 +18,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.j256.ormlite.dao.Dao;
-import com.readtracker.android.ApplicationReadTracker;
+import com.readtracker.android.ReadTrackerApp;
 import com.readtracker.android.IntentKeys;
 import com.readtracker.android.R;
 import com.readtracker.android.SettingsKeys;
@@ -174,7 +174,7 @@ public class HomeActivity extends BaseActivity implements LocalReadingInteractio
   }
 
   private void initializeFragmentAdapter() {
-    boolean compactMode = ApplicationReadTracker.getApplicationPreferences().getBoolean(SettingsKeys.SETTINGS_COMPACT_FINISH_LIST, false);
+    boolean compactMode = ReadTrackerApp.getApplicationPreferences().getBoolean(SettingsKeys.SETTINGS_COMPACT_FINISH_LIST, false);
     mHomeFragmentAdapter = new HomeFragmentAdapter(getSupportFragmentManager(), compactMode);
   }
 
@@ -304,8 +304,8 @@ public class HomeActivity extends BaseActivity implements LocalReadingInteractio
 
     private List<LocalReading> loadLocalReadings() {
       try {
-        Dao<LocalReading, Integer> readingDao = ApplicationReadTracker.getReadingDao();
-        Dao<LocalSession, Integer> sessionDao = ApplicationReadTracker.getLocalSessionDao();
+        Dao<LocalReading, Integer> readingDao = ReadTrackerApp.getReadingDao();
+        Dao<LocalSession, Integer> sessionDao = ReadTrackerApp.getLocalSessionDao();
 
         ArrayList<LocalReading> localReadings = fetchLocalReadings(readingDao);
         return readingsWithPopulateSessionSegments(localReadings, sessionDao);

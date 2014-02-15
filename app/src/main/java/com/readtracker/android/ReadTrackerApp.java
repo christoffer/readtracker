@@ -17,11 +17,8 @@ import com.readtracker.android.db.Session;
 
 import java.sql.SQLException;
 
-/**
- * Shared state for the entire application
- */
-public class ApplicationReadTracker extends Application {
-  private static final String TAG = ApplicationReadTracker.class.getName();
+public class ReadTrackerApp extends Application {
+  private static final String TAG = ReadTrackerApp.class.getName();
 
   public static final String PREF_FILE_NAME = "ReadTrackerPrefFile";
 
@@ -29,7 +26,7 @@ public class ApplicationReadTracker extends Application {
   public static final String KEY_FIRST_TIME = "first-time";
 
   // Access to application instance
-  private static ApplicationReadTracker mInstance = null;
+  private static ReadTrackerApp mInstance = null;
 
   // Store reference to allow cheaper look-ups
   private SharedPreferences mPreferences;
@@ -44,7 +41,7 @@ public class ApplicationReadTracker extends Application {
   // Flag for first time usage of ReadTracker
   private boolean mFirstTimeFlag;
 
-  public ApplicationReadTracker() {
+  public ReadTrackerApp() {
   }
 
   @Override

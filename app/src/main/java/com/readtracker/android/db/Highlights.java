@@ -3,7 +3,7 @@ package com.readtracker.android.db;
 import android.util.Log;
 
 import com.j256.ormlite.dao.Dao;
-import com.readtracker.android.ApplicationReadTracker;
+import com.readtracker.android.ReadTrackerApp;
 
 import java.sql.SQLException;
 
@@ -15,7 +15,7 @@ public class Highlights {
 
   public static Dao.CreateOrUpdateStatus createOrUpdate(LocalHighlight localHighlight) {
     try {
-      return ApplicationReadTracker.getHighlightDao().createOrUpdate(localHighlight);
+      return ReadTrackerApp.getHighlightDao().createOrUpdate(localHighlight);
     } catch(SQLException ex) {
       Log.e(TAG, "Failed to persist Highlight", ex);
       return null;
@@ -29,7 +29,7 @@ public class Highlights {
    */
   public static boolean delete(LocalHighlight localHighlight) {
     try {
-      ApplicationReadTracker.getHighlightDao().delete(localHighlight);
+      ReadTrackerApp.getHighlightDao().delete(localHighlight);
       return true;
     } catch(SQLException ex) {
       Log.e(TAG, "Failed to delete highlight: " + String.valueOf(localHighlight));

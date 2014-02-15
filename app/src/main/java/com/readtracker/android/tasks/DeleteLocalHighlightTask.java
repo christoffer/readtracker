@@ -3,7 +3,7 @@ package com.readtracker.android.tasks;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.readtracker.android.ApplicationReadTracker;
+import com.readtracker.android.ReadTrackerApp;
 import com.readtracker.android.db.LocalHighlight;
 import com.readtracker.android.interfaces.DeleteLocalHighlightListener;
 
@@ -34,7 +34,7 @@ public class DeleteLocalHighlightTask extends AsyncTask<LocalHighlight, Void, De
   protected DeleteLocalHighlightResult doInBackground(LocalHighlight... localHighlights) {
     LocalHighlight localHighlight = localHighlights[0];
     try {
-      ApplicationReadTracker.getHighlightDao().delete(localHighlight);
+      ReadTrackerApp.getHighlightDao().delete(localHighlight);
       return new DeleteLocalHighlightResult(localHighlight, true);
     } catch(SQLException e) {
       Log.e(TAG, "An error occurred while deleting the LocalHighlight", e);

@@ -8,7 +8,7 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.util.Log;
 
-import com.readtracker.android.ApplicationReadTracker;
+import com.readtracker.android.ReadTrackerApp;
 import com.readtracker.android.IntentKeys;
 import com.readtracker.android.R;
 import com.readtracker.android.SettingsKeys;
@@ -44,7 +44,7 @@ public class SettingsActivity extends PreferenceActivity {
       public boolean onPreferenceChange(Preference preference, Object value) {
         boolean isCompactMode = (Boolean) value;
         Log.i(TAG, "Changing compact mode to: " + isCompactMode);
-        ApplicationReadTracker.getApplicationPreferences()
+        ReadTrackerApp.getApplicationPreferences()
           .edit()
           .putBoolean(SettingsKeys.SETTINGS_COMPACT_FINISH_LIST, isCompactMode)
           .commit();

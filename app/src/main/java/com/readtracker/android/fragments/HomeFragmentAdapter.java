@@ -15,7 +15,7 @@ import com.readtracker.android.adapters.LocalReadingAdapter;
  */
 public class HomeFragmentAdapter extends FragmentStatePagerAdapter {
   private static final String TAG = HomeFragmentAdapter.class.getName();
-
+ap
   // Total number of pages in the adapter (affects getCount() and the fragment
   // cache array size)
   private static final int NUM_PAGES = 2;

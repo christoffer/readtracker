@@ -10,7 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.j256.ormlite.dao.Dao;
-import com.readtracker.android.ApplicationReadTracker;
+import com.readtracker.android.ReadTrackerApp;
 import com.readtracker.android.IntentKeys;
 import com.readtracker.android.R;
 import com.readtracker.android.db.LocalHighlight;
@@ -342,9 +342,9 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialogLi
     private final Dao<LocalHighlight, Integer> highlightDao;
 
     LoadLocalReadingAndSessionsTask() throws SQLException {
-      readingDao = ApplicationReadTracker.getReadingDao();
-      sessionDao = ApplicationReadTracker.getLocalSessionDao();
-      highlightDao = ApplicationReadTracker.getHighlightDao();
+      readingDao = ReadTrackerApp.getReadingDao();
+      sessionDao = ReadTrackerApp.getLocalSessionDao();
+      highlightDao = ReadTrackerApp.getHighlightDao();
     }
 
     @Override

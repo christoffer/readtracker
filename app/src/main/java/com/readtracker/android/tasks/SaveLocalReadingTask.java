@@ -3,7 +3,7 @@ package com.readtracker.android.tasks;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.readtracker.android.ApplicationReadTracker;
+import com.readtracker.android.ReadTrackerApp;
 import com.readtracker.android.db.LocalReading;
 import com.readtracker.android.interfaces.SaveLocalReadingListener;
 
@@ -36,7 +36,7 @@ public class SaveLocalReadingTask extends AsyncTask<LocalReading, Void, LocalRea
   protected LocalReading doInBackground(LocalReading... localReadings) {
     LocalReading localReading = localReadings[0];
     try {
-      ApplicationReadTracker.getReadingDao().createOrUpdate(localReading);
+      ReadTrackerApp.getReadingDao().createOrUpdate(localReading);
       return localReadings[0];
     } catch(SQLException e) {
       Log.e(TAG, "An error occurred while saving the LocalReading", e);

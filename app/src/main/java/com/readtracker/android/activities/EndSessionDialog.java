@@ -10,7 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.readtracker.android.ApplicationReadTracker;
+import com.readtracker.android.ReadTrackerApp;
 import com.readtracker.android.IntentKeys;
 import com.readtracker.android.R;
 import com.readtracker.android.custom_views.ProgressPicker;
@@ -272,7 +272,7 @@ public class EndSessionDialog extends DialogFragment {
       Log.i(TAG, "Updating LocalReading: " + localReading.id + ", adding: " + addedDurationMillis + " milliseconds to time spent");
       try {
         localReading.timeSpentMillis += addedDurationMillis;
-        ApplicationReadTracker.getReadingDao().update(localReading);
+        ReadTrackerApp.getReadingDao().update(localReading);
         return true;
       } catch(SQLException e) {
         Log.e(TAG, "Failed to update data", e);
@@ -283,7 +283,7 @@ public class EndSessionDialog extends DialogFragment {
     private boolean saveReadingSession(LocalSession session) {
       Log.i(TAG, "Saving session: " + session.readingId);
       try {
-        ApplicationReadTracker.getLocalSessionDao().create(session);
+        ReadTrackerApp.getLocalSessionDao().create(session);
         return true;
       } catch(SQLException e) {
         Log.e(TAG, "Failed to create Session", e);
