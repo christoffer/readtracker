@@ -14,6 +14,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
@@ -29,23 +30,16 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
   private Dao<LocalSession, Integer> sessionDao = null;
   private Dao<LocalHighlight, Integer> highlightDao = null;
 
-  private Dao<Book, Integer> mBookDao = null;
-  private Dao<Quote, Integer> mQuoteDao = null;
-  private Dao<Session, Integer> mSessionDao = null;
+  private final Map<Class<? extends Model>, Dao<? extends Model, Integer>> mDaoCache =
+    new HashMap<Class<? extends Model>, Dao<? extends Model, Integer>>();
 
-  public Dao<Book, Integer> getBookDao() throws SQLException {
-    if(mBookDao == null) mBookDao = getDao(Book.class);
-    return mBookDao;
-  }
-
-  public Dao<Quote, Integer> getQuoteDao() throws SQLException {
-    if(mQuoteDao == null) mQuoteDao = getDao(Quote.class);
-    return mQuoteDao;
-  }
-
-  public Dao<Session, Integer> getSessionDao() throws SQLException {
-    if(mSessionDao == null) mSessionDao = getDao(Session.class);
-    return mSessionDao;
+  /** Cached lookup of DAOs by class. */
+  private <T extends Model> Dao<T, Integer> getDaoByClass(Class<T> modelClass) {
+    try {
+      return getDao(modelClass);
+    } catch(SQLException e) {
+      throw new RuntimeException("Failed to get DAO for class: " + modelClass, e);
+    }
   }
 
   public Dao<LocalReading, Integer> getReadingDao() throws SQLException {
