@@ -29,21 +29,21 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
   private Dao<LocalSession, Integer> sessionDao = null;
   private Dao<LocalHighlight, Integer> highlightDao = null;
 
-  private Dao<Book, IntentKeys> mBookDao = null;
-  private Dao<Quote, IntentKeys> mQuoteDao = null;
-  private Dao<Session, IntentKeys> mSessionDao = null;
+  private Dao<Book, Integer> mBookDao = null;
+  private Dao<Quote, Integer> mQuoteDao = null;
+  private Dao<Session, Integer> mSessionDao = null;
 
-  public Dao<Book, IntentKeys> getBookDao() throws SQLException {
+  public Dao<Book, Integer> getBookDao() throws SQLException {
     if(mBookDao == null) mBookDao = getDao(Book.class);
     return mBookDao;
   }
 
-  public Dao<Quote, IntentKeys> getQuoteDao() throws SQLException {
+  public Dao<Quote, Integer> getQuoteDao() throws SQLException {
     if(mQuoteDao == null) mQuoteDao = getDao(Quote.class);
     return mQuoteDao;
   }
 
-  public Dao<Session, IntentKeys> getSessionDao() throws SQLException {
+  public Dao<Session, Integer> getSessionDao() throws SQLException {
     if(mSessionDao == null) mSessionDao = getDao(Session.class);
     return mSessionDao;
   }
