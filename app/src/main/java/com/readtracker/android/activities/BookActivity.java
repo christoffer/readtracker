@@ -343,7 +343,7 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialogLi
 
     LoadLocalReadingAndSessionsTask() throws SQLException {
       readingDao = ApplicationReadTracker.getReadingDao();
-      sessionDao = ApplicationReadTracker.getSessionDao();
+      sessionDao = ApplicationReadTracker.getLocalSessionDao();
       highlightDao = ApplicationReadTracker.getHighlightDao();
     }
 
