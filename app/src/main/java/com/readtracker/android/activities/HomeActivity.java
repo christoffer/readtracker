@@ -27,10 +27,6 @@ import com.readtracker.android.db.LocalReading;
 import com.readtracker.android.db.LocalSession;
 import com.readtracker.android.fragments.HomeFragmentAdapter;
 import com.readtracker.android.interfaces.LocalReadingInteractionListener;
-import com.readtracker.android.interfaces.OAuthDialogResultListener;
-import com.readtracker.android.support.ReadmillApiHelper;
-import com.readtracker.android.support.ReadmillSyncStatusUIHandler;
-import com.readtracker.android.tasks.ReadmillSyncAsyncTask;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -39,10 +35,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.readtracker.android.support.ReadmillSyncStatusUIHandler.SyncStatus;
-import static com.readtracker.android.support.ReadmillSyncStatusUIHandler.SyncUpdateHandler;
-
-public class HomeActivity extends BaseActivity implements LocalReadingInteractionListener, OAuthDialogResultListener {
+public class HomeActivity extends BaseActivity implements LocalReadingInteractionListener {
   private static ViewPager mPagerHomeActivity;
 
   // A list of all the reading for the current user
@@ -52,13 +45,8 @@ public class HomeActivity extends BaseActivity implements LocalReadingInteractio
   @SuppressLint("UseSparseArrays")
   private HashMap<Integer, LocalReading> mLocalReadingMap = new HashMap<Integer, LocalReading>();
 
-  private ReadmillSyncAsyncTask mReadmillSyncTask;
-
   // Fragment adapter that manages the reading list fragments
   HomeFragmentAdapter mHomeFragmentAdapter;
-
-  // Handles UI handling of Readmill Sync process
-  private ReadmillSyncStatusUIHandler mSyncStatusHandler;
 
   // Sort readings by freshness
   private Comparator<LocalReading> mLocalReadingComparator = new Comparator<LocalReading>() {
@@ -67,8 +55,6 @@ public class HomeActivity extends BaseActivity implements LocalReadingInteractio
       return localReadingB.getLastReadAt().compareTo(localReadingA.getLastReadAt());
     }
   };
-
-  private boolean mSyncIsEnabled;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -80,25 +66,15 @@ public class HomeActivity extends BaseActivity implements LocalReadingInteractio
     setContentView(R.layout.activity_home);
 
     // Show welcome screen for first time users
-    if(getApp().getFirstTimeFlag()) {
+    if (getApp().getFirstTimeFlag()) {
       Log.d(TAG, "First time opening the app, showing introduction.");
       showIntroduction();
     }
 
     bindViews();
 
-    bindEvents();
-
     PagerTabStrip pagerTabStrip = (PagerTabStrip) findViewById(R.id.pagerTabStrip);
     pagerTabStrip.setTabIndicatorColor(getResources().getColor(R.color.base_color));
-
-    final boolean skipFullSync = savedInstanceState != null && savedInstanceState.getBoolean(IntentKeys.SKIP_FULL_SYNC);
-    if(cameFromSignIn && (getCurrentUser() != null) && !skipFullSync) {
-      Log.d(TAG, "Fresh from sign in, doing initial full sync.");
-      sync(true);
-    }
-
-    setSyncEnabled(getCurrentUser() != null);
   }
 
   private void showIntroduction() {
@@ -136,23 +112,13 @@ public class HomeActivity extends BaseActivity implements LocalReadingInteractio
     // This is in onPostCreate instead of onCreate to avoid issues with un-dismissible dialogs
     // (as suggested at: http://stackoverflow.com/questions/891451/android-dialog-does-not-dismiss-the-dialog)
 
-    if(savedInstanceState != null) {
+    if (savedInstanceState != null) {
       Log.d(TAG, "Restoring reading list from saved state");
       List<LocalReading> frozenReadings = savedInstanceState.getParcelableArrayList(IntentKeys.LOCAL_READINGS);
       resetLocalReadingList(frozenReadings);
       refreshLocalReadingLists();
     } else {
       fetchLocalReadings();
-    }
-  }
-
-  @Override
-  protected void onDestroy() {
-    super.onDestroy();
-    // Abort any ongoing readmill sync
-    if(mReadmillSyncTask != null) {
-      mReadmillSyncTask.cancel(true);
-      mReadmillSyncTask = null;
     }
   }
 
@@ -164,22 +130,12 @@ public class HomeActivity extends BaseActivity implements LocalReadingInteractio
   }
 
   @Override
-  protected boolean onPrepareOptionsPanel(View view, Menu menu) {
-    MenuItem item = menu.findItem(R.id.sync_menu);
-    if(item != null) item.setEnabled(mSyncIsEnabled);
-
-    return super.onPrepareOptionsPanel(view, menu);
-  }
-
-  @Override
   public boolean onOptionsItemSelected(MenuItem item) {
     int clickedId = item.getItemId();
 
-    if(clickedId == R.id.sync_menu) {
-      sync(false);
-    } else if(clickedId == R.id.settings_menu) {
+    if (clickedId == R.id.settings_menu) {
       exitToSettings();
-    } else if(clickedId == R.id.add_book_menu) {
+    } else if (clickedId == R.id.add_book_menu) {
       exitToBookSearch();
     } else {
       return false;
@@ -196,11 +152,11 @@ public class HomeActivity extends BaseActivity implements LocalReadingInteractio
     );
     final boolean needReloadDueToAddedBook = requestCode == ActivityCodes.REQUEST_ADD_BOOK;
     // Handle coming back from settings
-    if(requestCode == ActivityCodes.SETTINGS) {
-      if(resultCode == ActivityCodes.RESULT_SIGN_OUT) {
+    if (requestCode == ActivityCodes.SETTINGS) {
+      if (resultCode == ActivityCodes.RESULT_SIGN_OUT) {
         getApp().signOut();
         finish();
-      } else if(resultCode == ActivityCodes.RESULT_SIGN_IN) {
+      } else if (resultCode == ActivityCodes.RESULT_SIGN_IN) {
         OAuthDialog.show(getSupportFragmentManager());
       } else {
         // Reset the adapter to refresh views if the user toggled compact mode
@@ -208,10 +164,9 @@ public class HomeActivity extends BaseActivity implements LocalReadingInteractio
         mPagerHomeActivity.setAdapter(mHomeFragmentAdapter);
         refreshLocalReadingLists();
       }
-    } else if(needReloadDueToReadingSession || needReloadDueToAddedBook) {
+    } else if (needReloadDueToReadingSession || needReloadDueToAddedBook) {
       // Push new changes and reload local lists
       fetchLocalReadings();
-      sync(false);
     }
   }
 
@@ -223,35 +178,6 @@ public class HomeActivity extends BaseActivity implements LocalReadingInteractio
 
   private void bindViews() {
     mPagerHomeActivity = (ViewPager) findViewById(R.id.pagerHomeActivity);
-  }
-
-  private void bindEvents() {
-    // Handler for showing sync status
-    mSyncStatusHandler = new ReadmillSyncStatusUIHandler(R.id.stub_sync_progress, this, new SyncUpdateHandler() {
-      @Override
-      public void onReadingUpdate(LocalReading localReading) {
-        addLocalReading(localReading);
-        refreshLocalReadingLists();
-      }
-
-      @Override
-      public void onReadingDelete(int localReadingId) {
-        removeLocalReadingIfExists(localReadingId, true);
-      }
-
-      @Override
-      public void onSyncComplete(SyncStatus status) {
-        Log.d(TAG, "Sync is complete with " + status);
-        setSyncEnabled(true);
-        mReadmillSyncTask = null;
-
-        if(status == SyncStatus.INVALID_TOKEN) {
-          toastLong(getString(R.string.home_activity_error_require_sign_in_again));
-          getApp().signOut();
-          finish();
-        }
-      }
-    });
   }
 
   private void initializeFragmentAdapter() {
@@ -297,7 +223,7 @@ public class HomeActivity extends BaseActivity implements LocalReadingInteractio
   private void removeLocalReadingIfExists(int localReadingId, boolean shouldRefreshLists) {
     Log.v(TAG, String.format("removeLocalReadingIfExists(%d)", localReadingId));
 
-    if(mLocalReadingMap.containsKey(localReadingId)) {
+    if (mLocalReadingMap.containsKey(localReadingId)) {
       Log.v(TAG, String.format("Removing reading with id: %d", localReadingId));
       mLocalReadings.remove(mLocalReadingMap.get(localReadingId));
       mLocalReadingMap.remove(localReadingId);
@@ -305,7 +231,7 @@ public class HomeActivity extends BaseActivity implements LocalReadingInteractio
       Log.v(TAG, String.format("Reading with id: %d not in list.", localReadingId));
     }
 
-    if(shouldRefreshLists) {
+    if (shouldRefreshLists) {
       refreshLocalReadingLists();
     }
   }
@@ -319,8 +245,8 @@ public class HomeActivity extends BaseActivity implements LocalReadingInteractio
   private void resetLocalReadingList(List<LocalReading> localReadings) {
     mLocalReadings.clear();
     mLocalReadingMap.clear();
-    if(localReadings != null && localReadings.size() > 0) {
-      for(LocalReading localReading : localReadings) {
+    if (localReadings != null && localReadings.size() > 0) {
+      for (LocalReading localReading : localReadings) {
         addLocalReading(localReading);
       }
     }
@@ -332,58 +258,6 @@ public class HomeActivity extends BaseActivity implements LocalReadingInteractio
   private void refreshLocalReadingLists() {
     Collections.sort(mLocalReadings, mLocalReadingComparator);
     mHomeFragmentAdapter.notifyDataSetChanged();
-  }
-
-  /**
-   * Initiates a sync with Readmill.
-   */
-  private void sync(boolean fullSync) {
-    if(!shouldSync()) {
-      return;
-    }
-    Log.i(TAG, "Performing " + (fullSync ? "full" : "partial") + " sync");
-
-    ReadmillApiHelper api = ApplicationReadTracker.getReadmillApiHelper();
-    mReadmillSyncTask = new ReadmillSyncAsyncTask(mSyncStatusHandler, api, fullSync);
-
-    // Prevent starting another sync while this is ongoing
-    setSyncEnabled(false);
-
-    long readmillUserId = getCurrentUserId();
-    mReadmillSyncTask.execute(readmillUserId);
-  }
-
-  /**
-   * Determines if it is appropriate to start a sync with Readmill.
-   *
-   * @return true if a sync should be started, false otherwise
-   */
-  private boolean shouldSync() {
-    if(!isNetworkAvailable()) {
-      Log.i(TAG, "No internet connection - skipping sync");
-      return false;
-    }
-
-    if(mReadmillSyncTask != null) {
-      Log.d(TAG, "Sync already in progress - skipping sync.");
-      return false;
-    }
-
-    if(getCurrentUser() == null) {
-      Log.i(TAG, "No user signed in - skipping sync");
-      return false;
-    }
-    return true;
-  }
-
-  /**
-   * Enables the menu option to start a Readmill sync
-   *
-   * @param enabled the enabled state of the sync menu option
-   */
-  private void setSyncEnabled(boolean enabled) {
-    mSyncIsEnabled = enabled;
-    supportInvalidateOptionsMenu();
   }
 
   // Private
@@ -420,16 +294,6 @@ public class HomeActivity extends BaseActivity implements LocalReadingInteractio
     getApp().clearProgressDialog();
   }
 
-  @Override
-  public void onOAuthFailure() {
-    // NOOP
-  }
-
-  @Override
-  public void onOAuthSuccess() {
-    sync(true);
-  }
-
   /**
    * Reloads readings for a given user
    */
@@ -450,11 +314,11 @@ public class HomeActivity extends BaseActivity implements LocalReadingInteractio
     private List<LocalReading> loadLocalReadingsForUser(long readmillUserId) {
       try {
         Dao<LocalReading, Integer> readingDao = ApplicationReadTracker.getReadingDao();
-        Dao<LocalSession, Integer> sessionDao = ApplicationReadTracker.getSessionDao();
+        Dao<LocalSession, Integer> sessionDao = ApplicationReadTracker.getLocalSessionDao();
 
         ArrayList<LocalReading> localReadings = fetchLocalReadingsForUser(readmillUserId, readingDao);
         return readingsWithPopulateSessionSegments(localReadings, sessionDao);
-      } catch(SQLException e) {
+      } catch (SQLException e) {
         Log.d(TAG, "Failed to get list of existing readings", e);
         return new ArrayList<LocalReading>();
       }
@@ -477,7 +341,7 @@ public class HomeActivity extends BaseActivity implements LocalReadingInteractio
      * @throws java.sql.SQLException
      */
     private List<LocalReading> readingsWithPopulateSessionSegments(ArrayList<LocalReading> localReadings, Dao<LocalSession, Integer> sessionsDao) throws SQLException {
-      for(LocalReading localReading : localReadings) {
+      for (LocalReading localReading : localReadings) {
         List<LocalSession> sessions = sessionsDao.queryBuilder()
           .where().eq(LocalSession.READING_ID_FIELD_NAME, localReading.id)
           .query();
