@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 
 import java.util.Date;
@@ -19,7 +20,7 @@ import java.util.List;
 public class LocalReading implements Parcelable {
 
   public static enum ReadingState {
-    INTERESTING, READING, FINISHED, ABANDONED
+    UNKNOWN, INTERESTING, READING, FINISHED, ABANDONED
   }
 
   private int mColor = -1; // Cache of the calculated color for this Reading
@@ -118,7 +119,7 @@ public class LocalReading implements Parcelable {
   @DatabaseField(columnName = READMILL_TOUCHED_AT_FIELD_NAME)
   protected long readmillTouchedAt = 0;
 
-  @DatabaseField(columnName = READMILL_STATE_FIELD_NAME)
+  @DatabaseField(columnName = READMILL_STATE_FIELD_NAME, dataType = DataType.ENUM_INTEGER)
   public ReadingState readmillState = ReadingState.READING;
 
   @DatabaseField(columnName = READMILL_CLOSING_REMARK)
@@ -207,7 +208,7 @@ public class LocalReading implements Parcelable {
   }
 
   public String getInfo() {
-    return String.format("LocalReading #%d \"%s\" by \"%s\" - Page (%d/%d) over %d seconds - Readmill Reading #%s, Book #%s, User #%s State %d Closing Remark '%s' - Cover '%s'", id, title, author, currentPage, totalPages, getTimeSpentSeconds(), readmillReadingId, readmillBookId, readmillUserId, readmillState, readmillClosingRemark, coverURL);
+    return String.format("LocalReading #%d \"%s\" by \"%s\" - Page (%d/%d) over %d seconds - Readmill Reading #%s, Book #%s, User #%s State %s Closing Remark '%s' - Cover '%s'", id, title, author, currentPage, totalPages, getTimeSpentSeconds(), readmillReadingId, readmillBookId, readmillUserId, readmillState, readmillClosingRemark, coverURL);
   }
 
   public boolean isActive() {
