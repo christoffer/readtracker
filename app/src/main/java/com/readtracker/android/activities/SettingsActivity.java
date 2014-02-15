@@ -2,7 +2,6 @@ package com.readtracker.android.activities;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
@@ -13,7 +12,6 @@ import com.readtracker.android.ApplicationReadTracker;
 import com.readtracker.android.IntentKeys;
 import com.readtracker.android.R;
 import com.readtracker.android.SettingsKeys;
-import com.readtracker.android.support.ReadTrackerUser;
 
 public class SettingsActivity extends PreferenceActivity {
   private static final String TAG = SettingsActivity.class.getName();
@@ -23,54 +21,11 @@ public class SettingsActivity extends PreferenceActivity {
     super.onCreate(savedInstanceState);
     addPreferencesFromResource(R.xml.settings);
 
-    Preference emailPreference = findPreference(SettingsKeys.USER_EMAIL);
-
-    final ReadTrackerUser currentUser = getApp().getCurrentUser();
-
-    // Current user info
-    if(currentUser == null) {
-      emailPreference.setSummary(R.string.settings_not_logged_in);
-      emailPreference.setEnabled(false);
-    } else {
-      emailPreference.setSummary(getString(R.string.settings_logged_in_as, currentUser.getDisplayName()));
-      //emailPreference.setSummary("Logged in as " + currentUser.getDisplayName());
-      emailPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-        @Override public boolean onPreferenceClick(Preference preference) {
-          Uri userUri = Uri.parse(currentUser.getWebURL());
-          Intent browserIntent = new Intent(Intent.ACTION_VIEW, userUri);
-          startActivity(browserIntent);
-          return true;
-        }
-      });
-    }
-
-    // Hook up the sign out button
-
-    Preference signOutPreference = findPreference(SettingsKeys.USER_SIGN_OUT);
-    final boolean accountSettingsButtonIsSignIn;
-    if(currentUser == null) {
-      signOutPreference.setTitle(R.string.settings_sign_in);
-      signOutPreference.setSummary(R.string.settings_sign_in_subtext);
-      accountSettingsButtonIsSignIn = true;
-    } else {
-      signOutPreference.setTitle(R.string.settings_sign_out);
-      accountSettingsButtonIsSignIn = false;
-    }
-
-    signOutPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-      @Override public boolean onPreferenceClick(Preference preference) {
-        setResult(accountSettingsButtonIsSignIn ? ActivityCodes.RESULT_SIGN_IN : ActivityCodes.RESULT_SIGN_OUT);
-        finish();
-        return true;
-      }
-    });
-
     try {
       String versionName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
       Preference versionPreference = findPreference(SettingsKeys.ABOUT_VERSION);
       versionPreference.setSummary(versionName);
-    } catch(PackageManager.NameNotFoundException ignored) {
-    }
+    } catch (PackageManager.NameNotFoundException ignored) { }
 
     Preference legalPreference = findPreference(SettingsKeys.ABOUT_LEGAL);
     legalPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -96,15 +51,5 @@ public class SettingsActivity extends PreferenceActivity {
         return true;
       }
     });
-  }
-
-  /**
-   * Provides a shorter method name for grabbing a type casted reference to the
-   * application instance.
-   *
-   * @return the application instance
-   */
-  private ApplicationReadTracker getApp() {
-    return (ApplicationReadTracker) getApplication();
   }
 }

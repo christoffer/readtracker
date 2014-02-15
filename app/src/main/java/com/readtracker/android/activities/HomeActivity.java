@@ -22,7 +22,6 @@ import com.readtracker.android.ApplicationReadTracker;
 import com.readtracker.android.IntentKeys;
 import com.readtracker.android.R;
 import com.readtracker.android.SettingsKeys;
-import com.readtracker.android.custom_views.OAuthDialog;
 import com.readtracker.android.db.LocalReading;
 import com.readtracker.android.db.LocalSession;
 import com.readtracker.android.fragments.HomeFragmentAdapter;
@@ -151,19 +150,13 @@ public class HomeActivity extends BaseActivity implements LocalReadingInteractio
         resultCode == ActivityCodes.RESULT_LOCAL_READING_UPDATED
     );
     final boolean needReloadDueToAddedBook = requestCode == ActivityCodes.REQUEST_ADD_BOOK;
+
     // Handle coming back from settings
     if (requestCode == ActivityCodes.SETTINGS) {
-      if (resultCode == ActivityCodes.RESULT_SIGN_OUT) {
-        getApp().signOut();
-        finish();
-      } else if (resultCode == ActivityCodes.RESULT_SIGN_IN) {
-        OAuthDialog.show(getSupportFragmentManager());
-      } else {
-        // Reset the adapter to refresh views if the user toggled compact mode
-        initializeFragmentAdapter();
-        mPagerHomeActivity.setAdapter(mHomeFragmentAdapter);
-        refreshLocalReadingLists();
-      }
+      // Reset the adapter to refresh views if the user toggled compact mode
+      initializeFragmentAdapter();
+      mPagerHomeActivity.setAdapter(mHomeFragmentAdapter);
+      refreshLocalReadingLists();
     } else if (needReloadDueToReadingSession || needReloadDueToAddedBook) {
       // Push new changes and reload local lists
       fetchLocalReadings();

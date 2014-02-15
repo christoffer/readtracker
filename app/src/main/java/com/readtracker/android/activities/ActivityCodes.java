@@ -6,10 +6,8 @@ class ActivityCodes {
   public static final int RESULT_OK = Activity.RESULT_OK;
   public static final int RESULT_CANCELED = Activity.RESULT_CANCELED;
 
-  public static final int RESULT_SIGN_OUT = Activity.RESULT_FIRST_USER + 1;
   public static final int RESULT_DELETED_BOOK = Activity.RESULT_FIRST_USER + 2;
   public static final int RESULT_SHOULD_SYNC = Activity.RESULT_FIRST_USER + 3;
-  public static final int RESULT_SIGN_IN = Activity.RESULT_FIRST_USER + 4;
 
   public static final int REQUEST_ADD_BOOK = 0;
   public static final int REQUEST_READING_SESSION = 1;
