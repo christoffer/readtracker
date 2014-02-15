@@ -283,7 +283,7 @@ public class EndSessionDialog extends DialogFragment {
     private boolean saveReadingSession(LocalSession session) {
       Log.i(TAG, "Saving session: " + session.readingId);
       try {
-        ApplicationReadTracker.getSessionDao().create(session);
+        ApplicationReadTracker.getLocalSessionDao().create(session);
         return true;
       } catch(SQLException e) {
         Log.e(TAG, "Failed to create Session", e);
