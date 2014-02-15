@@ -8,9 +8,9 @@ import com.j256.ormlite.table.DatabaseTable;
  */
 @DatabaseTable(tableName = "quotes")
 public class Quote extends Model {
-  @DatabaseField(columnName = "quote") private String mQuote;
+  @DatabaseField(columnName = "content") private String mContent;
   @DatabaseField(columnName = "added_at") private Long mAddedAt;
-  @DatabaseField(columnName = "quote_position") private Float mQuotePosition;
+  @DatabaseField(columnName = "position") private Float mPosition;
   @DatabaseField(
     columnName = "book_id",
     foreign = true,
@@ -24,15 +24,18 @@ public class Quote extends Model {
 
   public void setBook(Book book) { mBook = book; }
 
-  public String getQuote() { return mQuote; }
+  public String getContent() { return mContent; }
 
-  public void setQuote(String quote) { mQuote = quote; }
+  public void setContent(String content) { mContent = content; }
 
   public Long getAddedAt() { return mAddedAt; }
 
   public void setAddedAt(Long addedAt) { mAddedAt = addedAt; }
 
-  public Float getQuotePosition() { return mQuotePosition; }
+  public Float getPosition() { return mPosition; }
+
+  public void setPosition(Float position) { mPosition = position; }
+
 
   public void setQuotePosition(Float quotePosition) { mQuotePosition = quotePosition; }
 }

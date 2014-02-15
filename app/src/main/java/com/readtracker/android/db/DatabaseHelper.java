@@ -355,7 +355,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
   private void convertLocalHighlightToQuote(SQLiteDatabase db) {
     final String query = "insert into quotes " +
-      "(id, book_id, quote, quote_position, added_at) " +
+      "(id, book_id, content, position, added_at) " +
       "select id, reading_id, content, position, strftime('%s', highlighted_at) from localhighlight;";
     db.execSQL(query);
   }
