@@ -21,7 +21,7 @@ import android.widget.TextView.OnEditorActionListener;
 
 import com.readtracker.android.IntentKeys;
 import com.readtracker.android.R;
-import com.readtracker.android.adapters.BookAdapter;
+import com.readtracker.android.adapters.SearchResultAdapter;
 import com.readtracker.android.adapters.BookItem;
 import com.readtracker.android.adapters.GoogleBookItem;
 import com.readtracker.android.support.GoogleBook;
@@ -43,7 +43,7 @@ public class BookSearchActivity extends BaseActivity {
   private static Button mButtonNew;
   private static Button mButtonSearch;
 
-  private static BookAdapter mBookSearchAdapter;
+  private static SearchResultAdapter mBookSearchAdapter;
   private static InputMethodManager mInputMethodManager;
 
   // Indices of flipper pages
@@ -57,7 +57,7 @@ public class BookSearchActivity extends BaseActivity {
 
     bindViews();
 
-    mBookSearchAdapter = new BookAdapter(this, R.layout.list_item_book, R.id.textTitle, new ArrayList<BookItem>());
+    mBookSearchAdapter = new SearchResultAdapter(this, R.layout.list_item_book, R.id.textTitle, new ArrayList<BookItem>());
     mListSearchResults.setAdapter(mBookSearchAdapter);
 
     // Suggest that the soft input keyboard is visible at once

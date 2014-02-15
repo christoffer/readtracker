@@ -1,6 +1,5 @@
 package com.readtracker.android.adapters;
 
-import android.app.Activity;
 import android.content.Context;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -15,14 +14,9 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-/**
- * Adapter that shows a single book entity without a connect to a reading.
- * <p/>
- * Shows title, author and optionally a cover.
- */
-public class BookAdapter extends ArrayAdapter<BookItem> {
-  protected static final String TAG = null;
-  protected static LayoutInflater mInflater;
+/** Adapter for displaying book search results. */
+public class SearchResultAdapter extends ArrayAdapter<BookItem> {
+  protected static final String TAG = SearchResultAdapter.class.getSimpleName();
 
   /**
    * Cache item to avoid repeated view look-ups
@@ -33,9 +27,8 @@ public class BookAdapter extends ArrayAdapter<BookItem> {
     public ImageView imageCover;
   }
 
-  public BookAdapter(Context context, int resource, int textViewResourceId, List<BookItem> books) {
+  public SearchResultAdapter(Context context, int resource, int textViewResourceId, List<BookItem> books) {
     super(context, resource, textViewResourceId, books);
-    mInflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
   }
 
   @Override
@@ -44,8 +37,8 @@ public class BookAdapter extends ArrayAdapter<BookItem> {
     final ViewHolder viewHolder;
 
     // Inflate the view of it's not yet initialized
-    if (convertView == null) {
-      convertView = mInflater.inflate(R.layout.list_item_book, null);
+    if(convertView == null) {
+      convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_item_book, null);
 
       // Cache the items view look-ups
       viewHolder = new ViewHolder();
@@ -64,7 +57,7 @@ public class BookAdapter extends ArrayAdapter<BookItem> {
     viewHolder.textAuthor.setText(item.author);
     viewHolder.imageCover.setImageResource(android.R.drawable.ic_menu_gallery);
 
-    if (item.coverURL != null) {
+    if(item.coverURL != null) {
       viewHolder.imageCover.setImageResource(android.R.drawable.ic_menu_gallery);
       viewHolder.imageCover.setVisibility(View.VISIBLE);
       if(!TextUtils.isEmpty(item.coverURL)) {
