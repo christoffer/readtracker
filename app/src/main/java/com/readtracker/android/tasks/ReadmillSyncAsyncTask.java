@@ -58,7 +58,7 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
 
     try {
       mReadingDao = ApplicationReadTracker.getReadingDao();
-      mSessionDao = ApplicationReadTracker.getSessionDao();
+      mSessionDao = ApplicationReadTracker.getLocalSessionDao();
       mHighlightDao = ApplicationReadTracker.getHighlightDao();
     } catch(SQLException e) {
       Log.e(TAG, "Failed to get DAOs", e);
@@ -940,7 +940,7 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
    */
   private void uploadNewSessions() {
     try {
-      Dao<LocalSession, Integer> sessionDao = ApplicationReadTracker.getSessionDao();
+      Dao<LocalSession, Integer> sessionDao = ApplicationReadTracker.getLocalSessionDao();
       Where<LocalSession, Integer> stmt = sessionDao.queryBuilder().where()
         .eq(LocalSession.SYNCED_WITH_READMILL_FIELD_NAME, false)
         .and()
@@ -1019,7 +1019,7 @@ public class ReadmillSyncAsyncTask extends AsyncTask<Long, ReadmillSyncProgressM
     }
 
     try {
-      Dao<LocalSession, Integer> sessionDao = ApplicationReadTracker.getSessionDao();
+      Dao<LocalSession, Integer> sessionDao = ApplicationReadTracker.getLocalSessionDao();
       Where<LocalSession, Integer> stmt = sessionDao.queryBuilder().where()
         .eq(LocalSession.READING_ID_FIELD_NAME, localReading.id)
         .and()
