@@ -73,9 +73,13 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
   public void onCreate(SQLiteDatabase db, ConnectionSource connectionSource) {
     Log.d(TAG, "Running database create");
     try {
-      TableUtils.createTable(connectionSource, LocalReading.class);
-      TableUtils.createTable(connectionSource, LocalSession.class);
-      TableUtils.createTable(connectionSource, LocalHighlight.class);
+      TableUtils.createTableIfNotExists(connectionSource, LocalReading.class);
+      TableUtils.createTableIfNotExists(connectionSource, LocalSession.class);
+      TableUtils.createTableIfNotExists(connectionSource, LocalHighlight.class);
+
+      TableUtils.createTableIfNotExists(connectionSource, Book.class);
+      TableUtils.createTableIfNotExists(connectionSource, Session.class);
+      TableUtils.createTableIfNotExists(connectionSource, Quote.class);
     } catch(SQLException e) {
       Log.e(TAG, "Failed to create database: " + DATABASE_NAME);
       throw new RuntimeException(e);
@@ -274,13 +278,13 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
   }
 
   /**
-    This upgrade fixes an issue where sessions and highlights for readings that
-    were started offline never got the readmill reading id set on them once the
-    reading was connected to Readmill.
-
-    It goes through all sessions and highlights with a missing readmill reading
-    id. For each of these it adopts the readmill reading id of the parent reading
-    (if set).
+   * This upgrade fixes an issue where sessions and highlights for readings that
+   * were started offline never got the readmill reading id set on them once the
+   * reading was connected to Readmill.
+   * <p/>
+   * It goes through all sessions and highlights with a missing readmill reading
+   * id. For each of these it adopts the readmill reading id of the parent reading
+   * (if set).
    */
   private void _upgradeToVersion9(SQLiteDatabase db, ConnectionSource connectionSource) throws SQLException {
     Log.i(TAG, "Running database upgrade 9");
@@ -330,24 +334,41 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
   }
 
   private void _upgradeToVersion11(SQLiteDatabase db, ConnectionSource connectionSource) throws SQLException {
+    Log.i(TAG, "Running database upgrade 11");
     TableUtils.createTableIfNotExists(connectionSource, Book.class);
     TableUtils.createTableIfNotExists(connectionSource, Session.class);
     TableUtils.createTableIfNotExists(connectionSource, Quote.class);
 
-    convertLocalReadingsToBook();
-    convertLocalSessionToSession();
-    convertLocalHighlightToQuote();
+    convertLocalReadingsToBook(db);
+    convertLocalSessionToSession(db);
+    convertLocalHighlightToQuote(db);
   }
 
-  private void convertLocalHighlightToQuote() {
-    // TODO
+  private void convertLocalReadingsToBook(SQLiteDatabase db) {
+    final String query = "INSERT INTO books\n" +
+      "(id, title, author, cover_url, number_pages, current_position, highest_position, last_opened_at, first_position_at, closing_remark) " +
+      "SELECT " +
+      "id, title, author, coverURL, case(measure_in_percent) when 1 then null else case totalPages when 0 then null else totalPages end end, ifnull(1.0 * currentPage / totalPages , null), rt_progress, lastReadAt, started_at, rm_closing_remark " +
+      "FROM localreading;";
+    db.execSQL(query);
   }
 
-  private void convertLocalSessionToSession() {
-    // TODO
+  private void convertLocalHighlightToQuote(SQLiteDatabase db) {
+    final String query = "insert into quotes " +
+      "(id, book_id, quote, quote_position, added_at) " +
+      "select id, reading_id, content, position, strftime('%s', highlighted_at) from localhighlight;";
+    db.execSQL(query);
   }
 
-  private void convertLocalReadingsToBook() {
-    // TODO
+  private void convertLocalSessionToSession(SQLiteDatabase db) {
+    final String query = "insert into sessions " +
+      "(id, book_id, end_position, start_position, started_at,duration_seconds) " +
+      "select outer_session.id, readingId, " +
+      "progress as end_pos, " +
+      "(select inner_session.progress from localsession as inner_session where inner_session.progress < outer_session.progress AND inner_session.readingId = outer_session.readingId order by inner_session.progress desc limit 1) as start_pos, " +
+      "strftime('%s', occurredAt), durationSeconds " +
+      "from localsession as outer_session inner join localreading on localreading.id = readingId " +
+      "order by readingId;";
+    db.execSQL(query);
   }
 }
