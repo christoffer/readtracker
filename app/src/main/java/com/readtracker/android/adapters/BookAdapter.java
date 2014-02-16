@@ -15,12 +15,16 @@ import com.readtracker.android.R;
 import com.readtracker.android.activities.HomeActivity;
 import com.readtracker.android.custom_views.SegmentBar;
 import com.readtracker.android.db.Book;
+import com.readtracker.android.db.Session;
 import com.readtracker.android.support.DrawableGenerator;
 import com.readtracker.android.support.Utils;
 import com.squareup.otto.Subscribe;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 
 /** Adapter for displaying a filtered list of books. */
@@ -32,8 +36,15 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
   // Layout to inflate when rendering items
   private int mLayoutResource;
 
+  private static Comparator<String> sBookComparator = new Comparator<String>() {
+    @Override public int compare(String keyA, String keyB) {
+      return 0;
+    }
+  };
+
   // Books in this list
   private List<Book> mBooks = new ArrayList<Book>();
+
   private Book.State mStateFilter = null;
 
   public BookAdapter(Context context, int resource, Book.State stateFilter) {
@@ -48,7 +59,7 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
     for(Book book : event.getBooks()) {
       if(mStateFilter == null || book.getState() == mStateFilter) {
         Log.v(TAG, "Accepting: " + book);
-        mBooks.add(book);
+        addOrReplace(book);
       } else {
         Log.v(TAG, "Rejecting: " + book);
       }
@@ -98,38 +109,44 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
     return true;
   }
 
+  private void addOrReplace(Book book) {
+    int position = mBooks.indexOf(book);
+    if(position < 0) {
+      mBooks.add(book);
+    } else {
+      mBooks.remove(position);
+      mBooks.add(position, book);
+    }
+  }
+
   static class ViewHolder {
     ViewHolder(View view) {
-      textTitle = (TextView) view.findViewById(R.id.textTitle);
-      textAuthor = (TextView) view.findViewById(R.id.textAuthor);
-      progressReadingProgress = (SegmentBar) view.findViewById(R.id.progressReadingProgress);
-      imageCover = (ImageView) view.findViewById(R.id.imageCover);
+      titleText = (TextView) view.findViewById(R.id.textTitle);
+      authorText = (TextView) view.findViewById(R.id.textAuthor);
+      segmentedProgressBar = (SegmentBar) view.findViewById(R.id.progressReadingProgress);
+      coverImage = (ImageView) view.findViewById(R.id.imageCover);
       closingRemarkText = (TextView) view.findViewById(R.id.textClosingRemark);
-      textFinishedAt = (TextView) view.findViewById(R.id.textFinishedAt);
+      finishedAtText = (TextView) view.findViewById(R.id.textFinishedAt);
     }
 
     void populate(Book book) {
       // Required fields
-      textTitle.setText(book.getTitle());
-      textAuthor.setText(book.getAuthor());
+      titleText.setText(book.getTitle());
+      authorText.setText(book.getAuthor());
 
       // Optional fields
-//      if(progressReadingProgress != null) {
-//        progressReadingProgress.setVisibility(View.VISIBLE);
-//        float[] progressStops = book.getProgressStops();
-//        if(progressStops == null) {
-//          progressStops = new float[]{(float) book.progress};
-//        }
-//        progressReadingProgress.setStops(progressStops);
-//        progressReadingProgress.setColor(book.getColor());
-//      }
+      if(segmentedProgressBar != null) {
+        segmentedProgressBar.setVisibility(View.VISIBLE);
+        segmentedProgressBar.setStops(getSessionStops(book.getSessions()));
+        segmentedProgressBar.setColor(Utils.calculateBookColor(book));
+      }
 
-      if(imageCover != null) {
+      if(coverImage != null) {
         // TODO nicer default cover
-        imageCover.setImageResource(android.R.drawable.ic_menu_gallery);
+        coverImage.setImageResource(android.R.drawable.ic_menu_gallery);
         if(!TextUtils.isEmpty(book.getCoverUrl())) {
-          imageCover.setVisibility(View.VISIBLE);
-          Picasso.with(imageCover.getContext()).load(book.getCoverUrl()).into(imageCover);
+          coverImage.setVisibility(View.VISIBLE);
+          Picasso.with(coverImage.getContext()).load(book.getCoverUrl()).into(coverImage);
         }
       }
 
@@ -143,24 +160,36 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
         }
       }
 
-      if(textFinishedAt != null) {
+      if(finishedAtText != null) {
         if(book.getState() == Book.State.Finished) {
-          textFinishedAt.setText(Utils.humanPastDate(book.getLastOpenedAt()));
-          textFinishedAt.setVisibility(View.VISIBLE);
+          finishedAtText.setText(Utils.humanPastDate(book.getLastOpenedAt()));
+          finishedAtText.setVisibility(View.VISIBLE);
         } else {
-          textFinishedAt.setVisibility(View.GONE);
+          finishedAtText.setVisibility(View.GONE);
         }
       }
     }
 
-    // Required
-    TextView textTitle;
-    TextView textAuthor;
+    /** Returns the sessions a sorted stops list for the segmented progres bar. */
+    private float[] getSessionStops(Collection<Session> sessions) {
+      float[] stops = new float[sessions.size()];
+      int i = 0;
+      for(Session session : sessions) {
+        stops[i++] = session.getEndPosition();
+      }
 
-    // Optional
-    SegmentBar progressReadingProgress;
-    ImageView imageCover;
+      Arrays.sort(stops);
+      return stops;
+    }
+
+    // Required fields
+    TextView titleText;
+    TextView authorText;
+
+    // Optional fields
+    SegmentBar segmentedProgressBar;
+    ImageView coverImage;
     TextView closingRemarkText;
-    TextView textFinishedAt;
+    TextView finishedAtText;
   }
 }

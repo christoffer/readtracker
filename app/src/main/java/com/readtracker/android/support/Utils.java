@@ -259,4 +259,11 @@ public class Utils {
 
     return dateFormat.format(then);
   }
+
+  /** Return a color value to use for the book. */
+  public static int calculateBookColor(Book book) {
+    final String colorKey = book.getTitle() + book.getAuthor();
+    float color = 360 * (Math.abs(colorKey.hashCode()) / (float) Integer.MAX_VALUE);
+    return Color.HSVToColor(new float[]{color, 0.4f, 0.5f});
+  }
 }

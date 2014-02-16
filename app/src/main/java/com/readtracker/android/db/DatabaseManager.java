@@ -22,4 +22,15 @@ public class DatabaseManager {
       throw new RuntimeException(e);
     }
   }
+
+  /** Returns all sessions for the book. */
+  public List<Session> getSessionsForBook(Book book) {
+    try {
+      return db.getDaoByClass(Session.class).queryBuilder()
+        .where().eq(Session.Columns.BOOK_ID, book.getId())
+        .query();
+    } catch(SQLException e) {
+      throw new RuntimeException(e);
+    }
+  }
 }
