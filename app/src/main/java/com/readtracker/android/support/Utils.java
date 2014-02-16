@@ -1,6 +1,10 @@
 package com.readtracker.android.support;
 
 
+import android.graphics.Color;
+
+import com.readtracker.android.db.Book;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -14,6 +18,7 @@ public class Utils {
 
   /**
    * Returns a string representation like "3 hours, 12 minutes"
+   *
    * @param duration the duration to represent
    * @return the duration formatted as full hours and minutes
    */
@@ -27,13 +32,14 @@ public class Utils {
     }
 
     return String.format("%s, %s",
-        pluralizeWithCount(hours, "hour"),
-        pluralizeWithCount(minutes, "minute")
+      pluralizeWithCount(hours, "hour"),
+      pluralizeWithCount(minutes, "minute")
     );
   }
 
   /**
    * Returns a string representation like "3 h, 12 min"
+   *
    * @param duration the duration to represent
    * @return the duration formatted as short hours and minutes
    */
@@ -51,6 +57,7 @@ public class Utils {
 
   /**
    * Returns a string representation like: "4h 23m 12s"
+   *
    * @param duration duration in milliseconds to represent
    * @return the given duration in a short human string representation
    */
@@ -264,6 +271,6 @@ public class Utils {
   public static int calculateBookColor(Book book) {
     final String colorKey = book.getTitle() + book.getAuthor();
     float color = 360 * (Math.abs(colorKey.hashCode()) / (float) Integer.MAX_VALUE);
-    return Color.HSVToColor(new float[]{color, 0.4f, 0.5f});
+    return Color.HSVToColor(new float[] { color, 0.4f, 0.5f });
   }
 }
