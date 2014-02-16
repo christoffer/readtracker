@@ -8,15 +8,13 @@ import com.j256.ormlite.table.DatabaseTable;
  */
 @DatabaseTable(tableName = "sessions")
 public class Session extends Model {
-  @DatabaseField(columnName = "start_position") private Float mStartPosition;
-  @DatabaseField(columnName = "end_position") private Float mEndPosition;
-  @DatabaseField(columnName = "duration_seconds") private Long mDurationSeconds;
-  @DatabaseField(columnName = "started_at") private Long mStartedAt;
-  @DatabaseField(
-    columnName = "book_id",
-    foreign = true,
-    columnDefinition = "integer references books (_id) on delete cascade"
-  ) private Book mBook;
+
+  @DatabaseField(columnName = Columns.START_POSITION) private Float mStartPosition;
+  @DatabaseField(columnName = Columns.END_POSITION) private Float mEndPosition;
+  @DatabaseField(columnName = Columns.DURATION_SECONDS) private Long mDurationSeconds;
+  @DatabaseField(columnName = Columns.STARTED_AT) private Long mStartedAt;
+  @DatabaseField(columnName = Columns.BOOK_ID, foreign = true,
+    columnDefinition = "integer references books (_id) on delete cascade") private Book mBook;
 
   public Session() {
   }
@@ -40,4 +38,12 @@ public class Session extends Model {
   public Book getBook() { return mBook; }
 
   public void setBook(Book book) { mBook = book; }
+
+  public static abstract class Columns extends Model.Columns {
+    public static final String START_POSITION = "start_position";
+    public static final String END_POSITION = "end_position";
+    public static final String DURATION_SECONDS = "duration_seconds";
+    public static final String STARTED_AT = "started_at";
+    public static final String BOOK_ID = "book_id";
+  }
 }

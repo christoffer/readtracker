@@ -4,35 +4,55 @@ import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Represents a book in the users list of books that are being read.
  */
 @DatabaseTable(tableName = "books")
 public class Book extends Model {
-  public static enum State { Uknown, Finished, Reading}
+  public static enum State {Unknown, Finished, Reading}
 
-  @DatabaseField(columnName = "title") private String mTitle;
-  @DatabaseField(columnName = "author") private String mAuthor;
-  @DatabaseField(columnName = "cover_url") private String mCoverUrl;
-  @DatabaseField(columnName = "number_pages") private Float mNumberPages;
-  @DatabaseField(columnName = "state", dataType = DataType.ENUM_STRING) private State mState;
-  @DatabaseField(columnName = "last_position") private Float mCurrentPosition;
-  @DatabaseField(columnName = "last_opened_at") private Long mLastOpenedAt;
-  @DatabaseField(columnName = "first_position_at") private Long mFirstPositionAt;
-  @DatabaseField(columnName = "closing_remark") private String mClosingRemark;
+  @DatabaseField(columnName = Columns.TITLE) String mTitle;
+  @DatabaseField(columnName = Columns.AUTHOR) String mAuthor;
+  @DatabaseField(columnName = Columns.COVER_URL) String mCoverUrl;
+  @DatabaseField(columnName = Columns.NUMBER_PAGES) Float mNumberPages;
+  @DatabaseField(columnName = Columns.STATE, dataType = DataType.ENUM_STRING) State mState;
+  @DatabaseField(columnName = Columns.LAST_POSITION) Float mCurrentPosition;
+  @DatabaseField(columnName = Columns.LAST_OPENED_AT) Long mLastOpenedAt;
+  @DatabaseField(columnName = Columns.FIRST_POSITION_AT) Long mFirstPositionAt;
+  @DatabaseField(columnName = Columns.CLOSING_REMARK) String mClosingRemark;
+
+  // Cached list of sessions. Avoid using a foreign collection since we want complete
+  // control over when this is loaded from the database.
+  private List<Session> mSessions = new ArrayList<Session>();
 
   public Book() { }
 
   /** Load all sessions for this book from the database. */
   public void loadSessions(DatabaseManager databaseManager) {
-    // TODO
+    mSessions = databaseManager.getSessionsForBook(this);
   }
 
-  public String getTitle() { return mTitle; }
+  @Override public boolean equals(Object o) {
+    if(this == o) return true;
+    if(o instanceof Book) {
+      final Book other = (Book) o;
+      return this.getTitle().equals(other.getTitle()) && (this.getAuthor().equals(other.getAuthor()));
+    }
+    return false;
+  }
+
+  @Override public int hashCode() {
+    return (getTitle() + getAuthor()).hashCode();
+  }
+
+  public String getTitle() { return mTitle == null ? "" : mTitle; }
 
   public void setTitle(String title) { mTitle = title; }
 
-  public String getAuthor() { return mAuthor; }
+  public String getAuthor() { return mAuthor == null ? "" : mAuthor; }
 
   public void setAuthor(String author) { mAuthor = author; }
 
@@ -63,4 +83,20 @@ public class Book extends Model {
   public String getClosingRemark() { return mClosingRemark; }
 
   public void setClosingRemark(String closingRemark) { mClosingRemark = closingRemark; }
+
+  public List<Session> getSessions() {
+    return mSessions;
+  }
+
+  public static abstract class Columns extends Model.Columns {
+    public static final String TITLE = "title";
+    public static final String AUTHOR = "author";
+    public static final String COVER_URL = "cover_url";
+    public static final String NUMBER_PAGES = "number_pages";
+    public static final String STATE = "state";
+    public static final String LAST_POSITION = "last_position";
+    public static final String LAST_OPENED_AT = "last_opened_at";
+    public static final String FIRST_POSITION_AT = "first_position_at";
+    public static final String CLOSING_REMARK = "closing_remark";
+  }
 }
