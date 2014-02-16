@@ -82,7 +82,20 @@ public class BookListFragment extends ListFragment {
 
   @Override
   public void onListItemClick(ListView listView, View clickedView, int position, long id) {
-    LocalReading clickedReading = (LocalReading) listView.getItemAtPosition(position);
-    ((LocalReadingInteractionListener) getActivity()).onLocalReadingClicked(clickedReading);
+    Book book = (Book) listView.getItemAtPosition(position);
+    mBus.post(new BookClickedEvent(book));
+  }
+
+  /** Emitted when a book is clicked. */
+  public static class BookClickedEvent {
+    private final Book mBook;
+
+    public BookClickedEvent(Book book) {
+      mBook = book;
+    }
+
+    public Book getBook() {
+      return mBook;
+    }
   }
 }

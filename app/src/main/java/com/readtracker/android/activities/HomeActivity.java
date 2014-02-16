@@ -22,9 +22,11 @@ import com.readtracker.android.R;
 import com.readtracker.android.ReadTrackerApp;
 import com.readtracker.android.db.Book;
 import com.readtracker.android.db.DatabaseManager;
+import com.readtracker.android.fragments.BookListFragment;
 import com.readtracker.android.fragments.HomeFragmentAdapter;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Produce;
+import com.squareup.otto.Subscribe;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -82,9 +84,9 @@ public class HomeActivity extends BaseActivity {
     return new BooksLoadedEvent(mBooks);
   }
 
-//  @Subscribe public void onBookClickedEvent(BookClickedEvent event) {
-//    exitToBookActivity(event.getBook().getId());
-//  }
+  @Subscribe public void onBookClickedEvent(BookListFragment.BookClickedEvent event) {
+    exitToBookActivity(event.getBook().getId());
+  }
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
