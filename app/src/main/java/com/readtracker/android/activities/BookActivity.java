@@ -72,9 +72,9 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialogLi
     // Load information from database
     int readingId;
     if(in == null) {
-      readingId = getIntent().getExtras().getInt(IntentKeys.READING_ID);
+      readingId = getIntent().getExtras().getInt(IntentKeys.BOOK_ID);
     } else {
-      readingId = in.getInt(IntentKeys.READING_ID);
+      readingId = in.getInt(IntentKeys.BOOK_ID);
     }
 
     reloadLocalData(readingId);
@@ -87,7 +87,7 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialogLi
     if(mViewPagerReading != null) {
       outState.putInt(IntentKeys.INITIAL_FRAGMENT_PAGE, mViewPagerReading.getCurrentItem());
     }
-    outState.putInt(IntentKeys.READING_ID, mLocalReading.id);
+    outState.putInt(IntentKeys.BOOK_ID, mLocalReading.id);
   }
 
   @Override
@@ -108,7 +108,7 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialogLi
         if(resultCode == RESULT_OK) {
           Log.d(TAG, "Came back from editing page number");
           mInitialPageForFragmentAdapter = PAGE_READING;
-          int updateReadingId = data.getIntExtra(IntentKeys.READING_ID, -1);
+          int updateReadingId = data.getIntExtra(IntentKeys.BOOK_ID, -1);
           reloadLocalData(updateReadingId);
         }
         break;
@@ -116,7 +116,7 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialogLi
         if(resultCode == RESULT_OK) {
           Log.d(TAG, "Came back from adding a quote");
           mInitialPageForFragmentAdapter = PAGE_QUOTES;
-          int updateReadingId = data.getIntExtra(IntentKeys.READING_ID, -1);
+          int updateReadingId = data.getIntExtra(IntentKeys.BOOK_ID, -1);
           reloadLocalData(updateReadingId); // TODO optimally we should only reload the highlights here
           mShouldSync = true; // Ask for sync when returning to HomeActivity
         }
@@ -129,7 +129,7 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialogLi
         } else if(resultCode == ActivityCodes.RESULT_OK) {
           Log.d(TAG, "Came back from changing the book settings");
           // Something changed
-          reloadLocalData(data.getIntExtra(IntentKeys.READING_ID, -1));
+          reloadLocalData(data.getIntExtra(IntentKeys.BOOK_ID, -1));
         }
     }
     super.onActivityResult(requestCode, resultCode, data);
@@ -221,7 +221,7 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialogLi
       }
     }
 
-    PagerTabStrip pagerTabStrip = (PagerTabStrip) findViewById(R.id.pagerTabStrip);
+    PagerTabStrip pagerTabStrip = (PagerTabStrip) findViewById(R.id.pager_tab_strip);
     pagerTabStrip.setTabIndicatorColor(mLocalReading.getColor());
     setupFragments(bundle);
 

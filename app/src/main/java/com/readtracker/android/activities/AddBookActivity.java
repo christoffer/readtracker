@@ -200,10 +200,10 @@ public class AddBookActivity extends BaseActivity {
     Intent readingSessionIntent = new Intent(this, BookActivity.class);
     if (mEditBookMode) {
       Intent data = new Intent();
-      data.putExtra(IntentKeys.READING_ID, localReading.id);
+      data.putExtra(IntentKeys.BOOK_ID, localReading.id);
       setResult(ActivityCodes.RESULT_OK, data);
     } else {
-      readingSessionIntent.putExtra(IntentKeys.READING_ID, localReading.id);
+      readingSessionIntent.putExtra(IntentKeys.BOOK_ID, localReading.id);
       startActivity(readingSessionIntent);
       setResult(ActivityCodes.RESULT_OK);
     }

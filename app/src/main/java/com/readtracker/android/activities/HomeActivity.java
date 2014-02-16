@@ -1,6 +1,5 @@
 package com.readtracker.android.activities;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -14,68 +13,131 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewStub;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.j256.ormlite.dao.Dao;
-import com.readtracker.android.ReadTrackerApp;
 import com.readtracker.android.IntentKeys;
 import com.readtracker.android.R;
-import com.readtracker.android.SettingsKeys;
-import com.readtracker.android.db.LocalReading;
-import com.readtracker.android.db.LocalSession;
+import com.readtracker.android.ReadTrackerApp;
+import com.readtracker.android.db.Book;
+import com.readtracker.android.db.DatabaseManager;
 import com.readtracker.android.fragments.HomeFragmentAdapter;
-import com.readtracker.android.interfaces.LocalReadingInteractionListener;
+import com.squareup.otto.Bus;
+import com.squareup.otto.Produce;
 
-import java.sql.SQLException;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 
-public class HomeActivity extends BaseActivity implements LocalReadingInteractionListener {
-  private static ViewPager mPagerHomeActivity;
+public class HomeActivity extends BaseActivity {
+  private static final int REQUEST_READING_SESSION = 1;
 
-  // A list of all the reading for the current user
-  private ArrayList<LocalReading> mLocalReadings = new ArrayList<LocalReading>();
+  // List of books loaded from the database
+  private List<Book> mBooks = new ArrayList<Book>();
 
-  // Cache lookup of readings by ID
-  @SuppressLint("UseSparseArrays")
-  private HashMap<Integer, LocalReading> mLocalReadingMap = new HashMap<Integer, LocalReading>();
+  private ViewPager mViewPager;
+  HomeFragmentAdapter mFragmentAdapter;
 
-  // Fragment adapter that manages the reading list fragments
-  HomeFragmentAdapter mHomeFragmentAdapter;
+  private Bus mBus;
+  private BookLoadTask mBookLoadTask;
 
-  // Sort readings by freshness
-  private Comparator<LocalReading> mLocalReadingComparator = new Comparator<LocalReading>() {
-    @Override
-    public int compare(LocalReading localReadingA, LocalReading localReadingB) {
-      return localReadingB.getLastReadAt().compareTo(localReadingA.getLastReadAt());
-    }
-  };
-
-  @Override
-  public void onCreate(Bundle savedInstanceState) {
+  @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
-    final boolean cameFromSignIn = getIntent().getBooleanExtra(IntentKeys.SIGNED_IN, false);
-    Log.d(TAG, "Came from sign in? " + (cameFromSignIn ? "YES" : "NO"));
+    mBus = ReadTrackerApp.from(this).getBus();
+
+    requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
     setContentView(R.layout.activity_home);
 
     // Show welcome screen for first time users
-    if (getApp().getFirstTimeFlag()) {
+    if(getApp().getFirstTimeFlag()) {
       Log.d(TAG, "First time opening the app, showing introduction.");
       showIntroduction();
     }
 
-    bindViews();
-
-    PagerTabStrip pagerTabStrip = (PagerTabStrip) findViewById(R.id.pagerTabStrip);
+    PagerTabStrip pagerTabStrip = (PagerTabStrip) findViewById(R.id.pager_tab_strip);
     pagerTabStrip.setTabIndicatorColor(getResources().getColor(R.color.base_color));
+
+    mViewPager = (ViewPager) findViewById(R.id.book_list_pager);
+
+    resetFragmentAdapter();
+    mViewPager.setCurrentItem(mFragmentAdapter.getDefaultPage());
+
+    loadBooks();
   }
 
+  @Override protected void onResume() {
+    super.onResume();
+    mBus.register(this);
+  }
+
+  @Override protected void onPause() {
+    super.onPause();
+    mBus.unregister(this);
+  }
+
+  @Produce public BooksLoadedEvent produceBooksLoadedEvent() {
+    return new BooksLoadedEvent(mBooks);
+  }
+
+//  @Subscribe public void onBookClickedEvent(BookClickedEvent event) {
+//    exitToBookActivity(event.getBook().getId());
+//  }
+
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    MenuInflater inflater = getMenuInflater();
+    inflater.inflate(R.menu.home, menu);
+    return true;
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    int clickedId = item.getItemId();
+
+    if(clickedId == R.id.settings_menu) {
+      exitToSettings();
+    } else if(clickedId == R.id.add_book_menu) {
+      exitToBookSearch();
+    } else {
+      return false;
+    }
+
+    return true;
+  }
+
+  @Override
+  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    final boolean shouldReload = (
+      requestCode == REQUEST_READING_SESSION && resultCode == RESULT_OK
+    );
+    final boolean needReloadDueToAddedBook = requestCode == ActivityCodes.REQUEST_ADD_BOOK;
+
+    // Handle coming back from settings
+    if(requestCode == ActivityCodes.SETTINGS) {
+      // Reset the adapter to refresh views if the user toggled compact mode
+      resetFragmentAdapter();
+      loadBooks();
+    } else if(shouldReload || needReloadDueToAddedBook) {
+      // Push new changes and reload local lists
+      loadBooks();
+    }
+  }
+
+  @Override
+  public boolean onSearchRequested() {
+    exitToBookSearch();
+    return true;
+  }
+
+  private void resetFragmentAdapter() {
+    mFragmentAdapter = new HomeFragmentAdapter(this, getAppSettings().hasCompactFinishedList());
+    mViewPager.setAdapter(mFragmentAdapter);
+  }
+
+  /** Show introduction for new users. */
   private void showIntroduction() {
     ViewStub stub = (ViewStub) findViewById(R.id.introduction_stub);
     final View root = stub.inflate();
@@ -93,168 +155,6 @@ public class HomeActivity extends BaseActivity implements LocalReadingInteractio
     });
   }
 
-  @Override
-  protected void onSaveInstanceState(Bundle outState) {
-    outState.putParcelableArrayList(IntentKeys.LOCAL_READINGS, mLocalReadings);
-    outState.putBoolean(IntentKeys.SKIP_FULL_SYNC, true);
-  }
-
-  @Override
-  protected void onPostCreate(Bundle savedInstanceState) {
-    super.onPostCreate(savedInstanceState);
-    Log.d(TAG, "onPostCreate ReadingList");
-
-    initializeFragmentAdapter();
-    mPagerHomeActivity.setAdapter(mHomeFragmentAdapter);
-    mPagerHomeActivity.setCurrentItem(mHomeFragmentAdapter.getDefaultPage());
-
-    // This is in onPostCreate instead of onCreate to avoid issues with un-dismissible dialogs
-    // (as suggested at: http://stackoverflow.com/questions/891451/android-dialog-does-not-dismiss-the-dialog)
-
-    if (savedInstanceState != null) {
-      Log.d(TAG, "Restoring reading list from saved state");
-      List<LocalReading> frozenReadings = savedInstanceState.getParcelableArrayList(IntentKeys.LOCAL_READINGS);
-      resetLocalReadingList(frozenReadings);
-      refreshLocalReadingLists();
-    } else {
-      fetchLocalReadings();
-    }
-  }
-
-  @Override
-  public boolean onCreateOptionsMenu(Menu menu) {
-    MenuInflater inflater = getMenuInflater();
-    inflater.inflate(R.menu.home, menu);
-    return true;
-  }
-
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-    int clickedId = item.getItemId();
-
-    if (clickedId == R.id.settings_menu) {
-      exitToSettings();
-    } else if (clickedId == R.id.add_book_menu) {
-      exitToBookSearch();
-    } else {
-      return false;
-    }
-
-    return true;
-  }
-
-  @Override
-  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    final boolean needReloadDueToReadingSession = (
-      requestCode == ActivityCodes.REQUEST_READING_SESSION &&
-        resultCode == ActivityCodes.RESULT_LOCAL_READING_UPDATED
-    );
-    final boolean needReloadDueToAddedBook = requestCode == ActivityCodes.REQUEST_ADD_BOOK;
-
-    // Handle coming back from settings
-    if (requestCode == ActivityCodes.SETTINGS) {
-      // Reset the adapter to refresh views if the user toggled compact mode
-      initializeFragmentAdapter();
-      mPagerHomeActivity.setAdapter(mHomeFragmentAdapter);
-      refreshLocalReadingLists();
-    } else if (needReloadDueToReadingSession || needReloadDueToAddedBook) {
-      // Push new changes and reload local lists
-      fetchLocalReadings();
-    }
-  }
-
-  @Override
-  public boolean onSearchRequested() {
-    startActivityForResult(new Intent(this, BookSearchActivity.class), ActivityCodes.REQUEST_ADD_BOOK);
-    return true;
-  }
-
-  private void bindViews() {
-    mPagerHomeActivity = (ViewPager) findViewById(R.id.pagerHomeActivity);
-  }
-
-  private void initializeFragmentAdapter() {
-    boolean compactMode = ReadTrackerApp.getApplicationPreferences().getBoolean(SettingsKeys.SETTINGS_COMPACT_FINISH_LIST, false);
-    mHomeFragmentAdapter = new HomeFragmentAdapter(getSupportFragmentManager(), compactMode);
-  }
-
-  /**
-   * Callback from clicking a local readings in one of the fragment lists.
-   *
-   * @param localReading clicked local reading
-   */
-  @Override
-  public void onLocalReadingClicked(LocalReading localReading) {
-    exitToBookActivity(localReading.id);
-  }
-
-  /**
-   * Provides access to the current list of local readings
-   *
-   * @return the list of local readings for the current user
-   */
-  public ArrayList<LocalReading> getLocalReadings() {
-    return mLocalReadings;
-  }
-
-  /**
-   * Add a local reading the lists. Handles duplication of readings.
-   *
-   * @param localReading LocalReading to add
-   */
-  private void addLocalReading(LocalReading localReading) {
-    Log.v(TAG, String.format("addLocalReading(%s)", localReading.toString()));
-
-    removeLocalReadingIfExists(localReading.id, false);
-    mLocalReadings.add(localReading);
-    mLocalReadingMap.put(localReading.id, localReading);
-  }
-
-  /**
-   * Removes a local reading from the lists.
-   */
-  private void removeLocalReadingIfExists(int localReadingId, boolean shouldRefreshLists) {
-    Log.v(TAG, String.format("removeLocalReadingIfExists(%d)", localReadingId));
-
-    if (mLocalReadingMap.containsKey(localReadingId)) {
-      Log.v(TAG, String.format("Removing reading with id: %d", localReadingId));
-      mLocalReadings.remove(mLocalReadingMap.get(localReadingId));
-      mLocalReadingMap.remove(localReadingId);
-    } else {
-      Log.v(TAG, String.format("Reading with id: %d not in list.", localReadingId));
-    }
-
-    if (shouldRefreshLists) {
-      refreshLocalReadingLists();
-    }
-  }
-
-  /**
-   * Clear the managed list of local readings and add all of the provided
-   * readings. Handles duplicates.
-   *
-   * @param localReadings List of local readings to use (can be null).
-   */
-  private void resetLocalReadingList(List<LocalReading> localReadings) {
-    mLocalReadings.clear();
-    mLocalReadingMap.clear();
-    if (localReadings != null && localReadings.size() > 0) {
-      for (LocalReading localReading : localReadings) {
-        addLocalReading(localReading);
-      }
-    }
-  }
-
-  /**
-   * Reload the local readings and tell lists to update themselves.
-   */
-  private void refreshLocalReadingLists() {
-    Collections.sort(mLocalReadings, mLocalReadingComparator);
-    mHomeFragmentAdapter.notifyDataSetChanged();
-  }
-
-  // Private
-
   private void exitToBookSearch() {
     startActivityForResult(new Intent(this, BookSearchActivity.class), ActivityCodes.REQUEST_ADD_BOOK);
   }
@@ -264,81 +164,73 @@ public class HomeActivity extends BaseActivity implements LocalReadingInteractio
     startActivityForResult(intentSettings, ActivityCodes.SETTINGS);
   }
 
-  private void exitToBookActivity(int localReadingId) {
+  private void exitToBookActivity(long localReadingId) {
     Intent intentReadingSession = new Intent(this, BookActivity.class);
-    intentReadingSession.putExtra(IntentKeys.READING_ID, localReadingId);
+    intentReadingSession.putExtra(IntentKeys.BOOK_ID, localReadingId);
 
     startActivityForResult(intentReadingSession, ActivityCodes.REQUEST_READING_SESSION);
   }
 
-  private void fetchLocalReadings() {
-    Log.v(TAG, "fetchLocalReadings()");
-    getApp().showProgressDialog(this, "Reloading books...");
-    (new RefreshBookListTask()).execute();
+  private void loadBooks() {
+    if(mBookLoadTask != null) {
+      Log.d(TAG, "Task already running, ignoring");
+      return;
+    }
+
+    getSupportActionBar().setSubtitle(R.string.home_loading_books);
+    setProgressBarIndeterminateVisibility(Boolean.TRUE);
+
+    mBookLoadTask = new BookLoadTask(this);
+    mBookLoadTask.execute();
   }
 
-  private void onFetchedReadings(List<LocalReading> localReadings) {
-    Log.v(TAG, "onFetchedReadings()");
-    Log.d(TAG, "Listing " + localReadings.size() + " existing readings");
+  private void onBooksLoaded(List<Book> books) {
+    mBookLoadTask = null;
+    mBus.post(new BooksLoadedEvent(books));
 
-    resetLocalReadingList(localReadings);
-    refreshLocalReadingLists();
-
-    getApp().clearProgressDialog();
+    getSupportActionBar().setSubtitle(null);
+    setProgressBarIndeterminateVisibility(Boolean.FALSE);
   }
 
-  /**
-   * Reloads readings for a given user
-   */
-  class RefreshBookListTask extends AsyncTask<Void, Void, List<LocalReading>> {
+  /** Load all Book models from the database. */
+  private static class BookLoadTask extends AsyncTask<Void, Void, List<Book>> {
+    private final WeakReference<HomeActivity> mActivity;
+    private final DatabaseManager mDatabaseManager;
 
-    @Override
-    protected List<LocalReading> doInBackground(Void... ignored) {
-      return loadLocalReadings();
+    public BookLoadTask(HomeActivity activity) {
+      mActivity = new WeakReference<HomeActivity>(activity);
+      mDatabaseManager = ReadTrackerApp.from(activity).getDatabaseManager();
     }
 
     @Override
-    protected void onPostExecute(List<LocalReading> localReadings) {
-      onFetchedReadings(localReadings);
+    protected List<Book> doInBackground(Void... ignored) {
+      List<Book> books = mDatabaseManager.getAll(Book.class);
+      for(Book book : books) {
+        // Need the sessions to display segmented progress bars
+        book.loadSessions(mDatabaseManager);
+      }
+      return books;
     }
 
-    private List<LocalReading> loadLocalReadings() {
-      try {
-        Dao<LocalReading, Integer> readingDao = ReadTrackerApp.getReadingDao();
-        Dao<LocalSession, Integer> sessionDao = ReadTrackerApp.getLocalSessionDao();
-
-        ArrayList<LocalReading> localReadings = fetchLocalReadings(readingDao);
-        return readingsWithPopulateSessionSegments(localReadings, sessionDao);
-      } catch (SQLException e) {
-        Log.d(TAG, "Failed to get list of existing readings", e);
-        return new ArrayList<LocalReading>();
+    @Override
+    protected void onPostExecute(List<Book> books) {
+      HomeActivity activity = mActivity.get();
+      if(activity != null && !activity.isFinishing()) {
+        activity.onBooksLoaded(books);
       }
     }
+  }
 
-    private ArrayList<LocalReading> fetchLocalReadings(Dao<LocalReading, Integer> dao) throws SQLException {
-      return (ArrayList<LocalReading>) dao.queryBuilder()
-        .where().eq(LocalReading.DELETED_BY_USER_FIELD_NAME, false)
-        .query();
+  /** Emitted when the HomeActivity has finished loading books from the database. */
+  public static class BooksLoadedEvent {
+    private final List<Book> mBooks;
+
+    public BooksLoadedEvent(List<Book> books) {
+      mBooks = books;
     }
 
-    /**
-     * Load all reading sessions for each of the given local readings, and use them to set the progress stops array on
-     * the reading.
-     *
-     * @param localReadings List of local readings to set progress stops for
-     * @param sessionsDao   DAO from which to load sessions
-     * @return the given local readings, with progress stops populated
-     * @throws java.sql.SQLException
-     */
-    private List<LocalReading> readingsWithPopulateSessionSegments(ArrayList<LocalReading> localReadings, Dao<LocalSession, Integer> sessionsDao) throws SQLException {
-      for (LocalReading localReading : localReadings) {
-        List<LocalSession> sessions = sessionsDao.queryBuilder()
-          .where().eq(LocalSession.READING_ID_FIELD_NAME, localReading.id)
-          .query();
-        Log.d(TAG, "Got " + sessions.size() + " sessions for " + localReading.toString());
-        localReading.setProgressStops(sessions);
-      }
-      return localReadings;
+    public List<Book> getBooks() {
+      return mBooks;
     }
   }
 }

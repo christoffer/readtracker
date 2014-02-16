@@ -10,6 +10,7 @@ import android.util.TypedValue;
 import android.widget.Toast;
 
 import com.readtracker.android.ReadTrackerApp;
+import com.readtracker.android.support.ApplicationSettingsHelper;
 
 /** Base activity */
 public class BaseActivity extends ActionBarActivity {
@@ -19,14 +20,19 @@ public class BaseActivity extends ActionBarActivity {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    mApplication = (ReadTrackerApp) getApplication();
+    mApplication = ReadTrackerApp.from(this);
     requestWindowFeatures();
 
     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
   }
 
-  public final ReadTrackerApp getApp() {
+  protected ReadTrackerApp getApp() {
     return mApplication;
+  }
+
+  /** Returns the current application settings. */
+  protected ApplicationSettingsHelper getAppSettings() {
+    return getApp().getAppSettings();
   }
 
   /**

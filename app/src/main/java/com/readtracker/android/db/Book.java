@@ -9,7 +9,7 @@ import com.j256.ormlite.table.DatabaseTable;
  */
 @DatabaseTable(tableName = "books")
 public class Book extends Model {
-  public static enum State { Uknown, Finshed, Reading}
+  public static enum State { Uknown, Finished, Reading}
 
   @DatabaseField(columnName = "title") private String mTitle;
   @DatabaseField(columnName = "author") private String mAuthor;
@@ -21,7 +21,11 @@ public class Book extends Model {
   @DatabaseField(columnName = "first_position_at") private Long mFirstPositionAt;
   @DatabaseField(columnName = "closing_remark") private String mClosingRemark;
 
-  public Book() {
+  public Book() { }
+
+  /** Load all sessions for this book from the database. */
+  public void loadSessions(DatabaseManager databaseManager) {
+    // TODO
   }
 
   public String getTitle() { return mTitle; }

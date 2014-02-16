@@ -40,6 +40,10 @@
   <string name="home_menu_add">Add</string>
   <string name="home_menu_add_book">Add book</string>
 
+  <string name="home_loading_books">Loading books…</string>
+  <string name="home_fragment_title_finished">Finished</string>
+  <string name="home_fragment_title_reading">Reading</string>
+
   <string name="welcome_start_using">Start using ReadTracker</string>
   <string name="welcome_welcome_to_readtracker">Welcome to ReadTracker!</string>
 
@@ -115,6 +119,4 @@ Sorry about that.</string>
   <string name="reading_list_blank">No books</string>
   <string name="sessions_blank_text">No reading history to display</string>
   <string name="reading_item_cover_content_desc">Book cover</string>
-
-
 </resources>

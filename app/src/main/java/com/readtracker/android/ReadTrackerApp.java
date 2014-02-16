@@ -7,20 +7,20 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.j256.ormlite.dao.Dao;
-import com.readtracker.android.db.Book;
 import com.readtracker.android.db.DatabaseHelper;
+import com.readtracker.android.db.DatabaseManager;
 import com.readtracker.android.db.LocalHighlight;
 import com.readtracker.android.db.LocalReading;
 import com.readtracker.android.db.LocalSession;
-import com.readtracker.android.db.Quote;
-import com.readtracker.android.db.Session;
+import com.readtracker.android.support.ApplicationSettingsHelper;
+import com.squareup.otto.Bus;
 
 import java.sql.SQLException;
 
 public class ReadTrackerApp extends Application {
   private static final String TAG = ReadTrackerApp.class.getName();
 
-  public static final String PREF_FILE_NAME = "ReadTrackerPrefFile";
+  public static final String PREFERENCES_FILE_NAME = "ReadTrackerPrefFile";
 
   // Keys for saving information in Settings
   public static final String KEY_FIRST_TIME = "first-time";
@@ -41,12 +41,27 @@ public class ReadTrackerApp extends Application {
   // Flag for first time usage of ReadTracker
   private boolean mFirstTimeFlag;
 
+  private Bus mBus;
+
+  // Convenient access to app settings
+  private ApplicationSettingsHelper mAppSettingsHelper;
+  private DatabaseManager mDatabaseManager;
+
   public ReadTrackerApp() {
+
+  }
+
   /** Gets the application class from a Context. */
   public static ReadTrackerApp from(Context context) {
     return (ReadTrackerApp) context.getApplicationContext();
   }
 
+  /** Get access to the shared event bus. */
+  public Bus getBus() {
+    if(mBus == null) {
+      mBus = new Bus();
+    }
+    return mBus;
   }
 
   @Override
@@ -118,10 +133,10 @@ public class ReadTrackerApp extends Application {
   }
 
   public void clearProgressDialog() {
-    if (mProgressDialog != null) {
+    if(mProgressDialog != null) {
       try {
         mProgressDialog.dismiss();
-      } catch (IllegalArgumentException ignored) {
+      } catch(IllegalArgumentException ignored) {
         // We sometimes end up here if the activity that started the progress dialog is no longer
         // attached to the view manager.
       }
@@ -130,17 +145,9 @@ public class ReadTrackerApp extends Application {
   }
 
   private static void assertInstance() {
-    if (mInstance == null) {
+    if(mInstance == null) {
       throw new RuntimeException("Application ReadTracker has not been initialized");
     }
-  }
-
-  public static Dao<Quote, Integer> getQuoteDao() throws SQLException {
-    return mInstance.getDatabaseHelper().getQuoteDao();
-  }
-
-  public static Dao<Session, Integer> getSessionDao() throws SQLException {
-    return mInstance.getDatabaseHelper().getSessionDao();
   }
 
   public static Dao<LocalReading, Integer> getReadingDao() throws SQLException {
@@ -156,5 +163,12 @@ public class ReadTrackerApp extends Application {
   public static Dao<LocalHighlight, Integer> getHighlightDao() throws SQLException {
     assertInstance();
     return mInstance.getDatabaseHelper().getHighlightDao();
+  }
+
+  public ApplicationSettingsHelper getAppSettings() {
+    if(mAppSettingsHelper == null) {
+      mAppSettingsHelper = new ApplicationSettingsHelper(getSharedPreferences(PREFERENCES_FILE_NAME, MODE_PRIVATE));
+    }
+    return mAppSettingsHelper;
   }
 }

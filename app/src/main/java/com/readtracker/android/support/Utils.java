@@ -197,10 +197,15 @@ public class Utils {
     return "at night";
   }
 
+  public static String humanPastDate(long unixEpoc) {
+    return humanPastDate(new Date(unixEpoc * 1000));
+  }
+
   public static String humanPastDate(Date pastDate) {
     return humanPastDate(new Date(), pastDate);
   }
 
+  // TODO internationalize
   public static String humanPastDate(Date now, Date then) {
     if(then.after(now)) {
       return "";

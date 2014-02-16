@@ -34,7 +34,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     new HashMap<Class<? extends Model>, Dao<? extends Model, Integer>>();
 
   /** Cached lookup of DAOs by class. */
-  private <T extends Model> Dao<T, Integer> getDaoByClass(Class<T> modelClass) {
+  <T extends Model> Dao<T, Integer> getDaoByClass(Class<T> modelClass) {
     try {
       return getDao(modelClass);
     } catch(SQLException e) {

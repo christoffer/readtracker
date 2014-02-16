@@ -1,38 +1,36 @@
 package com.readtracker.android.fragments;
 
+import android.content.res.Resources;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.util.Log;
-import android.view.ViewGroup;
 
 import com.readtracker.android.R;
-import com.readtracker.android.adapters.LocalReadingAdapter;
+import com.readtracker.android.activities.BaseActivity;
+import com.readtracker.android.db.Book;
 
 /**
  * Managers a set of local readings and partitions them into two states:
  * finished and active.
  */
-public class HomeFragmentAdapter extends FragmentStatePagerAdapter {
-  private static final String TAG = HomeFragmentAdapter.class.getName();
-ap
-  // Total number of pages in the adapter (affects getCount() and the fragment
-  // cache array size)
+public class HomeFragmentAdapter extends FragmentPagerAdapter {
+  private static final String TAG = HomeFragmentAdapter.class.getSimpleName();
+
+  // Number of pages total
   private static final int NUM_PAGES = 2;
 
   // Page indexes
   private static final int FRAGMENT_FINISHED = 0;
   private static final int FRAGMENT_ACTIVE = 1;
+  private final Resources mResources;
 
-  // Keep references to current fragments to allow updating them when the
-  // list of local readings changes
-  private ReadingListFragment[] fragments = new ReadingListFragment[NUM_PAGES];
+  // Flag to use compact mode for the finished reading list
+  private boolean mUseCompactFinishList = false;
 
-  private boolean mCompactMode = false;
-
-  public HomeFragmentAdapter(FragmentManager fragmentManager, boolean compactMode) {
-    super(fragmentManager);
-    mCompactMode = compactMode;
+  public HomeFragmentAdapter(BaseActivity activity, boolean useCompactFinishList) {
+    super(activity.getSupportFragmentManager());
+    mResources = activity.getResources();
+    mUseCompactFinishList = useCompactFinishList;
   }
 
   @Override public int getCount() { return NUM_PAGES; }
@@ -40,60 +38,30 @@ ap
   @Override public CharSequence getPageTitle(int position) {
     switch(position) {
       case FRAGMENT_FINISHED:
-        return "Finished";
+        return mResources.getString(R.string.home_fragment_title_finished);
       case FRAGMENT_ACTIVE:
-        return "Reading";
+        return mResources.getString(R.string.home_fragment_title_reading);
       default:
         return "";
     }
   }
 
   @Override public Fragment getItem(int position) {
-    ReadingListFragment fragment = null;
-
     if(position == FRAGMENT_FINISHED) {
-      if(mCompactMode) {
-        fragment = ReadingListFragment.newInstance(R.layout.local_reading_item_finished_compact, LocalReadingAdapter.FILTER_INACTIVE);
+      if(mUseCompactFinishList) {
+        return BookListFragment.newInstance(R.layout.finished_book_item_compact, Book.State.Finished);
       } else {
-        fragment = ReadingListFragment.newInstance(R.layout.local_reading_item_finished, LocalReadingAdapter.FILTER_INACTIVE);
+        return BookListFragment.newInstance(R.layout.finished_book_item, Book.State.Finished);
       }
     } else if(position == FRAGMENT_ACTIVE) {
-      fragment = ReadingListFragment.newInstance(R.layout.local_reading_item_active, LocalReadingAdapter.FILTER_ACTIVE);
+      return BookListFragment.newInstance(R.layout.local_reading_item_active, Book.State.Reading);
     }
 
-    // Keep a reference to the active fragment around so we can update it later
-    if(fragment != null) {
-      fragments[position] = fragment;
-      return fragment;
-    }
-
+    Log.w(TAG, "Could not figure out what fragment to return. Returning null.");
     return null;
   }
 
-  @Override
-  public void destroyItem(ViewGroup container, int position, Object object) {
-    super.destroyItem(container, position, object);
-    fragments[position] = null;
-  }
-
-  @Override
-  public void notifyDataSetChanged() {
-    Log.v(TAG, "onNotifyDataSetChanged()");
-    super.notifyDataSetChanged();
-
-    // Tell all children that there's new data in the parent
-    for(int i = 0; i < NUM_PAGES; i++) {
-      if(fragments[i] != null) {
-        fragments[i].notifyDataSetChanged();
-      }
-    }
-  }
-
-  /**
-   * Gets the default page to show in a view pager
-   *
-   * @return the default page
-   */
+  /** Returns the default page to show for this adapter. */
   public int getDefaultPage() {
     return FRAGMENT_ACTIVE;
   }
