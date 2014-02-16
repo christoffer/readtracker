@@ -343,7 +343,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
       "(id, title, author, cover_url, number_pages, state, last_position, last_opened_at, first_position_at, closing_remark) " +
       "SELECT " +
       "id, title, author, coverURL, case(measure_in_percent) when 1 then null else case totalPages when 0 then null else totalPages end end, " +
-      "case rm_state when 1 then 'Unknown' when 2 then 'Reading' when 3 then 'Finished' when 4 then 'Finished' end, ifnull(1.0 * currentPage / totalPages , null), " +
+      "case rm_state when 2 then 'Reading' when 3 then 'Finished' when 4 then 'Finished' else 'Unknown' end, ifnull(1.0 * currentPage / totalPages , null), " +
       "lastReadAt, started_at, rm_closing_remark " +
       "FROM localreading;";
     db.execSQL(query);
