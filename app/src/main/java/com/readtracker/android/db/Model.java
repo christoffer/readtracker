@@ -7,9 +7,9 @@ import com.j256.ormlite.field.DatabaseField;
  */
 abstract public class Model {
   @DatabaseField(generatedId = true, columnName = Columns.ID, canBeNull = false, unique = true)
-  long mId;
+  int mId;
 
-  public long getId() {
+  public int getId() {
     return mId;
   }
 
