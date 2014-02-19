@@ -35,8 +35,15 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
   /** Cached lookup of DAOs by class. */
   <T extends Model> Dao<T, Integer> getDaoByClass(Class<T> modelClass) {
+    if(mDaoCache.containsKey(modelClass)) {
+      //noinspection unchecked
+      return (Dao<T, Integer>) mDaoCache.get(modelClass);
+    }
+
     try {
-      return getDao(modelClass);
+      Dao<T, Integer> dao = getDao(modelClass);
+      mDaoCache.put(modelClass, dao);
+      return dao;
     } catch(SQLException e) {
       throw new RuntimeException("Failed to get DAO for class: " + modelClass, e);
     }
