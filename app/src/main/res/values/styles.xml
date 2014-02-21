@@ -215,7 +215,7 @@
     <item name="android:scaleType">fitXY</item>
   </style>
 
-  <style name="pager_title">
+  <style name="pager_tab_strip">
     <item name="android:layout_width">wrap_content</item>
     <item name="android:layout_height">wrap_content</item>
     <item name="android:layout_gravity">top</item>

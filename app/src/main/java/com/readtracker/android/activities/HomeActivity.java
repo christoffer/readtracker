@@ -112,6 +112,8 @@ public class HomeActivity extends BaseActivity {
 
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+    // TODO we should be smarter here and just reload the one book that was changed
     final boolean shouldReload = (
       requestCode == REQUEST_READING_SESSION && resultCode == RESULT_OK
     );
@@ -166,11 +168,11 @@ public class HomeActivity extends BaseActivity {
     startActivityForResult(intentSettings, ActivityCodes.SETTINGS);
   }
 
-  private void exitToBookActivity(long localReadingId) {
-    Intent intentReadingSession = new Intent(this, BookActivity.class);
-    intentReadingSession.putExtra(IntentKeys.BOOK_ID, localReadingId);
+  private void exitToBookActivity(int bookId) {
+    Intent bookActivity = new Intent(this, BookActivity.class);
+    bookActivity.putExtra(BookActivity.KEY_BOOK_ID, bookId);
 
-    startActivityForResult(intentReadingSession, ActivityCodes.REQUEST_READING_SESSION);
+    startActivityForResult(bookActivity, ActivityCodes.REQUEST_READING_SESSION);
   }
 
   private void loadBooks() {

@@ -13,6 +13,16 @@ public class DatabaseManager {
     db = databaseHelper;
   }
 
+  /** Returns the single model of a class with the id. */
+  public <T extends Model> T get(Class<T> modelClass, int id) {
+    Dao<T, Integer> dao = db.getDaoByClass(modelClass);
+    try {
+      return dao.queryForId(id);
+    } catch(SQLException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
   /** Returns all persisted models of a class. */
   public <T extends Model> List<T> getAll(Class<T> modelClass) {
     Dao<T, Integer> dao = db.getDaoByClass(modelClass);
@@ -23,7 +33,7 @@ public class DatabaseManager {
     }
   }
 
-  /** Returns all sessions for the book. */
+  /** Returns all Sessions belonging to the Book. */
   public List<Session> getSessionsForBook(Book book) {
     try {
       return db.getDaoByClass(Session.class).queryBuilder()
@@ -32,5 +42,17 @@ public class DatabaseManager {
     } catch(SQLException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  /** Returns all Quotes belonging to the Book. */
+  public List<Quote> getQuotesForBook(Book book) {
+    try {
+      return db.getDaoByClass(Quote.class).queryBuilder()
+        .where().eq(Quote.Columns.BOOK_ID, book.getId())
+        .query();
+    } catch(SQLException e) {
+      throw new RuntimeException(e);
+    }
+
   }
 }

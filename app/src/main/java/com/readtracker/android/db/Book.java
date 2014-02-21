@@ -24,15 +24,28 @@ public class Book extends Model {
   @DatabaseField(columnName = Columns.FIRST_POSITION_AT) Long mFirstPositionAt;
   @DatabaseField(columnName = Columns.CLOSING_REMARK) String mClosingRemark;
 
-  // Cached list of sessions. Avoid using a foreign collection since we want complete
-  // control over when this is loaded from the database.
+  // Use manual handling of foreign keys here as we want to have complete
+  // control over when and where these are loaded.
   private List<Session> mSessions = new ArrayList<Session>();
+  private List<Quote> mQuotes = new ArrayList<Quote>();
 
   public Book() { }
 
   /** Load all sessions for this book from the database. */
   public void loadSessions(DatabaseManager databaseManager) {
     mSessions = databaseManager.getSessionsForBook(this);
+  }
+
+  public List<Session> getSessions() {
+    return mSessions;
+  }
+
+  public void loadQuotes(DatabaseManager databaseManager) {
+    mQuotes = databaseManager.getQuotesForBook(this);
+  }
+
+  public List<Quote> getQuotes() {
+    return mQuotes;
   }
 
   @Override public boolean equals(Object o) {
@@ -84,10 +97,6 @@ public class Book extends Model {
 
   public void setClosingRemark(String closingRemark) { mClosingRemark = closingRemark; }
 
-  public List<Session> getSessions() {
-    return mSessions;
-  }
-
   public static abstract class Columns extends Model.Columns {
     public static final String TITLE = "title";
     public static final String AUTHOR = "author";
@@ -98,5 +107,29 @@ public class Book extends Model {
     public static final String LAST_OPENED_AT = "last_opened_at";
     public static final String FIRST_POSITION_AT = "first_position_at";
     public static final String CLOSING_REMARK = "closing_remark";
+  }
+
+  /** Returns the sum of all loaded sessions. */
+  public long calculateSecondsSpent() {
+    long totalDuration = 0;
+
+    for(Session session: mSessions) {
+      totalDuration += session.getDurationSeconds();
+    }
+
+    return totalDuration;
+  }
+
+  /** Returns an estimated time left, based on the progress and time of all loaded sessions. */
+  public int calculateEstimatedSecondsLeft() {
+    if(mState != State.Reading || mCurrentPosition <= 0.0 || mCurrentPosition >= 1.0) {
+      return 0;
+    }
+
+    final long secondsSpent = calculateSecondsSpent();
+    final float secondsPerPosition = secondsSpent / mCurrentPosition; // TODO use start-end for sessions for accuracy
+    final float positionsToRead = 1.0f - mCurrentPosition;
+
+    return (int) (positionsToRead * secondsPerPosition);
   }
 }

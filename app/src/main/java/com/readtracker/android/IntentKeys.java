@@ -1,7 +1,6 @@
 package com.readtracker.android;
 
 public class IntentKeys {
-  public static final String BOOK_ID = "reading-id";
   public static final String SESSION_LENGTH_MS = "session-length";
   public static final String WEB_VIEW_URL = "webview-url";
   public static final String TITLE = "title";

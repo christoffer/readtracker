@@ -4,9 +4,12 @@ package com.readtracker.android.support;
 import android.graphics.Color;
 
 import com.readtracker.android.db.Book;
+import com.readtracker.android.db.Session;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Locale;
 
@@ -101,6 +104,10 @@ public class Utils {
       return String.format("%d %s", number, name); // 1 hour
     }
     return String.format("%d %ss", number, name); // 4 hours
+  }
+
+  public static String longCoarseHumanTimeFromSeconds(long seconds) {
+    return longCoarseHumanTimeFromMillis(seconds * 1000);
   }
 
   public static String longCoarseHumanTimeFromMillis(long durationMillis) {
@@ -272,5 +279,17 @@ public class Utils {
     final String colorKey = book.getTitle() + book.getAuthor();
     float color = 360 * (Math.abs(colorKey.hashCode()) / (float) Integer.MAX_VALUE);
     return Color.HSVToColor(new float[] { color, 0.4f, 0.5f });
+  }
+
+  /** Returns the sessions a sorted stops list for the segmented progress bar. */
+  public static float[] getSessionStops(Collection<Session> sessions) {
+    float[] stops = new float[sessions.size()];
+    int i = 0;
+    for(Session session : sessions) {
+      stops[i++] = session.getEndPosition();
+    }
+
+    Arrays.sort(stops);
+    return stops;
   }
 }

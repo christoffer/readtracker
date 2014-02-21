@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.readtracker.android.R;
 import com.readtracker.android.activities.BookActivity;
+import com.readtracker.android.db.Book;
 import com.readtracker.android.db.LocalHighlight;
 import com.readtracker.android.db.LocalReading;
 import com.readtracker.android.db.LocalSession;
@@ -14,43 +15,26 @@ import com.readtracker.android.support.SessionTimer;
 
 import java.util.ArrayList;
 
-/**
- * Handles the fragments for the book activity
- */
+/** Handles the fragments for the book activity */
 public class BookFragmentAdapter extends FragmentStatePagerAdapter {
   private final Context mContext;
   private boolean mBrowseMode;
 
-  private ReadingFragment mReadingFragmentInstance;
-
-  private LocalReading mLocalReading;
-  private ArrayList<LocalSession> mLocalSessions;
-  private ArrayList<LocalHighlight> mLocalHighlights;
-  private SessionTimer mSessionTimer;
-
-  public BookFragmentAdapter(Context context, FragmentManager fm, BookActivity.LocalReadingBundle bundle) {
+  public BookFragmentAdapter(Context context, FragmentManager fm) {
     super(fm);
     mContext = context;
-    setBundle(bundle);
-  }
-
-  public void setBundle(BookActivity.LocalReadingBundle bundle) {
-    mLocalReading = bundle.localReading;
-    mLocalSessions = bundle.localSessions;
-    mLocalHighlights = bundle.localHighlights;
   }
 
   @Override
   public Fragment getItem(int position) {
     if(position == getSessionsPageIndex()) {
-      return ReadingSessionsFragment.newInstance(mLocalReading, mLocalSessions);
+      return ReadingSessionsFragment.newInstance();
     } else if(position == getReadingPageIndex()) {
       // Keep a reference to the ReadingFragment since we want the ability to
       // interrogate for the current session state
-      mReadingFragmentInstance = (ReadingFragment) ReadingFragment.newInstance(mLocalReading, mSessionTimer);
-      return mReadingFragmentInstance;
+      return ReadingFragment.newInstance();
     } else if(position == getQuotesPageIndex()) {
-      return QuoteFragment.newInstance(mLocalReading, mLocalHighlights);
+      return QuoteFragment.newInstance();
     }
     return null;
   }
@@ -85,26 +69,5 @@ public class BookFragmentAdapter extends FragmentStatePagerAdapter {
 
   public void setBrowserMode(boolean browserMode) {
     mBrowseMode = browserMode;
-  }
-
-  /**
-   * Get the current reading state
-   *
-   * @return the current reading state as a value object or null
-   */
-  public SessionTimer getSessionTimer() {
-    if(mReadingFragmentInstance != null) {
-      return mReadingFragmentInstance.getSessionTimer();
-    }
-    return new SessionTimer(mLocalReading.id);
-  }
-
-  /**
-   * Sets the current reading state
-   *
-   * @param sessionTimer reading state value object to extract state from
-   */
-  public void setReadingState(SessionTimer sessionTimer) {
-    mSessionTimer = sessionTimer;
   }
 }

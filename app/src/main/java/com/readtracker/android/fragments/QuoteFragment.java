@@ -36,9 +36,11 @@ import java.util.List;
 public class QuoteFragment extends Fragment {
   private static final String TAG = QuoteFragment.class.getName();
 
-  private static ListView mListHighlights;
-  private static TextView mTextBlankState;
-  private static Button mButtonAddHighlight;
+  private ListView mListHighlights;
+  private TextView mTextBlankState;
+  private Button mButtonAddHighlight;
+
+  private View mRootView;
 
   private LocalReading mLocalReading;
   private ArrayList<LocalHighlight> mLocalHighlights;
@@ -48,13 +50,9 @@ public class QuoteFragment extends Fragment {
 
   private static final int MENU_DELETE_HIGHLIGHT = 1;
 
-  public static Fragment newInstance(LocalReading localReading, ArrayList<LocalHighlight> localHighlights) {
-    Log.d(TAG, "newInstance() called with " + localHighlights.size() + " highlights ");
-    QuoteFragment instance = new QuoteFragment();
-    instance.setLocalReading(localReading);
-    instance.setReadingHighlights(localHighlights);
-    instance.setForceInitialize(true);
-    return instance;
+  public static Fragment newInstance() {
+    Log.v(TAG, "Creating new QuoteFragment instance");
+    return new QuoteFragment();
   }
 
   private void setForceInitialize(boolean forceInitialize) {
@@ -116,6 +114,14 @@ public class QuoteFragment extends Fragment {
       }
     });
 
+    populateFieldsDeferred();
+  }
+
+  private void populateFieldsDeferred() {
+    if(mLocalReading == null || mRootView == null) {
+      return;
+    }
+
     mButtonAddHighlight.setBackgroundDrawable(DrawableGenerator.generateButtonBackground(mLocalReading.getColor()));
 
     List<HighlightItem> highlightItems = itemize(mLocalHighlights);
@@ -140,6 +146,7 @@ public class QuoteFragment extends Fragment {
     registerForContextMenu(mListHighlights);
 
     refreshHighlightBlankState();
+
   }
 
   @Override
@@ -169,6 +176,8 @@ public class QuoteFragment extends Fragment {
     mTextBlankState = (TextView) view.findViewById(R.id.blank_text);
     mListHighlights = (ListView) view.findViewById(R.id.quotes_list);
     mButtonAddHighlight = (Button) view.findViewById(R.id.add_quote_button);
+
+    mRootView = view;
   }
 
   private List<HighlightItem> itemize(List<LocalHighlight> localHighlights) {

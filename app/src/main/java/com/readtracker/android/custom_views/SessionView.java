@@ -14,6 +14,7 @@ import android.view.View;
 
 import com.readtracker.android.R;
 import com.readtracker.android.db.LocalSession;
+import com.readtracker.android.db.Session;
 import com.readtracker.android.support.Utils;
 
 import java.util.Arrays;
@@ -108,11 +109,11 @@ public class SessionView extends View {
    *
    * @param sessions list of sessions to convert
    */
-  public void setSessions(List<LocalSession> sessions) {
+  public void setSessions(List<Session> sessions) {
     mNodes = new Node[sessions.size()];
     int index = 0;
 
-    for(LocalSession session : sessions) {
+    for(Session session : sessions) {
       mNodes[index++] = new Node(session);
     }
 
@@ -237,10 +238,10 @@ public class SessionView extends View {
     public float progress; // 0..1
     public Date occurredAt;
 
-    public Node(LocalSession localSession) {
-      this.durationSeconds = localSession.durationSeconds;
-      this.progress = (float) localSession.progress;
-      this.occurredAt = localSession.occurredAt;
+    public Node(Session session) {
+      this.durationSeconds = session.getDurationSeconds();
+      this.progress = session.getEndPosition();
+      this.occurredAt = new Date(session.getStartedAt());
     }
   }
 

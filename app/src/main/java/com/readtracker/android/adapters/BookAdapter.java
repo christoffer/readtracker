@@ -137,7 +137,7 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
       // Optional fields
       if(segmentedProgressBar != null) {
         segmentedProgressBar.setVisibility(View.VISIBLE);
-        segmentedProgressBar.setStops(getSessionStops(book.getSessions()));
+        segmentedProgressBar.setStops(Utils.getSessionStops(book.getSessions()));
         segmentedProgressBar.setColor(Utils.calculateBookColor(book));
       }
 
@@ -168,18 +168,6 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
           finishedAtText.setVisibility(View.GONE);
         }
       }
-    }
-
-    /** Returns the sessions a sorted stops list for the segmented progres bar. */
-    private float[] getSessionStops(Collection<Session> sessions) {
-      float[] stops = new float[sessions.size()];
-      int i = 0;
-      for(Session session : sessions) {
-        stops[i++] = session.getEndPosition();
-      }
-
-      Arrays.sort(stops);
-      return stops;
     }
 
     // Required fields

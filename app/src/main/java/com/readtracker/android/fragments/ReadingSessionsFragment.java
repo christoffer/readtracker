@@ -10,17 +10,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.readtracker.android.IntentKeys;
 import com.readtracker.android.R;
 import com.readtracker.android.custom_views.SegmentBar;
 import com.readtracker.android.custom_views.SessionView;
-import com.readtracker.android.db.LocalReading;
-import com.readtracker.android.db.LocalSession;
+import com.readtracker.android.db.Book;
+import com.readtracker.android.db.Session;
 import com.readtracker.android.support.Utils;
 
-import java.util.ArrayList;
-
-import static com.readtracker.android.db.LocalReading.ReadingState;
+import java.util.List;
 
 /**
  * Fragment for showing a reading history of a book
@@ -28,8 +25,8 @@ import static com.readtracker.android.db.LocalReading.ReadingState;
 public class ReadingSessionsFragment extends Fragment {
   private static final String TAG = ReadingSessionsFragment.class.getName();
 
-  private LocalReading mLocalReading;
-  private ArrayList<LocalSession> mLocalSessions;
+  private Book mBook;
+  private View mRootView = null;
 
   private static SessionView mSessionView;
   private static SegmentBar mSegmentBar;
@@ -39,34 +36,14 @@ public class ReadingSessionsFragment extends Fragment {
   private static TextView mTextClosingRemark;
   private static TextView mTextTimeLeft;
 
-  // Flag for forcing reinitialization (ignore frozen state)
-  private boolean mForceReInitialize;
-
-  public static Fragment newInstance(LocalReading localReading, ArrayList<LocalSession> localSessions) {
+  public static Fragment newInstance() {
     Log.d(TAG, "newInstance()");
-    ReadingSessionsFragment instance = new ReadingSessionsFragment();
-    instance.setLocalReading(localReading);
-    instance.setReadingSessions(localSessions);
-    instance.setForceReinitialize(true);
-    return instance;
+    return new ReadingSessionsFragment();
   }
 
   @Override
   public void onCreate(Bundle in) {
     super.onCreate(in);
-    if(in != null && !mForceReInitialize) {
-      Log.d(TAG, "unfreezing state");
-      mLocalReading = in.getParcelable(IntentKeys.LOCAL_READING);
-      mLocalSessions = in.getParcelableArrayList(IntentKeys.READING_SESSIONS);
-    }
-  }
-
-  @Override
-  public void onSaveInstanceState(Bundle out) {
-    super.onSaveInstanceState(out);
-    Log.d(TAG, "freezing state");
-    out.putParcelable(IntentKeys.LOCAL_READING, mLocalReading);
-    out.putParcelableArrayList(IntentKeys.READING_SESSIONS, mLocalSessions);
   }
 
   @Override
@@ -74,62 +51,59 @@ public class ReadingSessionsFragment extends Fragment {
     Log.d(TAG, "onCreateView()");
     View view = inflater.inflate(R.layout.fragment_sessions, container, false);
 
-    bindViews(view);
-
-    int color = mLocalReading.getColor();
-
-    mSegmentBar.setColor(color);
-    mSegmentBar.setStops(mLocalReading.getProgressStops());
-
-    if(mLocalSessions != null && mLocalSessions.size() > 0) {
-      mSessionView.setColor(color);
-      mSessionView.setSessions(mLocalSessions);
-
-      presentReadingState(mLocalReading.readmillState, color);
-      presentClosingRemark(mLocalReading.getClosingRemark());
-      presentSummary(mLocalReading.timeSpentMillis, mLocalReading.estimateTimeLeft(), mLocalSessions.size(), mLocalReading.readmillState);
-    } else {
-      view.findViewById(R.id.blank_text).setVisibility(View.VISIBLE);
-      view.findViewById(R.id.scrollView).setVisibility(View.GONE);
-    }
+    setRootView(view);
 
     return view;
   }
 
-  private void setForceReinitialize(boolean forceReinitialize) {
-    mForceReInitialize = forceReinitialize;
+  /** Deferr populating the fields until both the UI and the data is available. */
+  private void populateFieldsDeferred() {
+    if(mBook == null || mRootView == null) {
+      return;
+    }
+
+    final int color = Utils.calculateBookColor(mBook);
+    final List<Session> sessions = mBook.getSessions();
+
+    mSegmentBar.setColor(color);
+    mSegmentBar.setStops(Utils.getSessionStops(sessions));
+
+    if(sessions.size() > 0) {
+      mSessionView.setColor(color);
+      mSessionView.setSessions(sessions);
+
+      populateReadingState(mBook.getState(), color);
+      popluateClosingRemark(mBook.getClosingRemark());
+      populateSummary();
+      populateTimeLeft();
+    } else {
+      mRootView.findViewById(R.id.blank_text).setVisibility(View.VISIBLE);
+      mRootView.findViewById(R.id.scrollView).setVisibility(View.GONE);
+    }
   }
 
-  private void setReadingSessions(ArrayList<LocalSession> localSessions) {
-    mLocalSessions = localSessions;
-  }
-
-  private void setLocalReading(LocalReading localReading) {
-    mLocalReading = localReading;
-  }
-
-  private void bindViews(View view) {
+  private void setRootView(View view) {
     mSessionView = (SessionView) view.findViewById(R.id.sessionView);
     mTextReadingState = (TextView) view.findViewById(R.id.textReadingState);
     mTextClosingRemark = (TextView) view.findViewById(R.id.textClosingRemark);
     mTextSummary = (TextView) view.findViewById(R.id.textSummary);
     mTextTimeLeft = (TextView) view.findViewById(R.id.textTimeLeft);
     mSegmentBar = (SegmentBar) view.findViewById(R.id.segmentBar);
+    mRootView = view;
+
+    populateFieldsDeferred();
   }
 
-  private void presentReadingState(ReadingState readingStateValue, int color) {
-    if(readingStateValue == ReadingState.READING ||
-      readingStateValue == ReadingState.INTERESTING) {
+  private void populateReadingState(Book.State state, int color) {
+    if(state == Book.State.Reading || state == Book.State.Unknown) {
       mTextReadingState.setVisibility(View.GONE);
       return;
     }
 
     String readingState = "";
 
-    if(readingStateValue == ReadingState.FINISHED) {
+    if(state == Book.State.Finished) {
       readingState = "Finished";
-    } else if(readingStateValue == ReadingState.ABANDONED) {
-      readingState = "Abandoned";
     }
 
     final float radius[] = new float[8];
@@ -141,7 +115,7 @@ public class ReadingSessionsFragment extends Fragment {
     mTextReadingState.setText(readingState);
   }
 
-  private void presentClosingRemark(String closingRemark) {
+  private void popluateClosingRemark(String closingRemark) {
     if(closingRemark != null) {
       mTextClosingRemark.setText(closingRemark);
     } else {
@@ -149,21 +123,37 @@ public class ReadingSessionsFragment extends Fragment {
     }
   }
 
-  private void presentSummary(long timeSpentMillis, int estimatedSecondsLeft, int sessionCount, ReadingState readingState) {
-    if(readingState != ReadingState.READING) {
-      final String summary = String.format("%s / %d sessions", Utils.longCoarseHumanTimeFromMillis(timeSpentMillis), sessionCount);
+  private void populateSummary() {
+    final long secondsSpent = mBook.calculateSecondsSpent();
+    final int sessionCount = mBook.getSessions().size();
+
+    if(mBook.getState() == Book.State.Reading) {
+      final String summary = String.format("%s / %d sessions", Utils.longCoarseHumanTimeFromSeconds(secondsSpent), sessionCount);
       mTextSummary.setText(summary);
       mSegmentBar.setVisibility(View.GONE);
-      return;
+    } else {
+      mTextSummary.setTextColor(getResources().getColor(R.color.text_color_primary));
+      final String summary = String.format("Reading for %s over %d sessions.", Utils.longCoarseHumanTimeFromSeconds(secondsSpent), sessionCount);
+      mTextSummary.setText(summary);
+    }
+  }
+
+  private void populateTimeLeft() {
+    final int estimatedSecondsLeft = mBook.calculateEstimatedSecondsLeft();
+    String timeLeft = String.format("You have about %s left of reading, given you keep the same pace", Utils.longCoarseHumanTimeFromSeconds(estimatedSecondsLeft));
+
+    final String pepTalk = getPepTalk(estimatedSecondsLeft);
+    if(pepTalk != null) {
+      timeLeft += ".\n\n" + pepTalk;
     }
 
-    // compensate visually for lacking the capsule that finish and abandon have
-    mTextSummary.setTextColor(getResources().getColor(R.color.text_color_primary));
-    final String summary = String.format("Reading for %s over %d sessions.", Utils.longCoarseHumanTimeFromMillis(timeSpentMillis), sessionCount);
-    mTextSummary.setText(summary);
+    mTextTimeLeft.setText(timeLeft);
+  }
 
+  /** Generate a short, encouraging, phrase on how long the user has to read. */
+  private String getPepTalk(float estimatedSecondsLeft) {
     String pepTalk = null;
-    float hoursLeft = (float) estimatedSecondsLeft / (60.0f * 60.0f);
+    float hoursLeft = estimatedSecondsLeft / (60.0f * 60.0f);
     if(hoursLeft < 1.0f) {
       pepTalk = "Why not finish it today?";
     } else if(hoursLeft < 4.0f) {
@@ -182,13 +172,6 @@ public class ReadingSessionsFragment extends Fragment {
       pepTalk = String.format("That's about %s per day to finish it in two weeks.",
         Utils.longCoarseHumanTimeFromMillis(secondsPerDayForGoal * 1000));
     }
-
-    String timeLeft = String.format("You have about %s left of reading, given you keep the same pace", Utils.longCoarseHumanTimeFromMillis(estimatedSecondsLeft * 1000));
-
-    if(pepTalk != null) {
-      timeLeft += ".\n\n" + pepTalk;
-    }
-
-    mTextTimeLeft.setText(timeLeft);
+    return pepTalk;
   }
 }

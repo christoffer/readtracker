@@ -22,6 +22,8 @@ import java.util.Date;
 public class AddBookActivity extends BaseActivity {
   public static final String TAG = AddBookActivity.class.getName();
 
+  public static final String KEY_BOOK_ID = "BOOK_ID";
+
   private LocalReading mLocalReading;
 
   private static EditText mEditTitle;
@@ -200,10 +202,10 @@ public class AddBookActivity extends BaseActivity {
     Intent readingSessionIntent = new Intent(this, BookActivity.class);
     if (mEditBookMode) {
       Intent data = new Intent();
-      data.putExtra(IntentKeys.BOOK_ID, localReading.id);
+      data.putExtra(KEY_BOOK_ID, localReading.id);
       setResult(ActivityCodes.RESULT_OK, data);
     } else {
-      readingSessionIntent.putExtra(IntentKeys.BOOK_ID, localReading.id);
+      readingSessionIntent.putExtra(KEY_BOOK_ID, localReading.id);
       startActivity(readingSessionIntent);
       setResult(ActivityCodes.RESULT_OK);
     }

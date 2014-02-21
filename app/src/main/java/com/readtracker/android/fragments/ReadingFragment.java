@@ -40,21 +40,24 @@ import com.readtracker.android.thirdparty.widget.adapters.ArrayWheelAdapter;
  */
 public class ReadingFragment extends Fragment {
   private static final String TAG = ReadingFragment.class.getName();
+  private static final String KEY_SESSION_TIMER = "SESSION_TIMER";
+
+  private View mRootView;
 
   // Session controls
-  private static Button mButtonStart;
-  private static Button mButtonPause;
-  private static Button mButtonDone;
+  private Button mButtonStart;
+  private Button mButtonPause;
+  private Button mButtonDone;
 
   // Time tracking
-  private static TextView mTextBillboard;
-  private static TimeSpinner mTimeSpinner;
+  private TextView mTextBillboard;
+  private TimeSpinner mTimeSpinner;
   // Wrap the spinner to apply the pulse animation on pause without
   // disrupting the time spinner animation
-  private static ViewGroup mLayoutTimeSpinnerWrapper;
+  private ViewGroup mLayoutTimeSpinnerWrapper;
 
   // Flipper for showing start vs. stop/done
-  private static SafeViewFlipper mFlipperSessionControl;
+  private SafeViewFlipper mFlipperSessionControl;
 
   // Reading to track
   private LocalReading mLocalReading;
@@ -63,7 +66,7 @@ public class ReadingFragment extends Fragment {
   private SessionTimer mSessionTimer;
   private UpdateDurationTask mUpdateDurationTask;
 
-  private static WheelView mWheelDuration;
+  private WheelView mWheelDuration;
 
   private boolean mIsStarted = false;
 
@@ -72,15 +75,9 @@ public class ReadingFragment extends Fragment {
   private static final int FLIPPER_PAGE_READING_BUTTONS = 1;
 
 
-  public static Fragment newInstance(LocalReading localReading, SessionTimer initialSessionTimer) {
-    Log.d(TAG, "newInstance()");
+  public static Fragment newInstance() {
+    Log.v(TAG, "Creating new instance of ReadingFragment");
     ReadingFragment instance = new ReadingFragment();
-    if(initialSessionTimer == null) {
-      Log.v(TAG, "Initializing with new session timer");
-      initialSessionTimer = new SessionTimer(localReading.id);
-    }
-    instance.setSessionTimer(initialSessionTimer);
-    instance.setLocalReading(localReading);
     return instance;
   }
 
@@ -88,12 +85,8 @@ public class ReadingFragment extends Fragment {
   public void onCreate(Bundle savedInstanceState) {
     Log.v(TAG, "onCreate()");
     super.onCreate(savedInstanceState);
-    mUpdateDurationTask = null;
-    if(savedInstanceState != null) {
-      Log.d(TAG, "unfreeze state");
-      mLocalReading = savedInstanceState.getParcelable(IntentKeys.LOCAL_READING);
-    }
-    setSessionTimer(new SessionTimer(mLocalReading.id));
+    mSessionTimer = new SessionTimer();
+    setSessionTimer(mSessionTimer);
   }
 
   @Override
@@ -108,6 +101,7 @@ public class ReadingFragment extends Fragment {
     super.onPause();
     Log.d(TAG, "onPause()");
 
+    // TODO replace with events
     if(((BookActivity) getActivity()).isManualShutdown()) {
       Log.d(TAG, "Parent Activity is shutting down - don't store state");
     } else {
@@ -123,7 +117,6 @@ public class ReadingFragment extends Fragment {
   @Override
   public void onResume() {
     super.onResume();
-    Log.v(TAG, "onResume()");
 
     Log.d(TAG, "Loading stored timing state");
     SessionTimer storedSessionTimer = SessionTimerStore.load();
@@ -142,14 +135,20 @@ public class ReadingFragment extends Fragment {
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     Log.d(TAG, "onCreateView()");
     View view = inflater.inflate(R.layout.fragment_read, container, false);
+
     bindViews(view);
     bindEvents();
 
     mFlipperSessionControl.setDisplayedChild(FLIPPER_PAGE_START_BUTTON);
 
-    if(mLocalReading == null) { // TODO investigate when this could happen...
-      Log.w(TAG, "Loaded without local reading");
-      return view;
+    populateFieldsDeferred();
+
+    return view;
+  }
+
+  private void populateFieldsDeferred() {
+    if(mLocalReading == null || mRootView == null) {
+      return;
     }
 
     Log.i(TAG, "Loaded with local reading: " + mLocalReading.getInfo());
@@ -170,7 +169,7 @@ public class ReadingFragment extends Fragment {
 
     initializeDurationWheel();
 
-    return view;
+
   }
 
   private void setSessionTimer(SessionTimer sessionTimer) {
@@ -208,6 +207,8 @@ public class ReadingFragment extends Fragment {
     mWheelDuration = (WheelView) view.findViewById(R.id.wheelDuration);
 
     mLayoutTimeSpinnerWrapper = (ViewGroup) view.findViewById(R.id.layoutTimeSpinnerWrapper);
+
+    mRootView = view;
   }
 
   private void bindEvents() {

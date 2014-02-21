@@ -174,7 +174,7 @@ public class AddQuoteActivity extends BookBaseActivity {
     }
 
     Intent resultIntent = new Intent();
-    resultIntent.putExtra(IntentKeys.BOOK_ID, mLocalReading.id);
+    resultIntent.putExtra(AddBookActivity.KEY_BOOK_ID, mLocalReading.id);
     setResult(ActivityCodes.RESULT_OK, resultIntent);
     finish();
   }
