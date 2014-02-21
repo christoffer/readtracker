@@ -32,6 +32,9 @@ public class EndSessionDialog extends DialogFragment {
   private static final int SAVE_BUTTON_PAGE = 0;
   private static final int FINISH_BUTTON_PAGE = 1;
 
+  public static final String ARG_BOOK_ID = "BOOK_ID";
+  public static final String ARG_SESSION_LENGTH_MS = "SESSION_LENGTH";
+
   private static Button mButtonSaveProgress;
   private static Button mButtonFinishBook;
 

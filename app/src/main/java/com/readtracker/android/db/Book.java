@@ -109,6 +109,25 @@ public class Book extends Model {
     public static final String CLOSING_REMARK = "closing_remark";
   }
 
+  /** Returns true if this book has page numbers set. */
+  public boolean hasPageNumbers() {
+    return mNumberPages != null && mNumberPages > 0;
+  }
+
+  /** Returns true if this book has a current position set. */
+  public boolean hasCurrentPosition() {
+    return mCurrentPosition != null && mCurrentPosition > 0.0;
+  }
+
+  /** Returns the page number if the user is reading a book with total pages set. Otherwise returns current position in %. */
+  public String getCurrentPageName() {
+    if(hasPageNumbers() && hasCurrentPosition()) {
+      return String.format("%d", Math.round(mNumberPages * mCurrentPosition));
+    } else {
+      return String.format("%.2f%%", mCurrentPosition * 100);
+    }
+  }
+
   /** Returns the sum of all loaded sessions. */
   public long calculateSecondsSpent() {
     long totalDuration = 0;
@@ -132,4 +151,5 @@ public class Book extends Model {
 
     return (int) (positionsToRead * secondsPerPosition);
   }
+
 }

@@ -19,6 +19,7 @@ import com.readtracker.android.fragments.BookFragmentAdapter;
 import com.readtracker.android.interfaces.EndSessionDialogListener;
 import com.readtracker.android.support.SessionTimer;
 import com.readtracker.android.support.SessionTimerStore;
+import com.squareup.otto.Bus;
 
 import java.lang.ref.WeakReference;
 
@@ -52,9 +53,12 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialogLi
 
   // Currently loaded book
   private Book mBook;
+  private Bus mBus;
 
   public void onCreate(Bundle in) {
     super.onCreate(in);
+
+    mBus = getApp().getBus();
 
     setContentView(R.layout.book_activity);
     mViewPager = (ViewPager) findViewById(R.id.fragment_view_pager);
@@ -102,7 +106,12 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialogLi
         break;
       case REQUEST_BOOK_SETTINGS:
         if(resultCode == ActivityCodes.RESULT_REQUESTED_BOOK_SETTINGS) {
-          exitToBookEditScreen((LocalReading) data.getParcelableExtra(IntentKeys.LOCAL_READING));
+          // TODO Replace this with event
+          if(mBook != null) {
+            exitToBookEditScreen(mBook);
+          } else {
+            Log.w(TAG, "Ignoring request for book settings, book is null");
+          }
         } else if(resultCode == ActivityCodes.RESULT_DELETED_BOOK) {
           shutdownWithResult(RESULT_OK);
         } else if(resultCode == ActivityCodes.RESULT_OK) {
@@ -163,9 +172,11 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialogLi
     mLoadDataTask.execute();
   }
 
+  /** Callback from the async task loading the book (with associated data) from the database. */
   void onBookLoaded(Book book) {
-    Log.d(TAG, "Book loaded: " + book);
+    Log.v(TAG, "Book loaded: " + book);
     mBook = book;
+    mBus.post(new BookLoadedEvent(mBook));
     setupFragments(mBook);
   }
 
@@ -199,7 +210,8 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialogLi
 
   // Private
 
-  public void exitToBookEditScreen(LocalReading localReading) {
+  public void exitToBookEditScreen(Book book) {
+    Log.d(TAG, "Exit to book edit screen for book: " + book);
 //    Log.d(TAG, String.format("Exiting to edit book: %s", localReading.toString()));
 //    Intent intentEditBook = new Intent(this, AddBookActivity.class);
 //    intentEditBook.putExtra(IntentKeys.LOCAL_READING, localReading);

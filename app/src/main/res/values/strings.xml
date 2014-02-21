@@ -83,8 +83,8 @@ Sorry about that.</string>
   <string name="reading_resume">Resume</string>
   <string name="reading_pause">Pause</string>
   <string name="reading_click_to_start">Click to start reading</string>
-  <string name="reading_last_at">Last at %1$d.%2$d%%</string>
-  <string name="reading_last_on">Last on page %1$d</string>
+  <string name="reading_last_at">Last at %1$s</string>
+  <string name="reading_last_on_page">Last on page %1$s</string>
   <string name="reading_adapter_found_via">Found via: %1$s</string>
   <string name="reading_adapter_abandoned">Abandoned</string>
   <string name="reading_adapter_finished">Finished</string>

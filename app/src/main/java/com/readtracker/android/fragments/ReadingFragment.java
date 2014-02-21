@@ -18,13 +18,12 @@ import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.readtracker.android.IntentKeys;
 import com.readtracker.android.R;
 import com.readtracker.android.activities.BookActivity;
 import com.readtracker.android.activities.EndSessionDialog;
 import com.readtracker.android.custom_views.PauseableSpinAnimation;
 import com.readtracker.android.custom_views.TimeSpinner;
-import com.readtracker.android.db.LocalReading;
+import com.readtracker.android.db.Book;
 import com.readtracker.android.interfaces.SessionTimerEventListener;
 import com.readtracker.android.support.DrawableGenerator;
 import com.readtracker.android.support.SessionTimer;
@@ -41,6 +40,8 @@ import com.readtracker.android.thirdparty.widget.adapters.ArrayWheelAdapter;
 public class ReadingFragment extends Fragment {
   private static final String TAG = ReadingFragment.class.getName();
   private static final String KEY_SESSION_TIMER = "SESSION_TIMER";
+
+  private static final String END_SESSION_FRAGMENT_TAG = "end-session-tag";
 
   private View mRootView;
 
@@ -59,8 +60,8 @@ public class ReadingFragment extends Fragment {
   // Flipper for showing start vs. stop/done
   private SafeViewFlipper mFlipperSessionControl;
 
-  // Reading to track
-  private LocalReading mLocalReading;
+  // Book to track reading for
+  private Book mBook;
 
   // Timing
   private SessionTimer mSessionTimer;
@@ -90,13 +91,6 @@ public class ReadingFragment extends Fragment {
   }
 
   @Override
-  public void onSaveInstanceState(Bundle outState) {
-    super.onSaveInstanceState(outState);
-    Log.d(TAG, "freezing state");
-    outState.putParcelable(IntentKeys.LOCAL_READING, mLocalReading);
-  }
-
-  @Override
   public void onPause() {
     super.onPause();
     Log.d(TAG, "onPause()");
@@ -123,9 +117,6 @@ public class ReadingFragment extends Fragment {
 
     if(storedSessionTimer == null) {
       Log.d(TAG, "... Not found");
-    } else if(storedSessionTimer.getLocalReadingId() != mLocalReading.id) {
-      Log.d(TAG, "... Not for this reading");
-    } else {
       setSessionTimer(storedSessionTimer);
       restoreTimingState(storedSessionTimer);
     }
@@ -147,25 +138,27 @@ public class ReadingFragment extends Fragment {
   }
 
   private void populateFieldsDeferred() {
-    if(mLocalReading == null || mRootView == null) {
+    if(mBook == null || mRootView == null) {
       return;
     }
 
-    Log.i(TAG, "Loaded with local reading: " + mLocalReading.getInfo());
+    Log.v(TAG, "Populating fields for book: " + mBook);
 
     // Show the book initialization screen or the read tracker
-    if(mLocalReading.hasPageInfo()) {
+    if(mBook.hasPageNumbers()) {
       setupForTimeTracking();
     } else {
       setupForMissingPages();
     }
 
-    mTimeSpinner.setColor(mLocalReading.getColor());
+    final int bookColor = Utils.calculateBookColor(mBook);
+
+    mTimeSpinner.setColor(bookColor);
     mTimeSpinner.setMaxSize(500);
 
-    mButtonStart.setBackgroundDrawable(DrawableGenerator.generateButtonBackground(mLocalReading.getColor()));
-    mButtonPause.setBackgroundDrawable(DrawableGenerator.generateButtonBackground(mLocalReading.getColor()));
-    mButtonDone.setBackgroundDrawable(DrawableGenerator.generateButtonBackground(mLocalReading.getColor()));
+    mButtonStart.setBackgroundDrawable(DrawableGenerator.generateButtonBackground(bookColor));
+    mButtonPause.setBackgroundDrawable(DrawableGenerator.generateButtonBackground(bookColor));
+    mButtonDone.setBackgroundDrawable(DrawableGenerator.generateButtonBackground(bookColor));
 
     initializeDurationWheel();
 
@@ -188,10 +181,6 @@ public class ReadingFragment extends Fragment {
     });
 
     mSessionTimer = sessionTimer;
-  }
-
-  public void setLocalReading(LocalReading localReading) {
-    mLocalReading = localReading;
   }
 
   private void bindViews(View view) {
@@ -366,7 +355,7 @@ public class ReadingFragment extends Fragment {
     final long totalElapsed = getElapsed();
 
     if(totalElapsed == 0) {
-      describeLastPosition(mLocalReading);
+      describeLastPosition();
       setupStartMode();
     } else {
       updateDuration(totalElapsed);
@@ -386,23 +375,17 @@ public class ReadingFragment extends Fragment {
   /**
    * Updates the text header and summary to show where the user last left off.
    * Handles pages/percent and shows a special text for first session.
-   *
-   * @param localReading The local reading to describe last position off
    */
-  private void describeLastPosition(LocalReading localReading) {
-    boolean isFirstRead = localReading.currentPage == 0;
-
-    if(isFirstRead) {
+  private void describeLastPosition() {
+    if(mBook.hasCurrentPosition()) {
       mTextBillboard.setText(R.string.reading_click_to_start);
       return;
     }
 
-    if(localReading.measureInPercent) {
-      int currentInteger = (int) localReading.currentPage / 10;
-      int currentFraction = (int) localReading.currentPage - currentInteger * 10;
-      mTextBillboard.setText(getString(R.string.reading_last_at, currentInteger, currentFraction));
+    if(mBook.hasPageNumbers()) {
+      mTextBillboard.setText(getString(R.string.reading_last_on_page, mBook.getCurrentPageName()));
     } else {
-      mTextBillboard.setText(getString(R.string.reading_last_on, localReading.currentPage));
+      mTextBillboard.setText(getString(R.string.reading_last_at, mBook.getCurrentPageName()));
     }
   }
 
@@ -420,17 +403,21 @@ public class ReadingFragment extends Fragment {
    */
   private void onClickedStart() {
     // Handle clicking "Edit book"
-    if(!mLocalReading.hasPageInfo()) {
-      ((BookActivity) getActivity()).exitToBookEditScreen(mLocalReading);
+    if(!mBook.hasPageNumbers()) {
+      // TODO Replace with event
+      ((BookActivity) getActivity()).exitToBookEditScreen(mBook);
       return;
     }
 
     final Animation disappear = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_out);
     final Animation appear = AnimationUtils.loadAnimation(getActivity(), R.anim.slide_up_appear);
 
+    //noinspection ConstantConditions
     disappear.setAnimationListener(new Animation.AnimationListener() {
       @Override public void onAnimationStart(Animation animation) { }
+
       @Override public void onAnimationRepeat(Animation animation) { }
+
       @Override public void onAnimationEnd(Animation animation) {
         mSessionTimer.start();
         updateDuration(getElapsed());
@@ -462,12 +449,12 @@ public class ReadingFragment extends Fragment {
     EndSessionDialog dialog = new EndSessionDialog();
 
     Bundle arguments = new Bundle();
-    arguments.putParcelable(IntentKeys.LOCAL_READING, mLocalReading);
-    arguments.putLong(IntentKeys.SESSION_LENGTH_MS, elapsed);
+    arguments.putInt(EndSessionDialog.ARG_BOOK_ID, mBook.getId());
+    arguments.putLong(EndSessionDialog.ARG_SESSION_LENGTH_MS, elapsed);
     dialog.setArguments(arguments);
 
     FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-    dialog.show(fragmentManager, "end-session");
+    dialog.show(fragmentManager, END_SESSION_FRAGMENT_TAG);
   }
 
   /**
