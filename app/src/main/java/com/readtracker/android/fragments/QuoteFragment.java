@@ -33,7 +33,7 @@ import com.readtracker.android.tasks.PersistLocalHighlightTask;
 import java.util.ArrayList;
 import java.util.List;
 
-public class QuoteFragment extends Fragment {
+public class QuoteFragment extends BaseFragment {
   private static final String TAG = QuoteFragment.class.getName();
 
   private ListView mListHighlights;

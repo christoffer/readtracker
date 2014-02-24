@@ -11,18 +11,20 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.readtracker.android.R;
+import com.readtracker.android.activities.BookBaseActivity;
 import com.readtracker.android.custom_views.SegmentBar;
 import com.readtracker.android.custom_views.SessionView;
 import com.readtracker.android.db.Book;
 import com.readtracker.android.db.Session;
 import com.readtracker.android.support.Utils;
+import com.squareup.otto.Subscribe;
 
 import java.util.List;
 
 /**
  * Fragment for showing summary of a book
  */
-public class SummaryFragment extends Fragment {
+public class SummaryFragment extends BaseFragment {
   private static final String TAG = SummaryFragment.class.getName();
 
   private Book mBook;
@@ -37,13 +39,7 @@ public class SummaryFragment extends Fragment {
   private static TextView mTextTimeLeft;
 
   public static Fragment newInstance() {
-    Log.d(TAG, "newInstance()");
     return new SummaryFragment();
-  }
-
-  @Override
-  public void onCreate(Bundle in) {
-    super.onCreate(in);
   }
 
   @Override
@@ -54,6 +50,11 @@ public class SummaryFragment extends Fragment {
     setRootView(view);
 
     return view;
+  }
+
+  @Subscribe public void onBookLoadedEvent(BookBaseActivity.BookLoadedEvent event) {
+    mBook = event.getBook();
+    populateFieldsDeferred();
   }
 
   /**
