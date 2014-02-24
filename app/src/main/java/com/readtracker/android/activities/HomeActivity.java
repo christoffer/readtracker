@@ -23,7 +23,6 @@ import com.readtracker.android.db.Book;
 import com.readtracker.android.db.DatabaseManager;
 import com.readtracker.android.fragments.BookListFragment;
 import com.readtracker.android.fragments.HomeFragmentAdapter;
-import com.squareup.otto.Bus;
 import com.squareup.otto.Produce;
 import com.squareup.otto.Subscribe;
 
@@ -42,13 +41,11 @@ public class HomeActivity extends BaseActivity {
   private ViewPager mViewPager;
   HomeFragmentAdapter mFragmentAdapter;
 
-  private Bus mBus;
-  private LoadCatalogueTask mLoadCatalogue;
+  private LoadCatalogueTask mLoadCatalogueTask;
 
-  @Override public void onCreate(Bundle savedInstanceState) {
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-
-    mBus = ReadTrackerApp.from(this).getBus();
 
     requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
@@ -71,21 +68,13 @@ public class HomeActivity extends BaseActivity {
     loadBooks();
   }
 
-  @Override protected void onResume() {
-    super.onResume();
-    mBus.register(this);
-  }
-
-  @Override protected void onPause() {
-    super.onPause();
-    mBus.unregister(this);
-  }
-
-  @Produce public CatalogueLoadedEvent produceBooksLoadedEvent() {
+  @Produce
+  public CatalogueLoadedEvent produceBooksLoadedEvent() {
     return new CatalogueLoadedEvent(mBooks);
   }
 
-  @Subscribe public void onBookClickedEvent(BookListFragment.BookClickedEvent event) {
+  @Subscribe
+  public void onBookClickedEvent(BookListFragment.BookClickedEvent event) {
     exitToBookActivity(event.getBook().getId());
   }
 
@@ -142,7 +131,9 @@ public class HomeActivity extends BaseActivity {
     mViewPager.setAdapter(mFragmentAdapter);
   }
 
-  /** Show introduction for new users. */
+  /**
+   * Show introduction for new users.
+   */
   private void showIntroduction() {
     ViewStub stub = (ViewStub) findViewById(R.id.introduction_stub);
     final View root = stub.inflate();
@@ -177,7 +168,7 @@ public class HomeActivity extends BaseActivity {
   }
 
   private void loadBooks() {
-    if(mLoadCatalogue != null) {
+    if(mLoadCatalogueTask != null) {
       Log.d(TAG, "Task already running, ignoring");
       return;
     }
@@ -185,19 +176,21 @@ public class HomeActivity extends BaseActivity {
     getSupportActionBar().setSubtitle(R.string.home_loading_books);
     setProgressBarIndeterminateVisibility(Boolean.TRUE);
 
-    mLoadCatalogue = new LoadCatalogueTask(this);
-    mLoadCatalogue.execute();
+    mLoadCatalogueTask = new LoadCatalogueTask(this);
+    mLoadCatalogueTask.execute();
   }
 
   private void onCatalogueLoaded(List<Book> books) {
-    mLoadCatalogue = null;
-    mBus.post(new CatalogueLoadedEvent(books));
+    mLoadCatalogueTask = null;
+    postEvent(new CatalogueLoadedEvent(books));
 
     getSupportActionBar().setSubtitle(null);
     setProgressBarIndeterminateVisibility(Boolean.FALSE);
   }
 
-  /** Load all Book models from the database. */
+  /**
+   * Load all Book models from the database.
+   */
   private static class LoadCatalogueTask extends AsyncTask<Void, Void, List<Book>> {
     private final WeakReference<HomeActivity> mActivity;
     private final DatabaseManager mDatabaseManager;
@@ -227,7 +220,9 @@ public class HomeActivity extends BaseActivity {
     }
   }
 
-  /** Emitted when the HomeActivity has finished loading books from the database. */
+  /**
+   * Emitted when the HomeActivity has finished loading books from the database.
+   */
   public static class CatalogueLoadedEvent {
     private final List<Book> mBooks;
 

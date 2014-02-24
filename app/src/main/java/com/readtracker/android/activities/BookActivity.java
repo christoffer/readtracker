@@ -130,7 +130,7 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialogLi
     return true;
   }
 
-  @Produce public BookLoadedEvent produceOnBookLoadedEvent() {
+  @Produce public BookLoadedEvent produceBookLoadedEvent() {
     return new BookLoadedEvent(getBook());
   }
 

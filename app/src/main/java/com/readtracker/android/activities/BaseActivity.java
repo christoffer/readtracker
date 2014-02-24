@@ -16,6 +16,7 @@ import com.squareup.otto.Bus;
 /** Base activity */
 public class BaseActivity extends ActionBarActivity {
   private ReadTrackerApp mApplication;
+  private Bus mBus;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -24,10 +25,23 @@ public class BaseActivity extends ActionBarActivity {
     requestWindowFeatures();
 
     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+    mBus = getApp().getBus();
   }
 
   protected ReadTrackerApp getApp() {
     return mApplication;
+  }
+
+  @Override
+  protected void onResume() {
+    super.onResume();
+    mBus.register(this);
+  }
+
+  @Override
+  protected void onPause() {
+    super.onPause();
+    mBus.unregister(this);
   }
 
   /** Returns the current application settings. */
@@ -85,11 +99,11 @@ public class BaseActivity extends ActionBarActivity {
 
   /** Convenient access to the bus. */
   public Bus getBus() {
-    return getApp().getBus();
+    return mBus;
   }
 
   /** Convenient method for posting to the global bus from an activity. */
   protected void postEvent(Object event) {
-    getBus().post(event);
+    mBus.post(event);
   }
 }

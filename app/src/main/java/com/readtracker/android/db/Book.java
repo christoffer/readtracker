@@ -127,8 +127,10 @@ public class Book extends Model {
   public String getCurrentPageName() {
     if(hasPageNumbers() && hasCurrentPosition()) {
       return String.format("%d", Math.round(mNumberPages * mCurrentPosition));
-    } else {
+    } else if(hasCurrentPosition()) {
       return String.format("%.2f%%", mCurrentPosition * 100);
+    } else {
+      return "0%";
     }
   }
 

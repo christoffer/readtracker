@@ -40,7 +40,7 @@ import com.squareup.otto.Subscribe;
 /**
  * Fragment for managing a reading session
  */
-public class ReadFragment extends Fragment {
+public class ReadFragment extends BaseFragment {
   private static final String TAG = ReadFragment.class.getName();
   private static final String KEY_SESSION_TIMER = "SESSION_TIMER";
 
@@ -78,9 +78,6 @@ public class ReadFragment extends Fragment {
   private static final int FLIPPER_PAGE_START_BUTTON = 0;
   private static final int FLIPPER_PAGE_READING_BUTTONS = 1;
 
-  private Bus mBus;
-
-
   public static Fragment newInstance() {
     Log.v(TAG, "Creating new instance of ReadFragment");
     return new ReadFragment();
@@ -92,18 +89,6 @@ public class ReadFragment extends Fragment {
     super.onCreate(savedInstanceState);
     mSessionTimer = new SessionTimer();
     setSessionTimer(mSessionTimer);
-  }
-
-  @Override public void onActivityCreated(Bundle savedInstanceState) {
-    super.onActivityCreated(savedInstanceState);
-
-    mBus = ((BaseActivity) getActivity()).getBus();
-    mBus.register(this);
-  }
-
-  @Override public void onDetach() {
-    super.onDetach();
-    mBus.unregister(this);
   }
 
   @Subscribe public void onBookLoadedEvent(BookActivity.BookLoadedEvent event) {
