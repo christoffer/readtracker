@@ -15,15 +15,12 @@ import com.readtracker.android.R;
 import com.readtracker.android.activities.HomeActivity;
 import com.readtracker.android.custom_views.SegmentBar;
 import com.readtracker.android.db.Book;
-import com.readtracker.android.db.Session;
 import com.readtracker.android.support.DrawableGenerator;
 import com.readtracker.android.support.Utils;
 import com.squareup.otto.Subscribe;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 
@@ -54,7 +51,7 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
     mStateFilter = stateFilter;
   }
 
-  @Subscribe public void onBooksLoadedEvent(HomeActivity.BooksLoadedEvent event) {
+  @Subscribe public void onCatalogueLoadedEvent(HomeActivity.CatalogueLoadedEvent event) {
     Log.d(TAG, "Adapter got books: " + event.getBooks().size());
     for(Book book : event.getBooks()) {
       if(mStateFilter == null || book.getState() == mStateFilter) {

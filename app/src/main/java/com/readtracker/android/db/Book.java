@@ -18,7 +18,7 @@ public class Book extends Model {
   @DatabaseField(columnName = Columns.AUTHOR) String mAuthor;
   @DatabaseField(columnName = Columns.COVER_URL) String mCoverUrl;
   @DatabaseField(columnName = Columns.NUMBER_PAGES) Float mNumberPages;
-  @DatabaseField(columnName = Columns.STATE, dataType = DataType.ENUM_STRING) State mState;
+  @DatabaseField(columnName = Columns.STATE, dataType = DataType.ENUM_STRING) State mState = State.Reading;
   @DatabaseField(columnName = Columns.LAST_POSITION) Float mCurrentPosition;
   @DatabaseField(columnName = Columns.LAST_OPENED_AT) Long mLastOpenedAt;
   @DatabaseField(columnName = Columns.FIRST_POSITION_AT) Long mFirstPositionAt;
@@ -80,6 +80,10 @@ public class Book extends Model {
   public State getState() { return mState; }
 
   public void setState(State state) { mState = state; }
+
+  public boolean hasState(State state) {
+    return mState != null && mState.equals(state);
+  }
 
   public Float getCurrentPosition() { return mCurrentPosition; }
 

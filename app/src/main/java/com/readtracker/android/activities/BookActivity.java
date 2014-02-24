@@ -1,7 +1,6 @@
 package com.readtracker.android.activities;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -11,20 +10,16 @@ import android.view.MenuItem;
 import com.readtracker.android.IntentKeys;
 import com.readtracker.android.R;
 import com.readtracker.android.db.Book;
-import com.readtracker.android.db.DatabaseManager;
 import com.readtracker.android.db.LocalHighlight;
-import com.readtracker.android.db.LocalReading;
 import com.readtracker.android.db.LocalSession;
 import com.readtracker.android.fragments.BookFragmentAdapter;
 import com.readtracker.android.interfaces.EndSessionDialogListener;
-import com.readtracker.android.support.SessionTimer;
 import com.readtracker.android.support.SessionTimerStore;
-import com.squareup.otto.Bus;
-
-import java.lang.ref.WeakReference;
+import com.squareup.otto.Produce;
 
 /** Browse data for, and interact with, a book. */
 public class BookActivity extends BookBaseActivity implements EndSessionDialogListener {
+  protected static final String TAG = BookActivity.class.getSimpleName();
 
   // Fragment pages
   public static final int PAGE_UNSPECIFIED = -1;
@@ -34,8 +29,6 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialogLi
 
   private static final int NO_GROUP = 0;
   private static final int MENU_EDIT_BOOK_SETTINGS = 1;
-
-  public static final String KEY_BOOK_ID = "BOOK_ID";
 
   private static final int REQUEST_EDIT_PAGE_NUMBERS = 1;
   private static final int REQUEST_ADD_QUOTE = 2;
@@ -48,23 +41,14 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialogLi
 
   private int mFragmentStartPage = PAGE_UNSPECIFIED;
 
-  // Task for loading data in the background
-  private LoadDataTask mLoadDataTask;
-
-  // Currently loaded book
-  private Book mBook;
-  private Bus mBus;
-
   public void onCreate(Bundle in) {
     super.onCreate(in);
-
-    mBus = getApp().getBus();
 
     setContentView(R.layout.book_activity);
     mViewPager = (ViewPager) findViewById(R.id.fragment_view_pager);
 
     // Load information from database
-    reloadBook();
+    loadBookFromIntent();
   }
 
   @Override
@@ -94,21 +78,22 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialogLi
         if(resultCode == RESULT_OK) {
           Log.d(TAG, "Came back from editing page number");
           mFragmentStartPage = PAGE_READING;
-          reloadBook();
+          loadBookFromIntent();
         }
         break;
       case REQUEST_ADD_QUOTE:
         if(resultCode == RESULT_OK) {
           Log.d(TAG, "Came back from adding a quote");
           mFragmentStartPage = PAGE_QUOTES;
-          reloadBook();
+          loadBookFromIntent();
         }
         break;
       case REQUEST_BOOK_SETTINGS:
         if(resultCode == ActivityCodes.RESULT_REQUESTED_BOOK_SETTINGS) {
           // TODO Replace this with event
-          if(mBook != null) {
-            exitToBookEditScreen(mBook);
+          final Book book = getBook();
+          if(book != null) {
+            exitToBookEditScreen(book);
           } else {
             Log.w(TAG, "Ignoring request for book settings, book is null");
           }
@@ -116,7 +101,7 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialogLi
           shutdownWithResult(RESULT_OK);
         } else if(resultCode == ActivityCodes.RESULT_OK) {
           Log.d(TAG, "Came back from changing the book settings");
-          reloadBook();
+          loadBookFromIntent();
         }
     }
     super.onActivityResult(requestCode, resultCode, data);
@@ -125,6 +110,12 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialogLi
   @Override public boolean onCreateOptionsMenu(Menu menu) {
     menu.add(NO_GROUP, MENU_EDIT_BOOK_SETTINGS, 0, "Edit book settings");
     return true;
+  }
+
+  @Override protected void onBookLoaded(Book book) {
+    Log.v(TAG, "Book loaded: " + book);
+    postEvent(new BookLoadedEvent(book));
+    setupFragments(book);
   }
 
   @Override
@@ -137,6 +128,10 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialogLi
         return false;
     }
     return true;
+  }
+
+  @Produce public BookLoadedEvent produceOnBookLoadedEvent() {
+    return new BookLoadedEvent(getBook());
   }
 
   /**
@@ -156,32 +151,8 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialogLi
     toast(getString(R.string.book_error_session_failed));
   }
 
-  private void reloadBook() {
-    int bookId = getIntent().getIntExtra(BookActivity.KEY_BOOK_ID, -1);
-
-    if(bookId < 0) {
-      throw new IllegalArgumentException("Must provide key: " + BookActivity.KEY_BOOK_ID + " with the book id");
-    }
-
-    if(mLoadDataTask != null) {
-      Log.w(TAG, "Already has running load data task, skipping...");
-      return;
-    }
-
-    mLoadDataTask = new LoadDataTask(this, bookId);
-    mLoadDataTask.execute();
-  }
-
-  /** Callback from the async task loading the book (with associated data) from the database. */
-  void onBookLoaded(Book book) {
-    Log.v(TAG, "Book loaded: " + book);
-    mBook = book;
-    mBus.post(new BookLoadedEvent(mBook));
-    setupFragments(mBook);
-  }
-
   private void setupFragments(Book book) {
-    final boolean browserMode = book.getState().equals(Book.State.Finished);
+    final boolean browserMode = book.hasState(Book.State.Finished);
 
     // (re-)create the book adapter
     mBookFragmentAdapter = new BookFragmentAdapter(getApplicationContext(), getSupportFragmentManager());
@@ -243,9 +214,10 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialogLi
     Log.v(TAG, "Shutting down");
 
     Intent data = null;
-    if(mBook != null && resultCode == RESULT_OK) {
+    Book book = getBook();
+    if(book != null && resultCode == RESULT_OK) {
       data = new Intent();
-      data.putExtra(KEY_BOOK_ID, mBook.getId());
+      data.putExtra(KEY_BOOK_ID, book.getId());
     }
 
     if(data != null) setResult(resultCode, data);
@@ -263,46 +235,5 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialogLi
    */
   public boolean isManualShutdown() {
     return mManualShutdown;
-  }
-
-  /** Load book data from the database. */
-  private static class LoadDataTask extends AsyncTask<Void, Void, Book> {
-    private final WeakReference<BookActivity> mActivityRef;
-    private final int mBookId;
-
-    private final DatabaseManager mDatabaseManager;
-
-    LoadDataTask(BookActivity activity, int bookId) {
-      mActivityRef = new WeakReference<BookActivity>(activity);
-      mBookId = bookId;
-
-      mDatabaseManager = activity.getApp().getDatabaseManager();
-    }
-
-    @Override
-    protected Book doInBackground(Void... params) {
-      // Fire off events for each part as they become available to increase feedback to the user
-      // TODO Error handling
-
-      Book book = mDatabaseManager.get(Book.class, mBookId);
-      book.loadSessions(mDatabaseManager);
-      book.loadQuotes(mDatabaseManager);
-
-      return book;
-    }
-
-    @Override protected void onPostExecute(Book book) {
-      BookActivity activity = mActivityRef.get();
-      if(activity != null && !activity.isFinishing()) {
-        activity.onBookLoaded(book);
-      }
-    }
-  }
-
-  /** Emitted when the BookActivity has loaded the book, with all it's sessions and quotes. */
-  public static class BookLoadedEvent {
-    Book book;
-
-    BookLoadedEvent(Book book) { this.book = book; }
   }
 }

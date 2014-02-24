@@ -19,6 +19,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.readtracker.android.R;
+import com.readtracker.android.activities.BaseActivity;
 import com.readtracker.android.activities.BookActivity;
 import com.readtracker.android.activities.EndSessionDialog;
 import com.readtracker.android.custom_views.PauseableSpinAnimation;
@@ -33,6 +34,8 @@ import com.readtracker.android.thirdparty.SafeViewFlipper;
 import com.readtracker.android.thirdparty.widget.OnWheelChangedListener;
 import com.readtracker.android.thirdparty.widget.WheelView;
 import com.readtracker.android.thirdparty.widget.adapters.ArrayWheelAdapter;
+import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
 
 /**
  * Fragment for managing a reading session
@@ -75,11 +78,12 @@ public class ReadingFragment extends Fragment {
   private static final int FLIPPER_PAGE_START_BUTTON = 0;
   private static final int FLIPPER_PAGE_READING_BUTTONS = 1;
 
+  private Bus mBus;
+
 
   public static Fragment newInstance() {
     Log.v(TAG, "Creating new instance of ReadingFragment");
-    ReadingFragment instance = new ReadingFragment();
-    return instance;
+    return new ReadingFragment();
   }
 
   @Override
@@ -88,6 +92,24 @@ public class ReadingFragment extends Fragment {
     super.onCreate(savedInstanceState);
     mSessionTimer = new SessionTimer();
     setSessionTimer(mSessionTimer);
+  }
+
+  @Override public void onActivityCreated(Bundle savedInstanceState) {
+    super.onActivityCreated(savedInstanceState);
+
+    mBus = ((BaseActivity) getActivity()).getBus();
+    mBus.register(this);
+  }
+
+  @Override public void onDetach() {
+    super.onDetach();
+    mBus.unregister(this);
+  }
+
+  @Subscribe public void onBookLoadedEvent(BookActivity.BookLoadedEvent event) {
+    Log.v(TAG, "Got book loaded event: " + event);
+    mBook = event.getBook();
+    populateFieldsDeferred();
   }
 
   @Override
@@ -117,9 +139,11 @@ public class ReadingFragment extends Fragment {
 
     if(storedSessionTimer == null) {
       Log.d(TAG, "... Not found");
-      setSessionTimer(storedSessionTimer);
-      restoreTimingState(storedSessionTimer);
+      storedSessionTimer = new SessionTimer();
     }
+
+    setSessionTimer(storedSessionTimer);
+    restoreTimingState(storedSessionTimer);
   }
 
   @Override
@@ -128,7 +152,6 @@ public class ReadingFragment extends Fragment {
     View view = inflater.inflate(R.layout.fragment_read, container, false);
 
     bindViews(view);
-    bindEvents();
 
     mFlipperSessionControl.setDisplayedChild(FLIPPER_PAGE_START_BUTTON);
 
@@ -162,7 +185,7 @@ public class ReadingFragment extends Fragment {
 
     initializeDurationWheel();
 
-
+    bindEvents();
   }
 
   private void setSessionTimer(SessionTimer sessionTimer) {

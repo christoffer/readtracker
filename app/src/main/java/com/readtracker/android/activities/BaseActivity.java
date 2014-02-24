@@ -11,10 +11,10 @@ import android.widget.Toast;
 
 import com.readtracker.android.ReadTrackerApp;
 import com.readtracker.android.support.ApplicationSettingsHelper;
+import com.squareup.otto.Bus;
 
 /** Base activity */
 public class BaseActivity extends ActionBarActivity {
-  protected final String TAG = this.getClass().getName();
   private ReadTrackerApp mApplication;
 
   @Override
@@ -81,5 +81,15 @@ public class BaseActivity extends ActionBarActivity {
    */
   public int getPixels(int dpValue) {
     return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dpValue, getResources().getDisplayMetrics());
+  }
+
+  /** Convenient access to the bus. */
+  public Bus getBus() {
+    return getApp().getBus();
+  }
+
+  /** Convenient method for posting to the global bus from an activity. */
+  protected void postEvent(Object event) {
+    getBus().post(event);
   }
 }

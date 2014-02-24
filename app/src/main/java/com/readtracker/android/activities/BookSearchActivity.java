@@ -21,9 +21,9 @@ import android.widget.TextView.OnEditorActionListener;
 
 import com.readtracker.android.IntentKeys;
 import com.readtracker.android.R;
-import com.readtracker.android.adapters.SearchResultAdapter;
 import com.readtracker.android.adapters.BookItem;
 import com.readtracker.android.adapters.GoogleBookItem;
+import com.readtracker.android.adapters.SearchResultAdapter;
 import com.readtracker.android.support.GoogleBook;
 import com.readtracker.android.support.GoogleBookSearch;
 import com.readtracker.android.support.GoogleBookSearchException;
@@ -35,6 +35,8 @@ import java.util.ArrayList;
  * Screen for searching for books on Google Books
  */
 public class BookSearchActivity extends BaseActivity {
+  private static final String TAG = BookSearchActivity.class.getSimpleName();
+
   private static ListView mListSearchResults;
   private static EditText mEditTextSearch;
 

@@ -17,7 +17,6 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.readtracker.android.IntentKeys;
 import com.readtracker.android.R;
 import com.readtracker.android.ReadTrackerApp;
 import com.readtracker.android.db.Book;
@@ -33,6 +32,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HomeActivity extends BaseActivity {
+  private static final String TAG = HomeActivity.class.getSimpleName();
+
   private static final int REQUEST_READING_SESSION = 1;
 
   // List of books loaded from the database
@@ -42,7 +43,7 @@ public class HomeActivity extends BaseActivity {
   HomeFragmentAdapter mFragmentAdapter;
 
   private Bus mBus;
-  private BookLoadTask mBookLoadTask;
+  private LoadCatalogueTask mLoadCatalogue;
 
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -80,8 +81,8 @@ public class HomeActivity extends BaseActivity {
     mBus.unregister(this);
   }
 
-  @Produce public BooksLoadedEvent produceBooksLoadedEvent() {
-    return new BooksLoadedEvent(mBooks);
+  @Produce public CatalogueLoadedEvent produceBooksLoadedEvent() {
+    return new CatalogueLoadedEvent(mBooks);
   }
 
   @Subscribe public void onBookClickedEvent(BookListFragment.BookClickedEvent event) {
@@ -176,7 +177,7 @@ public class HomeActivity extends BaseActivity {
   }
 
   private void loadBooks() {
-    if(mBookLoadTask != null) {
+    if(mLoadCatalogue != null) {
       Log.d(TAG, "Task already running, ignoring");
       return;
     }
@@ -184,24 +185,24 @@ public class HomeActivity extends BaseActivity {
     getSupportActionBar().setSubtitle(R.string.home_loading_books);
     setProgressBarIndeterminateVisibility(Boolean.TRUE);
 
-    mBookLoadTask = new BookLoadTask(this);
-    mBookLoadTask.execute();
+    mLoadCatalogue = new LoadCatalogueTask(this);
+    mLoadCatalogue.execute();
   }
 
-  private void onBooksLoaded(List<Book> books) {
-    mBookLoadTask = null;
-    mBus.post(new BooksLoadedEvent(books));
+  private void onCatalogueLoaded(List<Book> books) {
+    mLoadCatalogue = null;
+    mBus.post(new CatalogueLoadedEvent(books));
 
     getSupportActionBar().setSubtitle(null);
     setProgressBarIndeterminateVisibility(Boolean.FALSE);
   }
 
   /** Load all Book models from the database. */
-  private static class BookLoadTask extends AsyncTask<Void, Void, List<Book>> {
+  private static class LoadCatalogueTask extends AsyncTask<Void, Void, List<Book>> {
     private final WeakReference<HomeActivity> mActivity;
     private final DatabaseManager mDatabaseManager;
 
-    public BookLoadTask(HomeActivity activity) {
+    public LoadCatalogueTask(HomeActivity activity) {
       mActivity = new WeakReference<HomeActivity>(activity);
       mDatabaseManager = ReadTrackerApp.from(activity).getDatabaseManager();
     }
@@ -209,6 +210,7 @@ public class HomeActivity extends BaseActivity {
     @Override
     protected List<Book> doInBackground(Void... ignored) {
       List<Book> books = mDatabaseManager.getAll(Book.class);
+      Log.d(TAG, "Loaded " + books.size() + " books");
       for(Book book : books) {
         // Need the sessions to display segmented progress bars
         book.loadSessions(mDatabaseManager);
@@ -220,16 +222,16 @@ public class HomeActivity extends BaseActivity {
     protected void onPostExecute(List<Book> books) {
       HomeActivity activity = mActivity.get();
       if(activity != null && !activity.isFinishing()) {
-        activity.onBooksLoaded(books);
+        activity.onCatalogueLoaded(books);
       }
     }
   }
 
   /** Emitted when the HomeActivity has finished loading books from the database. */
-  public static class BooksLoadedEvent {
+  public static class CatalogueLoadedEvent {
     private final List<Book> mBooks;
 
-    public BooksLoadedEvent(List<Book> books) {
+    public CatalogueLoadedEvent(List<Book> books) {
       mBooks = books;
     }
 

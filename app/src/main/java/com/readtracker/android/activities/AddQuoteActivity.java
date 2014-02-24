@@ -11,6 +11,7 @@ import android.widget.EditText;
 import com.readtracker.android.IntentKeys;
 import com.readtracker.android.R;
 import com.readtracker.android.custom_views.ProgressPicker;
+import com.readtracker.android.db.Book;
 import com.readtracker.android.db.LocalHighlight;
 import com.readtracker.android.db.LocalReading;
 import com.readtracker.android.interfaces.PersistLocalHighlightListener;
@@ -21,6 +22,7 @@ import java.util.Date;
 
 /** Screen for adding a quote */
 public class AddQuoteActivity extends BookBaseActivity {
+  private static final String TAG = AddQuoteActivity.class.getSimpleName();
   private static EditText mQuoteTextEdit;
   private static Button mButtonSaveQuote;
 
@@ -76,8 +78,6 @@ public class AddQuoteActivity extends BookBaseActivity {
 
     setEditTextBackground(mQuoteTextEdit);
     setButtonBackground(mButtonSaveQuote);
-
-    setReading(mLocalReading);
   }
 
   @Override
@@ -189,5 +189,10 @@ public class AddQuoteActivity extends BookBaseActivity {
     }
 
     return true;
+  }
+
+  @Override
+  protected void onBookLoaded(Book book) {
+    throw new RuntimeException("Not implemented");
   }
 }

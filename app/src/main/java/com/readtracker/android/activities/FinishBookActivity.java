@@ -9,6 +9,7 @@ import android.widget.EditText;
 
 import com.readtracker.android.IntentKeys;
 import com.readtracker.android.R;
+import com.readtracker.android.db.Book;
 import com.readtracker.android.db.LocalReading;
 import com.readtracker.android.interfaces.SaveLocalReadingListener;
 import com.readtracker.android.support.DrawableGenerator;
@@ -46,7 +47,7 @@ public class FinishBookActivity extends BookBaseActivity {
 
     mButtonFinish.setBackgroundDrawable(DrawableGenerator.generateButtonBackground(mLocalReading.getColor()));
 
-    setReading(mLocalReading);
+    // setReading(mLocalReading);
   }
 
   @Override
@@ -93,5 +94,10 @@ public class FinishBookActivity extends BookBaseActivity {
     data.putExtra(IntentKeys.LOCAL_READING, localReading);
     setResult(ActivityCodes.RESULT_OK, data);
     finish();
+  }
+
+  @Override
+  protected void onBookLoaded(Book book) {
+    throw new RuntimeException("Not implemented");
   }
 }
