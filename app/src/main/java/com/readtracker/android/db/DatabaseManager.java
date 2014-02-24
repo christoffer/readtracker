@@ -43,7 +43,9 @@ public class DatabaseManager {
    * Saves the current instance to the database. Existing entries are updated, new ones are created.
    */
   public <T extends Model> T save(T instance) {
+    @SuppressWarnings("unchecked")
     Dao<T, Integer> dao = (Dao<T, Integer>) db.getDaoByClass(instance.getClass());
+
     try {
       if(instance.getId() > 0) {
         dao.update(instance);
@@ -52,6 +54,18 @@ public class DatabaseManager {
         dao.create(instance);
         return instance;
       }
+    } catch(SQLException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  public <T extends Model> boolean delete(T instance) {
+    @SuppressWarnings("unchecked")
+    Dao<T, Integer> dao = (Dao<T, Integer>) db.getDaoByClass(instance.getClass());
+
+    try {
+      dao.delete(instance);
+      return true;
     } catch(SQLException e) {
       throw new RuntimeException(e);
     }

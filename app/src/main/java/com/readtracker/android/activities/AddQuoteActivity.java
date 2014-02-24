@@ -2,7 +2,9 @@ package com.readtracker.android.activities;
 
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -12,26 +14,26 @@ import com.readtracker.android.IntentKeys;
 import com.readtracker.android.R;
 import com.readtracker.android.custom_views.ProgressPicker;
 import com.readtracker.android.db.Book;
-import com.readtracker.android.db.LocalHighlight;
-import com.readtracker.android.db.LocalReading;
-import com.readtracker.android.interfaces.PersistLocalHighlightListener;
+import com.readtracker.android.db.DatabaseManager;
+import com.readtracker.android.db.Quote;
 import com.readtracker.android.support.DrawableGenerator;
-import com.readtracker.android.tasks.PersistLocalHighlightTask;
+import com.readtracker.android.support.Utils;
 
+import java.lang.ref.WeakReference;
 import java.util.Date;
 
-/** Screen for adding a quote */
+/**
+ * Screen for adding a quote
+ */
 public class AddQuoteActivity extends BookBaseActivity {
   private static final String TAG = AddQuoteActivity.class.getSimpleName();
   private static EditText mQuoteTextEdit;
   private static Button mButtonSaveQuote;
-
   private static ProgressPicker mProgressPicker;
 
-  private LocalReading mLocalReading;
-  private LocalHighlight mLocalHighlight;
+  public static final String KEY_QUOTE_ID = "QUOTE_ID";
 
-  private boolean mCreateMode = false;
+  private Book mBook;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -39,151 +41,54 @@ public class AddQuoteActivity extends BookBaseActivity {
     setContentView(R.layout.add_quote_activity);
 
     bindViews();
-    bindButtonEvents();
 
-    int currentPage;
+    loadBookFromIntent();
+  }
 
-    if (savedInstanceState != null) {
-      Log.d(TAG, "unfreezing state");
-      mLocalReading = savedInstanceState.getParcelable(IntentKeys.LOCAL_READING);
-      mLocalHighlight = savedInstanceState.getParcelable(IntentKeys.LOCAL_HIGHLIGHT);
-      mQuoteTextEdit.setText(savedInstanceState.getString(IntentKeys.TEXT));
-      currentPage = savedInstanceState.getInt(IntentKeys.PAGE);
-    } else {
-      Bundle extras = getIntent().getExtras();
-      mLocalReading = (LocalReading) extras.get(IntentKeys.LOCAL_READING);
-      mLocalHighlight = (LocalHighlight) extras.get(IntentKeys.LOCAL_HIGHLIGHT);
+  @Override
+  protected void onBookLoaded(Book book) {
+    mBook = book;
 
-      if (mLocalHighlight == null) {
-        mLocalHighlight = new LocalHighlight();
-        mCreateMode = true;
-        mQuoteTextEdit.setText("");
-        currentPage = (int) mLocalReading.currentPage;
-      } else {
-        mCreateMode = false;
-        mQuoteTextEdit.setText(mLocalHighlight.content);
-        currentPage = (int) (mLocalHighlight.position * mLocalReading.totalPages);
-      }
+    final int color = Utils.calculateBookColor(book);
+    final Drawable backgroundDrawable = DrawableGenerator.generateEditTextOutline(color, getPixels(1), getPixels(3));
+    mQuoteTextEdit.setBackgroundDrawable(backgroundDrawable);
 
-      Log.d(TAG, "Starting activity in " + (mCreateMode ? "creation" : "edit") + " mode");
-    }
+    final Drawable background = DrawableGenerator.generateButtonBackground(color);
+    mButtonSaveQuote.setBackgroundDrawable(background);
 
-    if (mLocalReading.hasPageInfo()) {
-      mProgressPicker.setupForLocalReading(mLocalReading);
-      mProgressPicker.setCurrentPage(currentPage);
+    if(book != null && book.hasPageNumbers()) {
+      mProgressPicker.setBook(book);
+      mProgressPicker.setCurrentPage(book.getCurrentPage());
     } else {
       mProgressPicker.setVisibility(View.GONE);
       findViewById(R.id.textLabelEnterPosition).setVisibility(View.GONE);
     }
 
-    setEditTextBackground(mQuoteTextEdit);
-    setButtonBackground(mButtonSaveQuote);
-  }
-
-  @Override
-  protected void onSaveInstanceState(Bundle outState) {
-    super.onSaveInstanceState(outState);
-    Log.d(TAG, "freezing state");
-    outState.putParcelable(IntentKeys.LOCAL_READING, mLocalReading);
-    outState.putParcelable(IntentKeys.LOCAL_HIGHLIGHT, mLocalHighlight);
-    outState.putString(IntentKeys.TEXT, mQuoteTextEdit.getText().toString());
-    if (mLocalReading.hasPageInfo()) {
-      outState.putInt(IntentKeys.PAGE, mProgressPicker.getCurrentPage());
-    }
-  }
-
-  @Override
-  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    super.onActivityResult(requestCode, resultCode, data);
+    bindButtonEvents();
   }
 
   private void bindViews() {
     mQuoteTextEdit = (EditText) findViewById(R.id.quote_text_edit);
     mButtonSaveQuote = (Button) findViewById(R.id.save_button);
-    mProgressPicker = (ProgressPicker) findViewById(R.id.progressPicker);
+    mProgressPicker = (ProgressPicker) findViewById(R.id.progress_picker);
   }
 
   private void bindButtonEvents() {
     mButtonSaveQuote.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
-        saveOrCreateHighlight();
+        if(validateInput()) {
+          Float progress = mProgressPicker.getVisibility() == View.VISIBLE ? mProgressPicker.getProgress() : null;
+          saveQuote(mQuoteTextEdit.getText().toString(), progress);
+        }
       }
     });
   }
 
-  private void setEditTextBackground(EditText editText) {
-    Drawable backgroundDrawable;
-    backgroundDrawable = DrawableGenerator.generateEditTextOutline(
-      mLocalReading.getColor(), getPixels(1), getPixels(3)
-    );
-    editText.setBackgroundDrawable(backgroundDrawable);
-  }
-
-  private void setButtonBackground(Button button) {
-    final Drawable background = DrawableGenerator.generateButtonBackground(mLocalReading.getColor());
-    button.setBackgroundDrawable(background);
-  }
-
-  private void saveOrCreateHighlight() {
-    Log.i(TAG, "Save/Create highlight for LocalReading with id:" + mLocalReading.id);
-    String content = mQuoteTextEdit.getText().toString().trim();
-
-    if (!validateFields()) {
-      return;
-    }
-
-    double position = 0.0f;
-
-    if (mLocalReading.hasPageInfo()) {
-      position = mProgressPicker.getProgress();
-    }
-
-    mLocalHighlight.content = content;
-    mLocalHighlight.position = position;
-
-    if (mCreateMode) {
-      mLocalHighlight.highlightedAt = new Date();
-      mLocalHighlight.readingId = mLocalReading.id;
-      mLocalHighlight.readmillReadingId = mLocalReading.readmillReadingId;
-    } else {
-      mLocalHighlight.editedAt = new Date();
-    }
-
-    persistHighlight(mLocalHighlight);
-  }
-
-  private void persistHighlight(LocalHighlight localHighlight) {
-    PersistLocalHighlightTask.persist(localHighlight, new PersistLocalHighlightListener() {
-      @Override public void onLocalHighlightPersisted(int id, boolean created) {
-        Log.d(TAG, "Persisted local highlight, id: " + id + " created: " + created);
-        onHighlightPersisted(true);
-      }
-
-      @Override public void onLocalHighlightPersistedFailed() {
-        Log.d(TAG, "Failed to persist local highlight");
-        onHighlightPersisted(false);
-      }
-    });
-  }
-
-  private void onHighlightPersisted(boolean success) {
-    if (!success) {
-      toastLong(getString(R.string.add_quote_error_could_not_be_saved));
-      return;
-    }
-
-    Intent resultIntent = new Intent();
-    resultIntent.putExtra(AddBookActivity.KEY_BOOK_ID, mLocalReading.id);
-    setResult(ActivityCodes.RESULT_OK, resultIntent);
-    finish();
-  }
-
-  private boolean validateFields() {
-    final String quoteText = mQuoteTextEdit.getText().toString().trim();
-
-    if (quoteText.length() == 0) {
-      toastLong(getString(R.string.add_book_enter_quote));
+  private boolean validateInput() {
+    final String quoteContent = mQuoteTextEdit.getText().toString();
+    if(TextUtils.isEmpty(quoteContent)) {
+      mQuoteTextEdit.selectAll();
       mQuoteTextEdit.requestFocus();
       return false;
     }
@@ -191,8 +96,52 @@ public class AddQuoteActivity extends BookBaseActivity {
     return true;
   }
 
-  @Override
-  protected void onBookLoaded(Book book) {
-    throw new RuntimeException("Not implemented");
+  private void saveQuote(String quoteText, Float position) {
+    Log.d(TAG, "Saving quote for " + mBook.getTitle() + " [" + quoteText + "] " + position);
+    new SaveTask(mBook, quoteText, position, this).execute();
+  }
+
+  private void onQuoteSaved(Quote quote) {
+    if(quote != null) {
+      Log.d(TAG, "Saved " + quote);
+      Intent data = new Intent();
+      data.putExtra(KEY_QUOTE_ID, quote.getId());
+      setResult(RESULT_OK, data);
+      finish();
+    } else {
+      Log.w(TAG, "Failed to create quote for some reason");
+    }
+  }
+
+  private static class SaveTask extends AsyncTask<Void, Void, Quote> {
+    private Quote mQuote;
+
+    private final WeakReference<AddQuoteActivity> mActivity;
+    private final DatabaseManager mDatabaseManager;
+
+    public SaveTask(Book book, String quoteText, Float position, AddQuoteActivity activity) {
+      mQuote = new Quote();
+      mQuote.setBook(book);
+      mQuote.setAddedAt(new Date().getTime());
+      mQuote.setContent(quoteText);
+      mQuote.setPosition(position);
+
+      mActivity = new WeakReference<AddQuoteActivity>(activity);
+      mDatabaseManager = activity.getApp().getDatabaseManager();
+    }
+
+    @Override
+    protected Quote doInBackground(Void... voids) {
+      mDatabaseManager.save(mQuote);
+      return mQuote;
+    }
+
+    @Override
+    protected void onPostExecute(Quote quote) {
+      AddQuoteActivity activity = mActivity.get();
+      if(activity != null) {
+        activity.onQuoteSaved(quote);
+      }
+    }
   }
 }

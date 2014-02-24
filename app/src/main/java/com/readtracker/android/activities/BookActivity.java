@@ -12,6 +12,7 @@ import com.readtracker.android.R;
 import com.readtracker.android.db.Book;
 import com.readtracker.android.db.LocalHighlight;
 import com.readtracker.android.db.LocalSession;
+import com.readtracker.android.db.Quote;
 import com.readtracker.android.fragments.BookFragmentAdapter;
 import com.readtracker.android.interfaces.EndSessionDialogListener;
 import com.readtracker.android.support.SessionTimerStore;
@@ -187,7 +188,7 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialogLi
 //    startActivityForResult(intentEditBook, ActivityCodes.REQUEST_EDIT_PAGE_NUMBERS);
   }
 
-  public void exitToAddQuoteScreen(LocalHighlight highlight) {
+  public void exitToAddQuoteScreen(Quote quote) {
 //    Intent activityAddHighlight = new Intent(this, AddQuoteActivity.class);
 //    activityAddHighlight.putExtra(IntentKeys.LOCAL_READING, mLocalReading);
 //    activityAddHighlight.putExtra(IntentKeys.LOCAL_HIGHLIGHT, highlight);

@@ -1,6 +1,5 @@
 package com.readtracker.android.custom_views;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
@@ -9,7 +8,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import com.readtracker.android.R;
-import com.readtracker.android.db.LocalReading;
+import com.readtracker.android.db.Book;
 import com.readtracker.android.thirdparty.widget.OnWheelChangedListener;
 import com.readtracker.android.thirdparty.widget.WheelView;
 import com.readtracker.android.thirdparty.widget.adapters.AbstractWheelTextAdapter;
@@ -20,7 +19,6 @@ public class ProgressPicker extends LinearLayout {
   private static final int PAGES_MODE = 0;
   private static final int PERCENT_MODE = 1;
 
-  private int mMode = PAGES_MODE;
   private WheelView mWheelEndingPage;
 
   private OnProgressChangeListener mListener;
@@ -44,28 +42,18 @@ public class ProgressPicker extends LinearLayout {
     super(context, attrs);
   }
 
-  public void setupForLocalReading(LocalReading localReading) {
+  public void setBook(Book book) {
     if(mRootView == null) {
-      LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+      LayoutInflater inflater = LayoutInflater.from(getContext());
       mRootView = inflater.inflate(R.layout._progress_picker, this);
       mWheelEndingPage = (WheelView) mRootView.findViewById(R.id.wheelEndingPage);
     }
 
-    if(localReading.isMeasuredInPercent()) {
-      mMode = PERCENT_MODE;
-    } else {
-      mMode = PAGES_MODE;
-    }
-    setupWheelView(mWheelEndingPage, (int) localReading.totalPages);
-    mWheelEndingPage.setCurrentItem((int) localReading.currentPage);
+    setupWheelView(mWheelEndingPage, book.getNumberPages());
   }
 
   public int getCurrentPage() {
     return mWheelEndingPage.getCurrentItem();
-  }
-
-  public int getTotalPageCount() {
-    return mWheelEndingPage.getViewAdapter().getItemsCount();
   }
 
   public void setCurrentPage(int page) {
@@ -78,8 +66,9 @@ public class ProgressPicker extends LinearLayout {
    * @return the progress ratio [0..1]
    */
   public float getProgress() {
-    final int totalPages = mWheelEndingPage.getViewAdapter().getItemsCount();
-    if(totalPages == 0) {
+    // -1 since the adapter is 0 -> total pages
+    final int totalPages = mWheelEndingPage.getViewAdapter().getItemsCount() - 1;
+    if(totalPages <= 0) {
       return 0.0f;
     }
     return (float) getCurrentPage() / (float) totalPages;
@@ -92,12 +81,12 @@ public class ProgressPicker extends LinearLayout {
   /**
    * Setup a wheel view with a numeric wheel adapter and the default style
    */
-  private void setupWheelView(WheelView wheelView, int maxPages) {
+  private void setupWheelView(WheelView wheelView, Float numPages) {
     AbstractWheelTextAdapter adapter;
-    if(mMode == PAGES_MODE) {
-      adapter = new NumericWheelAdapter(getContext(), 0, maxPages);
-    } else {
+    if(numPages == null) {
       adapter = new PercentWheelAdapter(getContext());
+    } else {
+      adapter = new NumericWheelAdapter(getContext(), 0, numPages.intValue());
     }
 
     configureWheelAdapterStyle(adapter);
@@ -110,7 +99,8 @@ public class ProgressPicker extends LinearLayout {
     wheelView.setCalliperMode(WheelView.CalliperMode.NO_CALLIPERS);
 
     wheelView.addChangingListener(new OnWheelChangedListener() {
-      @Override public void onChanged(WheelView wheel, int oldValue, int newValue) {
+      @Override
+      public void onChanged(WheelView wheel, int oldValue, int newValue) {
         if(mListener != null) mListener.onChangeProgress(newValue);
       }
     });

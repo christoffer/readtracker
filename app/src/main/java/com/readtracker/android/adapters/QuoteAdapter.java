@@ -10,26 +10,29 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.readtracker.android.R;
+import com.readtracker.android.db.Quote;
 import com.readtracker.android.support.DrawableGenerator;
 import com.readtracker.android.support.Utils;
 
 import java.util.Comparator;
 import java.util.List;
 
-/** Shows a list of quotes */
-public class QuoteAdapter extends ArrayAdapter<HighlightItem> {
+/**
+ * Shows a list of quotes
+ */
+public class QuoteAdapter extends ArrayAdapter<Quote> {
   private int mColor;
   private LayoutInflater mInflater;
 
-  private Comparator<HighlightItem> mQuoteComparator = new Comparator<HighlightItem>() {
+  private Comparator<Quote> mQuoteComparator = new Comparator<Quote>() {
     @Override
-    public int compare(HighlightItem highlightA, HighlightItem highlightB) {
-      return highlightA.getHighlightedAt().after(highlightB.getHighlightedAt()) ? -1 : 1;
+    public int compare(Quote a, Quote b) {
+      return a.getAddedAt() > b.getAddedAt() ? -1 : 1;
     }
   };
 
-  public QuoteAdapter(Context context, int textViewResourceId, List<HighlightItem> highlights) {
-    super(context, textViewResourceId, highlights);
+  public QuoteAdapter(Context context, int textViewResourceId, List<Quote> quotes) {
+    super(context, textViewResourceId, quotes);
     sort(mQuoteComparator);
     mInflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
   }
@@ -41,29 +44,19 @@ public class QuoteAdapter extends ArrayAdapter<HighlightItem> {
 
   @Override
   public View getView(int position, View convertView, ViewGroup parent) {
-    HighlightItem item = getItem(position);
+    Quote quote = getItem(position);
 
     if(convertView == null) {
       convertView = mInflater.inflate(R.layout.highlight_list_item, null);
     }
 
     TextView textContent = (TextView) convertView.findViewById(R.id.textContent);
-    textContent.setText(item.getContent().trim());
-    textContent.setTextSize(textSizeForContent(item.getContent()));
+    textContent.setText(quote.getContent().trim());
+    textContent.setTextSize(textSizeForContent(quote.getContent()));
 
     TextView textDate = (TextView) convertView.findViewById(R.id.textDate);
 
-    String metadata = Utils.humanPastDate(item.getHighlightedAt());
-    int likeCount = item.getLikeCount();
-    int commentCount = item.getCommentCount();
-
-    if(likeCount > 0) {
-      metadata += String.format(" ・ Liked by %d %s", likeCount, (likeCount == 1 ? "person" : "people"));
-    }
-
-    if(commentCount > 0) {
-      metadata += String.format(" ・ %d %s", commentCount, Utils.pluralize(commentCount, "comment"));
-    }
+    String metadata = Utils.humanPastDate(quote.getAddedAt());
 
     textDate.setText(metadata);
     final int backgroundColor = getContext().getResources().getColor(R.color.background);
@@ -72,17 +65,11 @@ public class QuoteAdapter extends ArrayAdapter<HighlightItem> {
     return convertView;
   }
 
-  @Override
-  public void add(HighlightItem object) {
-    super.add(object);
-    sort(mQuoteComparator);
-  }
-
-  public void remove(int localHighlightId) {
+  public void removeById(int idOfItemToRemove) {
     for(int i = 0; i < getCount(); i++) {
-      HighlightItem item = getItem(i);
-      if(item.getLocalHighlight().id == localHighlightId) {
-        remove(item);
+      Quote quote = getItem(i);
+      if(quote.getId() == idOfItemToRemove) {
+        remove(quote);
         notifyDataSetChanged();
         return;
       }

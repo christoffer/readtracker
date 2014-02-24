@@ -1,7 +1,9 @@
 package com.readtracker.android.fragments;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -17,36 +19,37 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.readtracker.android.IntentKeys;
 import com.readtracker.android.R;
+import com.readtracker.android.activities.AddQuoteActivity;
+import com.readtracker.android.activities.BaseActivity;
 import com.readtracker.android.activities.BookActivity;
-import com.readtracker.android.adapters.HighlightItem;
+import com.readtracker.android.activities.BookBaseActivity;
 import com.readtracker.android.adapters.QuoteAdapter;
-import com.readtracker.android.db.LocalHighlight;
-import com.readtracker.android.db.LocalReading;
-import com.readtracker.android.interfaces.DeleteLocalHighlightListener;
-import com.readtracker.android.interfaces.PersistLocalHighlightListener;
+import com.readtracker.android.db.Book;
+import com.readtracker.android.db.DatabaseManager;
+import com.readtracker.android.db.Quote;
 import com.readtracker.android.support.DrawableGenerator;
-import com.readtracker.android.tasks.DeleteLocalHighlightTask;
-import com.readtracker.android.tasks.PersistLocalHighlightTask;
+import com.readtracker.android.support.Utils;
+import com.squareup.otto.Subscribe;
 
-import java.util.ArrayList;
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 public class QuoteFragment extends BaseFragment {
   private static final String TAG = QuoteFragment.class.getName();
 
-  private ListView mListHighlights;
+  private static final int REQ_ADD_QUOTE = 1;
+
+  private ListView mQuoteList;
   private TextView mTextBlankState;
-  private Button mButtonAddHighlight;
+  private Button mAddQuoteButton;
 
   private View mRootView;
 
-  private LocalReading mLocalReading;
-  private ArrayList<LocalHighlight> mLocalHighlights;
-  private QuoteAdapter mQuoteAdapter;
+  private Book mBook;
+  private List<Quote> mQuotes;
 
-  private boolean mForceReinitialize = false;
+  private QuoteAdapter mQuoteAdapter;
 
   private static final int MENU_DELETE_HIGHLIGHT = 1;
 
@@ -55,16 +58,9 @@ public class QuoteFragment extends BaseFragment {
     return new QuoteFragment();
   }
 
-  private void setForceInitialize(boolean forceInitialize) {
-    mForceReinitialize = forceInitialize;
-  }
-
-  public void setLocalReading(LocalReading localReading) {
-    mLocalReading = localReading;
-  }
-
-  private void setReadingHighlights(ArrayList<LocalHighlight> localHighlights) {
-    mLocalHighlights = localHighlights;
+  @Subscribe public void onBookLoadedEvent(BookBaseActivity.BookLoadedEvent event) {
+    mBook = event.getBook();
+    populateFieldsDeferred();
   }
 
   @Override
@@ -80,24 +76,6 @@ public class QuoteFragment extends BaseFragment {
   }
 
   @Override
-  public void onCreate(Bundle in) {
-    super.onCreate(in);
-    if(in != null && !mForceReinitialize) {
-      Log.d(TAG, "unfreezing state");
-      mLocalReading = in.getParcelable(IntentKeys.LOCAL_READING);
-      mLocalHighlights = in.getParcelableArrayList(IntentKeys.READING_HIGHLIGHTS);
-    }
-  }
-
-  @Override
-  public void onSaveInstanceState(Bundle out) {
-    super.onSaveInstanceState(out);
-    Log.d(TAG, "freezing state");
-    out.putParcelable(IntentKeys.LOCAL_READING, mLocalReading);
-    out.putParcelableArrayList(IntentKeys.READING_HIGHLIGHTS, mLocalHighlights);
-  }
-
-  @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     return inflater.inflate(R.layout.quote_fragment, container, false);
   }
@@ -106,47 +84,51 @@ public class QuoteFragment extends BaseFragment {
   public void onViewCreated(View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     Log.d(TAG, "onViewCreated()");
+
     bindViews(view);
 
-    mButtonAddHighlight.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View view) {
-        ((BookActivity) getActivity()).exitToAddQuoteScreen(null);
-      }
-    });
-
+    mAddQuoteButton.setEnabled(false);
     populateFieldsDeferred();
   }
 
   private void populateFieldsDeferred() {
-    if(mLocalReading == null || mRootView == null) {
+    if(mBook == null || mRootView == null) {
       return;
     }
 
-    mButtonAddHighlight.setBackgroundDrawable(DrawableGenerator.generateButtonBackground(mLocalReading.getColor()));
+    final int color = Utils.calculateBookColor(mBook);
+    mAddQuoteButton.setBackgroundDrawable(DrawableGenerator.generateButtonBackground(color));
 
-    List<HighlightItem> highlightItems = itemize(mLocalHighlights);
-
-    final int color = mLocalReading.getColor();
     ColorDrawable divider = new ColorDrawable(color);
     divider.setAlpha(128);
-    mListHighlights.setDivider(divider);
-    mListHighlights.setDividerHeight(1);
+    mQuoteList.setDivider(divider);
+    mQuoteList.setDividerHeight(1);
 
-    mQuoteAdapter = new QuoteAdapter(getActivity(), R.layout.highlight_list_item, highlightItems);
-    mQuoteAdapter.setColor(mLocalReading.getColor());
-    mListHighlights.setAdapter(mQuoteAdapter);
-    mListHighlights.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+    mQuoteAdapter = new QuoteAdapter(getActivity(), R.layout.highlight_list_item, mBook.getQuotes());
+    mQuoteAdapter.setColor(color);
+    mQuoteList.setAdapter(mQuoteAdapter);
+    mQuoteList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
       @Override
       public void onItemClick(AdapterView<?> adapterView, View view, int position, long itemId) {
-        HighlightItem highlightItem = mQuoteAdapter.getItem(position);
-        LocalHighlight clickedHighlight = highlightItem.getLocalHighlight();
-        ((BookActivity) getActivity()).exitToAddQuoteScreen(clickedHighlight);
+        Quote quote = mQuoteAdapter.getItem(position);
+        ((BookActivity) getActivity()).exitToAddQuoteScreen(quote);
       }
     });
-    registerForContextMenu(mListHighlights);
+
+    mAddQuoteButton.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        Intent intent = new Intent(getActivity(), AddQuoteActivity.class);
+        intent.putExtra(AddQuoteActivity.KEY_BOOK_ID, mBook.getId());
+        startActivityForResult(intent, REQ_ADD_QUOTE);
+      }
+    });
+
+    registerForContextMenu(mQuoteList);
+
+    mAddQuoteButton.setEnabled(true);
 
     refreshHighlightBlankState();
-
   }
 
   @Override
@@ -155,17 +137,40 @@ public class QuoteFragment extends BaseFragment {
     Log.d(TAG, "onActivityCreated()");
   }
 
+  @Override
+  public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
+    if(requestCode == REQ_ADD_QUOTE && resultCode == Activity.RESULT_OK) {
+      Log.d(TAG, "Quote created");
+      if(data != null && data.hasExtra(AddQuoteActivity.KEY_QUOTE_ID)) {
+        loadQuote(data.getExtras().getInt(AddQuoteActivity.KEY_QUOTE_ID));
+      }
+    } else {
+      Log.d(TAG, "Quote not created");
+    }
+  }
+
+  private void loadQuote(int quoteId) {
+    new LoadQuoteTask(quoteId, this).execute();
+  }
+
+  private void onQuoteLoaded(Quote quote) {
+    mQuoteAdapter.add(quote);
+    mQuoteAdapter.notifyDataSetChanged();
+  }
+
   @Override public void onCreateContextMenu(ContextMenu menu, View view, ContextMenu.ContextMenuInfo menuInfo) {
     super.onCreateContextMenu(menu, view, menuInfo);
-    if(view.getId() == mListHighlights.getId()) {
+    if(view.getId() == mQuoteList.getId()) {
       final AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-      menu.setHeaderTitle(getActivity().getString(R.string.quote_fragment_item_header, info.position));
+      Quote quote = mQuoteAdapter.getItem(info.position);
+      menu.setHeaderTitle(getActivity().getString(R.string.quote_fragment_item_header, quote.getId()));
       final String itemText = getActivity().getString(R.string.quote_fragment_delete_quote);
       MenuItem item = menu.add(Menu.NONE, MENU_DELETE_HIGHLIGHT, Menu.NONE, itemText);
       item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
         @Override public boolean onMenuItemClick(MenuItem menuItem) {
-          LocalHighlight localHighlight = mQuoteAdapter.getItem(info.position).getLocalHighlight();
-          deleteHighlight(localHighlight);
+          Quote quote = mQuoteAdapter.getItem(info.position);
+          deleteQuote(quote);
           return true;
         }
       });
@@ -174,26 +179,10 @@ public class QuoteFragment extends BaseFragment {
 
   private void bindViews(View view) {
     mTextBlankState = (TextView) view.findViewById(R.id.blank_text);
-    mListHighlights = (ListView) view.findViewById(R.id.quotes_list);
-    mButtonAddHighlight = (Button) view.findViewById(R.id.add_quote_button);
+    mQuoteList = (ListView) view.findViewById(R.id.quote_list);
+    mAddQuoteButton = (Button) view.findViewById(R.id.add_quote_button);
 
     mRootView = view;
-  }
-
-  private List<HighlightItem> itemize(List<LocalHighlight> localHighlights) {
-    if(localHighlights == null) {
-      return new ArrayList<HighlightItem>();
-    }
-
-    Log.d(TAG, "Itemizing " + localHighlights.size() + " reading highlights");
-
-    ArrayList<HighlightItem> items = new ArrayList<HighlightItem>(localHighlights.size());
-    for(LocalHighlight localHighlight : localHighlights) {
-      if(!localHighlight.deletedByUser) {
-        items.add(new HighlightItem(localHighlight));
-      }
-    }
-    return items;
   }
 
   /**
@@ -204,63 +193,78 @@ public class QuoteFragment extends BaseFragment {
   private void refreshHighlightBlankState() {
     if(mQuoteAdapter.getCount() == 0) {
       mTextBlankState.setVisibility(View.VISIBLE);
-      mListHighlights.setVisibility(View.GONE);
+      mQuoteList.setVisibility(View.GONE);
     } else {
       mTextBlankState.setVisibility(View.GONE);
-      mListHighlights.setVisibility(View.VISIBLE);
+      mQuoteList.setVisibility(View.VISIBLE);
     }
   }
 
-  /**
-   * Deletes the highlight. If the highlight is not connected to Readmill it is deleted immediately.
-   * Otherwise it is flagged as deleted and removed at a later time.
-   *
-   * @param localHighlight LocalHighlight local highlight to delete.
-   */
-  private void deleteHighlight(LocalHighlight localHighlight) {
-    if(localHighlight.isOfflineOnly()) {
-      deleteLocalHighlight(localHighlight);
+  private void deleteQuote(Quote quote) {
+    new DeleteTask(quote, this).execute();
+  }
+
+  private void onQuoteDeleted(Quote quote) {
+    if(quote == null) {
+      Toast.makeText(getActivity(), R.string.quote_error_failed_to_delete, Toast.LENGTH_SHORT).show();
     } else {
-      markHighlightAsDeleted(localHighlight);
+      mQuoteAdapter.remove(quote);
+      refreshHighlightBlankState();
     }
   }
 
-  /**
-   * Removes a highlight from the device and updates the highlight list
-   * @param localHighlight highlight to delete
-   */
-  private void deleteLocalHighlight(LocalHighlight localHighlight) {
-    Log.d(TAG, "deleteLocalHighlight()");
-    DeleteLocalHighlightTask.delete(localHighlight, new DeleteLocalHighlightListener() {
-      @Override public void onLocalHighlightDeleted(LocalHighlight deletedHighlight) {
-        Log.d(TAG, "Deleting highlight with id: " + deletedHighlight.id);
-        mQuoteAdapter.remove(deletedHighlight.id);
-        refreshHighlightBlankState();
-      }
+  private static class DeleteTask extends AsyncTask<Void, Void, Quote> {
+    private final Quote mQuote;
+    private final WeakReference<QuoteFragment> mFragment;
+    private final DatabaseManager mDatabaseManager;
 
-      @Override public void onLocalHighlightDeletedFailed(LocalHighlight deletedHighlight) {
-        Toast.makeText(getActivity(), R.string.quote_error_failed_to_delete, Toast.LENGTH_SHORT).show();
+    public DeleteTask(Quote quote, QuoteFragment fragment) {
+      mQuote = quote;
+      mFragment = new WeakReference<QuoteFragment>(fragment);
+      // TODO this is whack, should probably move to some sort of dependency solution
+      mDatabaseManager = ((BaseActivity)fragment.getActivity()).getApp().getDatabaseManager();
+    }
+
+    @Override
+    protected Quote doInBackground(Void... voids) {
+      if(mDatabaseManager.delete(mQuote)) {
+        return mQuote;
+      } else {
+        return null;
       }
-    });
+    }
+
+    @Override
+    protected void onPostExecute(Quote deletedQuote) {
+      QuoteFragment fragment = mFragment.get();
+      if(fragment != null) {
+        fragment.onQuoteDeleted(deletedQuote);
+      }
+    }
   }
 
-  /**
-   * Marks a local highlight as deleted, causing it to be removed on next sync.
-   *
-   * @param localHighlight highlight to mark as deleted
-   */
-  private void markHighlightAsDeleted(LocalHighlight localHighlight) {
-    Log.d(TAG, "markHighlightAsDeleted()");
-    localHighlight.deletedByUser = true;
-    PersistLocalHighlightTask.persist(localHighlight, new PersistLocalHighlightListener() {
-      @Override public void onLocalHighlightPersisted(int id, boolean created) {
-        mQuoteAdapter.remove(id);
-        refreshHighlightBlankState();
-      }
+  private static class LoadQuoteTask extends AsyncTask<Void, Void, Quote> {
+    private final WeakReference<QuoteFragment> mFragment;
+    private final DatabaseManager mDatabaseManager;
+    private final int mQuoteId;
 
-      @Override public void onLocalHighlightPersistedFailed() {
-        Toast.makeText(getActivity(), R.string.quote_error_failed_to_delete, Toast.LENGTH_SHORT).show();
+    public LoadQuoteTask(int quoteId, QuoteFragment fragment) {
+      mQuoteId = quoteId;
+      mFragment = new WeakReference<QuoteFragment>(fragment);
+      mDatabaseManager = ((BaseActivity)fragment.getActivity()).getApp().getDatabaseManager();
+    }
+
+    @Override
+    protected Quote doInBackground(Void... voids) {
+      return mDatabaseManager.get(Quote.class, mQuoteId);
+    }
+
+    @Override
+    protected void onPostExecute(Quote quote) {
+      QuoteFragment fragment = mFragment.get();
+      if(fragment != null) {
+        fragment.onQuoteLoaded(quote);
       }
-    });
+    }
   }
 }

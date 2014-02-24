@@ -134,6 +134,15 @@ public class Book extends Model {
     }
   }
 
+  /** Returns the numerical value of the current page if the book has a position and total page count. */
+  public int getCurrentPage() {
+    if(mCurrentPosition == null || mNumberPages == null) {
+      return 0;
+    }
+
+    return (int) (mCurrentPosition * mNumberPages);
+  }
+
   /** Returns the sum of all loaded sessions. */
   public long calculateSecondsSpent() {
     long totalDuration = 0;

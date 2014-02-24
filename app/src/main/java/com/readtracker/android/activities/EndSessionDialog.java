@@ -91,7 +91,7 @@ public class EndSessionDialog extends DialogFragment {
 
     bindViews(root);
 
-    mProgressPicker.setupForLocalReading(mLocalReading);
+    // mProgressPicker.setBook(mLocalReading);
 
     mProgressPicker.setCurrentPage(mCurrentPage);
 
@@ -133,7 +133,7 @@ public class EndSessionDialog extends DialogFragment {
     mButtonSaveProgress = (Button) root.findViewById(R.id.buttonSaveProgress);
     mButtonFinishBook = (Button) root.findViewById(R.id.buttonFinishBook);
     mFlipperActionButtons = (SafeViewFlipper) root.findViewById(R.id.flipperActionButtons);
-    mProgressPicker = (ProgressPicker) root.findViewById(R.id.progressPicker);
+    mProgressPicker = (ProgressPicker) root.findViewById(R.id.progress_picker);
   }
 
   private void bindEvents() {

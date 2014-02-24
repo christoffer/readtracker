@@ -17,7 +17,7 @@
     android:gravity="center_horizontal" />
 
   <com.readtracker.android.custom_views.ProgressPicker
-    android:id="@+id/progressPicker"
+    android:id="@+id/progress_picker"
     android:layout_marginTop="24dp"
     android:layout_marginBottom="24dp"
     android:layout_height="wrap_content"

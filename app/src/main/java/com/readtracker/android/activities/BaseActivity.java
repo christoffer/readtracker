@@ -28,7 +28,7 @@ public class BaseActivity extends ActionBarActivity {
     mBus = getApp().getBus();
   }
 
-  protected ReadTrackerApp getApp() {
+  public ReadTrackerApp getApp() {
     return mApplication;
   }
 

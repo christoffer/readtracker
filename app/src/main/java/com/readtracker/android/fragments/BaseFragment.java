@@ -24,4 +24,8 @@ public class BaseFragment extends Fragment {
     super.onDetach();
     mBus.unregister(this);
   }
+
+  protected Bus getBus() {
+    return mBus;
+  }
 }

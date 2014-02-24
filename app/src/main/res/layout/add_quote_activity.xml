@@ -34,7 +34,7 @@
       android:text="@string/quote_activity_position"/>
 
     <com.readtracker.android.custom_views.ProgressPicker
-      android:id="@+id/progressPicker"
+      android:id="@+id/progress_picker"
       android:layout_width="wrap_content"
       android:layout_gravity="center_horizontal"
       android:layout_height="wrap_content"
