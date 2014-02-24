@@ -20,10 +20,10 @@ import com.readtracker.android.support.Utils;
 import java.util.List;
 
 /**
- * Fragment for showing a reading history of a book
+ * Fragment for showing summary of a book
  */
-public class ReadingSessionsFragment extends Fragment {
-  private static final String TAG = ReadingSessionsFragment.class.getName();
+public class SummaryFragment extends Fragment {
+  private static final String TAG = SummaryFragment.class.getName();
 
   private Book mBook;
   private View mRootView = null;
@@ -38,7 +38,7 @@ public class ReadingSessionsFragment extends Fragment {
 
   public static Fragment newInstance() {
     Log.d(TAG, "newInstance()");
-    return new ReadingSessionsFragment();
+    return new SummaryFragment();
   }
 
   @Override
@@ -56,7 +56,9 @@ public class ReadingSessionsFragment extends Fragment {
     return view;
   }
 
-  /** Deferr populating the fields until both the UI and the data is available. */
+  /**
+   * Deferr populating the fields until both the UI and the data is available.
+   */
   private void populateFieldsDeferred() {
     if(mBook == null || mRootView == null) {
       return;
@@ -107,7 +109,9 @@ public class ReadingSessionsFragment extends Fragment {
     }
 
     final float radius[] = new float[8];
-    for(int i = 0; i < 8; i++) { radius[i] = 3; }
+    for(int i = 0; i < 8; i++) {
+      radius[i] = 3;
+    }
     RoundRectShape roundedRect = new RoundRectShape(radius, null, null);
     ShapeDrawable background = new ShapeDrawable(roundedRect);
     background.getPaint().setColor(color);
@@ -150,7 +154,9 @@ public class ReadingSessionsFragment extends Fragment {
     mTextTimeLeft.setText(timeLeft);
   }
 
-  /** Generate a short, encouraging, phrase on how long the user has to read. */
+  /**
+   * Generate a short, encouraging, phrase on how long the user has to read.
+   */
   private String getPepTalk(float estimatedSecondsLeft) {
     String pepTalk = null;
     float hoursLeft = estimatedSecondsLeft / (60.0f * 60.0f);

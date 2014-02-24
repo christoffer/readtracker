@@ -40,8 +40,8 @@ import com.squareup.otto.Subscribe;
 /**
  * Fragment for managing a reading session
  */
-public class ReadingFragment extends Fragment {
-  private static final String TAG = ReadingFragment.class.getName();
+public class ReadFragment extends Fragment {
+  private static final String TAG = ReadFragment.class.getName();
   private static final String KEY_SESSION_TIMER = "SESSION_TIMER";
 
   private static final String END_SESSION_FRAGMENT_TAG = "end-session-tag";
@@ -82,8 +82,8 @@ public class ReadingFragment extends Fragment {
 
 
   public static Fragment newInstance() {
-    Log.v(TAG, "Creating new instance of ReadingFragment");
-    return new ReadingFragment();
+    Log.v(TAG, "Creating new instance of ReadFragment");
+    return new ReadFragment();
   }
 
   @Override

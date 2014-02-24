@@ -159,9 +159,6 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialogLi
     mBookFragmentAdapter.setBrowserMode(browserMode);
 
     mViewPager.setAdapter(mBookFragmentAdapter);
-    // The default for off-screen page limit is 1, which means that the session/highlight view
-    // is unloaded when going away from the center (reading) page.
-    mViewPager.setOffscreenPageLimit(2);
 
     int page = 0;
     switch(mFragmentStartPage) {

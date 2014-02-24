@@ -3,20 +3,14 @@ package com.readtracker.android.fragments;
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.FragmentPagerAdapter;
 
 import com.readtracker.android.R;
-import com.readtracker.android.activities.BookActivity;
-import com.readtracker.android.db.Book;
-import com.readtracker.android.db.LocalHighlight;
-import com.readtracker.android.db.LocalReading;
-import com.readtracker.android.db.LocalSession;
-import com.readtracker.android.support.SessionTimer;
 
-import java.util.ArrayList;
-
-/** Handles the fragments for the book activity */
-public class BookFragmentAdapter extends FragmentStatePagerAdapter {
+/**
+ * Handles the fragments for the book activity
+ */
+public class BookFragmentAdapter extends FragmentPagerAdapter {
   private final Context mContext;
   private boolean mBrowseMode;
 
@@ -28,11 +22,11 @@ public class BookFragmentAdapter extends FragmentStatePagerAdapter {
   @Override
   public Fragment getItem(int position) {
     if(position == getSessionsPageIndex()) {
-      return ReadingSessionsFragment.newInstance();
+      return SummaryFragment.newInstance();
     } else if(position == getReadingPageIndex()) {
-      // Keep a reference to the ReadingFragment since we want the ability to
+      // Keep a reference to the ReadFragment since we want the ability to
       // interrogate for the current session state
-      return ReadingFragment.newInstance();
+      return ReadFragment.newInstance();
     } else if(position == getQuotesPageIndex()) {
       return QuoteFragment.newInstance();
     }
@@ -44,7 +38,8 @@ public class BookFragmentAdapter extends FragmentStatePagerAdapter {
     return mBrowseMode ? 2 : 3;
   }
 
-  @Override public CharSequence getPageTitle(int position) {
+  @Override
+  public CharSequence getPageTitle(int position) {
     if(position == getSessionsPageIndex()) {
       return mContext.getString(R.string.book_fragment_header_summary);
     } else if(position == getReadingPageIndex()) {
