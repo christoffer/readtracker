@@ -141,9 +141,9 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
       if(coverImage != null) {
         // TODO nicer default cover
         coverImage.setImageResource(android.R.drawable.ic_menu_gallery);
-        if(!TextUtils.isEmpty(book.getCoverUrl())) {
+        if(!TextUtils.isEmpty(book.getCoverImageUrl())) {
           coverImage.setVisibility(View.VISIBLE);
-          Picasso.with(coverImage.getContext()).load(book.getCoverUrl()).into(coverImage);
+          Picasso.with(coverImage.getContext()).load(book.getCoverImageUrl()).into(coverImage);
         }
       }
 
@@ -159,7 +159,7 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
 
       if(finishedAtText != null) {
         if(book.getState() == Book.State.Finished) {
-          finishedAtText.setText(Utils.humanPastDate(book.getLastOpenedAt()));
+          finishedAtText.setText(Utils.humanPastDate(book.getCurrentPositionTimestamp()));
           finishedAtText.setVisibility(View.VISIBLE);
         } else {
           finishedAtText.setVisibility(View.GONE);

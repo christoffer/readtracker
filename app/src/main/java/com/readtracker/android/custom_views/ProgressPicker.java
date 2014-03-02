@@ -49,7 +49,7 @@ public class ProgressPicker extends LinearLayout {
       mWheelEndingPage = (WheelView) mRootView.findViewById(R.id.wheelEndingPage);
     }
 
-    setupWheelView(mWheelEndingPage, book.getNumberPages());
+    setupWheelView(mWheelEndingPage, book.getPageCount());
   }
 
   public int getCurrentPage() {

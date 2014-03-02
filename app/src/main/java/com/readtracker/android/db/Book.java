@@ -16,12 +16,12 @@ public class Book extends Model {
 
   @DatabaseField(columnName = Columns.TITLE) String mTitle;
   @DatabaseField(columnName = Columns.AUTHOR) String mAuthor;
-  @DatabaseField(columnName = Columns.COVER_URL) String mCoverUrl;
-  @DatabaseField(columnName = Columns.NUMBER_PAGES) Float mNumberPages;
+  @DatabaseField(columnName = Columns.COVER_IMAGE_URL) String mCoverImageUrl;
+  @DatabaseField(columnName = Columns.PAGE_COUNT) Float mPageCount;
   @DatabaseField(columnName = Columns.STATE, dataType = DataType.ENUM_STRING) State mState = State.Reading;
-  @DatabaseField(columnName = Columns.LAST_POSITION) Float mCurrentPosition;
-  @DatabaseField(columnName = Columns.LAST_OPENED_AT) Long mLastOpenedAt;
-  @DatabaseField(columnName = Columns.FIRST_POSITION_AT) Long mFirstPositionAt;
+  @DatabaseField(columnName = Columns.CURRENT_POSITION) Float mCurrentPosition;
+  @DatabaseField(columnName = Columns.CURRENT_POSITION_TIMESTAMP) Long mCurrentPositionTimestamp;
+  @DatabaseField(columnName = Columns.FIRST_POSITION_TIMESTAMP) Long mFirstPositionTimestamp;
   @DatabaseField(columnName = Columns.CLOSING_REMARK) String mClosingRemark;
 
   // Use manual handling of foreign keys here as we want to have complete
@@ -69,13 +69,13 @@ public class Book extends Model {
 
   public void setAuthor(String author) { mAuthor = author; }
 
-  public String getCoverUrl() { return mCoverUrl; }
+  public String getCoverImageUrl() { return mCoverImageUrl; }
 
-  public void setCoverUrl(String coverUrl) { mCoverUrl = coverUrl; }
+  public void setCoverImageUrl(String coverImageUrl) { mCoverImageUrl = coverImageUrl; }
 
-  public Float getNumberPages() { return mNumberPages; }
+  public Float getPageCount() { return mPageCount; }
 
-  public void setNumberPages(Float numberPages) { mNumberPages = numberPages; }
+  public void setPageCount(Float pageCount) { mPageCount = pageCount; }
 
   public State getState() { return mState; }
 
@@ -89,13 +89,13 @@ public class Book extends Model {
 
   public void setCurrentPosition(Float currentPosition) { mCurrentPosition = currentPosition; }
 
-  public Long getLastOpenedAt() { return mLastOpenedAt; }
+  public Long getCurrentPositionTimestamp() { return mCurrentPositionTimestamp; }
 
-  public void setLastOpenedAt(Long lastOpenedAt) { mLastOpenedAt = lastOpenedAt; }
+  public void setCurrentPositionTimestamp(Long currentPositionTimestamp) { mCurrentPositionTimestamp = currentPositionTimestamp; }
 
-  public Long getFirstPositionAt() { return mFirstPositionAt; }
+  public Long getFirstPositionTimestamp() { return mFirstPositionTimestamp; }
 
-  public void setFirstPositionAt(Long firstPositionAt) { mFirstPositionAt = firstPositionAt; }
+  public void setFirstPositionTimestamp(Long firstPositionTimestamp) { mFirstPositionTimestamp = firstPositionTimestamp; }
 
   public String getClosingRemark() { return mClosingRemark; }
 
@@ -104,18 +104,18 @@ public class Book extends Model {
   public static abstract class Columns extends Model.Columns {
     public static final String TITLE = "title";
     public static final String AUTHOR = "author";
-    public static final String COVER_URL = "cover_url";
-    public static final String NUMBER_PAGES = "number_pages";
+    public static final String COVER_IMAGE_URL = "cover_image_url";
+    public static final String PAGE_COUNT = "page_count";
     public static final String STATE = "state";
-    public static final String LAST_POSITION = "last_position";
-    public static final String LAST_OPENED_AT = "last_opened_at";
-    public static final String FIRST_POSITION_AT = "first_position_at";
+    public static final String CURRENT_POSITION = "current_position";
+    public static final String CURRENT_POSITION_TIMESTAMP = "current_position_timestamp";
+    public static final String FIRST_POSITION_TIMESTAMP = "first_position_timestamp";
     public static final String CLOSING_REMARK = "closing_remark";
   }
 
   /** Returns true if this book has page numbers set. */
   public boolean hasPageNumbers() {
-    return mNumberPages != null && mNumberPages > 0;
+    return mPageCount != null && mPageCount > 0;
   }
 
   /** Returns true if this book has a current position set. */
@@ -126,7 +126,7 @@ public class Book extends Model {
   /** Returns the page number if the user is reading a book with total pages set. Otherwise returns current position in %. */
   public String getCurrentPageName() {
     if(hasPageNumbers() && hasCurrentPosition()) {
-      return String.format("%d", Math.round(mNumberPages * mCurrentPosition));
+      return String.format("%d", Math.round(mPageCount * mCurrentPosition));
     } else if(hasCurrentPosition()) {
       return String.format("%.2f%%", mCurrentPosition * 100);
     } else {
@@ -136,18 +136,18 @@ public class Book extends Model {
 
   /** Returns the numerical value of the current page if the book has a position and total page count. */
   public int getCurrentPage() {
-    if(mCurrentPosition == null || mNumberPages == null) {
+    if(mCurrentPosition == null || mPageCount == null) {
       return 0;
     }
 
-    return (int) (mCurrentPosition * mNumberPages);
+    return (int) (mCurrentPosition * mPageCount);
   }
 
   /** Returns the sum of all loaded sessions. */
   public long calculateSecondsSpent() {
     long totalDuration = 0;
 
-    for(Session session: mSessions) {
+    for(Session session : mSessions) {
       totalDuration += session.getDurationSeconds();
     }
 

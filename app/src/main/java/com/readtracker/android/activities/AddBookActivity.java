@@ -112,14 +112,14 @@ public class AddBookActivity extends BookBaseActivity {
     mEditAuthor.setText(book.getAuthor());
 
     if(book.hasPageNumbers()) {
-      mEditPageCount.setText(String.valueOf(book.getNumberPages()));
+      mEditPageCount.setText(String.valueOf(book.getPageCount()));
       mSwitchPagesPercent.setChecked(true);
     } else {
       mEditPageCount.setText("");
       mSwitchPagesPercent.setChecked(false);
     }
 
-    mCoverURL = book.getCoverUrl();
+    mCoverURL = book.getCoverImageUrl();
     bindEvents();
   }
 
@@ -141,13 +141,13 @@ public class AddBookActivity extends BookBaseActivity {
 
     book.setTitle(mEditTitle.getText().toString());
     book.setAuthor(mEditAuthor.getText().toString());
-    book.setCoverUrl(mCoverURL);
+    book.setCoverImageUrl(mCoverURL);
 
     if(mSwitchPagesPercent.isChecked()) {
       int discretePages = Integer.parseInt(mEditPageCount.getText().toString());
-      book.setNumberPages((float) discretePages);
+      book.setPageCount((float) discretePages);
     } else {
-      book.setNumberPages(null);
+      book.setPageCount(null);
     }
 
     saveBook(book);

@@ -65,10 +65,10 @@ public abstract class BookBaseActivity extends BaseActivity {
     // the imageview from the actionbar pre-11. So Gingerbread will be stuck with the default image...
     if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
       ImageView homeIcon = (ImageView) findViewById(android.R.id.home);
-      if(homeIcon != null && !TextUtils.isEmpty(book.getCoverUrl())) {
+      if(homeIcon != null && !TextUtils.isEmpty(book.getCoverImageUrl())) {
         int size = getActionBarHeight();
         if(size == 0) size = 48; // Arbitrary default value
-        Picasso.with(this).load(book.getCoverUrl()).placeholder(R.drawable.readmill_sync).resize(size, size).centerCrop().into(homeIcon);
+        Picasso.with(this).load(book.getCoverImageUrl()).placeholder(R.drawable.readmill_sync).resize(size, size).centerCrop().into(homeIcon);
         actionBar.setDisplayShowHomeEnabled(true);
       }
     }
