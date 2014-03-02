@@ -136,10 +136,9 @@ public class QuotesFragment extends BaseFragment {
         startActivityForResult(intent, REQ_ADD_QUOTE);
       }
     });
+    mAddQuoteButton.setEnabled(true);
 
     registerForContextMenu(mQuoteList);
-
-    mAddQuoteButton.setEnabled(true);
 
     refreshBlankState();
   }
