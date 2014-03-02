@@ -21,7 +21,6 @@ import android.widget.Toast;
 
 import com.readtracker.android.R;
 import com.readtracker.android.activities.AddQuoteActivity;
-import com.readtracker.android.activities.BaseActivity;
 import com.readtracker.android.activities.BookActivity;
 import com.readtracker.android.activities.BookBaseActivity;
 import com.readtracker.android.adapters.QuoteAdapter;
@@ -69,12 +68,24 @@ public class QuotesFragment extends BaseFragment {
   @Subscribe
   public void onBookLoadedEvent(BookBaseActivity.BookLoadedEvent event) {
     mBook = event.getBook();
+
+    if(mBook != null) {
+      List<Quote> quotesInBook = mBook.getQuotes();
+
+      // If we are running this after the activity result, then
+      if(mPendingNewQuote != null && quotesInBook.indexOf(mPendingNewQuote) < 0) {
+        Log.d(TAG, "Adding non-existing pending quote");
+        quotesInBook.add(mPendingNewQuote);
+        mPendingNewQuote = null;
+      }
+    }
+
     populateFieldsDeferred();
   }
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    return inflater.inflate(R.layout.quote_fragment, container, false);
+    return inflater.inflate(R.layout.quotes_fragment, container, false);
   }
 
   @Override
@@ -110,20 +121,11 @@ public class QuotesFragment extends BaseFragment {
       }
     });
 
-    List<Quote> quotesInBook = mBook.getQuotes();
-
-    // If we are running this after the activity result, then
-    if(mPendingNewQuote != null && quotesInBook.indexOf(mPendingNewQuote) < 0) {
-      Log.d(TAG, "Adding non-existing pending quote");
-      quotesInBook.add(mPendingNewQuote);
-      mPendingNewQuote = null;
-    }
-
     mQuoteAdapter.clear();
     for(Quote quote : mBook.getQuotes()) {
       mQuoteAdapter.add(quote);
     }
-
+    mQuoteAdapter.sortQuotes();
     mQuoteList.setAdapter(mQuoteAdapter);
 
     mAddQuoteButton.setOnClickListener(new View.OnClickListener() {
@@ -188,21 +190,32 @@ public class QuotesFragment extends BaseFragment {
   @Override
   public void onCreateContextMenu(ContextMenu menu, View view, ContextMenu.ContextMenuInfo menuInfo) {
     super.onCreateContextMenu(menu, view, menuInfo);
-    if(view.getId() == mQuoteList.getId()) {
-      final AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-      Quote quote = mQuoteAdapter.getItem(info.position);
-      menu.setHeaderTitle(getActivity().getString(R.string.quote_fragment_item_header, quote.getId()));
-      final String itemText = getActivity().getString(R.string.quote_fragment_delete_quote);
-      MenuItem item = menu.add(Menu.NONE, MENU_DELETE_HIGHLIGHT, Menu.NONE, itemText);
-      item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-        @Override
-        public boolean onMenuItemClick(MenuItem menuItem) {
-          Quote quote = mQuoteAdapter.getItem(info.position);
-          deleteQuote(quote);
-          return true;
-        }
-      });
+
+    if(view.getId() != mQuoteList.getId()) {
+      return;
     }
+
+    final AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+    Quote quote = mQuoteAdapter.getItem(info.position);
+
+    setMenuTitle(menu, quote);
+
+    final String itemText = getActivity().getString(R.string.quote_fragment_delete_quote);
+    MenuItem item = menu.add(Menu.NONE, MENU_DELETE_HIGHLIGHT, Menu.NONE, itemText);
+    item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+      @Override
+      public boolean onMenuItemClick(MenuItem menuItem) {
+        Quote quote = mQuoteAdapter.getItem(info.position);
+        deleteQuote(quote);
+        return true;
+      }
+    });
+  }
+
+  private void setMenuTitle(ContextMenu menu, Quote quote) {
+    final String defaultTitle = getActivity().getString(R.string.quote_fragment_menu_title_default);
+    final String title = Utils.truncateString(quote.getContent(), 20, defaultTitle);
+    menu.setHeaderTitle(title);
   }
 
   private void bindViews(View view) {
@@ -228,7 +241,8 @@ public class QuotesFragment extends BaseFragment {
       Toast.makeText(getActivity(), R.string.quote_error_failed_to_delete, Toast.LENGTH_SHORT).show();
     } else {
       mQuoteAdapter.remove(quote);
-      refreshHighlightBlankState();
+      mBook.getQuotes().remove(quote);
+      refreshBlankState();
     }
   }
 
@@ -240,17 +254,12 @@ public class QuotesFragment extends BaseFragment {
     public DeleteTask(Quote quote, QuotesFragment fragment) {
       mQuote = quote;
       mFragment = new WeakReference<QuotesFragment>(fragment);
-      // TODO this is whack, should probably move to some sort of dependency solution
-      mDatabaseManager = ((BaseActivity) fragment.getActivity()).getApp().getDatabaseManager();
+      mDatabaseManager = fragment.getDatabaseManager();
     }
 
     @Override
     protected Quote doInBackground(Void... voids) {
-      if(mDatabaseManager.delete(mQuote)) {
-        return mQuote;
-      } else {
-        return null;
-      }
+      return mDatabaseManager.delete(mQuote) ? mQuote : null;
     }
 
     @Override
@@ -261,5 +270,4 @@ public class QuotesFragment extends BaseFragment {
       }
     }
   }
-
 }

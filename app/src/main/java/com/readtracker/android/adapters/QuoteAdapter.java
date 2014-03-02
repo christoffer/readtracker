@@ -17,12 +17,9 @@ import com.readtracker.android.support.Utils;
 import java.util.Comparator;
 import java.util.List;
 
-/**
- * Shows a list of quotes
- */
+/** Shows a list of quotes */
 public class QuoteAdapter extends ArrayAdapter<Quote> {
   private int mColor;
-  private LayoutInflater mInflater;
 
   private Comparator<Quote> mQuoteComparator = new Comparator<Quote>() {
     @Override
@@ -33,8 +30,11 @@ public class QuoteAdapter extends ArrayAdapter<Quote> {
 
   public QuoteAdapter(Context context, int textViewResourceId, List<Quote> quotes) {
     super(context, textViewResourceId, quotes);
+    sortQuotes();
+  }
+
+  public void sortQuotes() {
     sort(mQuoteComparator);
-    mInflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
   }
 
   public void setColor(int color) {
@@ -47,12 +47,13 @@ public class QuoteAdapter extends ArrayAdapter<Quote> {
     Quote quote = getItem(position);
 
     if(convertView == null) {
-      convertView = mInflater.inflate(R.layout.highlight_list_item, null);
+      convertView = LayoutInflater.from(getContext()).inflate(R.layout.highlight_list_item, null);
     }
 
     TextView textContent = (TextView) convertView.findViewById(R.id.textContent);
     textContent.setText(quote.getContent().trim());
-    textContent.setTextSize(textSizeForContent(quote.getContent()));
+    final long contentLength = quote.getContent() == null ? 0 : quote.getContent().length();
+    textContent.setTextSize(getTextSizeForContentLength(contentLength));
 
     TextView textDate = (TextView) convertView.findViewById(R.id.textDate);
 
@@ -65,22 +66,11 @@ public class QuoteAdapter extends ArrayAdapter<Quote> {
     return convertView;
   }
 
-  public void removeById(int idOfItemToRemove) {
-    for(int i = 0; i < getCount(); i++) {
-      Quote quote = getItem(i);
-      if(quote.getId() == idOfItemToRemove) {
-        remove(quote);
-        notifyDataSetChanged();
-        return;
-      }
-    }
-  }
-
-  private float textSizeForContent(String content) {
-    if(content == null || content.length() < 100) {
+  private float getTextSizeForContentLength(long length) {
+    if(length < 100) {
       return textSizeFromDP(18);
     }
-    if(content.length() < 350) {
+    if(length < 350) {
       return textSizeFromDP(14);
     }
     return textSizeFromDP(10);

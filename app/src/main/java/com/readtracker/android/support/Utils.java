@@ -2,7 +2,9 @@ package com.readtracker.android.support;
 
 
 import android.graphics.Color;
+import android.text.TextUtils;
 
+import com.readtracker.android.R;
 import com.readtracker.android.db.Book;
 import com.readtracker.android.db.Session;
 
@@ -97,6 +99,16 @@ public class Utils {
 
   public static String longHumanTimeFromSeconds(long durationSeconds) {
     return longHumanTimeFromMillis(durationSeconds * 1000);
+  }
+
+  /** Returns the text truncated to length maxLength, or returns the defaultText if text is empty. */
+  public static String truncateString(String text, int maxLength, String defaultText) {
+    if(text == null || text.length() == 0) {
+      return defaultText;
+    } else if(text.length() < maxLength) {
+      return text;
+    }
+    return text.substring(0, maxLength - 1) + "\u2026";
   }
 
   private static String _pluralized(long number, String name) {
