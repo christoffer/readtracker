@@ -33,10 +33,11 @@ import com.readtracker.android.support.Utils;
 import com.squareup.otto.Subscribe;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.List;
 
-public class QuoteFragment extends BaseFragment {
-  private static final String TAG = QuoteFragment.class.getName();
+public class QuotesFragment extends BaseFragment {
+  private static final String TAG = QuotesFragment.class.getName();
 
   private static final int REQ_ADD_QUOTE = 1;
 
@@ -47,32 +48,28 @@ public class QuoteFragment extends BaseFragment {
   private View mRootView;
 
   private Book mBook;
-  private List<Quote> mQuotes;
-
   private QuoteAdapter mQuoteAdapter;
 
   private static final int MENU_DELETE_HIGHLIGHT = 1;
 
+  private Quote mPendingNewQuote;
+
   public static Fragment newInstance() {
-    Log.v(TAG, "Creating new QuoteFragment instance");
-    return new QuoteFragment();
+    Log.v(TAG, "Creating new QuotesFragment instance");
+    return new QuotesFragment();
   }
 
-  @Subscribe public void onBookLoadedEvent(BookBaseActivity.BookLoadedEvent event) {
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    mQuoteAdapter = new QuoteAdapter(getActivity(), R.layout.highlight_list_item, new ArrayList<Quote>());
+  }
+
+  // Called when the parent activity has completed loading the book
+  @Subscribe
+  public void onBookLoadedEvent(BookBaseActivity.BookLoadedEvent event) {
     mBook = event.getBook();
     populateFieldsDeferred();
-  }
-
-  @Override
-  public void onAttach(Activity activity) {
-    super.onAttach(activity);
-    Log.d(TAG, "onAttach()");
-  }
-
-  @Override
-  public void onResume() {
-    super.onResume();
-    Log.d(TAG, "onResume");
   }
 
   @Override
@@ -104,9 +101,7 @@ public class QuoteFragment extends BaseFragment {
     mQuoteList.setDivider(divider);
     mQuoteList.setDividerHeight(1);
 
-    mQuoteAdapter = new QuoteAdapter(getActivity(), R.layout.highlight_list_item, mBook.getQuotes());
     mQuoteAdapter.setColor(color);
-    mQuoteList.setAdapter(mQuoteAdapter);
     mQuoteList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
       @Override
       public void onItemClick(AdapterView<?> adapterView, View view, int position, long itemId) {
@@ -114,6 +109,22 @@ public class QuoteFragment extends BaseFragment {
         ((BookActivity) getActivity()).exitToAddQuoteScreen(quote);
       }
     });
+
+    List<Quote> quotesInBook = mBook.getQuotes();
+
+    // If we are running this after the activity result, then
+    if(mPendingNewQuote != null && quotesInBook.indexOf(mPendingNewQuote) < 0) {
+      Log.d(TAG, "Adding non-existing pending quote");
+      quotesInBook.add(mPendingNewQuote);
+      mPendingNewQuote = null;
+    }
+
+    mQuoteAdapter.clear();
+    for(Quote quote : mBook.getQuotes()) {
+      mQuoteAdapter.add(quote);
+    }
+
+    mQuoteList.setAdapter(mQuoteAdapter);
 
     mAddQuoteButton.setOnClickListener(new View.OnClickListener() {
       @Override
@@ -141,25 +152,41 @@ public class QuoteFragment extends BaseFragment {
   public void onActivityResult(int requestCode, int resultCode, Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
     if(requestCode == REQ_ADD_QUOTE && resultCode == Activity.RESULT_OK) {
-      Log.d(TAG, "Quote created");
       if(data != null && data.hasExtra(AddQuoteActivity.KEY_QUOTE_ID)) {
-        loadQuote(data.getExtras().getInt(AddQuoteActivity.KEY_QUOTE_ID));
+        final int quoteId = data.getExtras().getInt(AddQuoteActivity.KEY_QUOTE_ID);
+        Log.d(TAG, "Quote created: " + quoteId);
+        addQuoteToBookList(quoteId);
       }
     } else {
       Log.d(TAG, "Quote not created");
     }
   }
 
-  private void loadQuote(int quoteId) {
-    new LoadQuoteTask(quoteId, this).execute();
+  private void addQuoteToBookList(int quoteId) {
+    // Load the quote on the main thread since it's single row, and it quickly
+    // gets very complicated to sync this new quote with the book loading event
+    Quote quote = getDatabaseManager().get(Quote.class, quoteId);
+    if(quote == null) {
+      Log.w(TAG, "No such quote: " + quoteId);
+      return;
+    }
+
+    if(mBook != null) {
+      List<Quote> quotesInLoadedBook = mBook.getQuotes();
+      if(quotesInLoadedBook.indexOf(quote) < 0) {
+        Log.d(TAG, "Book does not contain new quote");
+        quotesInLoadedBook.add(quote);
+      } else {
+        Log.d(TAG, "Book already contains quote");
+      }
+    } else {
+      Log.d(TAG, "Setting pending quote: " + quote);
+      mPendingNewQuote = quote;
+    }
   }
 
-  private void onQuoteLoaded(Quote quote) {
-    mQuoteAdapter.add(quote);
-    mQuoteAdapter.notifyDataSetChanged();
-  }
-
-  @Override public void onCreateContextMenu(ContextMenu menu, View view, ContextMenu.ContextMenuInfo menuInfo) {
+  @Override
+  public void onCreateContextMenu(ContextMenu menu, View view, ContextMenu.ContextMenuInfo menuInfo) {
     super.onCreateContextMenu(menu, view, menuInfo);
     if(view.getId() == mQuoteList.getId()) {
       final AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
@@ -168,7 +195,8 @@ public class QuoteFragment extends BaseFragment {
       final String itemText = getActivity().getString(R.string.quote_fragment_delete_quote);
       MenuItem item = menu.add(Menu.NONE, MENU_DELETE_HIGHLIGHT, Menu.NONE, itemText);
       item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-        @Override public boolean onMenuItemClick(MenuItem menuItem) {
+        @Override
+        public boolean onMenuItemClick(MenuItem menuItem) {
           Quote quote = mQuoteAdapter.getItem(info.position);
           deleteQuote(quote);
           return true;
@@ -187,7 +215,7 @@ public class QuoteFragment extends BaseFragment {
 
   /**
    * Check the number of highlights and either show or hide the blank state.
-   *
+   * <p/>
    * TODO this fragment should be a ListFragment which handles this automatically.
    */
   private void refreshHighlightBlankState() {
@@ -215,14 +243,14 @@ public class QuoteFragment extends BaseFragment {
 
   private static class DeleteTask extends AsyncTask<Void, Void, Quote> {
     private final Quote mQuote;
-    private final WeakReference<QuoteFragment> mFragment;
+    private final WeakReference<QuotesFragment> mFragment;
     private final DatabaseManager mDatabaseManager;
 
-    public DeleteTask(Quote quote, QuoteFragment fragment) {
+    public DeleteTask(Quote quote, QuotesFragment fragment) {
       mQuote = quote;
-      mFragment = new WeakReference<QuoteFragment>(fragment);
+      mFragment = new WeakReference<QuotesFragment>(fragment);
       // TODO this is whack, should probably move to some sort of dependency solution
-      mDatabaseManager = ((BaseActivity)fragment.getActivity()).getApp().getDatabaseManager();
+      mDatabaseManager = ((BaseActivity) fragment.getActivity()).getApp().getDatabaseManager();
     }
 
     @Override
@@ -236,35 +264,11 @@ public class QuoteFragment extends BaseFragment {
 
     @Override
     protected void onPostExecute(Quote deletedQuote) {
-      QuoteFragment fragment = mFragment.get();
+      QuotesFragment fragment = mFragment.get();
       if(fragment != null) {
         fragment.onQuoteDeleted(deletedQuote);
       }
     }
   }
 
-  private static class LoadQuoteTask extends AsyncTask<Void, Void, Quote> {
-    private final WeakReference<QuoteFragment> mFragment;
-    private final DatabaseManager mDatabaseManager;
-    private final int mQuoteId;
-
-    public LoadQuoteTask(int quoteId, QuoteFragment fragment) {
-      mQuoteId = quoteId;
-      mFragment = new WeakReference<QuoteFragment>(fragment);
-      mDatabaseManager = ((BaseActivity)fragment.getActivity()).getApp().getDatabaseManager();
-    }
-
-    @Override
-    protected Quote doInBackground(Void... voids) {
-      return mDatabaseManager.get(Quote.class, mQuoteId);
-    }
-
-    @Override
-    protected void onPostExecute(Quote quote) {
-      QuoteFragment fragment = mFragment.get();
-      if(fragment != null) {
-        fragment.onQuoteLoaded(quote);
-      }
-    }
-  }
 }

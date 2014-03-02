@@ -10,6 +10,7 @@ import android.util.TypedValue;
 import android.widget.Toast;
 
 import com.readtracker.android.ReadTrackerApp;
+import com.readtracker.android.db.DatabaseManager;
 import com.readtracker.android.support.ApplicationSettingsHelper;
 import com.squareup.otto.Bus;
 
@@ -17,6 +18,7 @@ import com.squareup.otto.Bus;
 public class BaseActivity extends ActionBarActivity {
   private ReadTrackerApp mApplication;
   private Bus mBus;
+  private DatabaseManager mDatabaseManager;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -26,6 +28,7 @@ public class BaseActivity extends ActionBarActivity {
 
     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     mBus = getApp().getBus();
+    mDatabaseManager = getApp().getDatabaseManager();
   }
 
   public ReadTrackerApp getApp() {
@@ -97,9 +100,14 @@ public class BaseActivity extends ActionBarActivity {
     return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dpValue, getResources().getDisplayMetrics());
   }
 
-  /** Convenient access to the bus. */
+  /** Returns the application global event bus. */
   public Bus getBus() {
     return mBus;
+  }
+
+  /** Returns the application global database manager. */
+  public DatabaseManager getDatabaseManager() {
+    return mDatabaseManager;
   }
 
   /** Convenient method for posting to the global bus from an activity. */

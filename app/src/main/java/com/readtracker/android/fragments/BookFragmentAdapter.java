@@ -28,7 +28,7 @@ public class BookFragmentAdapter extends FragmentPagerAdapter {
       // interrogate for the current session state
       return ReadFragment.newInstance();
     } else if(position == getQuotesPageIndex()) {
-      return QuoteFragment.newInstance();
+      return QuotesFragment.newInstance();
     }
     return null;
   }
