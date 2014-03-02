@@ -139,7 +139,7 @@ public class QuotesFragment extends BaseFragment {
 
     mAddQuoteButton.setEnabled(true);
 
-    refreshHighlightBlankState();
+    refreshBlankState();
   }
 
   @Override
@@ -213,19 +213,10 @@ public class QuotesFragment extends BaseFragment {
     mRootView = view;
   }
 
-  /**
-   * Check the number of highlights and either show or hide the blank state.
-   * <p/>
-   * TODO this fragment should be a ListFragment which handles this automatically.
-   */
-  private void refreshHighlightBlankState() {
-    if(mQuoteAdapter.getCount() == 0) {
-      mTextBlankState.setVisibility(View.VISIBLE);
-      mQuoteList.setVisibility(View.GONE);
-    } else {
-      mTextBlankState.setVisibility(View.GONE);
-      mQuoteList.setVisibility(View.VISIBLE);
-    }
+  private void refreshBlankState() {
+    final boolean hasItems = mQuoteAdapter.getCount() > 0;
+    mQuoteList.setVisibility(hasItems ? View.VISIBLE : View.GONE);
+    mTextBlankState.setVisibility(hasItems ? View.GONE : View.VISIBLE);
   }
 
   private void deleteQuote(Quote quote) {
