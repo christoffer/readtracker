@@ -2,21 +2,24 @@ package com.readtracker.android.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.readtracker.android.IntentKeys;
 import com.readtracker.android.R;
 import com.readtracker.android.db.Book;
-import com.readtracker.android.db.LocalHighlight;
 import com.readtracker.android.db.LocalSession;
 import com.readtracker.android.db.Quote;
 import com.readtracker.android.fragments.BookFragmentAdapter;
 import com.readtracker.android.interfaces.EndSessionDialogListener;
 import com.readtracker.android.support.SessionTimerStore;
 import com.squareup.otto.Produce;
+
+import static com.readtracker.android.fragments.BookFragmentAdapter.Page;
 
 /** Browse data for, and interact with, a book. */
 public class BookActivity extends BookBaseActivity implements EndSessionDialogListener {
@@ -36,17 +39,30 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialogLi
   private static final int REQUEST_BOOK_SETTINGS = 3;
 
   private BookFragmentAdapter mBookFragmentAdapter;
+
   private ViewPager mViewPager;
+  private PagerTabStrip mPagerTabStrip;
 
   private boolean mManualShutdown;
 
-  private int mFragmentStartPage = PAGE_UNSPECIFIED;
+  private Page mInitialFragmentPage;
+
+  // open the book for read tracking
+  // if book is finished
+  // open book for summary viewing
+  // if coming back from book edit
+  // reload book
+  // when coming back from session edit
+  // set result and finish
 
   public void onCreate(Bundle in) {
     super.onCreate(in);
 
     setContentView(R.layout.book_activity);
     mViewPager = (ViewPager) findViewById(R.id.fragment_view_pager);
+    mPagerTabStrip = (PagerTabStrip) findViewById(R.id.pager_tab_strip);
+
+    mPagerTabStrip.setVisibility(View.INVISIBLE);
 
     // Load information from database
     loadBookFromIntent();
@@ -78,14 +94,14 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialogLi
       case REQUEST_EDIT_PAGE_NUMBERS:
         if(resultCode == RESULT_OK) {
           Log.d(TAG, "Came back from editing page number");
-          mFragmentStartPage = PAGE_READING;
+          mInitialFragmentPage = Page.READING;
           loadBookFromIntent();
         }
         break;
       case REQUEST_ADD_QUOTE:
         if(resultCode == RESULT_OK) {
           Log.d(TAG, "Came back from adding a quote");
-          mFragmentStartPage = PAGE_QUOTES;
+          mInitialFragmentPage = Page.QUOTES;
           loadBookFromIntent();
         }
         break;
@@ -117,6 +133,7 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialogLi
     Log.v(TAG, "Book loaded: " + book);
     postEvent(new BookLoadedEvent(book));
     setupFragments(book);
+    mPagerTabStrip.setVisibility(View.VISIBLE);
   }
 
   @Override
@@ -153,28 +170,19 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialogLi
   }
 
   private void setupFragments(Book book) {
-    final boolean browserMode = book.hasState(Book.State.Finished);
+    Page[] pages;
+    if(book.isInState(Book.State.Finished)) {
+      pages = new Page[] { Page.SUMMARY, Page.QUOTES };
+    } else {
+      pages = new Page[] { Page.SUMMARY, Page.READING, Page.QUOTES };
+    }
 
-    // (re-)create the book adapter
-    mBookFragmentAdapter = new BookFragmentAdapter(getApplicationContext(), getSupportFragmentManager());
-    mBookFragmentAdapter.setBrowserMode(browserMode);
+    mBookFragmentAdapter = new BookFragmentAdapter(getApplicationContext(), getSupportFragmentManager(), pages);
 
     mViewPager.setAdapter(mBookFragmentAdapter);
 
-    int page = 0;
-    switch(mFragmentStartPage) {
-      case PAGE_UNSPECIFIED:
-      case PAGE_SESSIONS:
-        page = mBookFragmentAdapter.getSessionsPageIndex();
-        break;
-      case PAGE_READING:
-        page = mBookFragmentAdapter.getReadingPageIndex();
-        break;
-      case PAGE_QUOTES:
-        page = mBookFragmentAdapter.getQuotesPageIndex();
-        break;
-    }
-    mViewPager.setCurrentItem(page, false);
+    final Page initialPage = mInitialFragmentPage == null ? Page.READING : mInitialFragmentPage;
+    mViewPager.setCurrentItem(mBookFragmentAdapter.getPageIndex(initialPage), false);
   }
 
   // Private

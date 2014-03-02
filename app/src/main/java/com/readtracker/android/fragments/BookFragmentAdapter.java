@@ -7,62 +7,59 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 import com.readtracker.android.R;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 /**
  * Handles the fragments for the book activity
  */
 public class BookFragmentAdapter extends FragmentPagerAdapter {
   private final Context mContext;
-  private boolean mBrowseMode;
+  private final Page[] mPages;
 
-  public BookFragmentAdapter(Context context, FragmentManager fm) {
+  /** Page identifiers. */
+  public static enum Page { SUMMARY, READING, QUOTES }
+
+  public BookFragmentAdapter(Context context, FragmentManager fm, Page[] pages) {
     super(fm);
     mContext = context;
+    mPages = pages;
   }
 
   @Override
   public Fragment getItem(int position) {
-    if(position == getSessionsPageIndex()) {
-      return SummaryFragment.newInstance();
-    } else if(position == getReadingPageIndex()) {
-      // Keep a reference to the ReadFragment since we want the ability to
-      // interrogate for the current session state
-      return ReadFragment.newInstance();
-    } else if(position == getQuotesPageIndex()) {
-      return QuotesFragment.newInstance();
+    switch(mPages[position]) {
+      case SUMMARY:
+        return SummaryFragment.newInstance();
+      case READING:
+        return ReadFragment.newInstance();
+      case QUOTES:
+        return QuotesFragment.newInstance();
     }
+
     return null;
   }
 
   @Override
   public int getCount() {
-    return mBrowseMode ? 2 : 3;
+    return mPages.length;
   }
 
   @Override
   public CharSequence getPageTitle(int position) {
-    if(position == getSessionsPageIndex()) {
-      return mContext.getString(R.string.book_fragment_header_summary);
-    } else if(position == getReadingPageIndex()) {
-      return mContext.getString(R.string.book_fragment_header_read);
-    } else if(position == getQuotesPageIndex()) {
-      return mContext.getString(R.string.book_fragment_header_quotes);
+    switch(mPages[position]) {
+      case SUMMARY:
+        return mContext.getString(R.string.book_fragment_header_summary);
+      case READING:
+        return mContext.getString(R.string.book_fragment_header_read);
+      case QUOTES:
+        return mContext.getString(R.string.book_fragment_header_quotes);
     }
     return "";
   }
 
-  public int getSessionsPageIndex() {
-    return 0;
-  }
-
-  public int getReadingPageIndex() {
-    return mBrowseMode ? -1 : 1;
-  }
-
-  public int getQuotesPageIndex() {
-    return mBrowseMode ? 1 : 2;
-  }
-
-  public void setBrowserMode(boolean browserMode) {
-    mBrowseMode = browserMode;
+  /** Returns the page index for the Page. */
+  public int getPageIndex(Page page) {
+    return Arrays.asList(mPages).indexOf(page);
   }
 }

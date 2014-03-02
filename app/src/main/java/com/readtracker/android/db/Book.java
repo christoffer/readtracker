@@ -81,7 +81,7 @@ public class Book extends Model {
 
   public void setState(State state) { mState = state; }
 
-  public boolean hasState(State state) {
+  public boolean isInState(State state) {
     return mState != null && mState.equals(state);
   }
 
