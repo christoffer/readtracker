@@ -1,6 +1,10 @@
 package com.readtracker.android.db;
 
+import android.util.Log;
+
 import com.j256.ormlite.dao.Dao;
+
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -9,6 +13,8 @@ import java.util.List;
  * Helper class for facilitating database access.
  */
 public class DatabaseManager {
+  private static final String TAG = DatabaseManager.class.getSimpleName();
+
   private final DatabaseHelper db;
 
   public DatabaseManager(DatabaseHelper databaseHelper) {
@@ -16,14 +22,21 @@ public class DatabaseManager {
   }
 
   /**
-   * Returns the single model of a class with the id.
+   * Returns the single model of a class with the id, or null if id did not exist.
    */
-  public <T extends Model> T get(Class<T> modelClass, int id) {
+  @Nullable public <T extends Model> T get(Class<T> modelClass, int id) {
     Dao<T, Integer> dao = db.getDaoByClass(modelClass);
     try {
       return dao.queryForId(id);
-    } catch(SQLException e) {
-      throw new RuntimeException(e);
+    } catch(SQLException originalException) {
+      try {
+        if(!dao.idExists(id)) {
+          return null;
+        }
+      } catch(SQLException innerException) {
+        Log.e(TAG, "Failure trying to check for id", innerException);
+      }
+      throw new RuntimeException(originalException);
     }
   }
 
