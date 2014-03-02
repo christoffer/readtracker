@@ -10,7 +10,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.readtracker.android.IntentKeys;
 import com.readtracker.android.R;
 import com.readtracker.android.custom_views.ProgressPicker;
 import com.readtracker.android.db.Book;
@@ -122,7 +121,7 @@ public class AddQuoteActivity extends BookBaseActivity {
     public SaveTask(Book book, String quoteText, Float position, AddQuoteActivity activity) {
       mQuote = new Quote();
       mQuote.setBook(book);
-      mQuote.setAddedAt(new Date().getTime());
+      mQuote.setAddTimestamp(new Date().getTime());
       mQuote.setContent(quoteText);
       mQuote.setPosition(position);
 
