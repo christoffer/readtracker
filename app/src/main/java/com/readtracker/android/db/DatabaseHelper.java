@@ -365,7 +365,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
   private void convertLocalSessionToSession(SQLiteDatabase db) {
     final String query = "insert into sessions " +
-      "(id, book_id, end_position, start_position, started_at,duration_seconds) " +
+      "(id, book_id, end_position, start_position, start_timestamp, duration_seconds) " +
       "select outer_session.id, readingId, " +
       "progress as end_pos, " +
       "(select inner_session.progress from localsession as inner_session where inner_session.progress < outer_session.progress AND inner_session.readingId = outer_session.readingId order by inner_session.progress desc limit 1) as start_pos, " +

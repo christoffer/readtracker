@@ -9,12 +9,16 @@ import com.j256.ormlite.table.DatabaseTable;
 @DatabaseTable(tableName = "sessions")
 public class Session extends Model {
 
-  @DatabaseField(columnName = Columns.START_POSITION) private Float mStartPosition;
-  @DatabaseField(columnName = Columns.END_POSITION) private Float mEndPosition;
-  @DatabaseField(columnName = Columns.DURATION_SECONDS) private Long mDurationSeconds;
-  @DatabaseField(columnName = Columns.STARTED_AT) private Long mStartedAt;
-  @DatabaseField(columnName = Columns.BOOK_ID, foreign = true,
-    columnDefinition = "integer references books (_id) on delete cascade") private Book mBook;
+  @DatabaseField(columnName = Columns.START_POSITION) private float mStartPosition;
+  @DatabaseField(columnName = Columns.END_POSITION) private float mEndPosition;
+  @DatabaseField(columnName = Columns.DURATION_SECONDS) private long mDurationSeconds;
+  @DatabaseField(columnName = Columns.START_TIMESTAMP) private long mStartTimestamp;
+  @DatabaseField(
+    columnName = Columns.BOOK_ID,
+    foreign = true,
+    canBeNull = false,
+    columnDefinition = "integer references books (_id) on delete cascade")
+  private Book mBook;
 
   public Session() {
   }
@@ -31,9 +35,9 @@ public class Session extends Model {
 
   public void setDurationSeconds(Long durationSeconds) { mDurationSeconds = durationSeconds; }
 
-  public Long getStartedAt() { return mStartedAt; }
+  public Long getStartTimestamp() { return mStartTimestamp; }
 
-  public void setStartedAt(Long startedAt) { mStartedAt = startedAt; }
+  public void setStartTimestamp(Long startTimestamp) { mStartTimestamp = startTimestamp; }
 
   public Book getBook() { return mBook; }
 
@@ -43,7 +47,7 @@ public class Session extends Model {
     public static final String START_POSITION = "start_position";
     public static final String END_POSITION = "end_position";
     public static final String DURATION_SECONDS = "duration_seconds";
-    public static final String STARTED_AT = "started_at";
+    public static final String START_TIMESTAMP = "start_timestamp";
     public static final String BOOK_ID = "book_id";
   }
 }

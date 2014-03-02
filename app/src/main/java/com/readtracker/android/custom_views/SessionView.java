@@ -13,7 +13,6 @@ import android.util.TypedValue;
 import android.view.View;
 
 import com.readtracker.android.R;
-import com.readtracker.android.db.LocalSession;
 import com.readtracker.android.db.Session;
 import com.readtracker.android.support.Utils;
 
@@ -241,7 +240,7 @@ public class SessionView extends View {
     public Node(Session session) {
       this.durationSeconds = session.getDurationSeconds();
       this.progress = session.getEndPosition();
-      this.occurredAt = new Date(session.getStartedAt());
+      this.occurredAt = new Date(session.getStartTimestamp());
     }
   }
 
