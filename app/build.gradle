@@ -10,12 +10,12 @@ apply plugin: 'android'
 
 repositories {
     mavenCentral()
-    maven { url "https://github.com/christoffer/readmill-java-wrapper/raw/master/snapshots" }
+    maven { url 'https://github.com/christoffer/readmill-java-wrapper/raw/master/snapshots' }
 }
 
 android {
     compileSdkVersion 19
-    buildToolsVersion "19.0.1"
+    buildToolsVersion '19.0.1'
 
     defaultConfig {
         minSdkVersion 10
@@ -44,4 +44,5 @@ dependencies {
     compile 'com.j256.ormlite:ormlite-core:4.42'
     compile 'com.squareup.picasso:picasso:2.2.0'
     compile 'com.squareup:otto:1.3.4'
+    compile files('lib/annotations.jar')
 }
