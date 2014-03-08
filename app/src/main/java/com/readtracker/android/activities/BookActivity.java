@@ -1,6 +1,7 @@
 package com.readtracker.android.activities;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
@@ -14,8 +15,12 @@ import com.readtracker.android.R;
 import com.readtracker.android.db.Book;
 import com.readtracker.android.db.Quote;
 import com.readtracker.android.fragments.BookFragmentAdapter;
+import com.readtracker.android.fragments.ReadFragment;
 import com.readtracker.android.support.SessionTimerStore;
 import com.squareup.otto.Produce;
+import com.squareup.otto.Subscribe;
+
+import java.lang.ref.WeakReference;
 
 import static com.readtracker.android.fragments.BookFragmentAdapter.Page;
 
@@ -150,6 +155,12 @@ public class BookActivity extends BookBaseActivity {
     return new BookLoadedEvent(getBook());
   }
 
+  @Subscribe public void onNewPositionEvent(ReadFragment.NewPositionEvent event) {
+    Float previousPosition = getBook().getCurrentPosition();
+    getBook().setCurrentPosition(event.getPosition());
+    new UpdateBookTask(this).execute();
+  }
+
   private void setupFragments(Book book) {
     Page[] pages;
     if(book.isInState(Book.State.Finished)) {
@@ -222,5 +233,34 @@ public class BookActivity extends BookBaseActivity {
    */
   public boolean isManualShutdown() {
     return mManualShutdown;
+  }
+
+  /** Saves the book and finishes the activity with a success result. */
+  private static class UpdateBookTask extends AsyncTask<Void, Void, Boolean> {
+    private final WeakReference<BookActivity> mActivityRef;
+
+    public UpdateBookTask(BookActivity bookActivity) {
+      mActivityRef = new WeakReference<BookActivity>(bookActivity);
+    }
+
+    @Override protected Boolean doInBackground(Void... voids) {
+      BookActivity activity = mActivityRef.get();
+      if(activity != null) {
+        return activity.getDatabaseManager().save(activity.getBook()) != null;
+      }
+      return null;
+    }
+
+    @Override protected void onPostExecute(Boolean success) {
+      BookActivity activity = mActivityRef.get();
+      if(activity != null && !activity.isFinishing()) {
+        if(success) {
+          activity.setResult(RESULT_OK);
+          activity.finish();
+        } else {
+          activity.toast(R.string.book_error_updating);
+        }
+      }
+    }
   }
 }

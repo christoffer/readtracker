@@ -54,6 +54,7 @@ public class DatabaseManager {
 
   /**
    * Saves the current instance to the database. Existing entries are updated, new ones are created.
+   * @return the model.
    */
   public <T extends Model> T save(T instance) {
     @SuppressWarnings("unchecked")

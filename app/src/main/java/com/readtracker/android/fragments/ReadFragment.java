@@ -144,10 +144,12 @@ public class ReadFragment extends BaseFragment implements EndSessionDialog.EndSe
 
   @Override public void onNewPosition(float position) {
     Log.d(TAG, "New position received: " + position);
+    getBus().post(new NewPositionEvent(position));
   }
 
   @Override public void onFinishBook() {
     Log.d(TAG, "Request to finish book received");
+    // TODO Start finish activity
   }
 
   private void populateFieldsDeferred() {
@@ -604,5 +606,16 @@ public class ReadFragment extends BaseFragment implements EndSessionDialog.EndSe
       Log.v(TAG, "Updated progress");
       updateDuration(getElapsed());
     }
+  }
+
+  /** Signals that a new position has been set for the current book. */
+  public class NewPositionEvent {
+    final private float position;
+
+    public NewPositionEvent(float position) {
+      this.position = position;
+    }
+
+    public float getPosition() { return position; }
   }
 }

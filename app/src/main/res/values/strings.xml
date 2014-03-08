@@ -64,9 +64,9 @@
   <string name="add_book_saving_book">Saving book...</string>
 
   <string name="book_pausing_book">Pausing %1$s\n\nClick it again to resume</string>
-  <string name="book_error_reading_book">An error occurred while reading the book</string><string name="book_error_session_failed">Failed to save your reading session.
+  <string name="book_error_reading_book">An error occurred while reading the book</string><string name="book_error_session_failed">Failed to save your reading session.\n\nPlease report this to the developer.</string>
+  <string name="book_error_updating">An error occurred, the book could not be saved.</string>
 
-Please report this to the developer.</string>
   <string name="add_quote_error_could_not_be_saved">An error occurred. The highlight could not be saved.</string>
   <string name="add_book_enter_quote">Type in the quote from the book</string>
   <string name="book_error_loading">An error occurred while loading data for this book</string>
