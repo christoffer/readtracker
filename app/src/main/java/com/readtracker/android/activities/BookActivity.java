@@ -12,17 +12,15 @@ import android.view.View;
 import com.readtracker.android.IntentKeys;
 import com.readtracker.android.R;
 import com.readtracker.android.db.Book;
-import com.readtracker.android.db.LocalSession;
 import com.readtracker.android.db.Quote;
 import com.readtracker.android.fragments.BookFragmentAdapter;
-import com.readtracker.android.interfaces.EndSessionDialogListener;
 import com.readtracker.android.support.SessionTimerStore;
 import com.squareup.otto.Produce;
 
 import static com.readtracker.android.fragments.BookFragmentAdapter.Page;
 
 /** Browse data for, and interact with, a book. */
-public class BookActivity extends BookBaseActivity implements EndSessionDialogListener {
+public class BookActivity extends BookBaseActivity {
   protected static final String TAG = BookActivity.class.getSimpleName();
 
   // Fragment pages
@@ -150,23 +148,6 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialogLi
 
   @Produce public BookLoadedEvent produceBookLoadedEvent() {
     return new BookLoadedEvent(getBook());
-  }
-
-  /**
-   * The session has been successfully created.
-   */
-  @Override
-  public void onSessionCreated(LocalSession localSession) {
-    Log.d(TAG, "Created a local session");
-    shutdownWithResult(RESULT_OK);
-  }
-
-  /**
-   * The session could not be created.
-   */
-  @Override
-  public void onSessionFailed() {
-    toast(getString(R.string.book_error_session_failed));
   }
 
   private void setupFragments(Book book) {

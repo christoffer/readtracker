@@ -19,7 +19,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.readtracker.android.R;
-import com.readtracker.android.activities.BaseActivity;
 import com.readtracker.android.activities.BookActivity;
 import com.readtracker.android.activities.EndSessionDialog;
 import com.readtracker.android.custom_views.PauseableSpinAnimation;
@@ -34,13 +33,12 @@ import com.readtracker.android.thirdparty.SafeViewFlipper;
 import com.readtracker.android.thirdparty.widget.OnWheelChangedListener;
 import com.readtracker.android.thirdparty.widget.WheelView;
 import com.readtracker.android.thirdparty.widget.adapters.ArrayWheelAdapter;
-import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
 /**
  * Fragment for managing a reading session
  */
-public class ReadFragment extends BaseFragment {
+public class ReadFragment extends BaseFragment implements EndSessionDialog.EndSessionDialogListener {
   private static final String TAG = ReadFragment.class.getName();
   private static final String KEY_SESSION_TIMER = "SESSION_TIMER";
 
@@ -87,8 +85,7 @@ public class ReadFragment extends BaseFragment {
   public void onCreate(Bundle savedInstanceState) {
     Log.v(TAG, "onCreate()");
     super.onCreate(savedInstanceState);
-    mSessionTimer = new SessionTimer();
-    setSessionTimer(mSessionTimer);
+    setSessionTimer(new SessionTimer());
   }
 
   @Subscribe public void onBookLoadedEvent(BookActivity.BookLoadedEvent event) {
@@ -143,6 +140,14 @@ public class ReadFragment extends BaseFragment {
     populateFieldsDeferred();
 
     return view;
+  }
+
+  @Override public void onNewPosition(float position) {
+    Log.d(TAG, "New position received: " + position);
+  }
+
+  @Override public void onFinishBook() {
+    Log.d(TAG, "Request to finish book received");
   }
 
   private void populateFieldsDeferred() {
@@ -454,12 +459,8 @@ public class ReadFragment extends BaseFragment {
     mSessionTimer.stop();
     final long elapsed = mSessionTimer.getTotalElapsed();
 
-    EndSessionDialog dialog = new EndSessionDialog();
-
-    Bundle arguments = new Bundle();
-    arguments.putInt(EndSessionDialog.ARG_BOOK_ID, mBook.getId());
-    arguments.putLong(EndSessionDialog.ARG_SESSION_LENGTH_MS, elapsed);
-    dialog.setArguments(arguments);
+    EndSessionDialog dialog = EndSessionDialog.newInstance(mBook);
+    dialog.setTargetFragment(this, -1);
 
     FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
     dialog.show(fragmentManager, END_SESSION_FRAGMENT_TAG);

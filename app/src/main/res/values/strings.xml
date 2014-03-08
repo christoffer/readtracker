@@ -111,7 +111,7 @@ Sorry about that.</string>
   <string name="book_search_search">Search</string>
   <string name="finish_book_hint">What did you think of the book?</string>
   <string name="finish_book_finish">Finish</string>
-  <string name="end_session_where_did_you_end">Where did you end?</string>
+  <string name="end_session_where_did_you_stop_reading">Where did you stop reading?</string>
   <string name="end_session_scroll_to_end_to_finish">Scroll to the very end if you finished the book</string>
   <string name="general_save">Save</string>
   <string name="end_session_finish_book">Finish book</string>

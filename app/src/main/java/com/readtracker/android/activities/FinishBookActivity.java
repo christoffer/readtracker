@@ -60,7 +60,7 @@ public class FinishBookActivity extends BookBaseActivity {
 
   private void bindViews() {
     mEditClosingRemark = (EditText) findViewById(R.id.editClosingRemark);
-    mButtonFinish = (Button) findViewById(R.id.buttonFinishBook);
+    mButtonFinish = (Button) findViewById(R.id.finish_button);
     mSwitchRecommended = (Switch) findViewById(R.id.switchRecommended);
   }
 

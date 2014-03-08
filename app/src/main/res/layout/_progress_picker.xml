@@ -3,7 +3,7 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
 
   <com.readtracker.android.thirdparty.widget.WheelView
-    android:id="@+id/wheelEndingPage"
+    android:id="@+id/position_wheel"
     android:minWidth="150dp"
     android:layout_width="fill_parent"
     style="@style/generic_number_wheel" />

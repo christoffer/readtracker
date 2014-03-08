@@ -56,8 +56,7 @@ public class AddQuoteActivity extends BookBaseActivity {
     mButtonSaveQuote.setBackgroundDrawable(background);
 
     if(book != null && book.hasPageNumbers()) {
-      mProgressPicker.setBook(book);
-      mProgressPicker.setCurrentPage(book.getCurrentPage());
+      mProgressPicker.setPositionAndPageCount(book.getCurrentPosition(), book.getPageCount());
     } else {
       mProgressPicker.setVisibility(View.GONE);
       findViewById(R.id.textLabelEnterPosition).setVisibility(View.GONE);
@@ -77,7 +76,7 @@ public class AddQuoteActivity extends BookBaseActivity {
       @Override
       public void onClick(View view) {
         if(validateInput()) {
-          Float progress = mProgressPicker.getVisibility() == View.VISIBLE ? mProgressPicker.getProgress() : null;
+          Float progress = mProgressPicker.getVisibility() == View.VISIBLE ? mProgressPicker.getPosition() : null;
           saveQuote(mQuoteTextEdit.getText().toString(), progress);
         }
       }

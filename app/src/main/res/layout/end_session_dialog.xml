@@ -8,13 +8,13 @@
 
   <TextView
     style="@style/default_text"
-    android:text="@string/end_session_where_did_you_end"
+    android:text="@string/end_session_where_did_you_stop_reading"
     android:layout_gravity="center_horizontal" />
 
   <TextView
     style="@style/ui_hint"
     android:text="@string/end_session_scroll_to_end_to_finish"
-    android:gravity="center_horizontal" />
+    android:layout_gravity="center_horizontal" />
 
   <com.readtracker.android.custom_views.ProgressPicker
     android:id="@+id/progress_picker"
@@ -25,19 +25,19 @@
     android:layout_gravity="center_horizontal" />
 
   <com.readtracker.android.thirdparty.SafeViewFlipper
-    android:id="@+id/flipperActionButtons"
+    android:id="@+id/action_button_flipper"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:inAnimation="@anim/slide_up_appear"
     android:outAnimation="@anim/slide_down_disappear">
 
     <Button
-      android:id="@+id/buttonSaveProgress"
+      android:id="@+id/save_button"
       style="@style/default_button"
       android:text="@string/general_save" />
 
     <Button
-      android:id="@+id/buttonFinishBook"
+      android:id="@+id/finish_button"
       style="@style/default_button"
       android:text="@string/end_session_finish_book" />
 
