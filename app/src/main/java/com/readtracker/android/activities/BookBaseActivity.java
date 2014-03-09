@@ -10,12 +10,15 @@ import android.util.TypedValue;
 import android.view.MenuItem;
 import android.widget.ImageView;
 
+import com.readtracker.android.BuildConfig;
 import com.readtracker.android.R;
 import com.readtracker.android.db.Book;
 import com.readtracker.android.db.DatabaseManager;
 import com.squareup.picasso.Picasso;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 public abstract class BookBaseActivity extends BaseActivity {
   private static final String TAG = BookBaseActivity.class.getSimpleName();
@@ -27,6 +30,8 @@ public abstract class BookBaseActivity extends BaseActivity {
 
   // Currently loaded book
   private Book mBook;
+
+  private final ArrayList<Runnable> mBookReadyRunnables = new ArrayList<Runnable>();
 
   protected Book getBook() {
     return mBook;
@@ -58,6 +63,32 @@ public abstract class BookBaseActivity extends BaseActivity {
     loadBook(bookId);
   }
 
+  /** Calls a callback when the book has been loaded. */
+  protected void runWhenBookIsReady(Runnable runnable) {
+    mBookReadyRunnables.add(runnable);
+    if(BuildConfig.DEBUG) {
+      Log.v(getClass().getSimpleName(), "Adding book ready runnable");
+    }
+
+    flushBookReadyRunnables();
+  }
+
+  private void flushBookReadyRunnables() {
+    if(mBookReadyRunnables.isEmpty() || mBook == null) {
+      return;
+    }
+
+    if(BuildConfig.DEBUG) {
+      Log.v(getClass().getSimpleName(), "Flushing " + mBookReadyRunnables.size() + " runnables");
+    }
+
+    for(Iterator<Runnable> iterator = mBookReadyRunnables.iterator(); iterator.hasNext(); ) {
+      Runnable runnable = iterator.next();
+      iterator.remove();
+      runnable.run();
+    }
+  }
+
   private void setupActionBar(Book book) {
     ActionBar actionBar = getSupportActionBar();
 
@@ -81,8 +112,14 @@ public abstract class BookBaseActivity extends BaseActivity {
   /** Callback from the async task loading the book (with associated data) from the database. */
   protected abstract void onBookLoaded(Book book);
 
+  /** Return true for activities that need related book data, such as Sessions and Quotes. */
+  protected boolean shouldLoadRelatedBookData() {
+    return false;
+  }
+
   private void onLoadTaskCompleted(Book book) {
     mBook = book;
+    flushBookReadyRunnables();
     setupActionBar(book);
     onBookLoaded(book);
   }
@@ -111,11 +148,13 @@ public abstract class BookBaseActivity extends BaseActivity {
     private final int mBookId;
 
     private final DatabaseManager mDatabaseManager;
+    private final boolean mLoadeRelated;
 
     LoadDataTask(BookBaseActivity activity, int bookId) {
       mActivityRef = new WeakReference<BookBaseActivity>(activity);
       mBookId = bookId;
       mDatabaseManager = activity.getApp().getDatabaseManager();
+      mLoadeRelated = activity.shouldLoadRelatedBookData();
     }
 
     @Override
@@ -127,12 +166,12 @@ public abstract class BookBaseActivity extends BaseActivity {
       if(book == null) {
         Log.w("LoadDataTask", "Failed to load book");
         return null;
-      } else {
+      } else if(mLoadeRelated) {
         book.loadSessions(mDatabaseManager);
         book.loadQuotes(mDatabaseManager);
-
-        return book;
       }
+
+      return book;
     }
 
     @Override protected void onPostExecute(Book book) {

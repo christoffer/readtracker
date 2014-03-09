@@ -6,9 +6,11 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.util.TypedValue;
 import android.widget.Toast;
 
+import com.readtracker.android.BuildConfig;
 import com.readtracker.android.ReadTrackerApp;
 import com.readtracker.android.db.DatabaseManager;
 import com.readtracker.android.support.ApplicationSettingsHelper;
@@ -38,27 +40,24 @@ public class BaseActivity extends ActionBarActivity {
   @Override
   protected void onResume() {
     super.onResume();
+    if(BuildConfig.DEBUG) {
+      Log.v(getClass().getSimpleName(), "Registering on bus");
+    }
     mBus.register(this);
   }
 
   @Override
   protected void onPause() {
     super.onPause();
+    if(BuildConfig.DEBUG) {
+      Log.v(getClass().getSimpleName(), "Unregistering from bus");
+    }
     mBus.unregister(this);
   }
 
   /** Returns the current application settings. */
   protected ApplicationSettingsHelper getAppSettings() {
     return getApp().getAppSettings();
-  }
-
-  /**
-   * @return Internet connectivity status
-   */
-  protected boolean isNetworkAvailable() {
-    ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-    NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-    return activeNetworkInfo != null;
   }
 
   /**

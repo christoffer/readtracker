@@ -1,5 +1,7 @@
 package com.readtracker.android.fragments;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -20,7 +22,9 @@ import android.widget.TextView;
 
 import com.readtracker.android.R;
 import com.readtracker.android.activities.BookActivity;
+import com.readtracker.android.activities.BookBaseActivity;
 import com.readtracker.android.activities.EndSessionDialog;
+import com.readtracker.android.activities.FinishBookActivity;
 import com.readtracker.android.custom_views.PauseableSpinAnimation;
 import com.readtracker.android.custom_views.TimeSpinner;
 import com.readtracker.android.db.Book;
@@ -38,7 +42,7 @@ import com.squareup.otto.Subscribe;
 /**
  * Fragment for managing a reading session
  */
-public class ReadFragment extends BaseFragment implements EndSessionDialog.EndSessionDialogListener {
+public class ReadFragment extends BaseFragment {
   private static final String TAG = ReadFragment.class.getName();
   private static final String KEY_SESSION_TIMER = "SESSION_TIMER";
 
@@ -86,12 +90,6 @@ public class ReadFragment extends BaseFragment implements EndSessionDialog.EndSe
     Log.v(TAG, "onCreate()");
     super.onCreate(savedInstanceState);
     setSessionTimer(new SessionTimer());
-  }
-
-  @Subscribe public void onBookLoadedEvent(BookActivity.BookLoadedEvent event) {
-    Log.v(TAG, "Got book loaded event: " + event);
-    mBook = event.getBook();
-    populateFieldsDeferred();
   }
 
   @Override
@@ -142,14 +140,19 @@ public class ReadFragment extends BaseFragment implements EndSessionDialog.EndSe
     return view;
   }
 
-  @Override public void onNewPosition(float position) {
-    Log.d(TAG, "New position received: " + position);
-    getBus().post(new NewPositionEvent(position));
+  @Override public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
+    if(requestCode == BookActivity.REQUEST_FINISH_BOOK && resultCode == Activity.RESULT_OK) {
+      String closingRemark = data.getStringExtra(FinishBookActivity.KEY_CLOSING_REMARK);
+      Log.d(TAG, String.format("Finishing %s with closing remark: %s", mBook.getTitle(), closingRemark));
+      getBus().post(new BookFinishedEvent(closingRemark));
+    }
   }
 
-  @Override public void onFinishBook() {
-    Log.d(TAG, "Request to finish book received");
-    // TODO Start finish activity
+  @Subscribe public void onBookLoadedEvent(BookActivity.BookLoadedEvent event) {
+    Log.v(TAG, "Got book loaded event: " + event);
+    mBook = event.getBook();
+    populateFieldsDeferred();
   }
 
   private void populateFieldsDeferred() {
@@ -462,8 +465,8 @@ public class ReadFragment extends BaseFragment implements EndSessionDialog.EndSe
     final long elapsed = mSessionTimer.getTotalElapsed();
 
     EndSessionDialog dialog = EndSessionDialog.newInstance(mBook);
-    dialog.setTargetFragment(this, -1);
 
+    // Response will be relayed to the activity, requiring it to implement EndSessionDialogListener
     FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
     dialog.show(fragmentManager, END_SESSION_FRAGMENT_TAG);
   }
@@ -609,7 +612,7 @@ public class ReadFragment extends BaseFragment implements EndSessionDialog.EndSe
   }
 
   /** Signals that a new position has been set for the current book. */
-  public class NewPositionEvent {
+  public static class NewPositionEvent {
     final private float position;
 
     public NewPositionEvent(float position) {
@@ -617,5 +620,18 @@ public class ReadFragment extends BaseFragment implements EndSessionDialog.EndSe
     }
 
     public float getPosition() { return position; }
+  }
+
+  /** Signals that the current book was finished. */
+  public static class BookFinishedEvent {
+    final private String closingRemark;
+
+    public BookFinishedEvent(String closingRemark) {
+      this.closingRemark = closingRemark;
+    }
+
+    public String getClosingRemark() {
+      return closingRemark;
+    }
   }
 }
