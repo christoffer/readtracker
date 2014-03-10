@@ -167,8 +167,12 @@ public class ReadTrackerApp extends Application {
 
   public ApplicationSettingsHelper getAppSettings() {
     if(mAppSettingsHelper == null) {
-      mAppSettingsHelper = new ApplicationSettingsHelper(getSharedPreferences(PREFERENCES_FILE_NAME, MODE_PRIVATE));
+      mAppSettingsHelper = new ApplicationSettingsHelper(getPreferences());
     }
     return mAppSettingsHelper;
+  }
+
+  public SharedPreferences getPreferences() {
+    return getSharedPreferences(PREFERENCES_FILE_NAME, MODE_PRIVATE);
   }
 }

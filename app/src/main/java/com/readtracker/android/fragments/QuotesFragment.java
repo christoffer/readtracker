@@ -117,7 +117,7 @@ public class QuotesFragment extends BaseFragment {
       @Override
       public void onItemClick(AdapterView<?> adapterView, View view, int position, long itemId) {
         Quote quote = mQuoteAdapter.getItem(position);
-        ((BookActivity) getActivity()).exitToAddQuoteScreen(quote);
+        Log.v(TAG, "Clicked quote: " + quote);
       }
     });
 
@@ -154,7 +154,7 @@ public class QuotesFragment extends BaseFragment {
     super.onActivityResult(requestCode, resultCode, data);
     if(requestCode == REQ_ADD_QUOTE && resultCode == Activity.RESULT_OK) {
       if(data != null && data.hasExtra(AddQuoteActivity.KEY_QUOTE_ID)) {
-        final int quoteId = data.getExtras().getInt(AddQuoteActivity.KEY_QUOTE_ID);
+        final int quoteId = data.getIntExtra(AddQuoteActivity.KEY_QUOTE_ID, 0);
         Log.d(TAG, "Quote created: " + quoteId);
         addQuoteToBookList(quoteId);
       }

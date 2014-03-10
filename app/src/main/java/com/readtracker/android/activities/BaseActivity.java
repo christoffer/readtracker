@@ -1,6 +1,7 @@
 package com.readtracker.android.activities;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -58,6 +59,11 @@ public class BaseActivity extends ActionBarActivity {
   /** Returns the current application settings. */
   protected ApplicationSettingsHelper getAppSettings() {
     return getApp().getAppSettings();
+  }
+
+  /** Returns a references to the shared preferences. */
+  protected SharedPreferences getPreferences() {
+    return getApp().getPreferences();
   }
 
   /**

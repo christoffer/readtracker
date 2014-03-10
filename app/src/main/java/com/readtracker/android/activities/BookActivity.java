@@ -14,22 +14,15 @@ import com.readtracker.android.BuildConfig;
 import com.readtracker.android.IntentKeys;
 import com.readtracker.android.R;
 import com.readtracker.android.db.Book;
-import com.readtracker.android.db.Quote;
 import com.readtracker.android.fragments.BookFragmentAdapter;
-import com.readtracker.android.support.SessionTimerStore;
+import com.readtracker.android.support.SessionTimer;
 import com.squareup.otto.Produce;
 
 import static com.readtracker.android.fragments.BookFragmentAdapter.Page;
 
 /** Browse data for, and interact with, a book. */
-public class BookActivity extends BookBaseActivity implements EndSessionDialog.EndSessionDialogListener {
+public class BookActivity extends BookBaseActivity implements EndSessionDialog.EndSessionDialogListener, SessionTimer.SessionTimerListener {
   protected static final String TAG = BookActivity.class.getSimpleName();
-
-  // Fragment pages
-  public static final int PAGE_UNSPECIFIED = -1;
-  public static final int PAGE_SESSIONS = 0;
-  public static final int PAGE_READING = 1;
-  public static final int PAGE_QUOTES = 2;
 
   private static final int NO_GROUP = 0;
   private static final int MENU_EDIT_BOOK_SETTINGS = 1;
@@ -39,22 +32,11 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialog.E
   public static final int REQUEST_BOOK_SETTINGS = 3;
   public static final int REQUEST_FINISH_BOOK = 4; // used by ReadFragment
 
-  private BookFragmentAdapter mBookFragmentAdapter;
-
   private ViewPager mViewPager;
   private PagerTabStrip mPagerTabStrip;
 
-  private boolean mManualShutdown;
-
   private Page mInitialFragmentPage;
-
-  // open the book for read tracking
-  // if book is finished
-  // open book for summary viewing
-  // if coming back from book edit
-  // reload book
-  // when coming back from session edit
-  // set result and finish
+  private SessionTimer mSessionTimer = new SessionTimer();
 
   public void onCreate(Bundle in) {
     super.onCreate(in);
@@ -69,6 +51,27 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialog.E
     loadBookFromIntent();
   }
 
+  @Override protected void onStart() {
+    super.onStart();
+    if(!mSessionTimer.loadFromPreferences(getPreferences())) {
+      Log.d(TAG, "No stored sessions found, resetting timer");
+      mSessionTimer.reset();
+    } else {
+      Log.d(TAG, "Using reset timer state: " + mSessionTimer);
+    }
+
+    mSessionTimer.setOnTimerListener(this);
+  }
+
+  @Override protected void onStop() {
+    super.onStop();
+    if(isFinishing()) {
+      mSessionTimer.saveToPreferences(getPreferences());
+    } else {
+      mSessionTimer.clearFromPreferences(getPreferences());
+    }
+  }
+
   @Override
   protected void onSaveInstanceState(Bundle outState) {
     super.onSaveInstanceState(outState);
@@ -76,11 +79,6 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialog.E
     if(mViewPager != null) {
       outState.putInt(IntentKeys.INITIAL_FRAGMENT_PAGE, mViewPager.getCurrentItem());
     }
-  }
-
-  @Override
-  public void onBackPressed() {
-    exitToHomeScreen();
   }
 
   @Override
@@ -111,12 +109,12 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialog.E
           // TODO Replace this with event
           final Book book = getBook();
           if(book != null) {
-            exitToBookEditScreen(book);
+            // exitToBookEditScreen(book);
           } else {
             Log.w(TAG, "Ignoring request for book settings, book is null");
           }
         } else if(resultCode == ActivityCodes.RESULT_DELETED_BOOK) {
-          shutdownWithResult(RESULT_OK);
+          // shutdownWithResult(RESULT_OK);
         } else if(resultCode == ActivityCodes.RESULT_OK) {
           Log.d(TAG, "Came back from changing the book settings");
           loadBookFromIntent();
@@ -156,7 +154,7 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialog.E
   public boolean onOptionsItemSelected(MenuItem item) {
     switch(item.getItemId()) {
       case MENU_EDIT_BOOK_SETTINGS:
-        exitToBookSettings();
+        // exitToBookSettings();
         break;
       default:
         return false;
@@ -192,9 +190,19 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialog.E
     startActivityForResult(finishReading, BookActivity.REQUEST_FINISH_BOOK);
   }
 
+  @Override public void onSessionTimerStarted() {
+
+  }
+
+  @Override public void onSessionTimerStopped() {
+    postEvent(new SessionTimerChangedEvent(mSessionTimer));
+  }
+
   private void finishBookWithClosingRemark(String closingRemark) {
     final Book book = getBook();
-    if(BuildConfig.DEBUG) Log.d(TAG, String.format("Finishing with closing remark: %s", closingRemark));
+    if(BuildConfig.DEBUG) {
+      Log.d(TAG, String.format("Finishing with closing remark: %s", closingRemark));
+    }
     if(!TextUtils.isEmpty(closingRemark)) {
       book.setClosingRemark(closingRemark);
     }
@@ -212,43 +220,12 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialog.E
       pages = new Page[] { Page.SUMMARY, Page.READING, Page.QUOTES };
     }
 
-    mBookFragmentAdapter = new BookFragmentAdapter(getApplicationContext(), getSupportFragmentManager(), pages);
+    BookFragmentAdapter bookFragmentAdapter = new BookFragmentAdapter(getApplicationContext(), getSupportFragmentManager(), pages);
 
-    mViewPager.setAdapter(mBookFragmentAdapter);
+    mViewPager.setAdapter(bookFragmentAdapter);
 
     final Page initialPage = mInitialFragmentPage == null ? Page.READING : mInitialFragmentPage;
-    mViewPager.setCurrentItem(mBookFragmentAdapter.getPageIndex(initialPage), false);
-  }
-
-  // Private
-
-  public void exitToBookEditScreen(Book book) {
-    Log.d(TAG, "Exit to book edit screen for book: " + book);
-//    Log.d(TAG, String.format("Exiting to edit book: %s", localReading.toString()));
-//    Intent intentEditBook = new Intent(this, AddBookActivity.class);
-//    intentEditBook.putExtra(IntentKeys.LOCAL_READING, localReading);
-//    intentEditBook.putExtra(IntentKeys.EDIT_MODE, true);
-//    startActivityForResult(intentEditBook, ActivityCodes.REQUEST_EDIT_PAGE_NUMBERS);
-  }
-
-  public void exitToAddQuoteScreen(Quote quote) {
-//    Intent activityAddHighlight = new Intent(this, AddQuoteActivity.class);
-//    activityAddHighlight.putExtra(IntentKeys.LOCAL_READING, mLocalReading);
-//    activityAddHighlight.putExtra(IntentKeys.LOCAL_HIGHLIGHT, highlight);
-//    startActivityForResult(activityAddHighlight, ActivityCodes.ADD_QUOTE);
-  }
-
-  /**
-   * Exits to the home activity with correct result information.
-   */
-  public void exitToHomeScreen() {
-    shutdownWithResult(ActivityCodes.RESULT_OK);
-  }
-
-  public void exitToBookSettings() {
-//    Intent bookSettings = new Intent(this, BookSettingsActivity.class);
-//    bookSettings.putExtra(IntentKeys.LOCAL_READING, mLocalReading);
-//    startActivityForResult(bookSettings, ActivityCodes.REQUEST_BOOK_SETTINGS);
+    mViewPager.setCurrentItem(bookFragmentAdapter.getPageIndex(initialPage), false);
   }
 
   private void saveAndFinish() {
@@ -264,30 +241,16 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialog.E
     }
   }
 
-  private void shutdownWithResult(int resultCode) {
-    Log.v(TAG, "Shutting down");
+  /** Signlas that the SessionTimer has changed in some way. */
+  public static class SessionTimerChangedEvent {
+    private final SessionTimer sessionTimer;
 
-    Intent data = null;
-    Book book = getBook();
-    if(book != null && resultCode == RESULT_OK) {
-      data = new Intent();
-      data.putExtra(KEY_BOOK_ID, book.getId());
+    public SessionTimerChangedEvent(SessionTimer sessionTimer) {
+      this.sessionTimer = sessionTimer;
     }
 
-    if(data != null) setResult(resultCode, data);
-
-    mManualShutdown = true;
-    SessionTimerStore.clear();
-    finish();
-  }
-
-  /**
-   * Informs fragments if we are shutting down explicitly (as opposed to being
-   * shutdown because activity is being sent to background or memory collected)
-   *
-   * @return true if we are explicitly shutting down, false otherwise
-   */
-  public boolean isManualShutdown() {
-    return mManualShutdown;
+    public SessionTimer getSessionTimer() {
+      return sessionTimer;
+    }
   }
 }

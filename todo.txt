@@ -1,6 +1,6 @@
+Re-instate session timer
 Make all default colors gray
 Clean up ReadFragment
-Re-instate session timer
 Reload library on return from finish
 Allow edit book
 Edit highlights on tap
