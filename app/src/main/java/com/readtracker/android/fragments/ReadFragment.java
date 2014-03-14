@@ -39,7 +39,7 @@ import com.squareup.otto.Subscribe;
  * Fragment for managing a reading session
  */
 public class ReadFragment extends BaseFragment {
-  private static final String TAG = ReadFragment.class.getName();
+  private static final String TAG = ReadFragment.class.getSimpleName();
 
   private static final String END_SESSION_FRAGMENT_TAG = "end-session-tag";
 
@@ -89,6 +89,7 @@ public class ReadFragment extends BaseFragment {
     mFlipperSessionControl.setDisplayedChild(FLIPPER_PAGE_START_BUTTON);
 
     populateFieldsDeferred();
+    populateTimerDeferred();
 
     return view;
   }
@@ -111,18 +112,21 @@ public class ReadFragment extends BaseFragment {
   @Subscribe public void onSessionTimerChangedEvent(BookActivity.SessionTimerChangedEvent event) {
     if(event.getSessionTimer() != null) {
       // Flag for assigning timer for the first time
-      final boolean isAssigned = mSessionTimer == null;
+      final boolean initMode = mSessionTimer == null && event.getSessionTimer() != null;
       mSessionTimer = event.getSessionTimer();
 
-      if(mSessionTimer.isRunning()) {
-        startTimeSpinner();
-        if(!isAssigned) displayPausableControls();
-      } else {
-        pauseTimeSpinner();
-        if(!isAssigned) displayResumableControls();
+      if(mSessionTimer != null) {
+        if(mSessionTimer.isRunning()) {
+          startTimeSpinner();
+          if(!initMode) displayPausableControls();
+        } else {
+          pauseTimeSpinner();
+          if(!initMode) displayResumableControls();
+        }
       }
 
       refreshElapsedTime();
+      populateTimerDeferred();
     } else {
       Log.w(TAG, "Session timer unexpectedly reset to null");
     }
@@ -182,8 +186,6 @@ public class ReadFragment extends BaseFragment {
     mLayoutTimeSpinnerWrapper = (ViewGroup) view.findViewById(R.id.layoutTimeSpinnerWrapper);
 
     mRootView = view;
-    populateFieldsDeferred();
-    populateTimerDeferred();
   }
 
   private void bindEvents() {
@@ -194,7 +196,8 @@ public class ReadFragment extends BaseFragment {
     });
 
     mButtonStart.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View view) {
+      @Override
+      public void onClick(View view) {
         onClickedStart();
       }
     });
@@ -217,7 +220,8 @@ public class ReadFragment extends BaseFragment {
     }
 
     mTimeSpinner.setOnTouchListener(new View.OnTouchListener() {
-      @Override public boolean onTouch(View view, MotionEvent motionEvent) {
+      @Override
+      public boolean onTouch(View view, MotionEvent motionEvent) {
         // The start wheel is not active as a click target when the timing is started
         // this is due to the inability to have both the TimeSpinner and the underlying
         // wheel view receive touch events prior to android 11.
@@ -349,11 +353,16 @@ public class ReadFragment extends BaseFragment {
 
     //noinspection ConstantConditions
     disappear.setAnimationListener(new Animation.AnimationListener() {
-      @Override public void onAnimationStart(Animation animation) { }
+      @Override
+      public void onAnimationStart(Animation animation) {
+      }
 
-      @Override public void onAnimationRepeat(Animation animation) { }
+      @Override
+      public void onAnimationRepeat(Animation animation) {
+      }
 
-      @Override public void onAnimationEnd(Animation animation) {
+      @Override
+      public void onAnimationEnd(Animation animation) {
         mSessionTimer.start();
         refreshElapsedTime();
         mTextBillboard.setVisibility(View.INVISIBLE);
