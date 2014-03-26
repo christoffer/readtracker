@@ -1,4 +1,5 @@
 .idea/*
+!.idea/codeStyleSettings.xml
 proguard/*
 .DS_Store
 .classpath
