@@ -312,7 +312,11 @@ public class ReadFragment extends BaseFragment {
       @Override
       public void onChanged(WheelView wheel, int oldValue, int newValue) {
         final long newElapsedMs = newValue * 60 * 1000;
+        final boolean wasRunning = mSessionTimer.isRunning();
         mSessionTimer.reset(newElapsedMs);
+        if(wasRunning) {
+          mSessionTimer.start();
+        }
       }
     });
   }
