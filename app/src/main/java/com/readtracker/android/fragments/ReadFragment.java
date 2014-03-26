@@ -459,7 +459,7 @@ public class ReadFragment extends BaseFragment {
 
   /** Helper class for updating the duration wheel at suitable times. */
   private static class UpdateDurationWheelTimer extends Timer {
-    private static final int MS_PER_MINUTE = 1000;
+    private static final int MS_PER_MINUTE = 1000 * 60;
     private final WeakReference<ReadFragment> mReadFragmentRef;
     TimerTask mTask;
 
@@ -486,8 +486,6 @@ public class ReadFragment extends BaseFragment {
 
       final long elapsedMs = fragment.mSessionTimer.getElapsedMs();
       final long millisUntilNextMinute = 1000 - (elapsedMs - (elapsedMs / MS_PER_MINUTE) * MS_PER_MINUTE);
-      Log.d(TAG, String.format("elapsed: %s, until next complete: %s", elapsedMs, millisUntilNextMinute));
-
       mTask = new TimerTask() {
         @Override public void run() {
           mHandler.post(mUpdateRunnable);
