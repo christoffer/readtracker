@@ -139,7 +139,7 @@ public class BookSearchActivity extends BaseActivity {
       @Override
       public void onItemClick(AdapterView parent, View view, int position, long id) {
         BookItem clickedBook = mBookSearchAdapter.getItem(position);
-        exitToBookInit(clickedBook.title, clickedBook.author, clickedBook.coverURL, clickedBook.pageCount);
+        exitToBookInit(clickedBook.title, clickedBook.author, clickedBook.coverURL, (int) clickedBook.pageCount);
       }
     });
 
@@ -193,7 +193,7 @@ public class BookSearchActivity extends BaseActivity {
    * @param coverURL  cover url
    * @param pageCount number of pages in the book (Use -1 if not available)
    */
-  private void exitToBookInit(String title, String author, String coverURL, Long pageCount) {
+  private void exitToBookInit(String title, String author, String coverURL, int pageCount) {
     Intent intent = new Intent(this, AddBookActivity.class);
     intent.putExtra(IntentKeys.TITLE, title);
     intent.putExtra(IntentKeys.AUTHOR, author);

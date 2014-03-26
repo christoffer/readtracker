@@ -28,6 +28,8 @@ public class SessionTimer {
 
   public SessionTimer(TimeProvider timeProvider) {
     mTimeProvider = timeProvider;
+    mStartTimestampMs = STOPPED_TIME;
+    mElapsedMs = 0;
   }
 
   @Override public String toString() {
@@ -63,6 +65,16 @@ public class SessionTimer {
     }
   }
 
+  /** Stops the timer if running, otherwise starts it. */
+  public void togglePausePlay() {
+    if(isRunning()) {
+      stop();
+    } else {
+      start();
+    }
+  }
+
+
   /** Returns the total milliseconds elapsed. */
   public long getElapsedMs() {
     if(isRunning()) {
@@ -70,6 +82,11 @@ public class SessionTimer {
     } else {
       return mElapsedMs;
     }
+  }
+
+  /** Returns true if the timer has been started. */
+  public boolean isStarted() {
+    return getElapsedMs() > 0;
   }
 
   /** Returns true if the timer is currently running. */

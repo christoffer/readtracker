@@ -2,41 +2,4 @@
 
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
 
-  <com.readtracker.android.thirdparty.SafeViewFlipper
-    android:id="@+id/flipperSessionControl"
-    style="@style/flipper_action_buttons"
-    android:layout_alignParentBottom="true">
-
-    <!-- start button -->
-
-    <Button
-      style="@style/default_button"
-      android:id="@+id/buttonStart"
-      android:layout_gravity="center"
-      android:text="@string/reading_start" />
-
-    <!-- group of pause/resume and done button -->
-
-    <LinearLayout
-      android:layout_width="fill_parent"
-      android:layout_height="wrap_content"
-      android:layout_alignParentBottom="true">
-
-      <Button
-        style="@style/default_button"
-        android:id="@+id/buttonPause"
-        android:layout_weight="1"
-        android:layout_marginRight="6dp"
-        android:text="@string/reading_pause" />
-
-      <Button
-        style="@style/default_button"
-        android:id="@+id/buttonDone"
-        android:layout_weight="1"
-        android:layout_marginLeft="6dp"
-        android:text="@string/reading_done" />
-
-    </LinearLayout>
-
-  </com.readtracker.android.thirdparty.SafeViewFlipper>
 </merge>
