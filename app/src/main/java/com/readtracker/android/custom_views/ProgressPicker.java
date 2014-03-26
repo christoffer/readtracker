@@ -1,9 +1,7 @@
 package com.readtracker.android.custom_views;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Typeface;
-import android.os.Build;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,11 +15,7 @@ import com.readtracker.android.thirdparty.widget.adapters.NumericWheelAdapter;
 import com.readtracker.android.thirdparty.widget.adapters.PercentWheelAdapter;
 
 public class ProgressPicker extends LinearLayout {
-  private static final int PAGES_MODE = 0;
-  private static final int PERCENT_MODE = 1;
-
   private WheelView mPositionWheel;
-
   private OnPositionChangeListener mListener;
 
   @SuppressWarnings("UnusedDeclaration")
@@ -30,12 +24,15 @@ public class ProgressPicker extends LinearLayout {
     initializeView();
   }
 
+  @SuppressWarnings("UnusedDeclaration")
   public ProgressPicker(Context context, AttributeSet attrs) {
     super(context, attrs);
     initializeView();
   }
 
-  /** Returns the current page as a ratio of how close it is to the final page. */
+  /**
+   * Returns the current page as a ratio of how close it is to the final page.
+   */
   public float getPosition() {
 
     final int currentPage = mPositionWheel.getCurrentItem();
@@ -44,7 +41,9 @@ public class ProgressPicker extends LinearLayout {
     return totalPages > 0 ? (currentPage / (float) totalPages) : 0f;
   }
 
-  /** Sets the listener to get notified about position changes. */
+  /**
+   * Sets the listener to get notified about position changes.
+   */
   public void setOnPositionChangeListener(OnPositionChangeListener listener) {
     mListener = listener;
   }
@@ -63,7 +62,9 @@ public class ProgressPicker extends LinearLayout {
     mPositionWheel = (WheelView) root.findViewById(R.id.position_wheel);
   }
 
-  /** Sets the page count of the wheel. If pageCount is null, percentage mode is used. */
+  /**
+   * Sets the page count of the wheel. If pageCount is null, percentage mode is used.
+   */
   private void setPageCount(Float pageCount) {
     final AbstractWheelTextAdapter adapter;
     if(pageCount == null) {
@@ -83,14 +84,13 @@ public class ProgressPicker extends LinearLayout {
     mPositionWheel.setCurrentItem(itemIndex);
   }
 
-  /** Setup a wheel view with a numeric wheel adapter and the default style */
+  /**
+   * Setup a wheel view with a numeric wheel adapter and the default style
+   */
   private void setupWheelView(WheelView wheelView, AbstractWheelTextAdapter adapter) {
     configureWheelAdapterStyle(adapter);
     wheelView.setViewAdapter(adapter);
-    configureWheelView(wheelView);
-  }
 
-  private void configureWheelView(WheelView wheelView) {
     wheelView.setVisibleItems(3);
     wheelView.setCalliperMode(WheelView.CalliperMode.NO_CALLIPERS);
 
@@ -112,7 +112,9 @@ public class ProgressPicker extends LinearLayout {
     return !(getPosition() < 1f);
   }
 
-  /** Callback for listening to position change on the wheel view. */
+  /**
+   * Callback for listening to position change on the wheel view.
+   */
   public static interface OnPositionChangeListener {
     public void onChangeProgress(int newPage);
   }
