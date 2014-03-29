@@ -22,6 +22,7 @@ import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.readtracker.android.BuildConfig;
 import com.readtracker.android.R;
 import com.readtracker.android.activities.BaseActivity;
 import com.readtracker.android.activities.BookActivity;
@@ -79,31 +80,24 @@ public class ReadFragment extends BaseFragment {
 
   private WheelView mDurationWheelView;
 
-  private boolean mIsStarted = false;
-
   // Display child index for flipper session control
   private static final int FLIPPER_PAGE_START_BUTTON = 0;
   private static final int FLIPPER_PAGE_READING_BUTTONS = 1;
 
-  // Actions to be taken as the timer starts and stops
-  private SessionTimer.SessionTimerListener mSessionTimerListener = new SessionTimer.SessionTimerListener() {
-    @Override
-    public void onSessionTimerStarted() {
-      mUpdateWheelViewTimer.reschedule();
-      startTimeSpinner();
-      displayRunningModeControls();
-    }
-
-    @Override
-    public void onSessionTimerStopped() {
-      mUpdateWheelViewTimer.stop();
-      pauseTimeSpinner();
-      displayPauseModeControls();
-    }
-  };
-
   public ReadFragment() {
-    mSessionTimer.setOnTimerListener(mSessionTimerListener);
+    mSessionTimer.setOnTimerListener(new SessionTimer.SessionTimerListener() {
+      @Override
+      public void onSessionTimerStarted() {
+        mUpdateWheelViewTimer.reschedule();
+        refreshTimerUI();
+      }
+
+      @Override
+      public void onSessionTimerStopped() {
+        mUpdateWheelViewTimer.stop();
+        refreshTimerUI();
+      }
+    });
   }
 
   public static Fragment newInstance() {
@@ -114,21 +108,11 @@ public class ReadFragment extends BaseFragment {
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     Log.d(TAG, "onCreateView()");
-    View view = inflater.inflate(R.layout.read_fragment, container, false);
-
+    final View view = inflater.inflate(R.layout.read_fragment, container, false);
     bindViews(view);
-
+    initializeTimerUI();
     mTimeSpinnerControlsFlipper.setDisplayedChild(FLIPPER_PAGE_START_BUTTON);
-
     populateFieldsDeferred();
-
-    if(mSessionTimer.isStarted()) {
-      updateWheelWithElapsedTime();
-      mSessionTimer.togglePausePlay();
-    } else {
-      displayStartModeControls();
-    }
-
     return view;
   }
 
@@ -143,12 +127,8 @@ public class ReadFragment extends BaseFragment {
 
   @Override public void onStart() {
     super.onStart();
-    if(!mSessionTimer.loadFromPreferences(getPreferences())) {
-      Log.v(TAG, "No stored sessions found, resetting timer");
-      mSessionTimer.reset();
-    } else {
-      Log.v(TAG, "Using reset timer state: " + mSessionTimer);
-    }
+    mSessionTimer.initializeFromPreferences(getPreferences());
+    refreshDurationWheel();
   }
 
   @Override public void onStop() {
@@ -158,6 +138,7 @@ public class ReadFragment extends BaseFragment {
     } else {
       mSessionTimer.saveToPreferences(getPreferences());
     }
+    mUpdateWheelViewTimer.stop();
   }
 
   @Subscribe public void onBookLoadedEvent(BookActivity.BookLoadedEvent event) {
@@ -166,6 +147,35 @@ public class ReadFragment extends BaseFragment {
     populateFieldsDeferred();
   }
 
+  private void refreshTimerUI() {
+    final PauseableSpinAnimation timerAnimation = (PauseableSpinAnimation) mTimeSpinner.getAnimation();
+
+    if(timerAnimation == null) {
+      // Animation isn't ready yet. Exit and rely on the animation callback to call us again.
+      Log.d(TAG, "Animation not ready yet, bailing out.");
+      return;
+    }
+
+    Log.d(TAG, String.format("Showing UI for timer: %s", mSessionTimer));
+    if(mSessionTimer.isStarted()) {
+      displayDurationWheel(false);
+
+      if(mSessionTimer.isRunning()) {
+        timerAnimation.resume();
+        displayControlsForRunningTimer();
+      } else {
+        timerAnimation.pause();
+        displayControlsForPausedTimer();
+      }
+    } else {
+      mDurationWheelView.setVisibility(View.INVISIBLE);
+      timerAnimation.pause();
+      timerAnimation.reset();
+      displayControlsForUnstartedTimer();
+    }
+  }
+
+  /** Populates the fields of the UI as soon as both the UI and the book are available. */
   private void populateFieldsDeferred() {
     if(mBook == null || mRootView == null) {
       return;
@@ -178,11 +188,7 @@ public class ReadFragment extends BaseFragment {
     mTimeSpinner.setColor(bookColor);
     mTimeSpinner.setMaxSize(500);
 
-    mStartButton.setBackgroundDrawable(DrawableGenerator.generateButtonBackground(bookColor));
-    mPauseButton.setBackgroundDrawable(DrawableGenerator.generateButtonBackground(bookColor));
-    mDoneButton.setBackgroundDrawable(DrawableGenerator.generateButtonBackground(bookColor));
-
-    initializeDurationWheel();
+    DrawableGenerator.applyButtonBackground(bookColor, mStartButton, mPauseButton, mDoneButton);
 
     mLastPositionText.setText(getLastPositionDescription());
 
@@ -216,7 +222,7 @@ public class ReadFragment extends BaseFragment {
     mStartButton.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
-        startTimer();
+        transitionFromStartModeToRunningMode();
       }
     });
 
@@ -231,8 +237,10 @@ public class ReadFragment extends BaseFragment {
     if(viewTreeObserver != null && viewTreeObserver.isAlive()) {
       viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
         @Override public void onGlobalLayout() {
+          //noinspection deprecation
           mTimeSpinner.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-          prepareTimeSpinnerAnimation();
+          initializeTimerAnimation();
+          refreshTimerUI();
         }
       });
     }
@@ -240,49 +248,40 @@ public class ReadFragment extends BaseFragment {
     mTimeSpinner.setOnTouchListener(new View.OnTouchListener() {
       @Override
       public boolean onTouch(View view, MotionEvent motionEvent) {
-        // The start wheel is not active as a click target when the timing is started
-        // this is due to the inability to have both the TimeSpinner and the underlying
-        // wheel view receive touch events prior to android 11.
-        if(mDurationWheelView == null || mDurationWheelView.isEnabled()) {
-          return false;
-        }
-
-        int action = motionEvent.getAction();
-        if(action == MotionEvent.ACTION_DOWN) {
-          mTimeSpinner.setHighlighted(true);
-          return true;
-        } else if(action == MotionEvent.ACTION_UP) {
-          if(mIsStarted) {
-            mSessionTimer.togglePausePlay();
-          } else {
-            startTimer();
-          }
-          mTimeSpinner.setHighlighted(false);
-          return true;
-        } else if(action == MotionEvent.ACTION_CANCEL) {
-          mTimeSpinner.setHighlighted(false);
-          return true;
+        switch(motionEvent.getActionMasked()) {
+          case MotionEvent.ACTION_DOWN:
+            mTimeSpinner.setHighlighted(true);
+            return true;
+          case MotionEvent.ACTION_UP:
+            if(mSessionTimer.isStarted()) {
+              mSessionTimer.togglePausePlay();
+            } else {
+              transitionFromStartModeToRunningMode();
+            }
+            mTimeSpinner.setHighlighted(false);
+            return true;
+          case MotionEvent.ACTION_CANCEL:
+            mTimeSpinner.setHighlighted(false);
+            return true;
         }
         return false;
       }
     });
   }
 
-  private void prepareTimeSpinnerAnimation() {
-    if(mTimeSpinner.getAnimation() == null) {
-      final float offsetX = mTimeSpinner.getWidth() * 0.5f;
-      final float offsetY = mTimeSpinner.getHeight() * 0.5f;
+  private void initializeTimerAnimation() {
+    final float offsetX = mTimeSpinner.getWidth() * 0.5f;
+    final float offsetY = mTimeSpinner.getHeight() * 0.5f;
 
-      PauseableSpinAnimation spinAnimation = new PauseableSpinAnimation(0, 360, offsetX, offsetY);
-      spinAnimation.setRepeatMode(Animation.RESTART);
-      spinAnimation.setRepeatCount(Animation.INFINITE);
-      spinAnimation.setDuration(60 * 1000);
-      spinAnimation.setInterpolator(new LinearInterpolator());
-      spinAnimation.setFillAfter(true);
+    PauseableSpinAnimation spinAnimation = new PauseableSpinAnimation(0, 360, offsetX, offsetY);
+    spinAnimation.setRepeatMode(Animation.RESTART);
+    spinAnimation.setRepeatCount(Animation.INFINITE);
+    spinAnimation.setDuration(60 * 1000);
+    spinAnimation.setInterpolator(new LinearInterpolator());
+    spinAnimation.setFillAfter(true);
 
-      mTimeSpinner.setAnimation(spinAnimation);
-      spinAnimation.pause();
-    }
+    mTimeSpinner.setAnimation(spinAnimation);
+    spinAnimation.pause();
   }
 
   /**
@@ -295,28 +294,28 @@ public class ReadFragment extends BaseFragment {
     }
   }
 
-  /**
-   * Initializes the wheel view for displaying the reading session duration
-   */
+  /** Initialize duration wheel and timer. */
+  private void initializeTimerUI() {
+    initializeDurationWheel();
+
+
+  }
+
   private void initializeDurationWheel() {
-    ArrayWheelAdapter hoursAdapter = createDurationWheelAdapter(24 * 60);
+    final int maxHours = 24;
+    ArrayWheelAdapter hoursAdapter = createDurationWheelAdapter(maxHours * 60);
     mDurationWheelView.setVisibleItems(3);
     mDurationWheelView.setViewAdapter(hoursAdapter);
     mDurationWheelView.setCalliperMode(WheelView.CalliperMode.NO_CALLIPERS);
 
-    // Have the wheel duration initially invisible, and show it once timing starts
+    // Don't show the duration wheel until the timer has started
     mDurationWheelView.setVisibility(View.INVISIBLE);
-    mDurationWheelView.setEnabled(false);
 
     mDurationWheelView.addChangingListener(new OnWheelChangedListener() {
       @Override
       public void onChanged(WheelView wheel, int oldValue, int newValue) {
         final long newElapsedMs = newValue * 60 * 1000;
-        final boolean wasRunning = mSessionTimer.isRunning();
         mSessionTimer.reset(newElapsedMs);
-        if(wasRunning) {
-          mSessionTimer.start();
-        }
       }
     });
   }
@@ -353,28 +352,21 @@ public class ReadFragment extends BaseFragment {
     }
   }
 
-  /**
-   * Called when the start button is clicked
-   */
-  private void startTimer() {
+  /** Starts the timer with a UI transition into a running mode. */
+  private void transitionFromStartModeToRunningMode() {
     final Animation disappear = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_out);
-    final Animation appear = AnimationUtils.loadAnimation(getActivity(), R.anim.slide_up_appear);
 
     //noinspection ConstantConditions
     disappear.setAnimationListener(new SimpleAnimationListener() {
       @Override public void onAnimationEnd(Animation animation) {
         mSessionTimer.start();
-        updateWheelWithElapsedTime();
-        mLastPositionText.setVisibility(View.INVISIBLE);
-        mDurationWheelView.startAnimation(appear);
-        mDurationWheelView.setVisibility(View.VISIBLE);
+        refreshDurationWheel();
+        displayDurationWheel(true);
       }
     });
 
     mTimeSpinnerControlsFlipper.setDisplayedChild(FLIPPER_PAGE_READING_BUTTONS);
     mLastPositionText.startAnimation(disappear);
-
-    mIsStarted = true;
   }
 
   private void endSession() {
@@ -387,14 +379,22 @@ public class ReadFragment extends BaseFragment {
     dialog.show(fragmentManager, END_SESSION_FRAGMENT_TAG);
   }
 
-  private void displayStartModeControls() {
-    Log.v(TAG, "Setting timer controls to start mode");
+  private void displayDurationWheel(boolean animated) {
+    if(animated) {
+      final Animation appear = AnimationUtils.loadAnimation(getActivity(), R.anim.slide_up_appear);
+      mDurationWheelView.startAnimation(appear);
+    }
+
+    mLastPositionText.setVisibility(View.INVISIBLE);
+    mDurationWheelView.setVisibility(View.VISIBLE);
+  }
+
+  private void displayControlsForUnstartedTimer() {
     mStartButton.setText(R.string.reading_start);
     flipToButtonPage(FLIPPER_PAGE_START_BUTTON);
   }
 
-  private void displayPauseModeControls() {
-    Log.v(TAG, "Setting timer controls to pause mode");
+  private void displayControlsForPausedTimer() {
     mPauseButton.setText(R.string.reading_resume);
     mDurationWheelView.setEnabled(false);
     flipToButtonPage(FLIPPER_PAGE_READING_BUTTONS);
@@ -402,14 +402,13 @@ public class ReadFragment extends BaseFragment {
     mTimeSpinnerWrapper.startAnimation(pulse);
   }
 
-  private void displayRunningModeControls() {
-    Log.v(TAG, "Setting timer controls to running mode");
+  private void displayControlsForRunningTimer() {
     mPauseButton.setText(R.string.reading_pause);
     flipToButtonPage(FLIPPER_PAGE_READING_BUTTONS);
     mTimeSpinnerWrapper.clearAnimation();
   }
 
-  private void updateWheelWithElapsedTime() {
+  private void refreshDurationWheel() {
     final long elapsedMilliseconds = mSessionTimer.getElapsedMs();
     Log.i(TAG, "Updating duration: " + elapsedMilliseconds);
     int elapsedMinutes = (int) (elapsedMilliseconds / (1000 * 60));
@@ -417,25 +416,6 @@ public class ReadFragment extends BaseFragment {
     if(elapsedMinutes != currentItem) {
       mDurationWheelView.setCurrentItem(elapsedMinutes, false, false);
     }
-  }
-
-  private void startTimeSpinner() {
-    PauseableSpinAnimation spinAnimation = (PauseableSpinAnimation) mTimeSpinner.getAnimation();
-    if(spinAnimation != null) {
-      spinAnimation.resume();
-    }
-
-    mDurationWheelView.setEnabled(true);
-    mDurationWheelView.setVisibility(View.VISIBLE);
-  }
-
-  private void pauseTimeSpinner() {
-    PauseableSpinAnimation spinAnimation = (PauseableSpinAnimation) mTimeSpinner.getAnimation();
-    if(spinAnimation != null) {
-      spinAnimation.pause();
-    }
-
-    mDurationWheelView.setEnabled(false);
   }
 
   private SharedPreferences getPreferences() {
@@ -457,9 +437,9 @@ public class ReadFragment extends BaseFragment {
     }
   }
 
-  /** Helper class for updating the duration wheel at suitable times. */
+  /** Updates the duration wheel at suitable times. */
   private static class UpdateDurationWheelTimer extends Timer {
-    private static final int MS_PER_MINUTE = 1000 * 60;
+    private static final int UPDATE_INTERVAL_MS = BuildConfig.DEBUG ? (1000) : (1000 * 60);
     private final WeakReference<ReadFragment> mReadFragmentRef;
     TimerTask mTask;
 
@@ -485,13 +465,13 @@ public class ReadFragment extends BaseFragment {
       }
 
       final long elapsedMs = fragment.mSessionTimer.getElapsedMs();
-      final long millisUntilNextMinute = 1000 - (elapsedMs - (elapsedMs / MS_PER_MINUTE) * MS_PER_MINUTE);
+      final long millisUntilNextMinute = 1000 - (elapsedMs - (elapsedMs / UPDATE_INTERVAL_MS) * UPDATE_INTERVAL_MS);
       mTask = new TimerTask() {
         @Override public void run() {
           mHandler.post(mUpdateRunnable);
         }
       };
-      scheduleAtFixedRate(mTask, millisUntilNextMinute, MS_PER_MINUTE);
+      scheduleAtFixedRate(mTask, Math.max(0, millisUntilNextMinute), UPDATE_INTERVAL_MS);
     }
 
     // Cancels the running task (if available) and purges the queue.
@@ -503,7 +483,7 @@ public class ReadFragment extends BaseFragment {
     private void onUpdate() {
       ReadFragment fragment = mReadFragmentRef.get();
       if(fragment != null) {
-        fragment.updateWheelWithElapsedTime();
+        fragment.refreshDurationWheel();
       }
     }
   }

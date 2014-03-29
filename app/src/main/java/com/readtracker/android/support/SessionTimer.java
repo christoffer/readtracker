@@ -3,6 +3,8 @@ package com.readtracker.android.support;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.readtracker.android.db.Session;
+
 /**
  * A timer for reading sessions.
  * Can be started and stopped and keeps track of total elapsed time.
@@ -33,10 +35,14 @@ public class SessionTimer {
   }
 
   @Override public String toString() {
-    return String.format("<%s> (%s) Accumulated elapsed time: %s",
-      SessionTimer.class.getSimpleName(),
-      isRunning() ? "Running since " + mStartTimestampMs : "Stopped",
-      mElapsedMs);
+    if(isStarted()) {
+      return String.format("<%s> (%s) Accumulated elapsed time: %s",
+          SessionTimer.class.getSimpleName(),
+          isRunning() ? "Running since " + mStartTimestampMs : "Stopped",
+          mElapsedMs);
+    } else {
+      return String.format("<%s> (Not yet started)", Session.class.getSimpleName());
+    }
   }
 
   /** Sets the listener to be notified when this timer starts or stops. */
@@ -48,9 +54,7 @@ public class SessionTimer {
   public void start() {
     if(!isRunning()) {
       mStartTimestampMs = mTimeProvider.getMilliseconds();
-      if(mListener != null) {
-        mListener.onSessionTimerStarted();
-      }
+      notifyStart();
     }
   }
 
@@ -59,9 +63,7 @@ public class SessionTimer {
     if(isRunning()) {
       mElapsedMs = getElapsedMs();
       mStartTimestampMs = STOPPED_TIME;
-      if(mListener != null) {
-        mListener.onSessionTimerStopped();
-      }
+      notifyStop();
     }
   }
 
@@ -99,15 +101,23 @@ public class SessionTimer {
     return !isRunning() && mElapsedMs > 0;
   }
 
-  /** Loads the timer state from preferences. Returns true if it was loaded. */
-  public boolean loadFromPreferences(SharedPreferences prefs) {
-    Log.d(TAG, "Loading from prefences");
+  /** Loads the timer state from preferences. If no stored timer was found, the timer is reset. */
+  public void initializeFromPreferences(SharedPreferences prefs) {
+    Log.d(TAG, "Loading from preferences");
     if(prefs.contains(PREF_ELAPSED) && prefs.contains(PREF_TIMESTAMP)) {
+      final boolean wasRunning = isRunning();
+
       mElapsedMs = prefs.getLong(PREF_ELAPSED, 0);
       mStartTimestampMs = prefs.getLong(PREF_TIMESTAMP, STOPPED_TIME);
-      return true;
+
+      if(isRunning() && !wasRunning) {
+        notifyStart();
+      } else if(!isRunning() && wasRunning) {
+        notifyStop();
+      }
+    } else {
+      reset();
     }
-    return false;
   }
 
   /** Saves the timer state to preferences. */
@@ -128,15 +138,20 @@ public class SessionTimer {
       .commit();
   }
 
-  /** Resets the timer to zero. */
+  /** Resets the elapsed time to zero. */
   public void reset() {
     reset(0);
   }
 
-  /** Resets the timer to a specific elapsed time. */
+  /** Reset the elapsed time for the timer. */
   public void reset(long elapsedMs) {
     mElapsedMs = elapsedMs;
-    mStartTimestampMs = STOPPED_TIME;
+    if(isRunning()) {
+      // Restart timer
+      mStartTimestampMs = mTimeProvider.getMilliseconds();
+    } else {
+      mStartTimestampMs = STOPPED_TIME;
+    }
   }
 
   /** Callback interface for getting notified as the timer is started and stopped. */
@@ -157,6 +172,18 @@ public class SessionTimer {
   public static class SystemTimeProvider implements TimeProvider {
     @Override public long getMilliseconds() {
       return System.currentTimeMillis();
+    }
+  }
+
+  private void notifyStart() {
+    if(mListener != null) {
+      mListener.onSessionTimerStarted();
+    }
+  }
+
+  private void notifyStop() {
+    if(mListener != null) {
+      mListener.onSessionTimerStopped();
     }
   }
 }

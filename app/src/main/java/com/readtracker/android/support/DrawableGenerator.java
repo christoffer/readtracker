@@ -5,6 +5,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.StateListDrawable;
+import android.widget.Button;
 
 public class DrawableGenerator {
   // Reuse this temporary container for color conversions
@@ -83,5 +84,12 @@ public class DrawableGenerator {
     hsv[1] *= adjustS;
     hsv[2] *= adjustV;
     return Color.HSVToColor(hsv);
+  }
+
+  /** Applies a button background drawable to each of the buttons. */
+  public static void applyButtonBackground(int color, Button... buttons) {
+    for(Button button: buttons) {
+      button.setBackgroundDrawable(generateButtonBackground(color));
+    }
   }
 }
