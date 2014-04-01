@@ -1,5 +1,7 @@
 package com.readtracker.android.activities;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -79,10 +81,32 @@ public class AddBookActivity extends BookBaseActivity {
 
   @Override public boolean onOptionsItemSelected(MenuItem item) {
     if(item.getItemId() == R.id.add_book_delete_item) {
-      new UpdateBookTask(this, getBook(), DELETE).execute();
+      confirmDeleteBook();
       return true;
     }
     return super.onOptionsItemSelected(item);
+  }
+
+  private void confirmDeleteBook() {
+    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    final String title = getString(R.string.add_book_confirm_delete, mTitleEdit.getText().toString());
+    builder.setTitle(title);
+    builder.setMessage(R.string.add_book_delete_explanation);
+
+    builder.setPositiveButton(R.string.add_book_delete, new DialogInterface.OnClickListener() {
+      @Override public void onClick(DialogInterface dialogInterface, int i) {
+        new UpdateBookTask(AddBookActivity.this, getBook(), DELETE).execute();
+      }
+    });
+
+    builder.setNegativeButton(R.string.general_cancel, new DialogInterface.OnClickListener() {
+      @Override public void onClick(DialogInterface dialogInterface, int i) {
+        dialogInterface.cancel();
+      }
+    });
+
+    builder.setCancelable(true);
+    builder.create().show();
   }
 
   @Override
@@ -102,17 +126,17 @@ public class AddBookActivity extends BookBaseActivity {
     mAddOrSaveButton.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
-        onAddBookClicked();
+        onAddOrUpdateClicked();
       }
     });
 
     mPagePctToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
       @Override
-      public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
-        mPageCountEdit.setEnabled(checked);
-        String rememberedValue = (String) mPageCountEdit.getTag();
-        if(checked && rememberedValue != null) {
-          mPageCountEdit.setText(rememberedValue);
+      public void onCheckedChanged(CompoundButton compoundButton, boolean isInPageMode) {
+        mPageCountEdit.setEnabled(isInPageMode);
+        if(isInPageMode) {
+          final String rememberedValue = (String) mPageCountEdit.getTag();
+          mPageCountEdit.setText(rememberedValue == null ? "0" : rememberedValue);
         } else {
           mPageCountEdit.setTag(mPageCountEdit.getText().toString());
           mPageCountEdit.setText("100%");
@@ -134,18 +158,18 @@ public class AddBookActivity extends BookBaseActivity {
   private void initializeForEditMode(Book book) {
     mAddOrSaveButton.setText(R.string.add_book_save);
 
-    mTitleEdit.setEnabled(false);
-    mAuthorEdit.setEnabled(false);
-
     mTitleEdit.setText(book.getTitle());
     mAuthorEdit.setText(book.getAuthor());
 
     if(book.hasPageNumbers()) {
-      mPageCountEdit.setText(String.valueOf(book.getPageCount()));
+      int pageCount = (int) ((float) book.getPageCount());
+      mPageCountEdit.setText(String.valueOf(pageCount));
       mPagePctToggle.setChecked(true);
+      mPagePctToggle.setEnabled(true);
     } else {
       mPageCountEdit.setText("100%");
       mPagePctToggle.setChecked(false);
+      mPagePctToggle.setEnabled(false);
     }
 
     mCoverURL = book.getCoverImageUrl();
@@ -161,7 +185,7 @@ public class AddBookActivity extends BookBaseActivity {
     }
   }
 
-  private void onAddBookClicked() {
+  private void onAddOrUpdateClicked() {
     if(!validateFields()) {
       return;
     }

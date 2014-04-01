@@ -63,6 +63,8 @@
   <string name="add_book_missing_author">Please enter the author</string>
   <string name="add_book_saving_book">Saving book...</string>
   <string name="add_book_delete">Delete</string>
+  <string name="add_book_confirm_delete">Really delete %1$s?</string>
+  <string name="add_book_delete_explanation">This will delete the book and the entire reading history from the device.\n\nThere is no way to undo this operation.</string>
 
   <string name="book_pausing_book">Pausing %1$s\n\nClick it again to resume</string>
   <string name="book_error_reading_book">An error occurred while reading the book</string><string name="book_error_session_failed">Failed to save your reading session.\n\nPlease report this to the developer.</string>
