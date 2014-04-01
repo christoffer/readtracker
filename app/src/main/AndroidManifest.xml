@@ -40,7 +40,12 @@
       android:name=".activities.AddBookActivity"
       android:noHistory="true"
       android:label="@string/activity_label_add_book"
-      android:windowSoftInputMode="adjustPan"/>
+      android:windowSoftInputMode="adjustPan"
+      android:parentActivityName=".activities.HomeActivity">
+      <meta-data
+        android:name="android.support.PARENT_ACTIVITY"
+        android:value=".activities.HomeActivity"/>
+    </activity>
 
     <activity
       android:name=".activities.BookActivity"
