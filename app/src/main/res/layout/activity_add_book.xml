@@ -22,13 +22,13 @@
       android:text="@string/add_book_book_info" />
 
     <EditText
-      android:id="@+id/editTitle"
+      android:id="@+id/title_edit"
       style="@style/default_input_field"
       android:layout_marginBottom="12dp"
       android:hint="@string/general_title" />
 
     <EditText
-      android:id="@+id/editAuthor"
+      android:id="@+id/author_edit"
       style="@style/default_input_field"
       android:layout_marginBottom="12dp"
       android:hint="@string/general_author" />
@@ -48,7 +48,7 @@
       android:gravity="center_vertical">
 
       <EditText
-        android:id="@+id/editPageCount"
+        android:id="@+id/page_count_edit"
         style="@style/centered_number_input_field"
         android:textSize="30sp"
         android:layout_width="fill_parent"
@@ -61,7 +61,7 @@
         android:ellipsize="end" />
 
       <com.readtracker.android.thirdparty.views.Switch
-        android:id="@+id/togglePagesPercent"
+        android:id="@+id/page_pct_toggle"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
         android:layout_weight="1"
@@ -77,7 +77,7 @@
       android:layout_weight="1" />
 
     <Button
-      android:id="@+id/buttonAddBook"
+      android:id="@+id/add_or_save_button"
       style="@style/default_button"
       android:layout_marginTop="24dp"
       android:text="@string/add_book_add" />

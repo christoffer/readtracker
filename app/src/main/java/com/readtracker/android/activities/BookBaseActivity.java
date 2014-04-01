@@ -53,15 +53,11 @@ public abstract class BookBaseActivity extends BaseActivity {
    * extra with key: {@code BaseBookActivity.KEY_BOOK_ID}
    */
   protected void loadBookFromIntent() {
-    int bookId = getIntent().getIntExtra(KEY_BOOK_ID, -1);
-
-    if(bookId < 0) {
-      throw new IllegalArgumentException("Must provide key: " + BookActivity.KEY_BOOK_ID + " with the book id");
-    } else {
-      Log.d(TAG, "Loading provided book: " + bookId);
+    if(!getIntent().hasExtra(KEY_BOOK_ID)) {
+      throw new IllegalArgumentException("Must provide key: " + KEY_BOOK_ID + " with the book id");
     }
 
-    loadBook(bookId);
+    loadBook(getBookIdFromIntent());
   }
 
   /** Calls a callback when the book has been loaded. */
@@ -72,6 +68,14 @@ public abstract class BookBaseActivity extends BaseActivity {
     }
 
     flushBookReadyRunnables();
+  }
+
+  /**
+   * Returns the book id that was passed with the {@code BookBaseActivity.KEY_BOOK_ID} key.
+   * Throws an exception if it wasn't found.
+   */
+  protected int getBookIdFromIntent() {
+    return getIntent().getExtras().getInt(KEY_BOOK_ID);
   }
 
   private void flushBookReadyRunnables() {

@@ -4,6 +4,9 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -17,24 +20,27 @@ import com.readtracker.android.thirdparty.views.Switch;
 
 import java.lang.ref.WeakReference;
 
-/**
- * Screen for adding a new book manually
- */
+import static com.readtracker.android.activities.AddBookActivity.UpdateBookTask.UpdateOperation.DELETE;
+import static com.readtracker.android.activities.AddBookActivity.UpdateBookTask.UpdateOperation.SAVE;
+
+/** Activity for adding or editing a book. */
 public class AddBookActivity extends BookBaseActivity {
   public static final String TAG = AddBookActivity.class.getName();
 
-  private static final String KEY_EDIT_BOOK_ID = "EDIT_BOOK_ID";
+  public static final int RESULT_ADDED_BOOK = RESULT_FIRST_USER + 1;
+  public static final int RESULT_DELETED_BOOK = RESULT_FIRST_USER + 2;
 
-  private static EditText mEditTitle;
-  private static EditText mEditAuthor;
-  private static EditText mEditPageCount;
+  private static EditText mTitleEdit;
+  private static EditText mAuthorEdit;
+  private static EditText mPageCountEdit;
 
-  private static Button mButtonAddBook;
+  private static Button mAddOrSaveButton;
 
-  private static Switch mSwitchPagesPercent;
+  private static Switch mPagePctToggle;
 
   // Store the cover url from the intent that starts the activity
   private String mCoverURL;
+  private boolean mEditMode;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -44,88 +50,114 @@ public class AddBookActivity extends BookBaseActivity {
     bindViews();
 
     Intent intent = getIntent();
-    if(intent.hasExtra(KEY_EDIT_BOOK_ID)) {
-      // Assume edit mode
-      int bookId = intent.getIntExtra(KEY_EDIT_BOOK_ID, -1);
+    if(intent.hasExtra(KEY_BOOK_ID)) {
+      // Assume edit mode if we get a book id passed in
+      int bookId = intent.getExtras().getInt(KEY_BOOK_ID);
       loadBook(bookId); // defer setup to onBookLoaded
-      Log.d(TAG, "Edit mode for book with id: " + mEditAuthor);
     } else {
+      mEditMode = false;
       // Assume create mode
       Log.d(TAG, "Add book mode");
-      setupCreateMode(intent);
+      initializeForAddingBook(intent);
     }
+  }
+
+  @Override public boolean onCreateOptionsMenu(Menu menu) {
+    MenuInflater inflater = getMenuInflater();
+    inflater.inflate(R.menu.add_book_menu, menu);
+    return super.onCreateOptionsMenu(menu);
+  }
+
+  @Override public boolean onPrepareOptionsMenu(Menu menu) {
+    MenuItem deleteItem = menu.findItem(R.id.add_book_delete_item);
+    if(deleteItem != null) {
+      deleteItem.setVisible(mEditMode);
+    }
+
+    return super.onPrepareOptionsMenu(menu);
+  }
+
+  @Override public boolean onOptionsItemSelected(MenuItem item) {
+    if(item.getItemId() == R.id.add_book_delete_item) {
+      new UpdateBookTask(this, getBook(), DELETE).execute();
+      return true;
+    }
+    return super.onOptionsItemSelected(item);
   }
 
   @Override
   protected void onBookLoaded(Book book) {
-    setupEditMode(book);
+    initializeForEditMode(book);
   }
 
   private void bindViews() {
-    mEditTitle = (EditText) findViewById(R.id.editTitle);
-    mEditAuthor = (EditText) findViewById(R.id.editAuthor);
-    mEditPageCount = (EditText) findViewById(R.id.editPageCount);
-    mSwitchPagesPercent = (Switch) findViewById(R.id.togglePagesPercent);
-    mButtonAddBook = (Button) findViewById(R.id.buttonAddBook);
+    mTitleEdit = (EditText) findViewById(R.id.title_edit);
+    mAuthorEdit = (EditText) findViewById(R.id.author_edit);
+    mPageCountEdit = (EditText) findViewById(R.id.page_count_edit);
+    mPagePctToggle = (Switch) findViewById(R.id.page_pct_toggle);
+    mAddOrSaveButton = (Button) findViewById(R.id.add_or_save_button);
   }
 
   private void bindEvents() {
-    mButtonAddBook.setOnClickListener(new View.OnClickListener() {
+    mAddOrSaveButton.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
         onAddBookClicked();
       }
     });
 
-    mSwitchPagesPercent.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+    mPagePctToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
       @Override
       public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
-        mEditPageCount.setEnabled(checked);
-        String rememberedValue = (String) mEditPageCount.getTag();
+        mPageCountEdit.setEnabled(checked);
+        String rememberedValue = (String) mPageCountEdit.getTag();
         if(checked && rememberedValue != null) {
-          mEditPageCount.setText(rememberedValue);
+          mPageCountEdit.setText(rememberedValue);
         } else {
-          mEditPageCount.setTag(mEditPageCount.getText().toString());
-          mEditPageCount.setText("100.00%");
+          mPageCountEdit.setTag(mPageCountEdit.getText().toString());
+          mPageCountEdit.setText("100%");
         }
       }
     });
   }
 
-  private void setupCreateMode(Intent intent) {
-    mButtonAddBook.setText(R.string.add_book_add);
-    mEditTitle.setText(intent.getStringExtra(IntentKeys.TITLE));
-    mEditAuthor.setText(intent.getStringExtra(IntentKeys.AUTHOR));
+  private void initializeForAddingBook(Intent intent) {
+    mAddOrSaveButton.setText(R.string.add_book_add);
+    mTitleEdit.setText(intent.getStringExtra(IntentKeys.TITLE));
+    mAuthorEdit.setText(intent.getStringExtra(IntentKeys.AUTHOR));
     mCoverURL = intent.getStringExtra(IntentKeys.COVER_URL);
     setInitialPageCount(intent.getIntExtra(IntentKeys.PAGE_COUNT, 0));
 
     bindEvents();
   }
 
-  private void setupEditMode(Book book) {
-    mButtonAddBook.setText(R.string.add_book_save);
+  private void initializeForEditMode(Book book) {
+    mAddOrSaveButton.setText(R.string.add_book_save);
 
-    mEditTitle.setEnabled(false);
-    mEditAuthor.setEnabled(false);
+    mTitleEdit.setEnabled(false);
+    mAuthorEdit.setEnabled(false);
 
-    mEditTitle.setText(book.getTitle());
-    mEditAuthor.setText(book.getAuthor());
+    mTitleEdit.setText(book.getTitle());
+    mAuthorEdit.setText(book.getAuthor());
 
     if(book.hasPageNumbers()) {
-      mEditPageCount.setText(String.valueOf(book.getPageCount()));
-      mSwitchPagesPercent.setChecked(true);
+      mPageCountEdit.setText(String.valueOf(book.getPageCount()));
+      mPagePctToggle.setChecked(true);
     } else {
-      mEditPageCount.setText("");
-      mSwitchPagesPercent.setChecked(false);
+      mPageCountEdit.setText("100%");
+      mPagePctToggle.setChecked(false);
     }
 
     mCoverURL = book.getCoverImageUrl();
     bindEvents();
+
+    mEditMode = true;
+    supportInvalidateOptionsMenu();
   }
 
   private void setInitialPageCount(long pageCount) {
     if(pageCount > 0) {
-      mEditPageCount.setText(Long.toString(pageCount));
+      mPageCountEdit.setText(Long.toString(pageCount));
     }
   }
 
@@ -139,18 +171,18 @@ public class AddBookActivity extends BookBaseActivity {
       book = new Book();
     }
 
-    book.setTitle(mEditTitle.getText().toString());
-    book.setAuthor(mEditAuthor.getText().toString());
+    book.setTitle(mTitleEdit.getText().toString());
+    book.setAuthor(mAuthorEdit.getText().toString());
     book.setCoverImageUrl(mCoverURL);
 
-    if(mSwitchPagesPercent.isChecked()) {
-      int discretePages = Integer.parseInt(mEditPageCount.getText().toString());
+    if(mPagePctToggle.isChecked()) {
+      int discretePages = Integer.parseInt(mPageCountEdit.getText().toString());
       book.setPageCount((float) discretePages);
     } else {
       book.setPageCount(null);
     }
 
-    saveBook(book);
+    new UpdateBookTask(this, book, SAVE).execute();
   }
 
   /**
@@ -159,30 +191,30 @@ public class AddBookActivity extends BookBaseActivity {
    * @return true if all fields were valid, otherwise false
    */
   private boolean validateFields() {
-    if(mEditTitle.getText().length() < 1) {
+    if(mTitleEdit.getText().length() < 1) {
       toast(R.string.add_book_missing_title);
-      mEditTitle.requestFocus();
+      mTitleEdit.requestFocus();
       return false;
     }
 
-    if(mEditAuthor.getText().length() < 1) {
+    if(mAuthorEdit.getText().length() < 1) {
       toast(R.string.add_book_missing_author);
-      mEditAuthor.requestFocus();
+      mAuthorEdit.requestFocus();
       return false;
     }
 
     // Validate a reasonable amount of page numbers
-    if(mSwitchPagesPercent.isChecked()) {
+    if(mPagePctToggle.isChecked()) {
       int pageCount = 0;
 
       try {
-        pageCount = Integer.parseInt(mEditPageCount.getText().toString());
+        pageCount = Integer.parseInt(mPageCountEdit.getText().toString());
       } catch(NumberFormatException ignored) {
       }
 
       if(pageCount < 1) {
         toast(R.string.add_book_missing_page_count);
-        mEditPageCount.requestFocus();
+        mPageCountEdit.requestFocus();
         return false;
       }
     }
@@ -190,47 +222,53 @@ public class AddBookActivity extends BookBaseActivity {
     return true;
   }
 
-  private void exitToReadingSession(Book book) {
-    Intent intent = new Intent(this, BookActivity.class);
-    intent.putExtra(BookBaseActivity.KEY_BOOK_ID, book.getId());
-    setResult(RESULT_OK);
-    startActivity(intent);
-    finish();
-  }
-
-  private void saveBook(Book book) {
-    new SaveTask(book, this).execute();
-  }
-
-  private void onBookSaved(Book book) {
-    if(book != null) {
-      exitToReadingSession(book);
-    } else {
+  private void onBookUpdated(int bookId, UpdateBookTask.UpdateOperation operation, boolean success) {
+    if(!success) {
       Log.w(TAG, "Failed to save book");
+      return;
+    }
+
+    Intent data = new Intent();
+    data.putExtra(KEY_BOOK_ID, bookId);
+
+    if(mEditMode) {
+      if(operation == DELETE) {
+        setResult(RESULT_DELETED_BOOK, data);
+      } else {
+        // Was update operation, just OK it
+        setResult(RESULT_OK, data);
+      }
+      finish();
+    } else {
+      setResult(RESULT_ADDED_BOOK, data);
+      finish();
     }
   }
 
-  private static class SaveTask extends AsyncTask<Void, Void, Book> {
+  static class UpdateBookTask extends AsyncTask<Void, Void, Boolean> {
+    public static enum UpdateOperation {SAVE, DELETE}
+
     private final WeakReference<AddBookActivity> mActivity;
     private final DatabaseManager mDatabaseMgr;
     private final Book mBook;
+    private final UpdateOperation mOperation;
 
-    public SaveTask(Book book, AddBookActivity activity) {
+    public UpdateBookTask(AddBookActivity activity, Book book, UpdateOperation operation) {
       mBook = book;
       mActivity = new WeakReference<AddBookActivity>(activity);
       mDatabaseMgr = activity.getApp().getDatabaseManager();
+      mOperation = operation;
     }
 
     @Override
-    protected Book doInBackground(Void... voids) {
-      return mDatabaseMgr.save(mBook);
+    protected Boolean doInBackground(Void... voids) {
+      return mOperation == DELETE ? mDatabaseMgr.delete(mBook) : mDatabaseMgr.save(mBook);
     }
 
-    @Override
-    protected void onPostExecute(Book book) {
+    @Override protected void onPostExecute(Boolean success) {
       AddBookActivity activity = mActivity.get();
       if(activity != null) {
-        activity.onBookSaved(book);
+        activity.onBookUpdated(mBook.getId(), mOperation, success);
       }
     }
   }

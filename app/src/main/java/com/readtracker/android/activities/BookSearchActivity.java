@@ -37,6 +37,8 @@ import java.util.ArrayList;
 public class BookSearchActivity extends BaseActivity {
   private static final String TAG = BookSearchActivity.class.getSimpleName();
 
+  private static final int REQUEST_ADD_BOOK = 1;
+
   private static ListView mListSearchResults;
   private static EditText mEditTextSearch;
 
@@ -77,8 +79,10 @@ public class BookSearchActivity extends BaseActivity {
 
   @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     // Fall through when coming back from a successful book activity
-    if(requestCode == ActivityCodes.REQUEST_ADD_BOOK && resultCode == ActivityCodes.RESULT_OK) {
-      setResult(ActivityCodes.RESULT_OK);
+    if(requestCode == REQUEST_ADD_BOOK && resultCode == AddBookActivity.RESULT_ADDED_BOOK) {
+      Intent searchResultData = new Intent();
+      searchResultData.putExtra(BookBaseActivity.KEY_BOOK_ID, data.getExtras().getInt(BookBaseActivity.KEY_BOOK_ID));
+      setResult(RESULT_OK, searchResultData);
       finish();
     }
   }
@@ -199,7 +203,7 @@ public class BookSearchActivity extends BaseActivity {
     intent.putExtra(IntentKeys.AUTHOR, author);
     intent.putExtra(IntentKeys.COVER_URL, coverURL);
     intent.putExtra(IntentKeys.PAGE_COUNT, pageCount);
-    startActivityForResult(intent, ActivityCodes.REQUEST_ADD_BOOK);
+    startActivityForResult(intent, REQUEST_ADD_BOOK);
   }
 
   /**
@@ -208,7 +212,7 @@ public class BookSearchActivity extends BaseActivity {
    */
   public void exitToBookInitForNewBook() {
     Intent intent = new Intent(this, AddBookActivity.class);
-    startActivityForResult(intent, ActivityCodes.REQUEST_ADD_BOOK);
+    startActivityForResult(intent, REQUEST_ADD_BOOK);
   }
 
   public void setSearchResults(ArrayList<GoogleBook> foundBooks) {

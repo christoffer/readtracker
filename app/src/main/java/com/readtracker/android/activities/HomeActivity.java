@@ -102,7 +102,6 @@ public class HomeActivity extends BaseActivity {
 
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
     // TODO we should be smarter here and just reload the one book that was changed
     final boolean shouldReload = (
       requestCode == REQUEST_READING_SESSION && resultCode == RESULT_OK

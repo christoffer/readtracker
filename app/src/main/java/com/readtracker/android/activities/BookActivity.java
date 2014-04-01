@@ -12,8 +12,8 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.readtracker.android.R;
-import com.readtracker.android.adapters.BookAdapter;
 import com.readtracker.android.db.Book;
+import com.readtracker.android.db.DatabaseManager;
 import com.readtracker.android.db.Model;
 import com.readtracker.android.db.Session;
 import com.readtracker.android.fragments.BookFragmentAdapter;
@@ -32,12 +32,11 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialog.E
   protected static final String TAG = BookActivity.class.getSimpleName();
 
   private static final int NO_GROUP = 0;
-  private static final int MENU_EDIT_BOOK_SETTINGS = 1;
+  private static final int MENU_EDIT_BOOK = 1;
 
-  public static final int REQUEST_EDIT_PAGE_NUMBERS = 1;
-  public static final int REQUEST_ADD_QUOTE = 2;
-  public static final int REQUEST_BOOK_SETTINGS = 3;
-  public static final int REQUEST_FINISH_BOOK = 4; // used by ReadFragment
+  public static final int REQUEST_ADD_QUOTE = 1;
+  public static final int REQUEST_EDIT_BOOK = 2;
+  public static final int REQUEST_FINISH_BOOK = 3;
 
   private static final String END_SESSION_FRAGMENT_TAG = "end-session-tag";
 
@@ -105,13 +104,6 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialog.E
 
     Log.v(TAG, "onActivityResult: requestCode: " + requestCode + ", resultCode: " + resultCode);
     switch(requestCode) {
-      case REQUEST_EDIT_PAGE_NUMBERS:
-        if(resultCode == RESULT_OK) {
-          Log.d(TAG, "Came back from editing page number");
-          mInitialFragmentPage = Page.READING;
-          loadBookFromIntent(); // reload book
-        }
-        break;
       case REQUEST_FINISH_BOOK:
         if(resultCode == RESULT_OK) {
           final String closingRemark = data.getStringExtra(FinishBookActivity.KEY_CLOSING_REMARK);
@@ -133,17 +125,11 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialog.E
           loadBookFromIntent(); // reload book
         }
         break;
-      case REQUEST_BOOK_SETTINGS:
-        if(resultCode == ActivityCodes.RESULT_REQUESTED_BOOK_SETTINGS) {
-          // TODO Replace this with event
-          final Book book = getBook();
-          if(book != null) {
-            // exitToBookEditScreen(book);
-          } else {
-            Log.w(TAG, "Ignoring request for book settings, book is null");
-          }
-        } else if(resultCode == ActivityCodes.RESULT_DELETED_BOOK) {
-          // shutdownWithResult(RESULT_OK);
+      case REQUEST_EDIT_BOOK:
+        if(resultCode == AddBookActivity.RESULT_DELETED_BOOK) {
+          Log.d(TAG, "Book deleted, shutting down");
+          setResult(RESULT_OK); // use OK to trigger reload in HomeActivity
+          finish();
         } else if(resultCode == ActivityCodes.RESULT_OK) {
           Log.d(TAG, "Came back from changing the book settings");
           loadBookFromIntent(); // reload book
@@ -155,7 +141,7 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialog.E
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
-    menu.add(NO_GROUP, MENU_EDIT_BOOK_SETTINGS, 0, "Edit book settings");
+    menu.add(NO_GROUP, MENU_EDIT_BOOK, 0, "Edit book settings");
     return true;
   }
 
@@ -176,8 +162,10 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialog.E
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
     switch(item.getItemId()) {
-      case MENU_EDIT_BOOK_SETTINGS:
-        // exitToBookSettings();
+      case MENU_EDIT_BOOK:
+        Intent intent = new Intent(this, AddBookActivity.class);
+        intent.putExtra(BookBaseActivity.KEY_BOOK_ID, getBookIdFromIntent());
+        startActivityForResult(intent, REQUEST_EDIT_BOOK);
         break;
       default:
         return false;
@@ -263,9 +251,10 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialog.E
         return Boolean.FALSE;
       }
 
+      DatabaseManager db = activity.getDatabaseManager();
       for(Model model : modelsToSave) {
         Log.v(TAG, "Saving: " + model);
-        if(activity.getDatabaseManager().save(model) == null) {
+        if(!db.save(model)) {
           activity.toast(R.string.book_error_updating);
           return Boolean.FALSE;
         }

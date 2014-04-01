@@ -54,19 +54,19 @@ public class DatabaseManager {
 
   /**
    * Saves the current instance to the database. Existing entries are updated, new ones are created.
-   * @return the model.
+   * @return true if saved or created.
    */
-  public <T extends Model> T save(T instance) {
+  public <T extends Model> boolean save(T instance) {
     @SuppressWarnings("unchecked")
     Dao<T, Integer> dao = (Dao<T, Integer>) db.getDaoByClass(instance.getClass());
 
     try {
       if(instance.getId() > 0) {
         dao.update(instance);
-        return instance;
+        return true;
       } else {
         dao.create(instance);
-        return instance;
+        return true;
       }
     } catch(SQLException e) {
       throw new RuntimeException(e);

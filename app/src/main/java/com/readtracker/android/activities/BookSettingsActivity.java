@@ -20,6 +20,8 @@ import com.readtracker.android.tasks.SaveLocalReadingTask;
 public class BookSettingsActivity extends PreferenceActivity {
   private static final String TAG = BookSettingsActivity.class.getName();
 
+  public static final int RESULT_DELETED_BOOK = RESULT_FIRST_USER + 1;
+
   private LocalReading mLocalReading;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
