@@ -12,6 +12,7 @@ import java.util.List;
  */
 @DatabaseTable(tableName = "books")
 public class Book extends Model {
+
   public static enum State {Unknown, Finished, Reading}
 
   @DatabaseField(columnName = Columns.TITLE) private String mTitle;
@@ -85,9 +86,9 @@ public class Book extends Model {
     return mState != null && mState.equals(state);
   }
 
-  public Float getCurrentPosition() { return mCurrentPosition; }
+  public float getCurrentPosition() { return mCurrentPosition == null ? 0f : mCurrentPosition; }
 
-  public void setCurrentPosition(Float currentPosition) { mCurrentPosition = currentPosition; }
+  public void setCurrentPosition(float currentPosition) { mCurrentPosition = currentPosition; }
 
   public Long getCurrentPositionTimestamp() { return mCurrentPositionTimestamp; }
 

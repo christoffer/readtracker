@@ -1,21 +1,27 @@
 package com.readtracker.android.activities;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.readtracker.android.BuildConfig;
-import com.readtracker.android.IntentKeys;
 import com.readtracker.android.R;
+import com.readtracker.android.adapters.BookAdapter;
 import com.readtracker.android.db.Book;
+import com.readtracker.android.db.Model;
+import com.readtracker.android.db.Session;
 import com.readtracker.android.fragments.BookFragmentAdapter;
+import com.readtracker.android.fragments.ReadFragment;
 import com.squareup.otto.Produce;
+import com.squareup.otto.Subscribe;
+
+import java.lang.ref.WeakReference;
 
 import static com.readtracker.android.fragments.BookFragmentAdapter.Page;
 
@@ -33,6 +39,14 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialog.E
   public static final int REQUEST_BOOK_SETTINGS = 3;
   public static final int REQUEST_FINISH_BOOK = 4; // used by ReadFragment
 
+  private static final String END_SESSION_FRAGMENT_TAG = "end-session-tag";
+
+  private static final String STATE_END_POSITION = "END_POSITION";
+  private static final String STATE_DURATION = "DURATION";
+  private static final String STATE_VIEW_PAGER_PAGE = "VIEW_PAGER_PAGE";
+
+  private Session mCurrentSession;
+
   private ViewPager mViewPager;
   private PagerTabStrip mPagerTabStrip;
 
@@ -46,6 +60,16 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialog.E
     mPagerTabStrip = (PagerTabStrip) findViewById(R.id.pager_tab_strip);
 
     mPagerTabStrip.setVisibility(View.INVISIBLE);
+
+    mCurrentSession = new Session();
+    if(in != null) {
+      if(in.containsKey(STATE_VIEW_PAGER_PAGE)) {
+        mInitialFragmentPage = Page.values()[in.getInt(STATE_VIEW_PAGER_PAGE)];
+      }
+
+      mCurrentSession.setEndPosition(in.getFloat(STATE_END_POSITION));
+      mCurrentSession.setDurationSeconds(in.getLong(STATE_DURATION));
+    }
 
     // Load information from database
     loadBookFromIntent();
@@ -65,58 +89,64 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialog.E
   protected void onSaveInstanceState(Bundle outState) {
     super.onSaveInstanceState(outState);
     Log.d(TAG, "freezing state");
-    if (mViewPager != null) {
-      outState.putInt(IntentKeys.INITIAL_FRAGMENT_PAGE, mViewPager.getCurrentItem());
+    if(mViewPager != null) {
+      outState.putInt(STATE_VIEW_PAGER_PAGE, mViewPager.getCurrentItem());
     }
+
+    outState.putFloat(STATE_END_POSITION, mCurrentSession.getEndPosition());
+    outState.putLong(STATE_DURATION, mCurrentSession.getDurationSeconds());
   }
 
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    Log.v(TAG, "onActivityResult()");
-    if (resultCode == ActivityCodes.RESULT_CANCELED) {
+    if(resultCode == ActivityCodes.RESULT_CANCELED) {
       return;
     }
 
     Log.v(TAG, "onActivityResult: requestCode: " + requestCode + ", resultCode: " + resultCode);
-    switch (requestCode) {
+    switch(requestCode) {
       case REQUEST_EDIT_PAGE_NUMBERS:
-        if (resultCode == RESULT_OK) {
+        if(resultCode == RESULT_OK) {
           Log.d(TAG, "Came back from editing page number");
           mInitialFragmentPage = Page.READING;
-          loadBookFromIntent();
+          loadBookFromIntent(); // reload book
         }
         break;
+      case REQUEST_FINISH_BOOK:
+        if(resultCode == RESULT_OK) {
+          final String closingRemark = data.getStringExtra(FinishBookActivity.KEY_CLOSING_REMARK);
+          runWhenBookIsReady(new Runnable() {
+            @Override public void run() {
+              final Book book = getBook();
+              Log.d(TAG, String.format("Finishing book %s with closing remark %s", book, closingRemark));
+              mCurrentSession.setEndPosition(1f);
+              book.setClosingRemark(closingRemark);
+              book.setState(Book.State.Finished);
+              saveSessionAndExit();
+            }
+          });
+        }
       case REQUEST_ADD_QUOTE:
-        if (resultCode == RESULT_OK) {
+        if(resultCode == RESULT_OK) {
           Log.d(TAG, "Came back from adding a quote");
           mInitialFragmentPage = Page.QUOTES;
-          loadBookFromIntent();
+          loadBookFromIntent(); // reload book
         }
         break;
       case REQUEST_BOOK_SETTINGS:
-        if (resultCode == ActivityCodes.RESULT_REQUESTED_BOOK_SETTINGS) {
+        if(resultCode == ActivityCodes.RESULT_REQUESTED_BOOK_SETTINGS) {
           // TODO Replace this with event
           final Book book = getBook();
-          if (book != null) {
+          if(book != null) {
             // exitToBookEditScreen(book);
           } else {
             Log.w(TAG, "Ignoring request for book settings, book is null");
           }
-        } else if (resultCode == ActivityCodes.RESULT_DELETED_BOOK) {
+        } else if(resultCode == ActivityCodes.RESULT_DELETED_BOOK) {
           // shutdownWithResult(RESULT_OK);
-        } else if (resultCode == ActivityCodes.RESULT_OK) {
+        } else if(resultCode == ActivityCodes.RESULT_OK) {
           Log.d(TAG, "Came back from changing the book settings");
-          loadBookFromIntent();
-        }
-        break;
-      case REQUEST_FINISH_BOOK:
-        if (resultCode == RESULT_OK) {
-          Log.v(TAG, "Finished book");
-          String closingRemark = null;
-          if (data.hasExtra(FinishBookActivity.KEY_CLOSING_REMARK)) {
-            closingRemark = data.getStringExtra(FinishBookActivity.KEY_CLOSING_REMARK);
-          }
-          finishBookWithClosingRemark(closingRemark);
+          loadBookFromIntent(); // reload book
         }
         break;
     }
@@ -132,6 +162,7 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialog.E
   @Override
   protected void onBookLoaded(Book book) {
     Log.v(TAG, "Book loaded: " + book);
+    mCurrentSession.setBook(book);
     postEvent(new BookLoadedEvent(book));
     setupFragments(book);
     mPagerTabStrip.setVisibility(View.VISIBLE);
@@ -144,7 +175,7 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialog.E
 
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
-    switch (item.getItemId()) {
+    switch(item.getItemId()) {
       case MENU_EDIT_BOOK_SETTINGS:
         // exitToBookSettings();
         break;
@@ -158,49 +189,48 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialog.E
     return new BookLoadedEvent(getBook());
   }
 
-  @Override public void onSessionEndWithNewPosition(final float position) {
+  @Subscribe public void onSessionDoneEvent(final ReadFragment.SessionDoneEvent event) {
+    mCurrentSession.setDurationSeconds(event.getDurationMillis() / 1000);
     runWhenBookIsReady(new Runnable() {
-      @Override
-      public void run() {
-        Log.d(TAG, "Ending session with new position" + position);
-        Float previousPosition = getBook().getCurrentPosition();
-
-        // TODO create session
-
-        final Book book = getBook();
-        book.setCurrentPosition(position);
-        book.setCurrentPositionTimestamp(System.currentTimeMillis());
-
-        saveAndFinish();
+      @Override public void run() {
+        final EndSessionDialog dialog = EndSessionDialog.newInstance(getBook());
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        dialog.show(fragmentManager, END_SESSION_FRAGMENT_TAG);
       }
     });
   }
 
-  @Override
-  public void onSessionEndWithFinish() {
-    Log.d(TAG, "Ending session with finish");
-    Intent finishReading = new Intent(this, FinishBookActivity.class);
-    finishReading.putExtra(BookBaseActivity.KEY_BOOK_ID, getBook().getId());
-    startActivityForResult(finishReading, BookActivity.REQUEST_FINISH_BOOK);
+  @Override public void onConfirmedSessionEndPosition(float position) {
+    mCurrentSession.setEndPosition(position);
+    if(position == 1f) {
+      // Finishing book, ask the user for a closing remark before finishing up
+      Intent intent = new Intent(this, FinishBookActivity.class);
+      intent.putExtra(BookBaseActivity.KEY_BOOK_ID, getBook().getId());
+      startActivityForResult(intent, REQUEST_FINISH_BOOK);
+    } else {
+      // Updated session, finish up
+      saveSessionAndExit();
+    }
   }
 
-  private void finishBookWithClosingRemark(String closingRemark) {
-    final Book book = getBook();
-    if (BuildConfig.DEBUG) {
-      Log.d(TAG, String.format("Finishing with closing remark: %s", closingRemark));
-    }
-    if (!TextUtils.isEmpty(closingRemark)) {
-      book.setClosingRemark(closingRemark);
-    }
-    book.setState(Book.State.Finished);
-    book.setCurrentPositionTimestamp(System.currentTimeMillis());
+  private void saveSessionAndExit() {
+    runWhenBookIsReady(new Runnable() {
+      @Override public void run() {
+        Log.d(TAG, "Saving book and session");
+        final Book book = getBook();
 
-    saveAndFinish();
+        // Snapshot the session as the latest state of the book
+        book.setCurrentPosition(mCurrentSession.getEndPosition());
+        book.setCurrentPositionTimestamp(System.currentTimeMillis());
+
+        new SaveAndExitTask(BookActivity.this).execute(mCurrentSession, book);
+      }
+    });
   }
 
   private void setupFragments(Book book) {
     Page[] pages;
-    if (book.isInState(Book.State.Finished)) {
+    if(book.isInState(Book.State.Finished)) {
       pages = new Page[]{Page.SUMMARY, Page.QUOTES};
     } else {
       pages = new Page[]{Page.SUMMARY, Page.READING, Page.QUOTES};
@@ -214,16 +244,40 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialog.E
     mViewPager.setCurrentItem(bookFragmentAdapter.getPageIndex(initialPage), false);
   }
 
-  private void saveAndFinish() {
-    // Perform database operations on the main thread here, since it's very quick operation
-    // and because we actually want the UI to be locked until we have saved since we're exiting
-    // after.
-    final boolean success = getDatabaseManager().save(getBook()) != null;
-    if (success) {
-      setResult(RESULT_OK);
-      finish();
-    } else {
-      toast(R.string.book_error_updating);
+  /**
+   * Task that saves an arbitrary number of models in the background and closes down the activity
+   * with a successful result when done.
+   */
+  private static class SaveAndExitTask extends AsyncTask<Model, Void, Boolean> {
+    private final WeakReference<BookActivity> mActivityRef;
+
+    SaveAndExitTask(BookActivity activity) {
+      mActivityRef = new WeakReference<BookActivity>(activity);
+    }
+
+    @Override protected Boolean doInBackground(Model... modelsToSave) {
+      BookActivity activity = mActivityRef.get();
+      if(activity == null) {
+        return Boolean.FALSE;
+      }
+
+      for(Model model : modelsToSave) {
+        Log.v(TAG, "Saving: " + model);
+        if(activity.getDatabaseManager().save(model) == null) {
+          activity.toast(R.string.book_error_updating);
+          return Boolean.FALSE;
+        }
+      }
+
+      return Boolean.TRUE;
+    }
+
+    @Override protected void onPostExecute(Boolean result) {
+      BookActivity activity = mActivityRef.get();
+      if(activity != null && result.equals(Boolean.TRUE)) {
+        activity.setResult(RESULT_OK);
+        activity.finish();
+      }
     }
   }
 }

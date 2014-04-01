@@ -1,14 +1,11 @@
 package com.readtracker.android.fragments;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -26,11 +23,10 @@ import com.readtracker.android.BuildConfig;
 import com.readtracker.android.R;
 import com.readtracker.android.activities.BaseActivity;
 import com.readtracker.android.activities.BookActivity;
-import com.readtracker.android.activities.EndSessionDialog;
-import com.readtracker.android.activities.FinishBookActivity;
 import com.readtracker.android.custom_views.PauseableSpinAnimation;
 import com.readtracker.android.custom_views.TimeSpinner;
 import com.readtracker.android.db.Book;
+import com.readtracker.android.db.Session;
 import com.readtracker.android.support.DrawableGenerator;
 import com.readtracker.android.support.SessionTimer;
 import com.readtracker.android.support.SimpleAnimationListener;
@@ -45,13 +41,9 @@ import java.lang.ref.WeakReference;
 import java.util.Timer;
 import java.util.TimerTask;
 
-/**
- * Fragment for managing a reading session
- */
+/** Displays a timer and controls for the user to start, pause and stop a reading session. */
 public class ReadFragment extends BaseFragment {
   private static final String TAG = ReadFragment.class.getSimpleName();
-
-  private static final String END_SESSION_FRAGMENT_TAG = "end-session-tag";
 
   private View mRootView;
 
@@ -73,6 +65,9 @@ public class ReadFragment extends BaseFragment {
 
   // Book to track
   private Book mBook;
+
+  // The position that the book had when loaded
+  private float mStartPosition;
 
   private final SessionTimer mSessionTimer = new SessionTimer();
 
@@ -116,15 +111,24 @@ public class ReadFragment extends BaseFragment {
     return view;
   }
 
-  @Override public void onActivityResult(int requestCode, int resultCode, Intent data) {
-    super.onActivityResult(requestCode, resultCode, data);
-    if(requestCode == BookActivity.REQUEST_FINISH_BOOK && resultCode == Activity.RESULT_OK) {
-      String closingRemark = data.getStringExtra(FinishBookActivity.KEY_CLOSING_REMARK);
-      Log.d(TAG, String.format("Finishing %s with closing remark: %s", mBook.getTitle(), closingRemark));
-      getBus().post(new BookFinishedEvent(closingRemark));
-    }
-  }
-
+  //  @Override public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//    super.onActivityResult(requestCode, resultCode, data);
+//    if(requestCode == REQUEST_CODE_END_SESSION) {
+//      if(resultCode == EndSessionDialog.RESULT_END_SESSION) {
+//        float endPosition = data.getExtras().getFloat(EndSessionDialog.KEY_END_POSITION);
+//        getBus().post(new NewSessionEvent(buildSession(endPosition)));
+//      } else if(resultCode == EndSessionDialog.RESULT_FINISH_BOOK) {
+//        // Bounce off to finish book screen when the book has finished loading
+//        Intent intent = new Intent(getActivity(), FinishBookActivity.class);
+//        intent.putExtra(BookBaseActivity.KEY_BOOK_ID, ((BookActivity) getActivity()).getBookId());
+//        startActivityForResult(intent, REQUEST_CODE_FINISH_BOOK);
+//      }
+//    } else if(requestCode == REQUEST_CODE_FINISH_BOOK && resultCode == Activity.RESULT_OK) {
+//      String closingRemark = data.getStringExtra(FinishBookActivity.KEY_CLOSING_REMARK);
+//      getBus().post(new NewSessionEvent(buildSession(1.0f), closingRemark));
+//    }
+//  }
+//
   @Override public void onStart() {
     super.onStart();
     mSessionTimer.initializeFromPreferences(getPreferences());
@@ -144,6 +148,7 @@ public class ReadFragment extends BaseFragment {
   @Subscribe public void onBookLoadedEvent(BookActivity.BookLoadedEvent event) {
     Log.v(TAG, "Got book loaded event: " + event);
     mBook = event.getBook();
+    mStartPosition = event.getBook() == null ? 0f : mBook.getCurrentPosition();
     populateFieldsDeferred();
   }
 
@@ -180,18 +185,12 @@ public class ReadFragment extends BaseFragment {
     if(mBook == null || mRootView == null) {
       return;
     }
-
     Log.v(TAG, "Populating fields for book: " + mBook);
-
     final int bookColor = Utils.calculateBookColor(mBook);
-
     mTimeSpinner.setColor(bookColor);
     mTimeSpinner.setMaxSize(500);
-
     DrawableGenerator.applyButtonBackground(bookColor, mStartButton, mPauseButton, mDoneButton);
-
     mLastPositionText.setText(getLastPositionDescription());
-
     bindEvents();
   }
 
@@ -199,16 +198,11 @@ public class ReadFragment extends BaseFragment {
     mDoneButton = (Button) view.findViewById(R.id.done_button);
     mStartButton = (Button) view.findViewById(R.id.start_button);
     mPauseButton = (Button) view.findViewById(R.id.pause_button);
-
     mTimeSpinnerControlsFlipper = (SafeViewFlipper) view.findViewById(R.id.time_spinner_controls_flipper);
-
     mLastPositionText = (TextView) view.findViewById(R.id.last_position_text);
     mTimeSpinner = (TimeSpinner) view.findViewById(R.id.timespinner);
-
     mDurationWheelView = (WheelView) view.findViewById(R.id.duration_wheel_view);
-
     mTimeSpinnerWrapper = (ViewGroup) view.findViewById(R.id.time_spinner_wrapper);
-
     mRootView = view;
   }
 
@@ -231,7 +225,6 @@ public class ReadFragment extends BaseFragment {
         endSession();
       }
     });
-
 
     ViewTreeObserver viewTreeObserver = mTimeSpinner.getViewTreeObserver();
     if(viewTreeObserver != null && viewTreeObserver.isAlive()) {
@@ -297,8 +290,6 @@ public class ReadFragment extends BaseFragment {
   /** Initialize duration wheel and timer. */
   private void initializeTimerUI() {
     initializeDurationWheel();
-
-
   }
 
   private void initializeDurationWheel() {
@@ -371,12 +362,8 @@ public class ReadFragment extends BaseFragment {
 
   private void endSession() {
     mSessionTimer.stop();
-
-    EndSessionDialog dialog = EndSessionDialog.newInstance(mBook);
-
-    // Response will be relayed to the activity, requiring it to implement EndSessionDialogListener
-    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-    dialog.show(fragmentManager, END_SESSION_FRAGMENT_TAG);
+    // Report back to whoever is listening that we're done with this session
+    getBus().post(new SessionDoneEvent(mSessionTimer.getElapsedMs()));
   }
 
   private void displayDurationWheel(boolean animated) {
@@ -420,21 +407,6 @@ public class ReadFragment extends BaseFragment {
 
   private SharedPreferences getPreferences() {
     return ((BaseActivity) getActivity()).getPreferences();
-  }
-
-  /**
-   * Signals that the current book was finished.
-   */
-  public static class BookFinishedEvent {
-    final private String closingRemark;
-
-    public BookFinishedEvent(String closingRemark) {
-      this.closingRemark = closingRemark;
-    }
-
-    public String getClosingRemark() {
-      return closingRemark;
-    }
   }
 
   /** Updates the duration wheel at suitable times. */
@@ -485,6 +457,50 @@ public class ReadFragment extends BaseFragment {
       if(fragment != null) {
         fragment.refreshDurationWheel();
       }
+    }
+  }
+
+  /** Event that is emitted when a book session has finished. */
+  public static class NewSessionEvent {
+    private final Session mSession;
+    private final String mClosingRemark;
+
+    public NewSessionEvent(Session session) {
+      mSession = session;
+      mClosingRemark = null;
+    }
+
+    /** Create a final session with an optional closing remark. */
+    public NewSessionEvent(Session session, String closingRemark) {
+      mSession = session;
+      // Always set to to a string instance so we can use that to identify session as final
+      mClosingRemark = closingRemark == null ? "" : closingRemark;
+    }
+
+    public Session getSession() {
+      return mSession;
+    }
+
+    public String getClosingRemark() {
+      return mClosingRemark;
+    }
+
+    /** Returns true if this session is the final one of the book. */
+    public boolean isFinalSessionOfBook() {
+      return mClosingRemark != null;
+    }
+  }
+
+  /** Event emitted when the user is done with a reading session. */
+  public static class SessionDoneEvent {
+    private final long mDurationMillis;
+
+    public SessionDoneEvent(long durationMillis) {
+      mDurationMillis = durationMillis;
+    }
+
+    public long getDurationMillis() {
+      return mDurationMillis;
     }
   }
 }

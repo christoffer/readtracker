@@ -36,11 +36,8 @@ public class EndSessionDialog extends DialogFragment implements View.OnClickList
   private Float mPageCount;
   private int mColor;
 
-  // owning activity must implement EndSessionDialogListener
-  private EndSessionDialogListener mListener;
-
   public static EndSessionDialog newInstance(Book book) {
-    assert(book != null);
+    assert (book != null);
     EndSessionDialog dialog = new EndSessionDialog();
     Bundle arguments = new Bundle();
 
@@ -75,13 +72,12 @@ public class EndSessionDialog extends DialogFragment implements View.OnClickList
     } else {
       mPageCount = null;
     }
-
-    mListener = (EndSessionDialogListener) getActivity();
   }
 
-  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+  @Override
+  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     Log.v(TAG, "onCreateView()");
-    View root = inflater.inflate(R.layout.end_session_dialog, null);
+    View root = inflater.inflate(R.layout.end_session_dialog, container, false);
 
     bindViews(root);
 
@@ -90,8 +86,7 @@ public class EndSessionDialog extends DialogFragment implements View.OnClickList
 
     toggleFinishButton(mSelectedPosition == 1f);
 
-    mButtonSaveProgress.setBackgroundDrawable(DrawableGenerator.generateButtonBackground(mColor));
-    mButtonFinishBook.setBackgroundDrawable(DrawableGenerator.generateButtonBackground(mColor));
+    DrawableGenerator.applyButtonBackground(mColor, mButtonSaveProgress, mButtonFinishBook);
 
     mButtonSaveProgress.setOnClickListener(this);
     mButtonFinishBook.setOnClickListener(this);
@@ -109,10 +104,10 @@ public class EndSessionDialog extends DialogFragment implements View.OnClickList
   @Override
   public void onClick(View view) {
     if(view == mButtonSaveProgress) {
-      mListener.onSessionEndWithNewPosition(mProgressPicker.getPosition());
+      ((EndSessionDialogListener) getActivity()).onConfirmedSessionEndPosition(mProgressPicker.getPosition());
       dismissAllowingStateLoss();
     } else if(view == mButtonFinishBook) {
-      mListener.onSessionEndWithFinish();
+      ((EndSessionDialogListener) getActivity()).onConfirmedSessionEndPosition(1f);
       dismissAllowingStateLoss();
     }
   }
@@ -130,12 +125,8 @@ public class EndSessionDialog extends DialogFragment implements View.OnClickList
     }
   }
 
-  /** Interface for listening to dialog results. */
-  public static interface EndSessionDialogListener {
-    /** Called when the user confirms a new position. */
-    void onSessionEndWithNewPosition(float position);
-
-    /** Called when the user wants to finish the book. */
-    void onSessionEndWithFinish();
+  /** Defines an interface for activities that host the EndSessionDialog in order to receive results. */
+  public interface EndSessionDialogListener {
+    public void onConfirmedSessionEndPosition(float position);
   }
 }

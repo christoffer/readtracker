@@ -2,6 +2,7 @@ package com.readtracker.android.activities;
 
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -11,121 +12,125 @@ import android.widget.Toast;
 import com.readtracker.android.BuildConfig;
 import com.readtracker.android.ReadTrackerApp;
 import com.readtracker.android.db.DatabaseManager;
+import com.readtracker.android.interfaces.BackgroundJob;
 import com.readtracker.android.support.ApplicationSettingsHelper;
 import com.squareup.otto.Bus;
+
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 
 /**
  * Base activity
  */
 public class BaseActivity extends ActionBarActivity {
-    private ReadTrackerApp mApplication;
-    private Bus mBus;
-    private DatabaseManager mDatabaseManager;
+  private ReadTrackerApp mApplication;
+  private Bus mBus;
+  private DatabaseManager mDatabaseManager;
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mApplication = ReadTrackerApp.from(this);
-        requestWindowFeatures();
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    mApplication = ReadTrackerApp.from(this);
+    requestWindowFeatures();
 
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        mBus = getApp().getBus();
-        mDatabaseManager = getApp().getDatabaseManager();
+    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+    mBus = getApp().getBus();
+    mDatabaseManager = getApp().getDatabaseManager();
+  }
+
+  public ReadTrackerApp getApp() {
+    return mApplication;
+  }
+
+  @Override
+  protected void onResume() {
+    super.onResume();
+    if(BuildConfig.DEBUG) {
+      Log.v(getClass().getSimpleName(), "Registering on bus");
     }
+    mBus.register(this);
+  }
 
-    public ReadTrackerApp getApp() {
-        return mApplication;
+  @Override
+  protected void onPause() {
+    super.onPause();
+    if(BuildConfig.DEBUG) {
+      Log.v(getClass().getSimpleName(), "Unregistering from bus");
     }
+    mBus.unregister(this);
+  }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (BuildConfig.DEBUG) {
-            Log.v(getClass().getSimpleName(), "Registering on bus");
-        }
-        mBus.register(this);
-    }
+  /**
+   * Returns the current application settings.
+   */
+  protected ApplicationSettingsHelper getAppSettings() {
+    return getApp().getAppSettings();
+  }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (BuildConfig.DEBUG) {
-            Log.v(getClass().getSimpleName(), "Unregistering from bus");
-        }
-        mBus.unregister(this);
-    }
+  /**
+   * Returns a references to the shared preferences.
+   */
+  public SharedPreferences getPreferences() {
+    return getApp().getPreferences();
+  }
 
-    /**
-     * Returns the current application settings.
-     */
-    protected ApplicationSettingsHelper getAppSettings() {
-        return getApp().getAppSettings();
-    }
+  /**
+   * Override this method to change what features that gets requested for the activity.
+   */
+  protected void requestWindowFeatures() {
+    // NOOP
+  }
 
-    /**
-     * Returns a references to the shared preferences.
-     */
-    public SharedPreferences getPreferences() {
-        return getApp().getPreferences();
-    }
+  /**
+   * Display a short toast message to the user
+   *
+   * @param toastMessageId String resources to be displayed
+   */
+  protected void toast(int toastMessageId) {
+    toast(getString(toastMessageId));
+  }
 
-    /**
-     * Override this method to change what features that gets requested for the activity.
-     */
-    protected void requestWindowFeatures() {
-        // NOOP
-    }
+  protected void toast(String message) {
+    Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+  }
 
-    /**
-     * Display a short toast message to the user
-     *
-     * @param toastMessageId String resources to be displayed
-     */
-    protected void toast(int toastMessageId) {
-        toast(getString(toastMessageId));
-    }
+  /**
+   * Display a long toast message to the user
+   *
+   * @param toastMessage Message to be displayed
+   */
+  protected void toastLong(String toastMessage) {
+    Toast.makeText(this, toastMessage, Toast.LENGTH_LONG).show();
+  }
 
-    protected void toast(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-    }
+  /**
+   * Converts a device independent pixel value to pixels.
+   *
+   * @param dpValue The value in DIP
+   * @return the value in pixels
+   */
+  public int getPixels(int dpValue) {
+    return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dpValue, getResources().getDisplayMetrics());
+  }
 
-    /**
-     * Display a long toast message to the user
-     *
-     * @param toastMessage Message to be displayed
-     */
-    protected void toastLong(String toastMessage) {
-        Toast.makeText(this, toastMessage, Toast.LENGTH_LONG).show();
-    }
+  /**
+   * Returns the application global event bus.
+   */
+  public Bus getBus() {
+    return mBus;
+  }
 
-    /**
-     * Converts a device independent pixel value to pixels.
-     *
-     * @param dpValue The value in DIP
-     * @return the value in pixels
-     */
-    public int getPixels(int dpValue) {
-        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dpValue, getResources().getDisplayMetrics());
-    }
+  /**
+   * Returns the application global database manager.
+   */
+  public DatabaseManager getDatabaseManager() {
+    return mDatabaseManager;
+  }
 
-    /**
-     * Returns the application global event bus.
-     */
-    public Bus getBus() {
-        return mBus;
-    }
-
-    /**
-     * Returns the application global database manager.
-     */
-    public DatabaseManager getDatabaseManager() {
-        return mDatabaseManager;
-    }
-
-    /**
-     * Convenient method for posting to the global bus from an activity.
-     */
-    protected void postEvent(Object event) {
-        mBus.post(event);
-    }
+  /**
+   * Convenient method for posting to the global bus from an activity.
+   */
+  protected void postEvent(Object event) {
+    mBus.post(event);
+  }
 }

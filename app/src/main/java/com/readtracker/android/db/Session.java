@@ -12,7 +12,7 @@ public class Session extends Model {
   @DatabaseField(columnName = Columns.START_POSITION) private float mStartPosition;
   @DatabaseField(columnName = Columns.END_POSITION) private float mEndPosition;
   @DatabaseField(columnName = Columns.DURATION_SECONDS) private long mDurationSeconds;
-  @DatabaseField(columnName = Columns.START_TIMESTAMP) private long mStartTimestamp;
+  @DatabaseField(columnName = Columns.TIMESTAMP) private long mTimestamp;
   @DatabaseField(
     columnName = Columns.BOOK_ID,
     foreign = true,
@@ -25,19 +25,19 @@ public class Session extends Model {
 
   public Float getStartPosition() { return mStartPosition; }
 
-  public void setStartPosition(Float startPosition) { mStartPosition = startPosition; }
+  public void setStartPosition(float startPosition) { mStartPosition = startPosition; }
 
-  public Float getEndPosition() { return mEndPosition; }
+  public float getEndPosition() { return mEndPosition; }
 
-  public void setEndPosition(Float endPosition) { mEndPosition = endPosition; }
+  public void setEndPosition(float endPosition) { mEndPosition = endPosition; }
 
   public Long getDurationSeconds() { return mDurationSeconds; }
 
-  public void setDurationSeconds(Long durationSeconds) { mDurationSeconds = durationSeconds; }
+  public void setDurationSeconds(long durationSeconds) { mDurationSeconds = durationSeconds; }
 
-  public Long getStartTimestamp() { return mStartTimestamp; }
+  public Long getTimestamp() { return mTimestamp; }
 
-  public void setStartTimestamp(Long startTimestamp) { mStartTimestamp = startTimestamp; }
+  public void setTimestamp(long timestamp) { mTimestamp = timestamp; }
 
   public Book getBook() { return mBook; }
 
@@ -47,7 +47,7 @@ public class Session extends Model {
     public static final String START_POSITION = "start_position";
     public static final String END_POSITION = "end_position";
     public static final String DURATION_SECONDS = "duration_seconds";
-    public static final String START_TIMESTAMP = "start_timestamp";
+    public static final String TIMESTAMP = "timestamp";
     public static final String BOOK_ID = "book_id";
   }
 }

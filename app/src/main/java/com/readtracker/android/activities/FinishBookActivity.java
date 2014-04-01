@@ -15,13 +15,13 @@ import com.readtracker.android.support.Utils;
 public class FinishBookActivity extends BookBaseActivity implements View.OnClickListener {
   public static final String KEY_CLOSING_REMARK = "CLOSING_REMARK";
 
-  private static final String STATE_CLOSING_REMARK = "CLOSING_REMARK";
-
   private EditText mEditClosingRemark;
   private Button mButtonFinish;
 
   private Book mBook;
   private boolean mDidLayout;
+
+  // TODO Change button text to "Finish without note" when nothing entered
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -32,20 +32,10 @@ public class FinishBookActivity extends BookBaseActivity implements View.OnClick
     mButtonFinish.setOnClickListener(this);
 
     loadBookFromIntent();
-
-    if(savedInstanceState != null) {
-      final String currentClosingRemark = savedInstanceState.getString(STATE_CLOSING_REMARK);
-      mEditClosingRemark.setText(currentClosingRemark);
-    }
-  }
-
-  @Override
-  protected void onSaveInstanceState(Bundle outState) {
-    outState.putString(STATE_CLOSING_REMARK, String.valueOf(mEditClosingRemark.getText()));
-    super.onSaveInstanceState(outState);
   }
 
   @Override protected void onBookLoaded(Book book) {
+    mBook = book;
     populateFieldsDeferred();
   }
 

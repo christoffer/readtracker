@@ -1,5 +1,6 @@
 package com.readtracker.android.activities;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.v4.app.NavUtils;
@@ -33,7 +34,7 @@ public abstract class BookBaseActivity extends BaseActivity {
 
   private final ArrayList<Runnable> mBookReadyRunnables = new ArrayList<Runnable>();
 
-  protected Book getBook() {
+  public Book getBook() {
     return mBook;
   }
 
@@ -64,7 +65,7 @@ public abstract class BookBaseActivity extends BaseActivity {
   }
 
   /** Calls a callback when the book has been loaded. */
-  protected void runWhenBookIsReady(Runnable runnable) {
+  public void runWhenBookIsReady(Runnable runnable) {
     mBookReadyRunnables.add(runnable);
     if(BuildConfig.DEBUG) {
       Log.v(getClass().getSimpleName(), "Adding book ready runnable");
