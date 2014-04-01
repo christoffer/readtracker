@@ -241,6 +241,10 @@ public class ReadFragment extends BaseFragment {
     mTimeSpinner.setOnTouchListener(new View.OnTouchListener() {
       @Override
       public boolean onTouch(View view, MotionEvent motionEvent) {
+        if(mDurationWheelView.getVisibility() == View.VISIBLE) {
+          return false;
+        }
+
         switch(motionEvent.getActionMasked()) {
           case MotionEvent.ACTION_DOWN:
             mTimeSpinner.setHighlighted(true);
@@ -383,7 +387,6 @@ public class ReadFragment extends BaseFragment {
 
   private void displayControlsForPausedTimer() {
     mPauseButton.setText(R.string.reading_resume);
-    mDurationWheelView.setEnabled(false);
     flipToButtonPage(FLIPPER_PAGE_READING_BUTTONS);
     final Animation pulse = AnimationUtils.loadAnimation(getActivity(), R.anim.pulse);
     mTimeSpinnerWrapper.startAnimation(pulse);

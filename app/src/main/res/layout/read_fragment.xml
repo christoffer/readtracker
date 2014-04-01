@@ -1,79 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-  android:layout_height="match_parent"
-  android:layout_width="match_parent"
-  android:padding="12dp">
+                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:padding="12dp">
 
-  <RelativeLayout
-    android:id="@+id/time_spinner_wrapper"
-    android:layout_above="@+id/time_spinner_controls_flipper"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    <RelativeLayout
+        android:id="@+id/time_spinner_wrapper"
+        android:layout_above="@+id/time_spinner_controls_flipper"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <TextView
-      android:id="@+id/last_position_text"
-      style="@style/default_text"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:textSize="20sp"
-      android:layout_centerInParent="true"
-      android:gravity="center" />
+        <TextView
+            android:id="@+id/last_position_text"
+            style="@style/default_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:layout_centerInParent="true"
+            android:gravity="center"/>
 
-    <com.readtracker.android.thirdparty.widget.WheelView
-      android:id="@+id/duration_wheel_view"
-      android:minWidth="220dp"
-      android:minHeight="80dp"
-      android:layout_height="wrap_content"
-      android:layout_width="match_parent"
-      android:layout_centerInParent="true"
-      android:layout_marginBottom="24dp" />
+        <com.readtracker.android.thirdparty.widget.WheelView
+            android:id="@+id/duration_wheel_view"
+            android:minWidth="220dp"
+            android:minHeight="80dp"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_centerInParent="true"
+            android:layout_marginBottom="24dp"/>
 
-    <com.readtracker.android.custom_views.TimeSpinner
-      android:id="@+id/timespinner"
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:layout_centerInParent="true"
-      android:layout_marginBottom="48dp" />
+        <com.readtracker.android.custom_views.TimeSpinner
+            android:id="@+id/timespinner"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:layout_marginBottom="48dp"/>
 
-  </RelativeLayout>
+    </RelativeLayout>
 
-  <com.readtracker.android.thirdparty.SafeViewFlipper
-    android:id="@+id/time_spinner_controls_flipper"
-    style="@style/flipper_action_buttons"
-    android:layout_alignParentBottom="true">
+    <com.readtracker.android.thirdparty.SafeViewFlipper
+        android:id="@+id/time_spinner_controls_flipper"
+        style="@style/flipper_action_buttons"
+        android:layout_alignParentBottom="true">
 
-    <!-- start button -->
+        <!-- start button -->
 
-    <Button
-      style="@style/default_button"
-      android:id="@+id/start_button"
-      android:layout_gravity="center"
-      android:text="@string/reading_start" />
+        <Button
+            style="@style/default_button"
+            android:id="@+id/start_button"
+            android:layout_gravity="center"
+            android:text="@string/reading_start"/>
 
-    <!-- group of pause/resume and done button -->
+        <!-- group of pause/resume and done button -->
 
-    <LinearLayout
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_alignParentBottom="true">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true">
 
-      <Button
-        style="@style/default_button"
-        android:id="@+id/pause_button"
-        android:layout_weight="1"
-        android:layout_marginRight="6dp"
-        android:text="@string/reading_pause" />
+            <Button
+                style="@style/default_button"
+                android:id="@+id/pause_button"
+                android:layout_weight="1"
+                android:layout_marginRight="6dp"
+                android:text="@string/reading_pause"/>
 
-      <Button
-        style="@style/default_button"
-        android:id="@+id/done_button"
-        android:layout_weight="1"
-        android:layout_marginLeft="6dp"
-        android:text="@string/reading_done" />
+            <Button
+                style="@style/default_button"
+                android:id="@+id/done_button"
+                android:layout_weight="1"
+                android:layout_marginLeft="6dp"
+                android:text="@string/reading_done"/>
 
-    </LinearLayout>
+        </LinearLayout>
 
-  </com.readtracker.android.thirdparty.SafeViewFlipper>
+    </com.readtracker.android.thirdparty.SafeViewFlipper>
 
 </RelativeLayout>
