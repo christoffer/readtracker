@@ -83,15 +83,6 @@
         android:value=".activities.HomeActivity"/>>
     </activity>
 
-    <activity
-      android:name=".activities.BookSettingsActivity"
-      android:label="@string/activity_label_book_settings"
-      android:parentActivityName=".activities.BookActivity">
-      <meta-data
-        android:name="android.support.PARENT_ACTIVITY"
-        android:value=".activities.BookActivity"/>
-    </activity>
-
     <activity android:name=".activities.InAppBrowserActivity"/>
 
   </application>

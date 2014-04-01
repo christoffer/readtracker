@@ -7,9 +7,6 @@ import android.os.Parcelable;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 
-import java.util.Date;
-import java.util.List;
-
 /**
  * A local reading stored on the device. May, or may not, be connected to a
  * remote (Readmill) reading.
@@ -143,40 +140,8 @@ public class LocalReading implements Parcelable {
     }
   }
 
-  public int getProgressPercent() {
-    return (int) (progress * 100);
-  }
-
   private long getTimeSpentSeconds() {
     return timeSpentMillis / 1000;
-  }
-
-  /**
-   * Returns the estimated time left to finish the book.
-   *
-   * @return The estimated time left in seconds.
-   */
-  public int estimateTimeLeft() {
-    if(!isActive() || progress == 0 || timeSpentMillis == 0 || progress > 1.0) {
-      return 0;
-    }
-    long estimatedMillisecondsLeft = (long) ((timeSpentMillis / progress) - timeSpentMillis);
-    return (int) (estimatedMillisecondsLeft / 1000);
-  }
-
-  public void setCurrentPage(long currentPage) {
-    this.currentPage = currentPage;
-    refreshProgress();
-  }
-
-  /**
-   * Gets the name of the user that the reading was marked via
-   *
-   * @return The user name or null if the via attribute is missing
-   *         TODO Implement
-   */
-  public String getFoundVia() {
-    return "NOT YET IMPLEMENTED";
   }
 
   public boolean hasPageInfo() {
@@ -188,9 +153,9 @@ public class LocalReading implements Parcelable {
       final String colorKey = title + author + readmillReadingId;
       float color = 360 * (Math.abs(colorKey.hashCode()) / (float) Integer.MAX_VALUE);
       mColor = Color.HSVToColor(new float[]{
-              color,
-              0.4f,
-              0.5f
+          color,
+          0.4f,
+          0.5f
       });
     }
     return mColor;
@@ -209,141 +174,6 @@ public class LocalReading implements Parcelable {
 
   public String getInfo() {
     return String.format("LocalReading #%d \"%s\" by \"%s\" - Page (%d/%d) over %d seconds - Readmill Reading #%s, Book #%s, User #%s State %s Closing Remark '%s' - Cover '%s'", id, title, author, currentPage, totalPages, getTimeSpentSeconds(), readmillReadingId, readmillBookId, readmillUserId, readmillState, readmillClosingRemark, coverURL);
-  }
-
-  public boolean isActive() {
-    return readmillState == ReadingState.READING;
-  }
-
-  public boolean isClosed() {
-    return locallyClosedAt > 0 ||
-      readmillState == ReadingState.FINISHED ||
-      readmillState == ReadingState.ABANDONED;
-  }
-
-  public boolean isMeasuredInPercent() {
-    return measureInPercent;
-  }
-
-  public boolean isInteresting() {
-    return readmillState == ReadingState.INTERESTING;
-  }
-
-  public boolean isConnected() {
-    return readmillReadingId > 0;
-  }
-
-  public boolean hasClosingRemark() {
-    return isClosed() && (readmillClosingRemark != null && readmillClosingRemark.length() > 0);
-  }
-
-  public String getClosingRemark() {
-    return hasClosingRemark() ? readmillClosingRemark : null;
-  }
-
-  /*
-
-  Date converters.
-
-  Dates are a bit problematic due to Readmill having the timestamps in
-  Unix Epoch (seconds) where Java Date uses Unix Epoch (milliseconds).
-
-  To avoid conversion mistakes and to keep the conversions DRY we handle all
-  dates with getter/setters.
-
- */
-
-  public void setClosedAt(Date closedAt) {
-    locallyClosedAt = _dateToUnixSeconds(closedAt);
-  }
-
-  public Date getClosedAt() {
-    return _unixSecondsToDate(locallyClosedAt);
-  }
-
-  public boolean hasClosedAt() {
-    return locallyClosedAt > 0;
-  }
-
-  public Date getLastReadAt() {
-    return _unixSecondsToDate(lastReadAt);
-  }
-
-  public void setLastReadAt(Date date) {
-    lastReadAt = _dateToUnixSeconds(date);
-  }
-
-  public void setStartedAt(Date date) {
-    startedAt = _dateToUnixSeconds(date);
-  }
-
-  public Date getStartedAt() {
-    return _unixSecondsToDate(startedAt);
-  }
-
-  public boolean hasStartedAt() {
-    return startedAt > 0;
-  }
-
-  public void setTouchedAt(Date date) {
-    readmillTouchedAt = _dateToUnixSeconds(date);
-  }
-
-  public Date getRemoteTouchedAt() {
-    return _unixSecondsToDate(readmillTouchedAt);
-  }
-
-  public void setUpdatedAt(Date date) {
-    updatedAt = _dateToUnixSeconds(date);
-  }
-
-  public Date getUpdatedAt() {
-    return _unixSecondsToDate(updatedAt);
-  }
-
-  public boolean hasRemoteChangedFrom(long other) {
-    return readmillTouchedAt != other;
-  }
-
-  public void setProgressStops(final List<LocalSession> sessions) {
-    if(sessions == null) {
-      progressStops = new float[0];
-      return;
-    }
-
-    progressStops = new float[sessions.size()];
-    for(int i = 0, sessionsSize = sessions.size(); i < sessionsSize; i++) {
-      LocalSession session = sessions.get(i);
-      progressStops[i] = (float) session.progress;
-    }
-  }
-
-  public float[] getProgressStops() {
-    return this.progressStops;
-  }
-
-  /**
-   * Converts a Date object to a unix epoch timestamp (seconds).
-   *
-   * @param date Date object to convert
-   * @return the unix epoch timestamp (seconds)
-   */
-  public long _dateToUnixSeconds(Date date) {
-    if(date == null) {
-      return 0;
-    } else {
-      return date.getTime() / 1000;
-    }
-  }
-
-  /**
-   * Convert a unix epoch (seconds) timestamp to a Java Date object
-   *
-   * @param unixEpochSeconds Timestamp (in seconds) to convert
-   * @return Date object representing the given timestamp
-   */
-  public Date _unixSecondsToDate(long unixEpochSeconds) {
-    return new Date(unixEpochSeconds * 1000);
   }
 
   public static Creator<LocalReading> CREATOR = new Creator<LocalReading>() {

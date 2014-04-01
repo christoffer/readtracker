@@ -5,8 +5,6 @@ import android.os.Parcelable;
 
 import com.j256.ormlite.field.DatabaseField;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Date;
 
 /**
@@ -35,28 +33,30 @@ public class LocalHighlight implements Parcelable {
 
   // Database => Member bindings
 
-  @DatabaseField(generatedId = true)                              public int id = 0;
+  @DatabaseField(generatedId = true) public int id = 0;
 
-  @DatabaseField(columnName = READING_ID_FIELD_NAME)              public long readingId = -1;
+  @DatabaseField(columnName = READING_ID_FIELD_NAME) public long readingId = -1;
 
-  @DatabaseField(columnName = CONTENT_FIELD_NAME)                 public String content;
-  @DatabaseField(columnName = HIGHLIGHTED_AT_FIELD_NAME)          public Date highlightedAt = null;
-  @DatabaseField(columnName = POSITION_FIELD_NAME)                public double position = 0.0f;
+  @DatabaseField(columnName = CONTENT_FIELD_NAME) public String content;
+  @DatabaseField(columnName = HIGHLIGHTED_AT_FIELD_NAME) public Date highlightedAt = null;
+  @DatabaseField(columnName = POSITION_FIELD_NAME) public double position = 0.0f;
 
-  @DatabaseField(columnName = EDITED_AT_FIELD_NAME)               public Date editedAt = null;
-  @DatabaseField(columnName = SYNCED_AT_FIELD_NAME)               public Date syncedAt = null;
-  @DatabaseField(columnName = DELETED_BY_USER_FIELD_NAME)         public boolean deletedByUser = false;
+  @DatabaseField(columnName = EDITED_AT_FIELD_NAME) public Date editedAt = null;
+  @DatabaseField(columnName = SYNCED_AT_FIELD_NAME) public Date syncedAt = null;
+  @DatabaseField(columnName = DELETED_BY_USER_FIELD_NAME) public boolean deletedByUser = false;
 
-  @DatabaseField(columnName = READMILL_HIGHLIGHT_ID_FIELD_NAME)   public long readmillHighlightId = -1;
-  @DatabaseField(columnName = READMILL_READING_ID_FIELD_NAME)     public long readmillReadingId = -1;
-  @DatabaseField(columnName = READMILL_USER_ID_FIELD_NAME)        public long readmillUserId = -1;
-  @DatabaseField(columnName = READMILL_PERMALINK_URL_FIELD_NAME)  public String readmillPermalinkUrl;
+  @DatabaseField(columnName = READMILL_HIGHLIGHT_ID_FIELD_NAME)
+  public long readmillHighlightId = -1;
+  @DatabaseField(columnName = READMILL_READING_ID_FIELD_NAME) public long readmillReadingId = -1;
+  @DatabaseField(columnName = READMILL_USER_ID_FIELD_NAME) public long readmillUserId = -1;
+  @DatabaseField(columnName = READMILL_PERMALINK_URL_FIELD_NAME) public String readmillPermalinkUrl;
 
-  @DatabaseField(columnName = COMMENT_FIELD_NAME)                 public String comment;
-  @DatabaseField(columnName = COMMENT_COUNT_FIELD_NAME)           public int commentCount = 0;
-  @DatabaseField(columnName = LIKE_COUNT_FIELD_NAME)              public int likeCount = 0;
+  @DatabaseField(columnName = COMMENT_FIELD_NAME) public String comment;
+  @DatabaseField(columnName = COMMENT_COUNT_FIELD_NAME) public int commentCount = 0;
+  @DatabaseField(columnName = LIKE_COUNT_FIELD_NAME) public int likeCount = 0;
 
-  public LocalHighlight() {}
+  public LocalHighlight() {
+  }
 
   @Override
   public String toString() {
@@ -65,62 +65,15 @@ public class LocalHighlight implements Parcelable {
 
   public static Parcelable.Creator<LocalHighlight> CREATOR = new Parcelable.Creator<LocalHighlight>() {
     @Override
-    public LocalHighlight createFromParcel(Parcel parcel) { return new LocalHighlight(parcel); }
+    public LocalHighlight createFromParcel(Parcel parcel) {
+      return new LocalHighlight(parcel);
+    }
 
     @Override
-    public LocalHighlight[] newArray(int size) { return new LocalHighlight[size]; }
+    public LocalHighlight[] newArray(int size) {
+      return new LocalHighlight[size];
+    }
   };
-
-  /**
-   * Checks the presence of a comment on the highlight.
-   *
-   * @return true if the highlight has a comment attached.
-   */
-  public boolean hasComment() {
-    return comment != null && comment.length() > 0;
-  }
-
-  /**
-   * Determine if the highlight is synced up and until the given timestamp.
-   *
-   * @param when Date to compare with
-   * @return true if when is null or the highlight is synced at or after the date. False otherwise.
-   */
-  public boolean lastSyncedBefore(Date when) {
-    return syncedAt != null && syncedAt.before(when);
-  }
-
-  /**
-   * Determine if this highlight is edited after the given instant.
-   *
-   * @param when Instant to compare with
-   * @return true if the highlight has been edited after the given instant
-   */
-  public boolean isEditedAfter(Date when) {
-    return editedAt != null && editedAt.after(when);
-  }
-
-  /**
-   * Checks whether the highlight is connected to Readmill or not.
-   * @return true if the highlight is connected to Readmill.
-   */
-  public boolean isOfflineOnly() {
-    return readmillHighlightId < 1;
-  }
-
-  /**
-   * Check for the existence of a visitable (absolute) permalink
-   *
-   * @return true if the permalink of the highlight can be visited.
-   */
-  public boolean hasVisitablePermalink() {
-    try {
-      if(readmillPermalinkUrl != null) {
-        return new URI(readmillPermalinkUrl).isAbsolute();
-      }
-    } catch(URISyntaxException ignored) {}
-    return false;
-  }
 
   @Override
   public void writeToParcel(Parcel parcel, int i) {

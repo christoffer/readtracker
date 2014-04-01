@@ -6,16 +6,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-import com.j256.ormlite.dao.Dao;
 import com.readtracker.android.db.DatabaseHelper;
 import com.readtracker.android.db.DatabaseManager;
-import com.readtracker.android.db.LocalHighlight;
-import com.readtracker.android.db.LocalReading;
-import com.readtracker.android.db.LocalSession;
 import com.readtracker.android.support.ApplicationSettingsHelper;
 import com.squareup.otto.Bus;
-
-import java.sql.SQLException;
 
 public class ReadTrackerApp extends Application {
   private static final String TAG = ReadTrackerApp.class.getName();
@@ -142,27 +136,6 @@ public class ReadTrackerApp extends Application {
       }
     }
     mProgressDialog = null;
-  }
-
-  private static void assertInstance() {
-    if(mInstance == null) {
-      throw new RuntimeException("Application ReadTracker has not been initialized");
-    }
-  }
-
-  public static Dao<LocalReading, Integer> getReadingDao() throws SQLException {
-    assertInstance();
-    return mInstance.getDatabaseHelper().getReadingDao();
-  }
-
-  public static Dao<LocalSession, Integer> getLocalSessionDao() throws SQLException {
-    assertInstance();
-    return mInstance.getDatabaseHelper().getLocalSessionDao();
-  }
-
-  public static Dao<LocalHighlight, Integer> getHighlightDao() throws SQLException {
-    assertInstance();
-    return mInstance.getDatabaseHelper().getHighlightDao();
   }
 
   public ApplicationSettingsHelper getAppSettings() {

@@ -27,7 +27,7 @@ import java.util.Date;
 public class AddQuoteActivity extends BookBaseActivity {
   private static final String TAG = AddQuoteActivity.class.getSimpleName();
   private static EditText mQuoteTextEdit;
-  private static Button mButtonSaveQuote;
+  private static Button mSaveButton;
   private static ProgressPicker mProgressPicker;
 
   public static final String KEY_QUOTE_ID = "QUOTE_ID";
@@ -41,6 +41,8 @@ public class AddQuoteActivity extends BookBaseActivity {
 
     bindViews();
 
+    mSaveButton.setEnabled(false);
+
     loadBookFromIntent();
   }
 
@@ -52,8 +54,8 @@ public class AddQuoteActivity extends BookBaseActivity {
     final Drawable backgroundDrawable = DrawableGenerator.generateEditTextOutline(color, getPixels(1), getPixels(3));
     mQuoteTextEdit.setBackgroundDrawable(backgroundDrawable);
 
-    final Drawable background = DrawableGenerator.generateButtonBackground(color);
-    mButtonSaveQuote.setBackgroundDrawable(background);
+    DrawableGenerator.applyButtonBackground(color, mSaveButton);
+    mSaveButton.setEnabled(true);
 
     if(book != null && book.hasPageNumbers()) {
       mProgressPicker.setPositionAndPageCount(book.getCurrentPosition(), book.getPageCount());
@@ -67,12 +69,12 @@ public class AddQuoteActivity extends BookBaseActivity {
 
   private void bindViews() {
     mQuoteTextEdit = (EditText) findViewById(R.id.quote_text_edit);
-    mButtonSaveQuote = (Button) findViewById(R.id.save_button);
+    mSaveButton = (Button) findViewById(R.id.save_button);
     mProgressPicker = (ProgressPicker) findViewById(R.id.progress_picker);
   }
 
   private void bindButtonEvents() {
-    mButtonSaveQuote.setOnClickListener(new View.OnClickListener() {
+    mSaveButton.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
         if(validateInput()) {

@@ -46,10 +46,6 @@ public class LocalSession implements Parcelable {
     return String.format("ReadingSession: %d seconds for ReadmillReading #%d. Occurred @ %s with SessionId: %s", durationSeconds, readmillReadingId, occurredAt.toString(), sessionIdentifier);
   }
 
-  public boolean isConnected() {
-    return readmillReadingId > 0;
-  }
-
   public static Parcelable.Creator<LocalSession> CREATOR = new Parcelable.Creator<LocalSession>() {
     @Override
     public LocalSession createFromParcel(Parcel parcel) { return new LocalSession(parcel); }

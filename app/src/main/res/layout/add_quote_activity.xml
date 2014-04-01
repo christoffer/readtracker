@@ -44,7 +44,6 @@
     <Button
       android:id="@+id/save_button"
       style="@style/default_button"
-      android:enabled="false"
       android:text="@string/quote_activity_add"/>
 
   </LinearLayout>

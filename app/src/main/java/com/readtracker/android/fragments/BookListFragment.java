@@ -1,9 +1,7 @@
 package com.readtracker.android.fragments;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,14 +9,9 @@ import android.widget.ListView;
 
 import com.readtracker.android.R;
 import com.readtracker.android.ReadTrackerApp;
-import com.readtracker.android.activities.HomeActivity;
 import com.readtracker.android.adapters.BookAdapter;
 import com.readtracker.android.db.Book;
-import com.readtracker.android.db.LocalReading;
-import com.readtracker.android.interfaces.LocalReadingInteractionListener;
 import com.squareup.otto.Bus;
-
-import java.util.ArrayList;
 
 /** List fragments for displaying a list of Books. */
 public class BookListFragment extends ListFragment {
@@ -26,7 +19,7 @@ public class BookListFragment extends ListFragment {
 
   private Bus mBus;
 
-  private static enum Argument { ItemResId, BookStateFilter }
+  private static enum Argument {ItemResId, BookStateFilter}
 
   private BookAdapter mBookAdapter;
 
