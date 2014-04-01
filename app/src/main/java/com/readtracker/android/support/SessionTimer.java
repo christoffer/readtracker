@@ -23,6 +23,7 @@ public class SessionTimer {
 
   private long mStartTimestampMs;
   private long mElapsedMs;
+  private boolean mIsStartedManually = false;
 
   public SessionTimer() {
     this(new SystemTimeProvider());
@@ -53,6 +54,7 @@ public class SessionTimer {
   /** Starts or resumes the timer. */
   public void start() {
     if(!isRunning()) {
+      mIsStartedManually = true;
       mStartTimestampMs = mTimeProvider.getMilliseconds();
       notifyStart();
     }
@@ -88,7 +90,9 @@ public class SessionTimer {
 
   /** Returns true if the timer has been started. */
   public boolean isStarted() {
-    return getElapsedMs() > 0;
+    // Use a flag + elapsed here since the elapsed ms might be zero when checked immediately
+    // after the timer has been started, leading to a false negative.
+    return mIsStartedManually || getElapsedMs() > 0;
   }
 
   /** Returns true if the timer is currently running. */
@@ -98,7 +102,7 @@ public class SessionTimer {
 
   /** Returns true if the timer has been started and stopped, and is currently not running. */
   public boolean isPaused() {
-    return !isRunning() && mElapsedMs > 0;
+    return isStarted() && !isRunning();
   }
 
   /** Loads the timer state from preferences. If no stored timer was found, the timer is reset. */
