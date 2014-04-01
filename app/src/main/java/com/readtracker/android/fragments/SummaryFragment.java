@@ -57,9 +57,7 @@ public class SummaryFragment extends BaseFragment {
     populateFieldsDeferred();
   }
 
-  /**
-   * Deferr populating the fields until both the UI and the data is available.
-   */
+  /** Defer populating the fields until both the UI and the data is available. */
   private void populateFieldsDeferred() {
     if(mBook == null || mRootView == null) {
       return;

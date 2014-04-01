@@ -219,9 +219,11 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialog.E
         Log.d(TAG, "Saving book and session");
         final Book book = getBook();
 
+        mCurrentSession.setTimestamp(System.currentTimeMillis());
+
         // Snapshot the session as the latest state of the book
         book.setCurrentPosition(mCurrentSession.getEndPosition());
-        book.setCurrentPositionTimestamp(System.currentTimeMillis());
+        book.setCurrentPositionTimestamp(mCurrentSession.getTimestamp());
 
         new SaveAndExitTask(BookActivity.this).execute(mCurrentSession, book);
       }
