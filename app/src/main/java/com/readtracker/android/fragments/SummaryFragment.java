@@ -142,26 +142,30 @@ public class SummaryFragment extends BaseFragment {
   }
 
   private void populateTimeLeft() {
-    final int estimatedSecondsLeft = mBook.calculateEstimatedSecondsLeft();
-    String timeLeft = String.format("You have about %s left of reading, given you keep the same pace", Utils.longCoarseHumanTimeFromSeconds(estimatedSecondsLeft));
-
-    final String pepTalk = getPepTalk(estimatedSecondsLeft);
-    if(pepTalk != null) {
-      timeLeft += ".\n\n" + pepTalk;
+    if(!mBook.getState().equals(Book.State.Finished)) {
+      final int estimatedSecondsLeft = mBook.calculateEstimatedSecondsLeft();
+      if(estimatedSecondsLeft > 0) {
+        String timeLeft = String.format("You have about %s left of reading, given you keep the same pace", Utils.longCoarseHumanTimeFromSeconds(estimatedSecondsLeft));
+        final String pepTalk = getPepTalk(estimatedSecondsLeft);
+        if(pepTalk != null) {
+          timeLeft += ".\n\n" + pepTalk;
+          mTextTimeLeft.setText(timeLeft);
+        }
+      }
     }
-
-    mTextTimeLeft.setText(timeLeft);
   }
 
   /**
    * Generate a short, encouraging, phrase on how long the user has to read.
    */
-  private String getPepTalk(float estimatedSecondsLeft) {
+  private static String getPepTalk(float estimatedSecondsLeft) {
     String pepTalk = null;
     float hoursLeft = estimatedSecondsLeft / (60.0f * 60.0f);
-    if(hoursLeft < 1.0f) {
+    if(hoursLeft == 0){
+      return null;
+    } else if(hoursLeft < 1) {
       pepTalk = "Why not finish it today?";
-    } else if(hoursLeft < 4.0f) {
+    } else if(hoursLeft < 4) {
       // hours per day to finish in 3 days
       final int secondsPerDayForGoal = (int) ((hoursLeft / 3.0f) * 3600);
       pepTalk = String.format("That's about %s per day to finish it in three days.",
