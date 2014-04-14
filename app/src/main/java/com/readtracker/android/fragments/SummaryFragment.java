@@ -21,6 +21,9 @@ import com.squareup.otto.Subscribe;
 
 import java.util.List;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
 /**
  * Fragment for showing summary of a book
  */
@@ -28,15 +31,13 @@ public class SummaryFragment extends BaseFragment {
   private static final String TAG = SummaryFragment.class.getName();
 
   private Book mBook;
-  private View mRootView = null;
 
-  private static SessionView mSessionView;
-  private static SegmentBar mSegmentBar;
-
-  private static TextView mTextSummary;
-  private static TextView mTextReadingState;
-  private static TextView mTextClosingRemark;
-  private static TextView mTextTimeLeft;
+  @InjectView(R.id.sessionView) SessionView mSessionView;
+  @InjectView(R.id.segmentBar) SegmentBar mSegmentBar;
+  @InjectView(R.id.textSummary) TextView mTextSummary;
+  @InjectView(R.id.textReadingState) TextView mTextReadingState;
+  @InjectView(R.id.textClosingRemark) TextView mTextClosingRemark;
+  @InjectView(R.id.textTimeLeft) TextView mTextTimeLeft;
 
   public static Fragment newInstance() {
     return new SummaryFragment();
@@ -45,11 +46,14 @@ public class SummaryFragment extends BaseFragment {
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     Log.d(TAG, "onCreateView()");
-    View view = inflater.inflate(R.layout.fragment_sessions, container, false);
+    View rootView = inflater.inflate(R.layout.fragment_sessions, container, false);
+    ButterKnife.inject(this, rootView);
+    return rootView;
+  }
 
-    setRootView(view);
-
-    return view;
+  @Override public void onViewCreated(View view, Bundle savedInstanceState) {
+    super.onViewCreated(view, savedInstanceState);
+    populateFieldsDeferred();
   }
 
   @Subscribe public void onBookLoadedEvent(BookBaseActivity.BookLoadedEvent event) {
@@ -59,7 +63,7 @@ public class SummaryFragment extends BaseFragment {
 
   /** Defer populating the fields until both the UI and the data is available. */
   private void populateFieldsDeferred() {
-    if(mBook == null || mRootView == null) {
+    if(mBook == null || getView() == null) {
       return;
     }
 
@@ -78,21 +82,9 @@ public class SummaryFragment extends BaseFragment {
       populateSummary();
       populateTimeLeft();
     } else {
-      mRootView.findViewById(R.id.blank_text).setVisibility(View.VISIBLE);
-      mRootView.findViewById(R.id.scrollView).setVisibility(View.GONE);
+      getView().findViewById(R.id.blank_text).setVisibility(View.VISIBLE);
+      getView().findViewById(R.id.scrollView).setVisibility(View.GONE);
     }
-  }
-
-  private void setRootView(View view) {
-    mSessionView = (SessionView) view.findViewById(R.id.sessionView);
-    mTextReadingState = (TextView) view.findViewById(R.id.textReadingState);
-    mTextClosingRemark = (TextView) view.findViewById(R.id.textClosingRemark);
-    mTextSummary = (TextView) view.findViewById(R.id.textSummary);
-    mTextTimeLeft = (TextView) view.findViewById(R.id.textTimeLeft);
-    mSegmentBar = (SegmentBar) view.findViewById(R.id.segmentBar);
-    mRootView = view;
-
-    populateFieldsDeferred();
   }
 
   private void populateReadingState(Book.State state, int color) {
@@ -156,7 +148,7 @@ public class SummaryFragment extends BaseFragment {
   /**
    * Generate a short, encouraging, phrase on how long the user has to read.
    */
-  private String getPepTalk(float estimatedSecondsLeft) {
+  private static String getPepTalk(float estimatedSecondsLeft) {
     String pepTalk = null;
     float hoursLeft = estimatedSecondsLeft / (60.0f * 60.0f);
     if(hoursLeft < 1.0f) {

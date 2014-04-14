@@ -23,6 +23,9 @@ import com.squareup.otto.Subscribe;
 
 import java.lang.ref.WeakReference;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
 import static com.readtracker.android.fragments.BookFragmentAdapter.Page;
 
 /**
@@ -46,20 +49,19 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialog.E
 
   private Session mCurrentSession;
 
-  private ViewPager mViewPager;
-  private PagerTabStrip mPagerTabStrip;
+  @InjectView(R.id.fragment_view_pager) ViewPager mViewPager;
+  @InjectView(R.id.pager_tab_strip) PagerTabStrip mPagerTabStrip;
 
   private Page mInitialFragmentPage;
 
+  @Override
   public void onCreate(Bundle in) {
     super.onCreate(in);
 
     setContentView(R.layout.book_activity);
-    mViewPager = (ViewPager) findViewById(R.id.fragment_view_pager);
-    mPagerTabStrip = (PagerTabStrip) findViewById(R.id.pager_tab_strip);
+    ButterKnife.inject(this);
 
     mPagerTabStrip.setVisibility(View.INVISIBLE);
-
     mCurrentSession = new Session();
     if(in != null) {
       if(in.containsKey(STATE_VIEW_PAGER_PAGE)) {
@@ -72,16 +74,6 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialog.E
 
     // Load information from database
     loadBookFromIntent();
-  }
-
-  @Override
-  protected void onStart() {
-    super.onStart();
-  }
-
-  @Override
-  protected void onStop() {
-    super.onStop();
   }
 
   @Override

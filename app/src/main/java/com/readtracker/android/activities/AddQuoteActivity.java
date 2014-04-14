@@ -21,16 +21,20 @@ import com.readtracker.android.support.Utils;
 import java.lang.ref.WeakReference;
 import java.util.Date;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
 /**
  * Screen for adding a quote
  */
 public class AddQuoteActivity extends BookBaseActivity {
-  private static final String TAG = AddQuoteActivity.class.getSimpleName();
-  private static EditText mQuoteTextEdit;
-  private static Button mSaveButton;
-  private static ProgressPicker mProgressPicker;
-
   public static final String KEY_QUOTE_ID = "QUOTE_ID";
+
+  private static final String TAG = AddQuoteActivity.class.getSimpleName();
+
+  @InjectView(R.id.quote_text_edit) EditText mQuoteTextEdit;
+  @InjectView(R.id.save_button) Button mSaveButton;
+  @InjectView(R.id.progress_picker) ProgressPicker mProgressPicker;
 
   private Book mBook;
 
@@ -38,8 +42,7 @@ public class AddQuoteActivity extends BookBaseActivity {
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.add_quote_activity);
-
-    bindViews();
+    ButterKnife.inject(this);
 
     mSaveButton.setEnabled(false);
 
@@ -65,12 +68,6 @@ public class AddQuoteActivity extends BookBaseActivity {
     }
 
     bindButtonEvents();
-  }
-
-  private void bindViews() {
-    mQuoteTextEdit = (EditText) findViewById(R.id.quote_text_edit);
-    mSaveButton = (Button) findViewById(R.id.save_button);
-    mProgressPicker = (ProgressPicker) findViewById(R.id.progress_picker);
   }
 
   private void bindButtonEvents() {

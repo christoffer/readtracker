@@ -15,6 +15,9 @@ import com.readtracker.android.support.DrawableGenerator;
 import com.readtracker.android.support.Utils;
 import com.readtracker.android.thirdparty.SafeViewFlipper;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
 /** Screen for input the ending page of a reading session */
 public class EndSessionDialog extends DialogFragment implements View.OnClickListener, ProgressPicker.OnPositionChangeListener {
   private static final String TAG = EndSessionDialog.class.getName();
@@ -27,10 +30,10 @@ public class EndSessionDialog extends DialogFragment implements View.OnClickList
   public static final String ARG_PAGE_COUNT = "PAGE_COUNT";
   private static final String ARG_COLOR = "COLOR";
 
-  private Button mButtonSaveProgress;
-  private Button mButtonFinishBook;
-  private ProgressPicker mProgressPicker;
-  private SafeViewFlipper mFlipperActionButtons;
+  @InjectView(R.id.save_button) Button mButtonSaveProgress;
+  @InjectView(R.id.finish_button) Button mButtonFinishBook;
+  @InjectView(R.id.progress_picker) ProgressPicker mProgressPicker;
+  @InjectView(R.id.action_button_flipper) SafeViewFlipper mFlipperActionButtons;
 
   private Float mSelectedPosition;
   private Float mPageCount;
@@ -78,8 +81,7 @@ public class EndSessionDialog extends DialogFragment implements View.OnClickList
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     Log.v(TAG, "onCreateView()");
     View root = inflater.inflate(R.layout.end_session_dialog, container, false);
-
-    bindViews(root);
+    ButterKnife.inject(this,root);
 
     mProgressPicker.setPositionAndPageCount(mSelectedPosition, mPageCount);
     mProgressPicker.setOnPositionChangeListener(this);
@@ -92,13 +94,6 @@ public class EndSessionDialog extends DialogFragment implements View.OnClickList
     mButtonFinishBook.setOnClickListener(this);
 
     return root;
-  }
-
-  private void bindViews(View root) {
-    mButtonSaveProgress = (Button) root.findViewById(R.id.save_button);
-    mButtonFinishBook = (Button) root.findViewById(R.id.finish_button);
-    mFlipperActionButtons = (SafeViewFlipper) root.findViewById(R.id.action_button_flipper);
-    mProgressPicker = (ProgressPicker) root.findViewById(R.id.progress_picker);
   }
 
   @Override

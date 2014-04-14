@@ -21,7 +21,6 @@ import android.widget.Toast;
 
 import com.readtracker.android.R;
 import com.readtracker.android.activities.AddQuoteActivity;
-import com.readtracker.android.activities.BookActivity;
 import com.readtracker.android.activities.BookBaseActivity;
 import com.readtracker.android.adapters.QuoteAdapter;
 import com.readtracker.android.db.Book;
@@ -35,16 +34,17 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
 public class QuotesFragment extends BaseFragment {
   private static final String TAG = QuotesFragment.class.getName();
 
   private static final int REQ_ADD_QUOTE = 1;
 
-  private ListView mQuoteList;
-  private TextView mTextBlankState;
-  private Button mAddQuoteButton;
-
-  private View mRootView;
+  @InjectView(R.id.quote_list) ListView mQuoteList;
+  @InjectView(R.id.blank_text) TextView mTextBlankState;
+  @InjectView(R.id.add_quote_button) Button mAddQuoteButton;
 
   private Book mBook;
   private QuoteAdapter mQuoteAdapter;
@@ -85,22 +85,21 @@ public class QuotesFragment extends BaseFragment {
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    return inflater.inflate(R.layout.quotes_fragment, container, false);
+    View rootView = inflater.inflate(R.layout.quotes_fragment, container, false);
+    ButterKnife.inject(this, rootView);
+    return rootView;
   }
 
   @Override
   public void onViewCreated(View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     Log.d(TAG, "onViewCreated()");
-
-    bindViews(view);
-
     mAddQuoteButton.setEnabled(false);
     populateFieldsDeferred();
   }
 
   private void populateFieldsDeferred() {
-    if(mBook == null || mRootView == null) {
+    if(mBook == null || getView() == null) {
       return;
     }
 
@@ -215,14 +214,6 @@ public class QuotesFragment extends BaseFragment {
     final String defaultTitle = getActivity().getString(R.string.quote_fragment_menu_title_default);
     final String title = Utils.truncateString(quote.getContent(), 20, defaultTitle);
     menu.setHeaderTitle(title);
-  }
-
-  private void bindViews(View view) {
-    mTextBlankState = (TextView) view.findViewById(R.id.blank_text);
-    mQuoteList = (ListView) view.findViewById(R.id.quote_list);
-    mAddQuoteButton = (Button) view.findViewById(R.id.add_quote_button);
-
-    mRootView = view;
   }
 
   private void refreshBlankState() {
