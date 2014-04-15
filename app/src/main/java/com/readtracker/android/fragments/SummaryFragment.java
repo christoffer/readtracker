@@ -134,17 +134,23 @@ public class SummaryFragment extends BaseFragment {
   }
 
   private void populateTimeLeft() {
+    // Hide the time left field when no relevant content
+    String timeLeft = null;
+    int visibility = View.GONE;
+
     if(!mBook.getState().equals(Book.State.Finished)) {
       final int estimatedSecondsLeft = mBook.calculateEstimatedSecondsLeft();
       if(estimatedSecondsLeft > 0) {
-        String timeLeft = String.format("You have about %s left of reading, given you keep the same pace", Utils.longCoarseHumanTimeFromSeconds(estimatedSecondsLeft));
+        visibility = View.VISIBLE;
+        timeLeft = String.format("You have about %s left of reading, given you keep the same pace", Utils.longCoarseHumanTimeFromSeconds(estimatedSecondsLeft));
         final String pepTalk = getPepTalk(estimatedSecondsLeft);
         if(pepTalk != null) {
           timeLeft += ".\n\n" + pepTalk;
-          mTextTimeLeft.setText(timeLeft);
         }
       }
     }
+    mTextTimeLeft.setVisibility(visibility);
+    mTextTimeLeft.setText(timeLeft);
   }
 
   /**
