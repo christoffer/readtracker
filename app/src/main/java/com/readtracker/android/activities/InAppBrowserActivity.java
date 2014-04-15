@@ -7,9 +7,7 @@ import android.webkit.WebView;
 import com.readtracker.android.IntentKeys;
 import com.readtracker.android.R;
 
-/**
- * Generic WebView for viewing any web url.
- */
+/** Generic WebView for viewing a http url. */
 public class InAppBrowserActivity extends Activity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -17,7 +15,7 @@ public class InAppBrowserActivity extends Activity {
     setContentView(R.layout.webview);
 
     WebView webView = (WebView) findViewById(R.id.webview);
-    String url = getIntent().getExtras().getString(IntentKeys.WEB_VIEW_URL);
+    String url = getIntent().getStringExtra(IntentKeys.WEB_VIEW_URL);
     if(url != null) {
       webView.loadUrl(url);
     }
