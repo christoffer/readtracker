@@ -3,8 +3,6 @@ package com.readtracker.android.support;
 import android.net.Uri;
 import android.util.Log;
 
-import com.readmill.api.HttpUtils;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -39,7 +37,7 @@ public class GoogleBookSearch {
       for(int i = 0; i < jsonItems.length(); i++) {
         JSONObject jsonObject = (JSONObject) jsonItems.get(i);
         googleBook = new GoogleBook(jsonObject);
-        if(googleBook.isSuitableForReadmill()) {
+        if(googleBook.isValid()) {
           result.add(googleBook);
         }
       }

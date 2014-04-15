@@ -49,7 +49,7 @@ public class QuotesFragment extends BaseFragment {
   private Book mBook;
   private QuoteAdapter mQuoteAdapter;
 
-  private static final int MENU_DELETE_HIGHLIGHT = 1;
+  private static final int MENU_DELETE_QUOTE = 1;
 
   private Quote mPendingNewQuote;
 
@@ -61,7 +61,7 @@ public class QuotesFragment extends BaseFragment {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    mQuoteAdapter = new QuoteAdapter(getActivity(), R.layout.highlight_list_item, new ArrayList<Quote>());
+    mQuoteAdapter = new QuoteAdapter(getActivity(), R.layout.quote_list_item, new ArrayList<Quote>());
   }
 
   // Called when the parent activity has completed loading the book
@@ -199,7 +199,7 @@ public class QuotesFragment extends BaseFragment {
     setMenuTitle(menu, quote);
 
     final String itemText = getActivity().getString(R.string.quote_fragment_delete_quote);
-    MenuItem item = menu.add(Menu.NONE, MENU_DELETE_HIGHLIGHT, Menu.NONE, itemText);
+    MenuItem item = menu.add(Menu.NONE, MENU_DELETE_QUOTE, Menu.NONE, itemText);
     item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
       @Override
       public boolean onMenuItemClick(MenuItem menuItem) {

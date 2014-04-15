@@ -99,7 +99,7 @@ public class GoogleBook {
     this.coverURL = coverURL;
   }
 
-  public boolean isSuitableForReadmill() {
+  public boolean isValid() {
     return id != null &&
         title != null &&
         author != null &&

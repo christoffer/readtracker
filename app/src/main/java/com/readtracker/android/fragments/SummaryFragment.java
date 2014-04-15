@@ -134,14 +134,22 @@ public class SummaryFragment extends BaseFragment {
   }
 
   private void populateTimeLeft() {
-    final int estimatedSecondsLeft = mBook.calculateEstimatedSecondsLeft();
-    String timeLeft = String.format("You have about %s left of reading, given you keep the same pace", Utils.longCoarseHumanTimeFromSeconds(estimatedSecondsLeft));
+    // Hide the time left field when no relevant content
+    String timeLeft = null;
+    int visibility = View.GONE;
 
-    final String pepTalk = getPepTalk(estimatedSecondsLeft);
-    if(pepTalk != null) {
-      timeLeft += ".\n\n" + pepTalk;
+    if(!mBook.getState().equals(Book.State.Finished)) {
+      final int estimatedSecondsLeft = mBook.calculateEstimatedSecondsLeft();
+      if(estimatedSecondsLeft > 0) {
+        visibility = View.VISIBLE;
+        timeLeft = String.format("You have about %s left of reading, given you keep the same pace", Utils.longCoarseHumanTimeFromSeconds(estimatedSecondsLeft));
+        final String pepTalk = getPepTalk(estimatedSecondsLeft);
+        if(pepTalk != null) {
+          timeLeft += ".\n\n" + pepTalk;
+        }
+      }
     }
-
+    mTextTimeLeft.setVisibility(visibility);
     mTextTimeLeft.setText(timeLeft);
   }
 
@@ -151,9 +159,11 @@ public class SummaryFragment extends BaseFragment {
   private static String getPepTalk(float estimatedSecondsLeft) {
     String pepTalk = null;
     float hoursLeft = estimatedSecondsLeft / (60.0f * 60.0f);
-    if(hoursLeft < 1.0f) {
+    if(hoursLeft == 0){
+      return null;
+    } else if(hoursLeft < 1) {
       pepTalk = "Why not finish it today?";
-    } else if(hoursLeft < 4.0f) {
+    } else if(hoursLeft < 4) {
       // hours per day to finish in 3 days
       final int secondsPerDayForGoal = (int) ((hoursLeft / 3.0f) * 3600);
       pepTalk = String.format("That's about %s per day to finish it in three days.",

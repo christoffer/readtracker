@@ -1,6 +1,5 @@
 package com.readtracker.android.adapters;
 
-import android.app.Activity;
 import android.content.Context;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -47,7 +46,7 @@ public class QuoteAdapter extends ArrayAdapter<Quote> {
     Quote quote = getItem(position);
 
     if(convertView == null) {
-      convertView = LayoutInflater.from(getContext()).inflate(R.layout.highlight_list_item, null);
+      convertView = LayoutInflater.from(getContext()).inflate(R.layout.quote_list_item, null);
     }
 
     TextView textContent = (TextView) convertView.findViewById(R.id.textContent);
