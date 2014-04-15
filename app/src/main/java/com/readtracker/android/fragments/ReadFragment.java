@@ -41,27 +41,28 @@ import java.lang.ref.WeakReference;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
 /** Displays a timer and controls for the user to start, pause and stop a reading session. */
 public class ReadFragment extends BaseFragment {
   private static final String TAG = ReadFragment.class.getSimpleName();
 
-  private View mRootView;
-
   // Session controls
-  private Button mStartButton;
-  private Button mPauseButton;
-  private Button mDoneButton;
+  @InjectView(R.id.start_button) Button mStartButton;
+  @InjectView(R.id.pause_button) Button mPauseButton;
+  @InjectView(R.id.done_button) Button mDoneButton;
 
   // Time tracking
-  private TextView mLastPositionText;
-  private TimeSpinner mTimeSpinner;
+  @InjectView(R.id.last_position_text) TextView mLastPositionText;
+  @InjectView(R.id.timespinner) TimeSpinner mTimeSpinner;
 
   // Wrap the spinner to apply the pulse animation on pause without
   // disrupting the time spinner animation
-  private ViewGroup mTimeSpinnerWrapper;
+  @InjectView(R.id.time_spinner_wrapper) ViewGroup mTimeSpinnerWrapper;
 
   // Flipper for showing start vs. stop/done
-  private SafeViewFlipper mTimeSpinnerControlsFlipper;
+  @InjectView(R.id.time_spinner_controls_flipper) SafeViewFlipper mTimeSpinnerControlsFlipper;
 
   // Book to track
   private Book mBook;
@@ -73,7 +74,7 @@ public class ReadFragment extends BaseFragment {
 
   private final UpdateDurationWheelTimer mUpdateWheelViewTimer = new UpdateDurationWheelTimer(this);
 
-  private WheelView mDurationWheelView;
+  @InjectView(R.id.duration_wheel_view)  WheelView mDurationWheelView;
 
   // Display child index for flipper session control
   private static final int FLIPPER_PAGE_START_BUTTON = 0;
@@ -103,12 +104,16 @@ public class ReadFragment extends BaseFragment {
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     Log.d(TAG, "onCreateView()");
-    final View view = inflater.inflate(R.layout.read_fragment, container, false);
-    bindViews(view);
+    View rootView = inflater.inflate(R.layout.read_fragment, container, false);
+    ButterKnife.inject(this, rootView);
     initializeTimerUI();
     mTimeSpinnerControlsFlipper.setDisplayedChild(FLIPPER_PAGE_START_BUTTON);
+    return rootView;
+  }
+
+  @Override public void onViewCreated(View view, Bundle savedInstanceState) {
+    super.onViewCreated(view, savedInstanceState);
     populateFieldsDeferred();
-    return view;
   }
 
   //  @Override public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -182,7 +187,7 @@ public class ReadFragment extends BaseFragment {
 
   /** Populates the fields of the UI as soon as both the UI and the book are available. */
   private void populateFieldsDeferred() {
-    if(mBook == null || mRootView == null) {
+    if(mBook == null || getView() == null) {
       return;
     }
     Log.v(TAG, "Populating fields for book: " + mBook);
@@ -192,18 +197,6 @@ public class ReadFragment extends BaseFragment {
     DrawableGenerator.applyButtonBackground(bookColor, mStartButton, mPauseButton, mDoneButton);
     mLastPositionText.setText(getLastPositionDescription());
     bindEvents();
-  }
-
-  private void bindViews(View view) {
-    mDoneButton = (Button) view.findViewById(R.id.done_button);
-    mStartButton = (Button) view.findViewById(R.id.start_button);
-    mPauseButton = (Button) view.findViewById(R.id.pause_button);
-    mTimeSpinnerControlsFlipper = (SafeViewFlipper) view.findViewById(R.id.time_spinner_controls_flipper);
-    mLastPositionText = (TextView) view.findViewById(R.id.last_position_text);
-    mTimeSpinner = (TimeSpinner) view.findViewById(R.id.timespinner);
-    mDurationWheelView = (WheelView) view.findViewById(R.id.duration_wheel_view);
-    mTimeSpinnerWrapper = (ViewGroup) view.findViewById(R.id.time_spinner_wrapper);
-    mRootView = view;
   }
 
   private void bindEvents() {

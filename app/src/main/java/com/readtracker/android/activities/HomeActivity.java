@@ -30,6 +30,9 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
 public class HomeActivity extends BaseActivity {
   private static final String TAG = HomeActivity.class.getSimpleName();
 
@@ -38,18 +41,17 @@ public class HomeActivity extends BaseActivity {
   // List of books loaded from the database
   private List<Book> mBooks = new ArrayList<Book>();
 
-  private ViewPager mViewPager;
-  HomeFragmentAdapter mFragmentAdapter;
+  @InjectView(R.id.book_list_pager) ViewPager mViewPager;
 
+  private HomeFragmentAdapter mFragmentAdapter;
   private LoadCatalogueTask mLoadCatalogueTask;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-
     requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-
     setContentView(R.layout.activity_home);
+    ButterKnife.inject(this);
 
     // Show welcome screen for first time users
     if(getApp().getFirstTimeFlag()) {
@@ -59,8 +61,6 @@ public class HomeActivity extends BaseActivity {
 
     PagerTabStrip pagerTabStrip = (PagerTabStrip) findViewById(R.id.pager_tab_strip);
     pagerTabStrip.setTabIndicatorColor(getResources().getColor(R.color.base_color));
-
-    mViewPager = (ViewPager) findViewById(R.id.book_list_pager);
 
     resetFragmentAdapter();
     mViewPager.setCurrentItem(mFragmentAdapter.getDefaultPage());
