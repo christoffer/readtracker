@@ -24,6 +24,10 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.Optional;
+
 /** Adapter for displaying a filtered list of books. */
 public class BookAdapter extends BaseAdapter implements ListAdapter {
   private static final String TAG = BookAdapter.class.getName();
@@ -79,17 +83,17 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
 
   @Override
   public View getView(int position, View convertView, ViewGroup parent) {
-    final ViewHolder holder;
+    final ViewHolder viewHolder;
     if(convertView == null) {
       convertView = LayoutInflater.from(mContext).inflate(mLayoutResource, null);
-      holder = new ViewHolder(convertView);
-      convertView.setTag(holder);
+      viewHolder = new ViewHolder(convertView);
+      convertView.setTag(viewHolder);
     } else {
-      holder = (ViewHolder) convertView.getTag();
+      viewHolder = (ViewHolder) convertView.getTag();
     }
 
     Book book = getItem(position);
-    holder.populate(book);
+    viewHolder.populate(book);
 
     int backColor = mContext.getResources().getColor(R.color.background);
     int activeColor = mContext.getResources().getColor(R.color.default_button_color_pressed);
@@ -118,12 +122,7 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
 
   static class ViewHolder {
     ViewHolder(View view) {
-      titleText = (TextView) view.findViewById(R.id.textTitle);
-      authorText = (TextView) view.findViewById(R.id.textAuthor);
-      segmentedProgressBar = (SegmentBar) view.findViewById(R.id.progressReadingProgress);
-      coverImage = (ImageView) view.findViewById(R.id.imageCover);
-      closingRemarkText = (TextView) view.findViewById(R.id.textClosingRemark);
-      finishedAtText = (TextView) view.findViewById(R.id.textFinishedAt);
+      ButterKnife.inject(this, view);
     }
 
     void populate(Book book) {
@@ -168,13 +167,13 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
     }
 
     // Required fields
-    TextView titleText;
-    TextView authorText;
+    @InjectView(R.id.textTitle) TextView titleText;
+    @InjectView(R.id.textAuthor) TextView authorText;
 
-    // Optional fields
-    SegmentBar segmentedProgressBar;
-    ImageView coverImage;
-    TextView closingRemarkText;
-    TextView finishedAtText;
+    // Optional fields *
+    @Optional @InjectView(R.id.progressReadingProgress) SegmentBar segmentedProgressBar;
+    @Optional @InjectView(R.id.imageCover) ImageView coverImage;
+    @Optional @InjectView(R.id.textClosingRemark) TextView closingRemarkText;
+    @Optional @InjectView(R.id.textFinishedAt) TextView finishedAtText;
   }
 }

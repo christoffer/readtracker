@@ -22,6 +22,9 @@ import com.readtracker.android.thirdparty.views.Switch;
 
 import java.lang.ref.WeakReference;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
 import static com.readtracker.android.activities.AddBookActivity.UpdateBookTask.UpdateOperation.DELETE;
 import static com.readtracker.android.activities.AddBookActivity.UpdateBookTask.UpdateOperation.SAVE;
 
@@ -32,13 +35,11 @@ public class AddBookActivity extends BookBaseActivity {
   public static final int RESULT_ADDED_BOOK = RESULT_FIRST_USER + 1;
   public static final int RESULT_DELETED_BOOK = RESULT_FIRST_USER + 2;
 
-  private static EditText mTitleEdit;
-  private static EditText mAuthorEdit;
-  private static EditText mPageCountEdit;
-
-  private static Button mAddOrSaveButton;
-
-  private static Switch mPagePctToggle;
+  @InjectView(R.id.title_edit) EditText mTitleEdit;
+  @InjectView(R.id.author_edit) EditText mAuthorEdit;
+  @InjectView(R.id.page_count_edit) EditText mPageCountEdit;
+  @InjectView(R.id.add_or_save_button) Button mAddOrSaveButton;
+  @InjectView(R.id.page_pct_toggle) Switch mPagePctToggle;
 
   // Store the cover url from the intent that starts the activity
   private String mCoverURL;
@@ -48,8 +49,7 @@ public class AddBookActivity extends BookBaseActivity {
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_add_book);
-
-    bindViews();
+    ButterKnife.inject(this);
 
     Intent intent = getIntent();
     if(intent.hasExtra(KEY_BOOK_ID)) {
@@ -75,7 +75,6 @@ public class AddBookActivity extends BookBaseActivity {
     if(deleteItem != null) {
       deleteItem.setVisible(mEditMode);
     }
-
     return super.onPrepareOptionsMenu(menu);
   }
 
@@ -112,14 +111,6 @@ public class AddBookActivity extends BookBaseActivity {
   @Override
   protected void onBookLoaded(Book book) {
     initializeForEditMode(book);
-  }
-
-  private void bindViews() {
-    mTitleEdit = (EditText) findViewById(R.id.title_edit);
-    mAuthorEdit = (EditText) findViewById(R.id.author_edit);
-    mPageCountEdit = (EditText) findViewById(R.id.page_count_edit);
-    mPagePctToggle = (Switch) findViewById(R.id.page_pct_toggle);
-    mAddOrSaveButton = (Button) findViewById(R.id.add_or_save_button);
   }
 
   private void bindEvents() {

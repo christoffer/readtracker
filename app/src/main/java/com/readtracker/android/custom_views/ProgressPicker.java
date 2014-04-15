@@ -14,8 +14,12 @@ import com.readtracker.android.thirdparty.widget.adapters.AbstractWheelTextAdapt
 import com.readtracker.android.thirdparty.widget.adapters.NumericWheelAdapter;
 import com.readtracker.android.thirdparty.widget.adapters.PercentWheelAdapter;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
 public class ProgressPicker extends LinearLayout {
-  private WheelView mPositionWheel;
+
+  @InjectView(R.id.position_wheel) WheelView mPositionWheel;
   private OnPositionChangeListener mListener;
 
   @SuppressWarnings("UnusedDeclaration")
@@ -59,7 +63,7 @@ public class ProgressPicker extends LinearLayout {
 
   private void initializeView() {
     final View root = LayoutInflater.from(getContext()).inflate(R.layout._progress_picker, this);
-    mPositionWheel = (WheelView) root.findViewById(R.id.position_wheel);
+    ButterKnife.inject(this, root);
   }
 
   /**

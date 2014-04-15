@@ -12,11 +12,14 @@ import com.readtracker.android.db.Book;
 import com.readtracker.android.support.DrawableGenerator;
 import com.readtracker.android.support.Utils;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
 public class FinishBookActivity extends BookBaseActivity implements View.OnClickListener {
   public static final String KEY_CLOSING_REMARK = "CLOSING_REMARK";
 
-  private EditText mEditClosingRemark;
-  private Button mButtonFinish;
+  @InjectView(R.id.editClosingRemark) EditText mEditClosingRemark;
+  @InjectView(R.id.finish_button) Button mButtonFinish;
 
   private Book mBook;
   private boolean mDidLayout;
@@ -28,7 +31,9 @@ public class FinishBookActivity extends BookBaseActivity implements View.OnClick
     super.onCreate(savedInstanceState);
 
     setContentView(R.layout.activity_finish_book);
-    bindViews();
+    ButterKnife.inject(this);
+    mDidLayout = true;
+    populateFieldsDeferred();
     mButtonFinish.setOnClickListener(this);
 
     loadBookFromIntent();
@@ -49,13 +54,6 @@ public class FinishBookActivity extends BookBaseActivity implements View.OnClick
     mEditClosingRemark.setBackgroundDrawable(drawable);
 
     mButtonFinish.setBackgroundDrawable(DrawableGenerator.generateButtonBackground(color));
-  }
-
-  private void bindViews() {
-    mEditClosingRemark = (EditText) findViewById(R.id.editClosingRemark);
-    mButtonFinish = (Button) findViewById(R.id.finish_button);
-    mDidLayout = true;
-    populateFieldsDeferred();
   }
 
   @Override public void onClick(View view) {

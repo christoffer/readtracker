@@ -31,6 +31,9 @@ import com.readtracker.android.thirdparty.SafeViewFlipper;
 
 import java.util.ArrayList;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
 /**
  * Screen for searching for books on Google Books
  */
@@ -39,27 +42,24 @@ public class BookSearchActivity extends BaseActivity {
 
   private static final int REQUEST_ADD_BOOK = 1;
 
-  private static ListView mListSearchResults;
-  private static EditText mEditTextSearch;
-
-  private static SafeViewFlipper mFlipperBookSearchActions;
-
-  private static Button mButtonNew;
-  private static Button mButtonSearch;
-
-  private static SearchResultAdapter mBookSearchAdapter;
-  private static InputMethodManager mInputMethodManager;
-
   // Indices of flipper pages
   private static final int FLIPPER_INDEX_ADD = 0;
   private static final int FLIPPER_INDEX_SEARCH = 1;
+
+  @InjectView(R.id.listSearchResult) ListView mListSearchResults;
+  @InjectView(R.id.textSearch) EditText mEditTextSearch;
+  @InjectView(R.id.flipperBookSearchActions) SafeViewFlipper mFlipperBookSearchActions;
+  @InjectView(R.id.buttonNew)Button mButtonNew;
+  @InjectView(R.id.buttonSearch)Button mButtonSearch;
+
+  private SearchResultAdapter mBookSearchAdapter;
+  private InputMethodManager mInputMethodManager;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_book_search);
-
-    bindViews();
+    ButterKnife.inject(this);
 
     mBookSearchAdapter = new SearchResultAdapter(this, R.layout.list_item_book, R.id.textTitle, new ArrayList<BookItem>());
     mListSearchResults.setAdapter(mBookSearchAdapter);
@@ -85,18 +85,6 @@ public class BookSearchActivity extends BaseActivity {
       setResult(RESULT_OK, searchResultData);
       finish();
     }
-  }
-
-  /**
-   * Bind local variables to views in the layout
-   */
-  private void bindViews() {
-    mListSearchResults = (ListView) findViewById(R.id.listSearchResult);
-    mEditTextSearch = (EditText) findViewById(R.id.textSearch);
-
-    mFlipperBookSearchActions = (SafeViewFlipper) findViewById(R.id.flipperBookSearchActions);
-    mButtonNew = (Button) findViewById(R.id.buttonNew);
-    mButtonSearch = (Button) findViewById(R.id.buttonSearch);
   }
 
   /**
