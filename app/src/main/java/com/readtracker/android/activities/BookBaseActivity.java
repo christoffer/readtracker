@@ -1,6 +1,5 @@
 package com.readtracker.android.activities;
 
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.v4.app.NavUtils;
@@ -104,7 +103,7 @@ public abstract class BookBaseActivity extends BaseActivity {
       if(homeIcon != null && !TextUtils.isEmpty(book.getCoverImageUrl())) {
         int size = getActionBarHeight();
         if(size == 0) size = 48; // Arbitrary default value
-        Picasso.with(this).load(book.getCoverImageUrl()).placeholder(R.drawable.readmill_sync).resize(size, size).centerCrop().into(homeIcon);
+        Picasso.with(this).load(book.getCoverImageUrl()).placeholder(R.drawable.icon_refresh).resize(size, size).centerCrop().into(homeIcon);
         actionBar.setDisplayShowHomeEnabled(true);
       }
     }
