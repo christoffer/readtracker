@@ -39,7 +39,7 @@ public class GoogleBookSearch {
       for(int i = 0; i < jsonItems.length(); i++) {
         JSONObject jsonObject = (JSONObject) jsonItems.get(i);
         googleBook = new GoogleBook(jsonObject);
-        if(googleBook.isSuitableForReadmill()) {
+        if(googleBook.isValid()) {
           result.add(googleBook);
         }
       }

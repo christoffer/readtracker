@@ -9,7 +9,7 @@
 
     <Preference
       android:title="Delete book"
-      android:summary="Remove book from your device and/or Readmill profile."
+      android:summary="Remove book from your profile."
       android:key="book.delete_book" />
 
   </PreferenceCategory>
