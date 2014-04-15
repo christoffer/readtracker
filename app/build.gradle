@@ -44,7 +44,6 @@ android {
 dependencies {
     compile 'com.android.support:appcompat-v7:+'
     compile 'com.android.support:support-v4:+'
-    compile 'com.christofferklang:readmill-java-wrapper:1.1.7'
     compile 'com.j256.ormlite:ormlite-android:4.42'
     compile 'com.j256.ormlite:ormlite-core:4.42'
     compile 'com.squareup.picasso:picasso:2.2.0'

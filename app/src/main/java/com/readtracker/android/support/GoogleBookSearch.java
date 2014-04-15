@@ -3,8 +3,6 @@ package com.readtracker.android.support;
 import android.net.Uri;
 import android.util.Log;
 
-import com.readmill.api.HttpUtils;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
