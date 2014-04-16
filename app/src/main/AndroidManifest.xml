@@ -29,11 +29,11 @@
     <activity
       android:name=".activities.BookSearchActivity"
       android:label="@string/activity_label_add_book"
-      android:parentActivityName=".activities.HomeActivity"
+      android:parentActivityName="com.readtracker.android.activities.HomeActivity"
       android:launchMode="singleTop">
       <meta-data
         android:name="android.support.PARENT_ACTIVITY"
-        android:value=".activities.HomeActivity"/>
+        android:value="com.readtracker.android.activities.HomeActivity"/>
     </activity>
 
     <activity
@@ -41,46 +41,46 @@
       android:noHistory="true"
       android:label="@string/activity_label_add_book"
       android:windowSoftInputMode="adjustPan"
-      android:parentActivityName=".activities.HomeActivity">
+      android:parentActivityName="com.readtracker.android.activities.HomeActivity">
       <meta-data
         android:name="android.support.PARENT_ACTIVITY"
-        android:value=".activities.HomeActivity"/>
+        android:value="com.readtracker.android.activities.HomeActivity"/>
     </activity>
 
     <activity
       android:name=".activities.BookActivity"
-      android:parentActivityName=".activities.HomeActivity"
+      android:parentActivityName="com.readtracker.android.activities.HomeActivity"
       android:label=""
       android:launchMode="singleTop">
       <!-- Parent activity meta-data to support 4.0 and lower -->
       <meta-data
         android:name="android.support.PARENT_ACTIVITY"
-        android:value=".activities.HomeActivity"/>
+        android:value="com.readtracker.android.activities.HomeActivity"/>
     </activity>
 
     <activity
       android:name=".activities.FinishBookActivity"
-      android:parentActivityName=".activities.BookActivity">
+      android:parentActivityName="com.readtracker.android.activities.BookActivity">
       <meta-data
         android:name="android.support.PARENT_ACTIVITY"
-        android:value=".activities.BookActivity"/>
+        android:value="com.readtracker.android.activities.BookActivity"/>
     </activity>
 
     <activity
       android:name=".activities.AddQuoteActivity"
-      android:parentActivityName=".activities.BookActivity">
+      android:parentActivityName="com.readtracker.android.activities.BookActivity">
       <meta-data
         android:name="android.support.PARENT_ACTIVITY"
-        android:value=".activities.BookActivity"/>
+        android:value="com.readtracker.android.activities.BookActivity"/>
     </activity>
 
     <activity
       android:name=".activities.SettingsActivity"
       android:label="@string/activity_label_settings"
-      android:parentActivityName=".activities.HomeActivity">
+      android:parentActivityName="com.readtracker.android.activities.HomeActivity">
       <meta-data
         android:name="android.support.PARENT_ACTIVITY"
-        android:value=".activities.HomeActivity"/>>
+        android:value="com.readtracker.android.activities.HomeActivity"/>>
     </activity>
 
     <activity android:name=".activities.InAppBrowserActivity"/>
