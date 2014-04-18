@@ -46,6 +46,7 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialog.E
   private static final String STATE_END_POSITION = "END_POSITION";
   private static final String STATE_DURATION = "DURATION";
   private static final String STATE_VIEW_PAGER_PAGE = "VIEW_PAGER_PAGE";
+  public static final String KEY_FINISHED = "FINISHED";
 
   private Session mCurrentSession;
 
@@ -205,7 +206,12 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialog.E
         book.setCurrentPosition(mCurrentSession.getEndPosition());
         book.setCurrentPositionTimestamp(mCurrentSession.getTimestamp());
 
-        new SaveAndExitTask(BookActivity.this).execute(mCurrentSession, book);
+        // Pass a flag to the receiver, allowing it to act on the fact that
+        // the resulting book is finished.
+        Intent data = new Intent();
+        data.putExtra(BookActivity.KEY_FINISHED, book.isInState(Book.State.Finished));
+
+        new SaveAndExitTask(BookActivity.this, data).execute(mCurrentSession, book);
       }
     });
   }
@@ -232,8 +238,10 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialog.E
    */
   private static class SaveAndExitTask extends AsyncTask<Model, Void, Boolean> {
     private final WeakReference<BookActivity> mActivityRef;
+    private final Intent mResultData;
 
-    SaveAndExitTask(BookActivity activity) {
+    SaveAndExitTask(BookActivity activity, Intent resultData) {
+      mResultData = resultData;
       mActivityRef = new WeakReference<BookActivity>(activity);
     }
 
@@ -258,7 +266,12 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialog.E
     @Override protected void onPostExecute(Boolean result) {
       BookActivity activity = mActivityRef.get();
       if(activity != null && result.equals(Boolean.TRUE)) {
-        activity.setResult(RESULT_OK);
+        if(mResultData != null) {
+          activity.setResult(RESULT_OK, mResultData);
+        } else {
+          activity.setResult(RESULT_OK);
+        }
+
         activity.finish();
       }
     }

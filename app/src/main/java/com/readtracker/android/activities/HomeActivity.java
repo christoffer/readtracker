@@ -102,7 +102,6 @@ public class HomeActivity extends BaseActivity {
 
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    // TODO we should be smarter here and just reload the one book that was changed
     final boolean shouldReload = (
       requestCode == REQUEST_READING_SESSION && resultCode == RESULT_OK
     );
@@ -116,6 +115,13 @@ public class HomeActivity extends BaseActivity {
     } else if(shouldReload || needReloadDueToAddedBook) {
       // Push new changes and reload local lists
       loadBooks();
+
+      if(data.getBooleanExtra(BookActivity.KEY_FINISHED, false)) {
+        // Came back with a success result for a finished book, let the view pager show it
+        if(mViewPager != null) {
+          mViewPager.setCurrentItem(0);
+        }
+      }
     }
   }
 
