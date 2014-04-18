@@ -202,7 +202,7 @@ public class HomeActivity extends BaseActivity {
     @Override
     protected List<Book> doInBackground(Void... ignored) {
       List<Book> books = mDatabaseManager.getAll(Book.class);
-      Log.d(TAG, "Loaded " + books.size() + " books");
+      Log.d(TAG, String.format("Loaded %d books", books.size()));
       for(Book book : books) {
         // Need the sessions to display segmented progress bars
         book.loadSessions(mDatabaseManager);

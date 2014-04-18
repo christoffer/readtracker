@@ -22,6 +22,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 
 import butterknife.ButterKnife;
@@ -57,16 +58,35 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
 
   @Subscribe public void onCatalogueLoadedEvent(HomeActivity.CatalogueLoadedEvent event) {
     Log.d(TAG, "Adapter got books: " + event.getBooks().size());
-    for(Book book : event.getBooks()) {
-      if(mStateFilter == null || book.getState() == mStateFilter) {
-        Log.v(TAG, "Accepting: " + book);
-        addOrReplace(book);
-      } else {
-        Log.v(TAG, "Rejecting: " + book);
-      }
-    }
+    addOrUpdateExistingEntires(event.getBooks());
+    removeDeletedEntries(event.getBooks());
 
     notifyDataSetChanged();
+  }
+
+  private void addOrUpdateExistingEntires(List<Book> updatedCatalogue) {
+    for(Book book : updatedCatalogue) {
+      if(mStateFilter == null || book.getState() == mStateFilter) {
+        Log.v(TAG, String.format("Adding entry: %s", book));
+        int position = mBooks.indexOf(book);
+        if(position < 0) { // Not in adapter
+          mBooks.add(book);
+        } else { // Already in adapter
+          mBooks.remove(position);
+          mBooks.add(position, book);
+        }
+      }
+    }
+  }
+
+  private void removeDeletedEntries(List<Book> updatedCatalogue) {
+    for(Iterator<Book> iterator = mBooks.iterator(); iterator.hasNext(); ) {
+      final Book book = iterator.next();
+      if(!updatedCatalogue.contains(book)) {
+        Log.v(TAG, String.format("Removing entry: %s", book));
+        iterator.remove();
+      }
+    }
   }
 
   @Override public int getCount() {
@@ -108,16 +128,6 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
 
   @Override public boolean isEnabled(int position) {
     return true;
-  }
-
-  private void addOrReplace(Book book) {
-    int position = mBooks.indexOf(book);
-    if(position < 0) {
-      mBooks.add(book);
-    } else {
-      mBooks.remove(position);
-      mBooks.add(position, book);
-    }
   }
 
   static class ViewHolder {
