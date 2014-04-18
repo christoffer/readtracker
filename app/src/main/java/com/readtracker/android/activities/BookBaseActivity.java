@@ -123,6 +123,7 @@ public abstract class BookBaseActivity extends BaseActivity {
 
   private void onLoadTaskCompleted(Book book) {
     mBook = book;
+    mLoadDataTask = null;
     flushBookReadyRunnables();
     setupActionBar(book);
     onBookLoaded(book);
