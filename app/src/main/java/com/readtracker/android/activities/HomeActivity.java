@@ -187,6 +187,7 @@ public class HomeActivity extends BaseActivity {
 
   private void onCatalogueLoaded(List<Book> books) {
     mLoadCatalogueTask = null;
+    mBooks = books;
     postEvent(new CatalogueLoadedEvent(books));
 
     getSupportActionBar().setSubtitle(null);

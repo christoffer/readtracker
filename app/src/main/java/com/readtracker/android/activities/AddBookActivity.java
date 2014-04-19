@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,6 +22,8 @@ import com.readtracker.android.db.DatabaseManager;
 import com.readtracker.android.thirdparty.views.Switch;
 
 import java.lang.ref.WeakReference;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -261,22 +264,33 @@ public class AddBookActivity extends BookBaseActivity {
   }
 
   static class UpdateBookTask extends AsyncTask<Void, Void, Boolean> {
+    // choose to prefix because the titles are truncated in the list, which would
+    // make dupes of long titles invisible to the user
+    public static final Pattern DUPE_COUNT_PATTERN = Pattern.compile("^[(](\\d+)[)](.*)");
+
     public static enum UpdateOperation {SAVE, DELETE}
 
     private final WeakReference<AddBookActivity> mActivity;
     private final DatabaseManager mDatabaseMgr;
     private final Book mBook;
     private final UpdateOperation mOperation;
+    private final String mUnknownTitleString;
 
     public UpdateBookTask(AddBookActivity activity, Book book, UpdateOperation operation) {
       mBook = book;
       mActivity = new WeakReference<AddBookActivity>(activity);
       mDatabaseMgr = activity.getApp().getDatabaseManager();
       mOperation = operation;
+      mUnknownTitleString = activity.getString(R.string.general_unknown_title);
     }
 
     @Override
     protected Boolean doInBackground(Void... voids) {
+      final boolean savingNewBook = mBook.getId() < 1 && mOperation == UpdateOperation.SAVE;
+      if(savingNewBook) {
+        mBook.setTitle(getUniqueTitle(mBook.getTitle()));
+      }
+
       return mOperation == DELETE ? mDatabaseMgr.delete(mBook) : mDatabaseMgr.save(mBook);
     }
 
@@ -284,6 +298,31 @@ public class AddBookActivity extends BookBaseActivity {
       AddBookActivity activity = mActivity.get();
       if(activity != null) {
         activity.onBookUpdated(mBook.getId(), mOperation, success);
+      }
+    }
+
+    private String getUniqueTitle(String title) {
+      if(TextUtils.isEmpty(title)) {
+        title = mUnknownTitleString;
+      }
+
+      boolean unique = mDatabaseMgr.isUniqueTitle(title);
+      int dupeNumber = 1;
+      while(!unique) { // found dupe title
+        String cleanTitle = getTitleWithoutDupeCount(title).trim();
+        title = String.format("(%d) %s", dupeNumber++, cleanTitle);
+        unique = mDatabaseMgr.isUniqueTitle(title);
+      }
+
+      return title;
+    }
+
+    private String getTitleWithoutDupeCount(String title) {
+      Matcher matcher = DUPE_COUNT_PATTERN.matcher(title);
+      if(matcher.find()) {
+        return matcher.group(2);
+      } else {
+        return title;
       }
     }
   }

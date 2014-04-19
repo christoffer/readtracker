@@ -73,6 +73,7 @@
   <string name="general_save">Save</string>
   <string name="general_author">Author</string>
   <string name="general_title">Title</string>
+  <string name="general_unknown_title">Unknown title</string>
 
   <string name="book_search_search">Search</string>
   <string name="book_search_search_google_books">Search Google Books...</string>
