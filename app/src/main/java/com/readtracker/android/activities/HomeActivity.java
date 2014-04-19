@@ -116,7 +116,7 @@ public class HomeActivity extends BaseActivity {
       // Push new changes and reload local lists
       loadBooks();
 
-      if(data.getBooleanExtra(BookActivity.KEY_FINISHED, false)) {
+      if(data != null && data.getBooleanExtra(BookActivity.KEY_FINISHED, false)) {
         // Came back with a success result for a finished book, let the view pager show it
         if(mViewPager != null) {
           mViewPager.setCurrentItem(0);
