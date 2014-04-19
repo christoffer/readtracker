@@ -3,8 +3,10 @@ package com.readtracker.android.db;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import com.readtracker.android.support.Utils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -53,13 +55,14 @@ public class Book extends Model {
     if(this == o) return true;
     if(o instanceof Book) {
       final Book other = (Book) o;
-      return this.getTitle().equals(other.getTitle()) && (this.getAuthor().equals(other.getAuthor()));
+      return Utils.equal(getTitle(), other.getTitle())
+          && Utils.equal(getAuthor(), other.getAuthor());
     }
     return false;
   }
 
   @Override public int hashCode() {
-    return (getTitle() + getAuthor()).hashCode();
+    return Arrays.hashCode(new Object[] { getTitle(), getAuthor() });
   }
 
   public String getTitle() { return mTitle == null ? "" : mTitle; }

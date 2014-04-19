@@ -2,6 +2,9 @@ package com.readtracker.android.db;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import com.readtracker.android.support.Utils;
+
+import java.util.Arrays;
 
 /**
  * Represents a quote from a book.
@@ -41,5 +44,21 @@ public class Quote extends Model {
     public static final String ADD_TIMESTAMP = "add_timestamp";
     public static final String POSITION = "position";
     public static final String BOOK_ID = "book_id";
+  }
+
+  @Override public boolean equals(Object o) {
+    if(this == o) return true;
+    if(o instanceof Quote) {
+      final Quote other = (Quote) o;
+
+      return Utils.equal(getBook(), other.getBook())
+          && Utils.equal(getContent(), other.getContent())
+          && Utils.equal(getAddTimestamp(), other.getAddTimestamp());
+    }
+    return false;
+  }
+
+  @Override public int hashCode() {
+    return Arrays.hashCode(new Object[]{getContent(), getBook(), getAddTimestamp()});
   }
 }

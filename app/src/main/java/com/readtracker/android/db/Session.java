@@ -2,6 +2,9 @@ package com.readtracker.android.db;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import com.readtracker.android.support.Utils;
+
+import java.util.Arrays;
 
 /**
  * Represents one reading session.
@@ -49,5 +52,22 @@ public class Session extends Model {
     public static final String DURATION_SECONDS = "duration_seconds";
     public static final String TIMESTAMP = "timestamp";
     public static final String BOOK_ID = "book_id";
+  }
+
+  @Override public boolean equals(Object o) {
+    if(this == o) return true;
+    if(o instanceof Session) {
+      final Session other = (Session) o;
+      return Utils.equal(getBook(), other.getBook())
+          && Utils.equal(getStartPosition(), other.getStartPosition())
+          && Utils.equal(getEndPosition(), other.getEndPosition())
+          && Utils.equal(getDurationSeconds(), other.getDurationSeconds())
+          && Utils.equal(getTimestamp(), other.getTimestamp());
+    }
+    return false;
+  }
+
+  @Override public int hashCode() {
+    return Arrays.hashCode(new Object[]{getBook(), getStartPosition(), getEndPosition(), getDurationSeconds(), getTimestamp()});
   }
 }
