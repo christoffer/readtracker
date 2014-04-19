@@ -15,10 +15,10 @@ public class Quote extends Model {
   @DatabaseField(columnName = Columns.ADD_TIMESTAMP) private Long mAddTimestamp;
   @DatabaseField(columnName = Columns.POSITION) private Float mPosition;
   @DatabaseField(
-    columnName = Columns.BOOK_ID,
-    foreign = true,
-    canBeNull = false,
-    columnDefinition = "integer references books (_id) on delete cascade")
+      columnName = Columns.BOOK_ID,
+      foreign = true,
+      canBeNull = false,
+      columnDefinition = "integer references books (_id) on delete cascade")
   private Book mBook;
 
   public Quote() { }

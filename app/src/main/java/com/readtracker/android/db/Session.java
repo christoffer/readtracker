@@ -17,10 +17,10 @@ public class Session extends Model {
   @DatabaseField(columnName = Columns.DURATION_SECONDS) private long mDurationSeconds;
   @DatabaseField(columnName = Columns.TIMESTAMP) private long mTimestamp;
   @DatabaseField(
-    columnName = Columns.BOOK_ID,
-    foreign = true,
-    canBeNull = false,
-    columnDefinition = "integer references books (_id) on delete cascade")
+      columnName = Columns.BOOK_ID,
+      foreign = true,
+      canBeNull = false,
+      columnDefinition = "integer references books (_id) on delete cascade")
   private Book mBook;
 
   public Session() {

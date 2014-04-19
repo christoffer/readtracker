@@ -48,6 +48,7 @@
           <option name="SPACE_BEFORE_CATCH_PARENTHESES" value="false" />
           <option name="SPACE_BEFORE_SWITCH_PARENTHESES" value="false" />
           <option name="SPACE_BEFORE_SYNCHRONIZED_PARENTHESES" value="false" />
+          <option name="KEEP_SIMPLE_METHODS_IN_ONE_LINE" value="true" />
           <option name="METHOD_ANNOTATION_WRAP" value="1" />
           <option name="CLASS_ANNOTATION_WRAP" value="1" />
           <option name="FIELD_ANNOTATION_WRAP" value="1" />

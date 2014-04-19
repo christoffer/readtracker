@@ -21,10 +21,13 @@ public class Book extends Model {
   @DatabaseField(columnName = Columns.AUTHOR) private String mAuthor;
   @DatabaseField(columnName = Columns.COVER_IMAGE_URL) private String mCoverImageUrl;
   @DatabaseField(columnName = Columns.PAGE_COUNT) private Float mPageCount;
-  @DatabaseField(columnName = Columns.STATE, dataType = DataType.ENUM_STRING) State mState = State.Reading;
+  @DatabaseField(columnName = Columns.STATE, dataType = DataType.ENUM_STRING)
+  State mState = State.Reading;
   @DatabaseField(columnName = Columns.CURRENT_POSITION) private Float mCurrentPosition;
-  @DatabaseField(columnName = Columns.CURRENT_POSITION_TIMESTAMP) private Long mCurrentPositionTimestamp;
-  @DatabaseField(columnName = Columns.FIRST_POSITION_TIMESTAMP) private Long mFirstPositionTimestamp;
+  @DatabaseField(columnName = Columns.CURRENT_POSITION_TIMESTAMP)
+  private Long mCurrentPositionTimestamp;
+  @DatabaseField(columnName = Columns.FIRST_POSITION_TIMESTAMP)
+  private Long mFirstPositionTimestamp;
   @DatabaseField(columnName = Columns.CLOSING_REMARK) private String mClosingRemark;
 
   // Use manual handling of foreign keys here as we want to have complete
@@ -62,7 +65,7 @@ public class Book extends Model {
   }
 
   @Override public int hashCode() {
-    return Arrays.hashCode(new Object[] { getTitle(), getAuthor() });
+    return Arrays.hashCode(new Object[]{getTitle(), getAuthor()});
   }
 
   public String getTitle() { return mTitle == null ? "" : mTitle; }
