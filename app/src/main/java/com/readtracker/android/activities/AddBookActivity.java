@@ -28,9 +28,6 @@ import java.util.regex.Pattern;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
-import static com.readtracker.android.activities.AddBookActivity.UpdateBookTask.UpdateOperation.DELETE;
-import static com.readtracker.android.activities.AddBookActivity.UpdateBookTask.UpdateOperation.SAVE;
-
 /** Activity for adding or editing a book. */
 public class AddBookActivity extends BookBaseActivity {
   public static final String TAG = AddBookActivity.class.getName();
@@ -97,7 +94,7 @@ public class AddBookActivity extends BookBaseActivity {
 
     builder.setPositiveButton(R.string.add_book_delete, new DialogInterface.OnClickListener() {
       @Override public void onClick(DialogInterface dialogInterface, int i) {
-        new UpdateBookTask(AddBookActivity.this, getBook(), DELETE).execute();
+        new DeleteBookTask(AddBookActivity.this, getBook()).execute();
       }
     });
 
@@ -184,13 +181,20 @@ public class AddBookActivity extends BookBaseActivity {
       return;
     }
 
+    final String newTitle = mTitleEdit.getText().toString();
+    final String newAuthor = mAuthorEdit.getText().toString();
+
+    // Be careful about changing the book title when we aren't changing the title.
+
     Book book = getBook();
     if(book == null) {
       book = new Book();
     }
 
-    book.setTitle(mTitleEdit.getText().toString());
-    book.setAuthor(mAuthorEdit.getText().toString());
+    boolean didChangeTitle = !book.getTitle().equals(newTitle);
+
+    book.setTitle(newTitle);
+    book.setAuthor(newAuthor);
     book.setCoverImageUrl(mCoverURL);
 
     if(mPagePctToggle.isChecked()) {
@@ -200,7 +204,7 @@ public class AddBookActivity extends BookBaseActivity {
       book.setPageCount(null);
     }
 
-    new UpdateBookTask(this, book, SAVE).execute();
+    new UpdateBookTask(this, book, didChangeTitle).execute();
   }
 
   /**
@@ -240,7 +244,7 @@ public class AddBookActivity extends BookBaseActivity {
     return true;
   }
 
-  private void onBookUpdated(int bookId, UpdateBookTask.UpdateOperation operation, boolean success) {
+  private void onBookUpdated(int bookId, boolean success) {
     if(!success) {
       Log.w(TAG, "Failed to save book");
       return;
@@ -250,55 +254,75 @@ public class AddBookActivity extends BookBaseActivity {
     data.putExtra(KEY_BOOK_ID, bookId);
 
     if(mEditMode) {
-      if(operation == DELETE) {
-        setResult(RESULT_DELETED_BOOK, data);
-      } else {
-        // Was update operation, just OK it
-        setResult(RESULT_OK, data);
-      }
-      finish();
+      setResult(RESULT_OK, data);
     } else {
       setResult(RESULT_ADDED_BOOK, data);
+    }
+    finish();
+  }
+
+  private void onBookDeleted(int bookId, boolean success) {
+    if(success) {
+      Intent data = new Intent();
+      data.putExtra(KEY_BOOK_ID, bookId);
+      setResult(RESULT_DELETED_BOOK, data);
       finish();
+    } else {
+      toast(R.string.add_book_delete_failed);
     }
   }
 
-  static class UpdateBookTask extends AsyncTask<Void, Void, Boolean> {
+  abstract static class BackgroundBookTask extends AsyncTask<Void, Void, Boolean> {
     // choose to prefix because the titles are truncated in the list, which would
     // make dupes of long titles invisible to the user
     public static final Pattern DUPE_COUNT_PATTERN = Pattern.compile("^[(](\\d+)[)](.*)");
 
-    public static enum UpdateOperation {SAVE, DELETE}
+    protected final WeakReference<AddBookActivity> mActivity;
+    protected final DatabaseManager mDatabaseMgr;
+    protected final Book mBook;
+    protected final String mUnknownTitleString;
 
-    private final WeakReference<AddBookActivity> mActivity;
-    private final DatabaseManager mDatabaseMgr;
-    private final Book mBook;
-    private final UpdateOperation mOperation;
-    private final String mUnknownTitleString;
-
-    public UpdateBookTask(AddBookActivity activity, Book book, UpdateOperation operation) {
+    public BackgroundBookTask(AddBookActivity activity, Book book) {
       mBook = book;
       mActivity = new WeakReference<AddBookActivity>(activity);
       mDatabaseMgr = activity.getApp().getDatabaseManager();
-      mOperation = operation;
       mUnknownTitleString = activity.getString(R.string.general_unknown_title);
     }
 
+    abstract protected boolean run();
+
+    abstract protected void onComplete(AddBookActivity activity, boolean success);
+
     @Override
     protected Boolean doInBackground(Void... voids) {
-      final boolean savingNewBook = mBook.getId() < 1 && mOperation == UpdateOperation.SAVE;
-      if(savingNewBook) {
-        mBook.setTitle(getUniqueTitle(mBook.getTitle()));
-      }
-
-      return mOperation == DELETE ? mDatabaseMgr.delete(mBook) : mDatabaseMgr.save(mBook);
+      return run();
     }
 
     @Override protected void onPostExecute(Boolean success) {
       AddBookActivity activity = mActivity.get();
       if(activity != null) {
-        activity.onBookUpdated(mBook.getId(), mOperation, success);
+        onComplete(activity, success);
       }
+    }
+  }
+
+  static class UpdateBookTask extends BackgroundBookTask {
+    private final boolean mShouldMakeTitleUnique;
+
+    public UpdateBookTask(AddBookActivity activity, Book book, boolean shouldMakeTitleUnique) {
+      super(activity, book);
+      mShouldMakeTitleUnique = shouldMakeTitleUnique;
+    }
+
+    @Override protected boolean run() {
+      if(mShouldMakeTitleUnique) {
+        mBook.setTitle(getUniqueTitle(mBook.getTitle()));
+      }
+      return mDatabaseMgr.save(mBook);
+    }
+
+    @Override protected void onComplete(AddBookActivity activity, boolean success) {
+      activity.onBookUpdated(mBook.getId(), success);
     }
 
     private String getUniqueTitle(String title) {
@@ -324,6 +348,20 @@ public class AddBookActivity extends BookBaseActivity {
       } else {
         return title;
       }
+    }
+  }
+
+  static class DeleteBookTask extends BackgroundBookTask {
+    public DeleteBookTask(AddBookActivity activity, Book book) {
+      super(activity, book);
+    }
+
+    @Override protected boolean run() {
+      return mDatabaseMgr.delete(mBook);
+    }
+
+    @Override protected void onComplete(AddBookActivity activity, boolean success) {
+      activity.onBookDeleted(mBook.getId(), success);
     }
   }
 }

@@ -54,6 +54,7 @@
   <string name="add_book_delete">Delete</string>
   <string name="add_book_confirm_delete">Really delete %1$s?</string>
   <string name="add_book_delete_explanation">This will delete the book and the entire reading history from the device.\n\nThere is no way to undo this operation.</string>
+  <string name="add_book_delete_failed">Failed to delete book</string>
 
   <string name="book_error_updating">An error occurred, the book could not be saved.</string>
 
