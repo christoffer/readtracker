@@ -304,4 +304,9 @@ public class Utils {
     Arrays.sort(stops);
     return stops;
   }
+
+  /** Lifted from Google Guava. */
+  public static boolean equal(Object a, Object b) {
+    return a == b || (a != null && a.equals(b));
+  }
 }
