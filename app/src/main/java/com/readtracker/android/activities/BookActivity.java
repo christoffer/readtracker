@@ -200,11 +200,11 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialog.E
         Log.d(TAG, "Saving book and session");
         final Book book = getBook();
 
-        mCurrentSession.setTimestamp(System.currentTimeMillis());
+        mCurrentSession.setTimestampMs(System.currentTimeMillis() / 1000);
 
         // Snapshot the session as the latest state of the book
         book.setCurrentPosition(mCurrentSession.getEndPosition());
-        book.setCurrentPositionTimestamp(mCurrentSession.getTimestamp());
+        book.setCurrentPositionTimestampMs(mCurrentSession.getTimestampMs());
 
         // Pass a flag to the receiver, allowing it to act on the fact that
         // the resulting book is finished.

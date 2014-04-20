@@ -15,7 +15,7 @@ public class Session extends Model {
   @DatabaseField(columnName = Columns.START_POSITION) private float mStartPosition;
   @DatabaseField(columnName = Columns.END_POSITION) private float mEndPosition;
   @DatabaseField(columnName = Columns.DURATION_SECONDS) private long mDurationSeconds;
-  @DatabaseField(columnName = Columns.TIMESTAMP) private long mTimestamp;
+  @DatabaseField(columnName = Columns.TIMESTAMP) private long mTimestampMs;
   @DatabaseField(
       columnName = Columns.BOOK_ID,
       foreign = true,
@@ -38,9 +38,9 @@ public class Session extends Model {
 
   public void setDurationSeconds(long durationSeconds) { mDurationSeconds = durationSeconds; }
 
-  public Long getTimestamp() { return mTimestamp; }
+  public Long getTimestampMs() { return mTimestampMs; }
 
-  public void setTimestamp(long timestamp) { mTimestamp = timestamp; }
+  public void setTimestampMs(long timestampMs) { mTimestampMs = timestampMs; }
 
   public Book getBook() { return mBook; }
 
@@ -62,12 +62,12 @@ public class Session extends Model {
           && Utils.equal(getStartPosition(), other.getStartPosition())
           && Utils.equal(getEndPosition(), other.getEndPosition())
           && Utils.equal(getDurationSeconds(), other.getDurationSeconds())
-          && Utils.equal(getTimestamp(), other.getTimestamp());
+          && Utils.equal(getTimestampMs(), other.getTimestampMs());
     }
     return false;
   }
 
   @Override public int hashCode() {
-    return Arrays.hashCode(new Object[]{getBook(), getStartPosition(), getEndPosition(), getDurationSeconds(), getTimestamp()});
+    return Arrays.hashCode(new Object[]{getBook(), getStartPosition(), getEndPosition(), getDurationSeconds(), getTimestampMs()});
   }
 }

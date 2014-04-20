@@ -168,7 +168,7 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
 
       if(finishedAtText != null) {
         if(book.getState() == Book.State.Finished) {
-          finishedAtText.setText(Utils.humanPastDate(book.getCurrentPositionTimestamp()));
+          finishedAtText.setText(Utils.humanPastDateFromMs(book.getCurrentPositionTimestampMs()));
           finishedAtText.setVisibility(View.VISIBLE);
         } else {
           finishedAtText.setVisibility(View.GONE);

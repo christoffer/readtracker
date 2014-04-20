@@ -24,7 +24,6 @@ import com.readtracker.android.support.DrawableGenerator;
 import com.readtracker.android.support.Utils;
 
 import java.lang.ref.WeakReference;
-import java.util.Date;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -203,7 +202,7 @@ public class AddQuoteActivity extends BookBaseActivity {
       if(quote == null) {
         Log.v(TAG, "Creating quote");
         mQuote = new Quote();
-        mQuote.setAddTimestamp(new Date().getTime());
+        mQuote.setAddTimestampMs(System.currentTimeMillis());
         mQuote.setBook(book);
       } else {
         mQuote = quote;

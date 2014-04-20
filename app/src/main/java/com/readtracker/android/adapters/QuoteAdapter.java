@@ -23,7 +23,7 @@ public class QuoteAdapter extends ArrayAdapter<Quote> {
   private Comparator<Quote> mQuoteComparator = new Comparator<Quote>() {
     @Override
     public int compare(Quote a, Quote b) {
-      return a.getAddTimestamp() > b.getAddTimestamp() ? -1 : 1;
+      return a.getAddTimestampMs() > b.getAddTimestampMs() ? -1 : 1;
     }
   };
 
@@ -56,7 +56,7 @@ public class QuoteAdapter extends ArrayAdapter<Quote> {
 
     TextView textDate = (TextView) convertView.findViewById(R.id.textDate);
 
-    String metadata = Utils.humanPastDate(quote.getAddTimestamp());
+    String metadata = Utils.humanPastDateFromMs(quote.getAddTimestampMs());
 
     textDate.setText(metadata);
     final int backgroundColor = getContext().getResources().getColor(R.color.background);

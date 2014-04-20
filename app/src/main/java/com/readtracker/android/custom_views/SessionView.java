@@ -240,7 +240,7 @@ public class SessionView extends View {
     public Node(Session session) {
       this.durationSeconds = session.getDurationSeconds();
       this.progress = session.getEndPosition();
-      this.occurredAt = new Date(session.getTimestamp());
+      this.occurredAt = new Date(session.getTimestampMs());
     }
   }
 

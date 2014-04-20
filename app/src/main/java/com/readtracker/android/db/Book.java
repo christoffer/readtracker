@@ -25,9 +25,9 @@ public class Book extends Model {
   State mState = State.Reading;
   @DatabaseField(columnName = Columns.CURRENT_POSITION) private Float mCurrentPosition;
   @DatabaseField(columnName = Columns.CURRENT_POSITION_TIMESTAMP)
-  private Long mCurrentPositionTimestamp;
+  private Long mCurrentPositionTimestampMs;
   @DatabaseField(columnName = Columns.FIRST_POSITION_TIMESTAMP)
-  private Long mFirstPositionTimestamp;
+  private Long mFirstPositionTimestampMs;
   @DatabaseField(columnName = Columns.CLOSING_REMARK) private String mClosingRemark;
 
   // Use manual handling of foreign keys here as we want to have complete
@@ -96,13 +96,13 @@ public class Book extends Model {
 
   public void setCurrentPosition(float currentPosition) { mCurrentPosition = currentPosition; }
 
-  public Long getCurrentPositionTimestamp() { return mCurrentPositionTimestamp; }
+  public Long getCurrentPositionTimestampMs() { return mCurrentPositionTimestampMs; }
 
-  public void setCurrentPositionTimestamp(Long currentPositionTimestamp) { mCurrentPositionTimestamp = currentPositionTimestamp; }
+  public void setCurrentPositionTimestampMs(Long currentPositionTimestampMs) { mCurrentPositionTimestampMs = currentPositionTimestampMs; }
 
-  public Long getFirstPositionTimestamp() { return mFirstPositionTimestamp; }
+  public Long getFirstPositionTimestampMs() { return mFirstPositionTimestampMs; }
 
-  public void setFirstPositionTimestamp(Long firstPositionTimestamp) { mFirstPositionTimestamp = firstPositionTimestamp; }
+  public void setFirstPositionTimestampMs(Long firstPositionTimestampMs) { mFirstPositionTimestampMs = firstPositionTimestampMs; }
 
   public String getClosingRemark() { return mClosingRemark; }
 

@@ -223,8 +223,8 @@ public class Utils {
     return "at night";
   }
 
-  public static String humanPastDate(long unixEpoc) {
-    return humanPastDate(new Date(unixEpoc * 1000));
+  public static String humanPastDateFromMs(long unixEpochMs) {
+    return humanPastDate(new Date(unixEpochMs));
   }
 
   public static String humanPastDate(Date pastDate) {
