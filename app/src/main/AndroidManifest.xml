@@ -19,7 +19,9 @@
     android:name=".ReadTrackerApp"
     android:theme="@style/ReadTrackerTheme">
 
-    <activity android:name=".activities.HomeActivity">
+    <activity
+      android:name=".activities.HomeActivity"
+      android:launchMode="singleTop">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
         <category android:name="android.intent.category.LAUNCHER"/>
