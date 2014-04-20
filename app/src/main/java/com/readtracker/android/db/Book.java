@@ -163,13 +163,13 @@ public class Book extends Model {
 
   /** Returns an estimated time left, based on the progress and time of all loaded sessions. */
   public int calculateEstimatedSecondsLeft() {
-    if(mState != State.Reading || mCurrentPosition <= 0.0 || mCurrentPosition >= 1.0) {
+    if(mState != State.Reading || getCurrentPosition() <= 0.0 || getCurrentPosition() >= 1.0) {
       return 0;
     }
 
     final long secondsSpent = calculateSecondsSpent();
-    final float secondsPerPosition = secondsSpent / mCurrentPosition; // TODO use start-end for sessions for accuracy
-    final float positionsToRead = 1.0f - mCurrentPosition;
+    final float secondsPerPosition = secondsSpent / getCurrentPosition(); // TODO use start-end for sessions for accuracy
+    final float positionsToRead = 1.0f - getCurrentPosition();
 
     return (int) (positionsToRead * secondsPerPosition);
   }
