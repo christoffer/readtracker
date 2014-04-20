@@ -9,7 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.readtracker.android.R;
+import com.readtracker.R;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;

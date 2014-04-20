@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.readtracker.android.R;
+import com.readtracker.R;
 import com.readtracker.android.db.Quote;
 import com.readtracker.android.support.DrawableGenerator;
 import com.readtracker.android.support.Utils;

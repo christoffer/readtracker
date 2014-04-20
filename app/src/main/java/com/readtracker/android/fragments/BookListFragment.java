@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
-import com.readtracker.android.R;
+import com.readtracker.R;
 import com.readtracker.android.ReadTrackerApp;
 import com.readtracker.android.activities.HomeActivity;
 import com.readtracker.android.adapters.BookAdapter;

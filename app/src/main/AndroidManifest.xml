@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.readtracker.android"
-          android:versionCode="15"
-          android:versionName="3.0.4">
+          package="com.readtracker"
+          android:versionCode="16"
+          android:versionName="3.1">
 
   <uses-permission android:name="android.permission.INTERNET"/>
   <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
@@ -16,11 +16,11 @@
     android:allowBackup="true"
     android:icon="@drawable/icon"
     android:label="@string/app_name"
-    android:name=".ReadTrackerApp"
+    android:name=".android.ReadTrackerApp"
     android:theme="@style/ReadTrackerTheme">
 
     <activity
-      android:name=".activities.HomeActivity"
+      android:name=".android.activities.HomeActivity"
       android:launchMode="singleTop">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
@@ -29,7 +29,7 @@
     </activity>
 
     <activity
-      android:name=".activities.BookSearchActivity"
+      android:name=".android.activities.BookSearchActivity"
       android:label="@string/activity_label_add_book"
       android:parentActivityName="com.readtracker.android.activities.HomeActivity"
       android:launchMode="singleTop">
@@ -39,7 +39,7 @@
     </activity>
 
     <activity
-      android:name=".activities.AddBookActivity"
+      android:name=".android.activities.AddBookActivity"
       android:noHistory="true"
       android:label="@string/activity_label_add_book"
       android:windowSoftInputMode="adjustPan"
@@ -50,7 +50,7 @@
     </activity>
 
     <activity
-      android:name=".activities.BookActivity"
+      android:name=".android.activities.BookActivity"
       android:parentActivityName="com.readtracker.android.activities.HomeActivity"
       android:label=""
       android:launchMode="singleTop">
@@ -61,7 +61,7 @@
     </activity>
 
     <activity
-      android:name=".activities.FinishBookActivity"
+      android:name=".android.activities.FinishBookActivity"
       android:parentActivityName="com.readtracker.android.activities.BookActivity">
       <meta-data
         android:name="android.support.PARENT_ACTIVITY"
@@ -69,7 +69,7 @@
     </activity>
 
     <activity
-      android:name=".activities.AddQuoteActivity"
+      android:name=".android.activities.AddQuoteActivity"
       android:parentActivityName="com.readtracker.android.activities.BookActivity">
       <meta-data
         android:name="android.support.PARENT_ACTIVITY"
@@ -77,7 +77,7 @@
     </activity>
 
     <activity
-      android:name=".activities.SettingsActivity"
+      android:name=".android.activities.SettingsActivity"
       android:label="@string/activity_label_settings"
       android:parentActivityName="com.readtracker.android.activities.HomeActivity">
       <meta-data
@@ -85,7 +85,7 @@
         android:value="com.readtracker.android.activities.HomeActivity"/>>
     </activity>
 
-    <activity android:name=".activities.InAppBrowserActivity"/>
+    <activity android:name=".android.activities.InAppBrowserActivity"/>
 
   </application>
 

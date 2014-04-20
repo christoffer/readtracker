@@ -4,7 +4,7 @@ package com.readtracker.android.support;
 import android.graphics.Color;
 import android.text.TextUtils;
 
-import com.readtracker.android.R;
+import com.readtracker.R;
 import com.readtracker.android.db.Book;
 import com.readtracker.android.db.Session;
 

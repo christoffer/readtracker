@@ -19,8 +19,8 @@ import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.readtracker.android.BuildConfig;
-import com.readtracker.android.R;
+import com.readtracker.BuildConfig;
+import com.readtracker.R;
 import com.readtracker.android.activities.BaseActivity;
 import com.readtracker.android.activities.BookActivity;
 import com.readtracker.android.custom_views.PauseableSpinAnimation;

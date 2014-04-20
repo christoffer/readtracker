@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.webkit.WebView;
 
 import com.readtracker.android.IntentKeys;
-import com.readtracker.android.R;
+import com.readtracker.R;
 
 /** Generic WebView for viewing a http url. */
 public class InAppBrowserActivity extends Activity {

@@ -17,7 +17,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.readtracker.android.R;
+import com.readtracker.R;
 import com.readtracker.android.ReadTrackerApp;
 import com.readtracker.android.db.Book;
 import com.readtracker.android.db.DatabaseManager;

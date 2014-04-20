@@ -9,7 +9,7 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.widget.Toast;
 
-import com.readtracker.android.BuildConfig;
+import com.readtracker.BuildConfig;
 import com.readtracker.android.ReadTrackerApp;
 import com.readtracker.android.db.DatabaseManager;
 import com.readtracker.android.interfaces.BackgroundJob;

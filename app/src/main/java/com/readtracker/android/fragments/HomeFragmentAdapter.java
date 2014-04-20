@@ -5,7 +5,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.util.Log;
 
-import com.readtracker.android.R;
+import com.readtracker.R;
 import com.readtracker.android.activities.BaseActivity;
 import com.readtracker.android.db.Book;
 

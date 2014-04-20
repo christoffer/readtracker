@@ -16,7 +16,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.readtracker.android.R;
+import com.readtracker.R;
 import com.readtracker.android.activities.AddBookActivity;
 import com.readtracker.android.activities.AddQuoteActivity;
 import com.readtracker.android.activities.BookActivity;

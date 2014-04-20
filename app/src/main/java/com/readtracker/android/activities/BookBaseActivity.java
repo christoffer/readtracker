@@ -10,8 +10,8 @@ import android.util.TypedValue;
 import android.view.MenuItem;
 import android.widget.ImageView;
 
-import com.readtracker.android.BuildConfig;
-import com.readtracker.android.R;
+import com.readtracker.BuildConfig;
+import com.readtracker.R;
 import com.readtracker.android.db.Book;
 import com.readtracker.android.db.DatabaseManager;
 import com.squareup.picasso.Picasso;
@@ -39,7 +39,6 @@ public abstract class BookBaseActivity extends BaseActivity {
 
   protected void loadBook(int bookId) {
     if(mLoadDataTask != null) {
-      Log.w(TAG, "Already has running load data task, skipping...");
       return;
     }
 

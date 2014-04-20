@@ -10,7 +10,7 @@ import android.util.Log;
 
 import com.readtracker.android.ReadTrackerApp;
 import com.readtracker.android.IntentKeys;
-import com.readtracker.android.R;
+import com.readtracker.R;
 import com.readtracker.android.SettingsKeys;
 
 public class SettingsActivity extends PreferenceActivity {

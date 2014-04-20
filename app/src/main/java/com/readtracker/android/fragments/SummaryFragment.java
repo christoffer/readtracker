@@ -10,7 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.readtracker.android.R;
+import com.readtracker.R;
 import com.readtracker.android.activities.BookBaseActivity;
 import com.readtracker.android.custom_views.SegmentBar;
 import com.readtracker.android.custom_views.SessionView;

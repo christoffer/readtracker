@@ -12,7 +12,7 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
 
-import com.readtracker.android.R;
+import com.readtracker.R;
 import com.readtracker.android.db.Session;
 import com.readtracker.android.support.Utils;
 

@@ -11,7 +11,7 @@ import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
-import com.readtracker.android.R;
+import com.readtracker.R;
 import com.readtracker.android.activities.HomeActivity;
 import com.readtracker.android.custom_views.SegmentBar;
 import com.readtracker.android.db.Book;

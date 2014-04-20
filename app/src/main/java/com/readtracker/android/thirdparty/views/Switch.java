@@ -22,7 +22,7 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.widget.CompoundButton;
 
-import com.readtracker.android.R;
+import com.readtracker.R;
 import com.readtracker.android.thirdparty.text.method.TransformationMethodCompat2;
 
 /**

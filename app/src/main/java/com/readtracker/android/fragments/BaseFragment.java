@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 
-import com.readtracker.android.BuildConfig;
+import com.readtracker.BuildConfig;
 import com.readtracker.android.activities.BaseActivity;
 import com.readtracker.android.db.DatabaseManager;
 import com.squareup.otto.Bus;

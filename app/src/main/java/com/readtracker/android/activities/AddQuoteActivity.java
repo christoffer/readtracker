@@ -15,7 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.readtracker.android.R;
+import com.readtracker.R;
 import com.readtracker.android.custom_views.ProgressPicker;
 import com.readtracker.android.db.Book;
 import com.readtracker.android.db.DatabaseManager;
@@ -125,7 +125,7 @@ public class AddQuoteActivity extends BookBaseActivity {
     DrawableGenerator.applyButtonBackground(color, mSaveButton);
     mSaveButton.setEnabled(true);
 
-    float quotePosition = book.getCurrentPosition();
+    Float quotePosition = book.getCurrentPosition();
     if(mEditQuote != null) {
       mQuoteTextEdit.setText(mEditQuote.getContent());
       quotePosition = mEditQuote.getPosition();
@@ -135,7 +135,7 @@ public class AddQuoteActivity extends BookBaseActivity {
     }
 
     if(book.hasPageNumbers()) {
-      mProgressPicker.setPositionAndPageCount(quotePosition, book.getPageCount());
+      mProgressPicker.setPositionAndPageCount(quotePosition == null ? 0 : quotePosition, book.getPageCount());
     } else {
       mProgressPicker.setVisibility(View.GONE);
       findViewById(R.id.textLabelEnterPosition).setVisibility(View.GONE);
