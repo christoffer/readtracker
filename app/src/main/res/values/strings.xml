@@ -69,9 +69,11 @@
   <string name="reading_list_blank_content_desc">Blank reading list</string>
   <string name="reading_list_blank">No books</string>
 
-  <string name="general_delete">Delete</string>
-  <string name="general_cancel">Cancel</string>
   <string name="general_save">Save</string>
+  <string name="general_cancel">Cancel</string>
+  <string name="general_add">Add</string>
+  <string name="general_delete">Delete</string>
+
   <string name="general_author">Author</string>
   <string name="general_title">Title</string>
   <string name="general_unknown_title">Unknown title</string>
@@ -88,4 +90,7 @@
   <string name="end_session_where_did_you_stop_reading">Where did you stop reading?</string>
   <string name="end_session_scroll_to_end_to_finish">Scroll to the very end if you finished the book</string>
   <string name="end_session_finish_book">Finish book</string>
+
+  <string name="add_quote_delete_quote">Delete Quote</string>
+  <string name="add_quote_delete_explanation">This will delete the quote.\n\nThere is no way to undo this operation.</string>
 </resources>

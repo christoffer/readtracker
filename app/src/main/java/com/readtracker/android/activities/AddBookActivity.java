@@ -35,6 +35,8 @@ public class AddBookActivity extends BookBaseActivity {
   public static final int RESULT_ADDED_BOOK = RESULT_FIRST_USER + 1;
   public static final int RESULT_DELETED_BOOK = RESULT_FIRST_USER + 2;
 
+  public static final String KEY_QUOTE_ID = "QUOTE_ID";
+
   @InjectView(R.id.title_edit) EditText mTitleEdit;
   @InjectView(R.id.author_edit) EditText mAuthorEdit;
   @InjectView(R.id.page_count_edit) EditText mPageCountEdit;
