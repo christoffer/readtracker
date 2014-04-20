@@ -21,6 +21,7 @@ import com.squareup.otto.Subscribe;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -38,9 +39,12 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
   // Layout to inflate when rendering items
   private int mLayoutResource;
 
-  private static Comparator<String> sBookComparator = new Comparator<String>() {
-    @Override public int compare(String keyA, String keyB) {
-      return 0;
+  private static Comparator<Book> sBookComparator = new Comparator<Book>() {
+    @Override public int compare(Book a, Book b) {
+      final long keyA = a.getCurrentPositionTimestampMs() == null ? 0 : a.getCurrentPositionTimestampMs();
+      final long keyB = b.getCurrentPositionTimestampMs() == null ? 0 : b.getCurrentPositionTimestampMs();
+
+      return keyB < keyA ? -1 : (keyA > keyB ? 1 : 0);
     }
   };
 
@@ -56,37 +60,15 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
     mStateFilter = stateFilter;
   }
 
-  @Subscribe public void onCatalogueLoadedEvent(HomeActivity.CatalogueLoadedEvent event) {
-    Log.d(TAG, "Adapter got books: " + event.getBooks().size());
-    addOrUpdateExistingEntires(event.getBooks());
-    removeDeletedEntries(event.getBooks());
+  public void sortBooks() {
+    Collections.sort(mBooks, sBookComparator);
 
     notifyDataSetChanged();
   }
 
-  private void addOrUpdateExistingEntires(List<Book> updatedCatalogue) {
-    for(Book book : updatedCatalogue) {
-      if(mStateFilter == null || book.getState() == mStateFilter) {
-        Log.v(TAG, String.format("Adding entry: %s", book));
-        int position = mBooks.indexOf(book);
-        if(position < 0) { // Not in adapter
-          mBooks.add(book);
-        } else { // Already in adapter
-          mBooks.remove(position);
-          mBooks.add(position, book);
-        }
-      }
-    }
-  }
-
-  private void removeDeletedEntries(List<Book> updatedCatalogue) {
-    for(Iterator<Book> iterator = mBooks.iterator(); iterator.hasNext(); ) {
-      final Book book = iterator.next();
-      if(!updatedCatalogue.contains(book)) {
-        Log.v(TAG, String.format("Removing entry: %s", book));
-        iterator.remove();
-      }
-    }
+  @Subscribe public void onCatalogueLoadedEvent(HomeActivity.CatalogueLoadedEvent event) {
+    Log.d(TAG, "Adapter got books: " + event.getBooks().size());
+    setBooks(event.getBooks());
   }
 
   @Override public int getCount() {
@@ -128,6 +110,38 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
 
   @Override public boolean isEnabled(int position) {
     return true;
+  }
+
+  /** Sets the list of books to display. */
+  public void setBooks(List<Book> books) {
+    addOrUpdateExistingEntries(books);
+    removeDeletedEntries(books);
+    sortBooks();
+  }
+
+  private void addOrUpdateExistingEntries(List<Book> updatedCatalogue) {
+    for(Book book : updatedCatalogue) {
+      if(mStateFilter == null || book.getState() == mStateFilter) {
+        Log.v(TAG, String.format("Adding entry: %s", book));
+        int position = mBooks.indexOf(book);
+        if(position < 0) { // Not in adapter
+          mBooks.add(book);
+        } else { // Already in adapter
+          mBooks.remove(position);
+          mBooks.add(position, book);
+        }
+      }
+    }
+  }
+
+  private void removeDeletedEntries(List<Book> updatedCatalogue) {
+    for(Iterator<Book> iterator = mBooks.iterator(); iterator.hasNext(); ) {
+      final Book book = iterator.next();
+      if(!updatedCatalogue.contains(book)) {
+        Log.v(TAG, String.format("Removing entry: %s", book));
+        iterator.remove();
+      }
+    }
   }
 
   static class ViewHolder {
