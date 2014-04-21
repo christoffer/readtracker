@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.readtracker"
-          android:versionCode="16"
-          android:versionName="3.1">
+          android:versionCode="0"
+          android:versionName="Values taken from build.gradle">
 
   <uses-permission android:name="android.permission.INTERNET"/>
   <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
