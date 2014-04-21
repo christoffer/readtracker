@@ -142,6 +142,7 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialog.E
   protected void onBookLoaded(Book book) {
     Log.v(TAG, "Book loaded: " + book);
     mCurrentSession.setBook(book);
+    mCurrentSession.setStartPosition(book.getCurrentPosition());
     postEvent(new BookLoadedEvent(book));
     setupFragments(book);
     mPagerTabStrip.setVisibility(View.VISIBLE);
