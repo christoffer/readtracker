@@ -64,6 +64,7 @@ public class HomeActivity extends BaseActivity {
     pagerTabStrip.setTabIndicatorColor(getResources().getColor(R.color.base_color));
 
     resetFragmentAdapter();
+    loadBooks();
     mViewPager.setCurrentItem(mFragmentAdapter.getDefaultPage());
   }
 

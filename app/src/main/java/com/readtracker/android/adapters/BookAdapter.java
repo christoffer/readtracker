@@ -121,15 +121,18 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
 
   private void addOrUpdateExistingEntries(List<Book> updatedCatalogue) {
     for(Book book : updatedCatalogue) {
+      int position = mBooks.indexOf(book);
       if(mStateFilter == null || book.getState() == mStateFilter) {
         Log.v(TAG, String.format("Adding entry: %s", book));
-        int position = mBooks.indexOf(book);
         if(position < 0) { // Not in adapter
           mBooks.add(book);
         } else { // Already in adapter
           mBooks.remove(position);
           mBooks.add(position, book);
         }
+      } else if(position >= 0) {
+        Log.v(TAG, String.format("Removing existing filtered entry: %s", book));
+        mBooks.remove(position);
       }
     }
   }
