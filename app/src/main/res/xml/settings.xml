@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <PreferenceCategory android:title="Settings">
-        <CheckBoxPreference
-            android:title="Compact finish list"
-            android:summary="Hides the closing remarks for finished books"
-            android:key="settings.compact_finish_list" />
-    </PreferenceCategory>
+  <PreferenceCategory android:title="@string/settings_title_settings">
+    <CheckBoxPreference
+      android:title="@string/settings_compact_finish_list"
+      android:summary="@string/settings_compact_finish_list_summary"
+      android:key="settings.compact_finish_list"/>
+  </PreferenceCategory>
 
-    <PreferenceCategory android:title="About">
-        <Preference
-            android:title="Version"
-            android:key="about.version" />
-        <Preference
-            android:title="Legal"
-            android:key="about.legal" />
-    </PreferenceCategory>
+  <PreferenceCategory android:title="@string/settings_title_about">
+    <Preference
+      android:title="@string/settings_version"
+      android:key="about.version"/>
+    <Preference
+      android:title="@string/settings_legal"
+      android:key="about.legal"/>
+  </PreferenceCategory>
 </PreferenceScreen>
