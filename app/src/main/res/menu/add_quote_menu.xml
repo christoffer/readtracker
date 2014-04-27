@@ -6,6 +6,6 @@
     android:id="@+id/add_quote_delete"
     android:title="@string/add_quote_delete_quote"
     android:titleCondensed="@string/general_delete"
-    android:icon="@android:drawable/ic_menu_delete"
+    android:icon="@drawable/delete"
     app:showAsAction="ifRoom"/>
 </menu>
