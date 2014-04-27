@@ -76,7 +76,7 @@ public class SettingsActivity extends PreferenceActivity {
           startActivity(Intent.createChooser(exportIntent, getString(R.string.settings_export_json_save_data)));
         } else {
           Log.w(TAG, "Failed to export to disk");
-          Toast.makeText(this, R.string.settings_export_json_failed, Toast.LENGTH_SHORT).show();
+          Toast.makeText(SettingsActivity.this, R.string.settings_export_json_failed, Toast.LENGTH_SHORT).show();
         }
         return true;
       }
