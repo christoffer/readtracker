@@ -24,6 +24,7 @@ public class SettingsActivity extends PreferenceActivity {
   private static final String EXPORT_JSON = "data.export_json";
   private static final String ABOUT_VERSION = "about.version";
   private static final String ABOUT_LEGAL = "about.legal";
+  private static final String ICONS8 = "about.icons8";
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +44,15 @@ public class SettingsActivity extends PreferenceActivity {
       public boolean onPreferenceClick(Preference preference) {
         Intent intentWebView = new Intent(SettingsActivity.this, InAppBrowserActivity.class);
         intentWebView.putExtra(IntentKeys.WEB_VIEW_URL, "file:///android_asset/legal.html");
+        startActivity(intentWebView);
+        return true;
+      }
+    });
+
+    Preference icons8 = findPreference(ICONS8);
+    icons8.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+      @Override public boolean onPreferenceClick(Preference preference) {
+        Intent intentWebView = new Intent(Intent.ACTION_VIEW, Uri.parse("http://icons8.com/"));
         startActivity(intentWebView);
         return true;
       }
@@ -76,7 +86,7 @@ public class SettingsActivity extends PreferenceActivity {
           startActivity(Intent.createChooser(exportIntent, getString(R.string.settings_export_json_save_data)));
         } else {
           Log.w(TAG, "Failed to export to disk");
-          Toast.makeText(this, R.string.settings_export_json_failed, Toast.LENGTH_SHORT).show();
+          Toast.makeText(SettingsActivity.this, R.string.settings_export_json_failed, Toast.LENGTH_SHORT).show();
         }
         return true;
       }

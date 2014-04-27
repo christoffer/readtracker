@@ -103,5 +103,6 @@
   <string name="settings_title_data">Data</string>
   <string name="settings_title_about">About</string>
   <string name="settings_version">Version</string>
+  <string name="settings_icons_by">Icons by <b>Icons8</b></string>
   <string name="settings_legal">Legal</string>
 </resources>
