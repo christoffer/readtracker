@@ -2,15 +2,20 @@ package com.readtracker.android.activities;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.readtracker.R;
 import com.readtracker.android.IntentKeys;
 import com.readtracker.android.ReadTrackerApp;
+import com.readtracker.android.db.export.JSONExporter;
+
+import java.io.File;
 
 public class SettingsActivity extends PreferenceActivity {
   private static final String TAG = SettingsActivity.class.getName();
@@ -57,6 +62,22 @@ public class SettingsActivity extends PreferenceActivity {
       }
     });
 
+    final Preference exportData = findPreference(EXPORT_JSON);
+    exportData.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+      @Override public boolean onPreferenceClick(Preference preference) {
+        final String jsonFile = JSONExporter.from(SettingsActivity.this).exportToDisk();
+        if(jsonFile != null) {
+          File file = new File(jsonFile);
+          assert file.exists();
+          Uri uri = Uri.fromFile(file);
+          Intent exportIntent = new Intent(Intent.ACTION_SEND);
+          exportIntent.putExtra(Intent.EXTRA_STREAM, uri);
+          exportIntent.setType("text/plain");
+          startActivity(Intent.createChooser(exportIntent, getString(R.string.settings_export_json_save_data)));
+        } else {
+          Log.w(TAG, "Failed to export to disk");
+          Toast.makeText(this, R.string.settings_export_json_failed, Toast.LENGTH_SHORT).show();
+        }
         return true;
       }
     });

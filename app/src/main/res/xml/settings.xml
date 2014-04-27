@@ -7,6 +7,13 @@
       android:key="settings.compact_finish_list"/>
   </PreferenceCategory>
 
+  <PreferenceCategory android:title="@string/settings_title_data">
+    <Preference
+      android:title="@string/settings_export_json"
+      android:summary="@string/settings_export_summary"
+      android:key="data.export_json"/>
+  </PreferenceCategory>
+
   <PreferenceCategory android:title="@string/settings_title_about">
     <Preference
       android:title="@string/settings_version"

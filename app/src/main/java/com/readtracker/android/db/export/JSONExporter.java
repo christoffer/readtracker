@@ -1,36 +1,90 @@
 package com.readtracker.android.db.export;
 
+import android.app.Activity;
+import android.content.Context;
+import android.os.Environment;
+import android.preference.Preference;
+import android.util.Log;
+
+import com.readtracker.android.ReadTrackerApp;
 import com.readtracker.android.db.Book;
 import com.readtracker.android.db.DatabaseManager;
 import com.readtracker.android.db.Quote;
 import com.readtracker.android.db.Session;
+import com.readtracker.android.support.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
+import java.util.zip.CheckedOutputStream;
 
 /** Serializer and deserializer of model data to and from JSON. */
 public class JSONExporter {
+  private static final String TAG = JSONExporter.class.getSimpleName();
+
+  private static final String DEFAULT_EXPORT_FILENAME = "readtracker.json";
+
   private final DatabaseManager mDatabaseMgr;
 
-  public JSONExporter(DatabaseManager db) {
+  public static JSONExporter from(Activity activity) {
+    Context context = activity;
+    return new JSONExporter(((ReadTrackerApp) activity.getApplication()).getDatabaseManager());
+  }
+
+  JSONExporter(DatabaseManager db) {
     mDatabaseMgr = db;
   }
 
+  /**
+   * Exports all model data to the default path.
+   * @return full path to the written file if successfully exported, <code>null</code> otherwise.
+   */
+  public String exportToDisk() {
+    File outputDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+    String path = new File(outputDir, DEFAULT_EXPORT_FILENAME).getAbsolutePath();
+    return exportToDisk(path);
+  }
+
+  /**
+   * Exports all model data to a file.
+   * @return full path to the written file if successfully exported, <code>null</code> otherwise.
+   */
+  public String exportToDisk(String path)  {
+    try {
+      final String jsonData = exportAll();
+      FileOutputStream fos = new FileOutputStream(path);
+      fos.write(jsonData.getBytes());
+      fos.close();
+      return path;
+    } catch(JSONException ex) {
+      Log.w(TAG, "Failed to export JSON data", ex);
+    } catch(FileNotFoundException ex) {
+      Log.w(TAG, "Failed to export JSON data", ex);
+    } catch(IOException ex) {
+      Log.w(TAG, "Failed to export JSON data", ex);
+    }
+
+    return null;
+  }
+
   /** Exports all model data as a JSON string. */
-  public String exportAll() throws JSONException {
+  private String exportAll() throws JSONException {
     List<Book> books = mDatabaseMgr.getAll(Book.class);
-    StringBuilder json = new StringBuilder();
+    StringBuilder jsonSB = new StringBuilder();
 
     for(Book book : books) {
       book.loadQuotes(mDatabaseMgr);
       book.loadSessions(mDatabaseMgr);
-      json.append(exportCompleteBook(book));
+      jsonSB.append(exportCompleteBook(book));
     }
 
-    return json.toString();
+    return jsonSB.toString();
   }
 
   private String exportCompleteBook(Book book) throws JSONException {
@@ -38,7 +92,7 @@ public class JSONExporter {
     json.put("sessions", createSessionListJson(book.getSessions()));
     json.put("quotes", createQuoteListJson(book.getQuotes()));
 
-    return json.toString();
+    return json.toString(4);
   }
 
   private JSONArray createSessionListJson(List<Session> sessions) throws JSONException {
