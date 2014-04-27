@@ -165,8 +165,7 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
       }
 
       if(coverImage != null) {
-        // TODO nicer default cover
-        coverImage.setImageResource(android.R.drawable.ic_menu_gallery);
+        coverImage.setImageResource(R.drawable.bookmark);
         if(!TextUtils.isEmpty(book.getCoverImageUrl())) {
           coverImage.setVisibility(View.VISIBLE);
           Picasso.with(coverImage.getContext()).load(book.getCoverImageUrl()).into(coverImage);

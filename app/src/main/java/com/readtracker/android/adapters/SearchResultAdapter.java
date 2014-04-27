@@ -58,10 +58,10 @@ public class SearchResultAdapter extends ArrayAdapter<BookItem> {
     // Assign values from the item to the view
     viewHolder.textTitle.setText(item.title);
     viewHolder.textAuthor.setText(item.author);
-    viewHolder.imageCover.setImageResource(android.R.drawable.ic_menu_gallery);
+    viewHolder.imageCover.setImageResource(R.drawable.bookmark);
 
     if(item.coverURL != null) {
-      viewHolder.imageCover.setImageResource(android.R.drawable.ic_menu_gallery);
+      viewHolder.imageCover.setImageResource(R.drawable.bookmark);
       viewHolder.imageCover.setVisibility(View.VISIBLE);
       if(!TextUtils.isEmpty(item.coverURL)) {
         Picasso.with(getContext()).load(item.coverURL).into(viewHolder.imageCover);

@@ -102,7 +102,12 @@ public abstract class BookBaseActivity extends BaseActivity {
       if(homeIcon != null && !TextUtils.isEmpty(book.getCoverImageUrl())) {
         int size = getActionBarHeight();
         if(size == 0) size = 48; // Arbitrary default value
-        Picasso.with(this).load(book.getCoverImageUrl()).placeholder(R.drawable.icon_refresh).resize(size, size).centerCrop().into(homeIcon);
+        Picasso.with(this)
+            .load(book.getCoverImageUrl())
+            .placeholder(R.drawable.bookmark)
+            .resize(size, size)
+            .centerCrop()
+            .into(homeIcon);
         actionBar.setDisplayShowHomeEnabled(true);
       }
     }
