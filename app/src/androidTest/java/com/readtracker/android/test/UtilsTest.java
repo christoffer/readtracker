@@ -1,7 +1,6 @@
 package com.readtracker.android.test;
 
 import com.readtracker.android.db.Session;
-import com.readtracker.android.support.SessionTimer;
 import com.readtracker.android.support.Utils;
 
 import junit.framework.TestCase;
@@ -75,9 +74,15 @@ public class UtilsTest extends TestCase {
   }
 
   public void test_getSessionStops() {
-    Session first = new Session() {{ setEndPosition(0.2f); }};
-    Session second = new Session() {{ setEndPosition(0.3f); }};
-    Session third = new Session() {{ setEndPosition(0.4f); }};
+    Session first = new Session() {{
+      setEndPosition(0.2f);
+    }};
+    Session second = new Session() {{
+      setEndPosition(0.3f);
+    }};
+    Session third = new Session() {{
+      setEndPosition(0.4f);
+    }};
 
     List<Session> sessions = Arrays.asList(third, first, second);
 

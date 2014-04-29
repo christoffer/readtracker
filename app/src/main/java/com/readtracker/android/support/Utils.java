@@ -41,44 +41,6 @@ public class Utils {
   }
 
   /**
-   * Returns a string representation like "3 h, 12 min"
-   *
-   * @param duration the duration to represent
-   * @return the duration formatted as short hours and minutes
-   */
-  public static String shortHoursAndMinutesFromMillis(long duration) {
-    int[] hms = bucketMilliseconds(duration);
-    int hours = hms[0];
-    int minutes = hms[1];
-
-    if(hours == 0) {
-      return String.format("%d min", minutes);
-    } else {
-      return String.format("%d h, %d min", hours, minutes);
-    }
-  }
-
-  /**
-   * Returns a string representation like: "4h 23m 12s"
-   *
-   * @param duration duration in milliseconds to represent
-   * @return the given duration in a short human string representation
-   */
-  public static String shortHumanTimeFromMillis(long duration) {
-    int[] hms = bucketMilliseconds(duration);
-
-    if(hms[0] == 0 && hms[1] == 0) {
-      return String.format("%ss", hms[2]);
-    }
-
-    if(hms[0] == 0) {
-      return String.format("%sm %ss", hms[1], hms[2]);
-    }
-
-    return String.format("%sh %sm %ss", hms[0], hms[1], hms[2]);
-  }
-
-  /**
    * Returns a duration as x hours, y minutes and z seconds.
    * Parts that are 0 are left out.
    * For example:
@@ -99,20 +61,6 @@ public class Utils {
       parts.add(pluralizeWithCount(seconds, "second"));
 
     return toSentence(parts.toArray(new String[parts.size()]));
-  }
-
-  public static String longHumanTimeFromSeconds(long durationSeconds) {
-    return longHumanTimeFromMillis(durationSeconds * 1000);
-  }
-
-  /** Returns the text truncated to length maxLength, or returns the defaultText if text is empty. */
-  public static String truncateString(String text, int maxLength, String defaultText) {
-    if(text == null || text.length() == 0) {
-      return defaultText;
-    } else if(text.length() < maxLength) {
-      return text;
-    }
-    return text.substring(0, maxLength - 1) + "\u2026";
   }
 
   /**
@@ -148,57 +96,6 @@ public class Utils {
    */
   public static String pluralizeWithCount(int num, String noun) {
     return String.format("%d %s", num, pluralizeWord(num, noun));
-  }
-
-  public static long parseLong(String str, long defaultValue) {
-    try {
-      return Long.parseLong(str);
-    } catch(NumberFormatException ex) {
-      return defaultValue;
-    }
-  }
-
-  public static int parseInt(String str, int defaultValue) {
-    try {
-      return Integer.parseInt(str);
-    } catch(NumberFormatException ex) {
-      return defaultValue;
-    }
-  }
-
-  public static int getHoursFromMillis(long milliseconds) {
-    return bucketMilliseconds(milliseconds)[0];
-  }
-
-  public static int getMinutesFromMillis(long milliseconds) {
-    return bucketMilliseconds(milliseconds)[1];
-  }
-
-  public static int getSecondsFromMillis(long milliseconds) {
-    return bucketMilliseconds(milliseconds)[2];
-  }
-
-  public static String humanTimeOfDay(Date occurredAt) {
-    int hour = occurredAt.getHours();
-    if(hour >= 4 && hour < 9) {
-      return "in the morning";
-    }
-    if(hour >= 9 && hour < 11) {
-      return "midmorning";
-    }
-    if(hour >= 11 && hour < 13) {
-      return "around noon";
-    }
-    if(hour >= 13 && hour < 16) {
-      return "in the afternoon";
-    }
-    if(hour >= 16 && hour < 19) {
-      return "in the late afternoon";
-    }
-    if(hour >= 19 && hour < 23) {
-      return "in the evening";
-    }
-    return "at night";
   }
 
   /**
@@ -263,6 +160,7 @@ public class Utils {
     return String.format("%s and %s", joined.substring(0, joined.length() - 2), items[items.length - 1]);
   }
 
+  @SuppressWarnings("deprecation")
   private static String humanPastTime(Date then, Date now) {
     if(then.after(now)) {
       return "";
