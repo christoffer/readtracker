@@ -57,7 +57,7 @@ public class UtilsTest extends TestCase {
   }
 
   public void test_humanPastTimeFromTimestamp() {
-    final long now = 1398748456000L; /* arbitrary value */
+    final long now = 1009886564000L; /* some date at around noon */
     final long millisPast22November1981 = now - 375254055000L;
 
     HumanPastTimeHelper humanPastTimeHelper = new HumanPastTimeHelper(now);
