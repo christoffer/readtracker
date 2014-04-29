@@ -29,3 +29,5 @@ before_script:
 
 script:
   - ./gradlew connectedAndroidTest
+
+install: ./gradlew assembleDebugTest --stacktrace
