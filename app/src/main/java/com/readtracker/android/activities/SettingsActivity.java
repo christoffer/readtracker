@@ -14,6 +14,7 @@ import com.readtracker.R;
 import com.readtracker.android.IntentKeys;
 import com.readtracker.android.ReadTrackerApp;
 import com.readtracker.android.db.export.JSONExporter;
+import com.readtracker.android.support.ApplicationSettingsHelper;
 
 import java.io.File;
 
@@ -64,10 +65,7 @@ public class SettingsActivity extends PreferenceActivity {
       public boolean onPreferenceChange(Preference preference, Object value) {
         boolean isCompactMode = (Boolean) value;
         Log.i(TAG, "Changing compact mode to: " + isCompactMode);
-        ReadTrackerApp.getApplicationPreferences()
-            .edit()
-            .putBoolean(SETTINGS_COMPACT_FINISH_LIST, isCompactMode)
-            .commit();
+        ReadTrackerApp.from(SettingsActivity.this).getAppSettings().setCompactFinishList(isCompactMode);
         return true;
       }
     });

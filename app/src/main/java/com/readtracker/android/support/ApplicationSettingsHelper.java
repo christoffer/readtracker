@@ -17,6 +17,9 @@ public class ApplicationSettingsHelper {
   }
 
   public void setCompactFinishList(boolean value) {
-
+    mPreferences
+        .edit()
+        .putBoolean(KEY_COMPACT_FINISH_LIST, value)
+        .commit();
   }
 }
