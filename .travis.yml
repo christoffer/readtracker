@@ -25,7 +25,10 @@ before_install:
   - echo yes | android update sdk -a -t tools,platform-tools,extra-android-support,extra-android-m2repository,android-19,build-tools-19.0.1 --force --no-ui
 
 before_script:
+  - echo no | android create avd --force -n test -t android-19 --abi armeabi-v7a
+  - emulator -avd test -no-skin -no-audio -no-window &
   - bash scripts/wait_for_emulator.sh
+  - adb shell input keyevent 82 &
 
 script:
   - ./gradlew connectedAndroidTest
