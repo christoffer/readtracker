@@ -34,10 +34,15 @@ android {
                READTRACKER_RELEASE_KEY_ALIAS=*****
                READTRACKER_RELEASE_KEY_PASSWORD=*****
              */
-            storeFile file(READTRACKER_RELEASE_STORE_FILE)
-            storePassword READTRACKER_RELEASE_STORE_PASSWORD
-            keyAlias READTRACKER_RELEASE_KEY_ALIAS
-            keyPassword READTRACKER_RELEASE_KEY_PASSWORD
+
+            // Let the presences of READTRACKER_RELEASE_STORE_FILE serve as an indicator that
+            // gradle.properties is setup properly.
+            if(hasProperty('READTRACKER_RELEASE_STORE_FILE')) {
+                storeFile file(READTRACKER_RELEASE_STORE_FILE)
+                storePassword READTRACKER_RELEASE_STORE_PASSWORD
+                keyAlias READTRACKER_RELEASE_KEY_ALIAS
+                keyPassword READTRACKER_RELEASE_KEY_PASSWORD
+            }
         }
     }
 
