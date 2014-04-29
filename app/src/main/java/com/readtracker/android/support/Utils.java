@@ -2,9 +2,7 @@ package com.readtracker.android.support;
 
 
 import android.graphics.Color;
-import android.text.TextUtils;
 
-import com.readtracker.R;
 import com.readtracker.android.db.Book;
 import com.readtracker.android.db.Session;
 
@@ -28,7 +26,7 @@ public class Utils {
    * @return the duration formatted as full hours and minutes
    */
   public static String hoursAndMinutesFromMillis(long duration) {
-    int[] hms = convertMillisToHoursMinutesSeconds(duration);
+    int[] hms = bucketMilliseconds(duration);
     int hours = hms[0];
     int minutes = hms[1];
 
@@ -37,8 +35,8 @@ public class Utils {
     }
 
     return String.format("%s, %s",
-      pluralizeWithCount(hours, "hour"),
-      pluralizeWithCount(minutes, "minute")
+        pluralizeWithCount(hours, "hour"),
+        pluralizeWithCount(minutes, "minute")
     );
   }
 
@@ -49,7 +47,7 @@ public class Utils {
    * @return the duration formatted as short hours and minutes
    */
   public static String shortHoursAndMinutesFromMillis(long duration) {
-    int[] hms = convertMillisToHoursMinutesSeconds(duration);
+    int[] hms = bucketMilliseconds(duration);
     int hours = hms[0];
     int minutes = hms[1];
 
@@ -67,7 +65,7 @@ public class Utils {
    * @return the given duration in a short human string representation
    */
   public static String shortHumanTimeFromMillis(long duration) {
-    int[] hms = convertMillisToHoursMinutesSeconds(duration);
+    int[] hms = bucketMilliseconds(duration);
 
     if(hms[0] == 0 && hms[1] == 0) {
       return String.format("%ss", hms[2]);
@@ -80,8 +78,14 @@ public class Utils {
     return String.format("%sh %sm %ss", hms[0], hms[1], hms[2]);
   }
 
+  /**
+   * Returns a duration as x hours, y minutes and z seconds.
+   * Parts that are 0 are left out.
+   * For example:
+   * 3 hours and 12 seconds.
+   */
   public static String longHumanTimeFromMillis(long durationMillis) {
-    int[] hms = convertMillisToHoursMinutesSeconds(durationMillis);
+    int[] hms = bucketMilliseconds(durationMillis);
 
     int hours = hms[0];
     int minutes = hms[1];
@@ -89,10 +93,10 @@ public class Utils {
 
     ArrayList<String> parts = new ArrayList<String>(3);
 
-    if(hours > 0) parts.add(_pluralized(hours, "hour"));
-    if(minutes > 0) parts.add(_pluralized(minutes, "minute"));
+    if(hours > 0) parts.add(pluralizeWithCount(hours, "hour"));
+    if(minutes > 0) parts.add(pluralizeWithCount(minutes, "minute"));
     if(seconds > 0 || parts.size() == 0)
-      parts.add(_pluralized(seconds, "second"));
+      parts.add(pluralizeWithCount(seconds, "second"));
 
     return toSentence(parts.toArray(new String[parts.size()]));
   }
@@ -111,17 +115,16 @@ public class Utils {
     return text.substring(0, maxLength - 1) + "\u2026";
   }
 
-  private static String _pluralized(long number, String name) {
-    if(number == 1) {
-      return String.format("%d %s", number, name); // 1 hour
-    }
-    return String.format("%d %ss", number, name); // 4 hours
-  }
-
+  /**
+   * @see #longCoarseHumanTimeFromMillis(long)
+   */
   public static String longCoarseHumanTimeFromSeconds(long seconds) {
     return longCoarseHumanTimeFromMillis(seconds * 1000);
   }
 
+  /**
+   * Returns a string describing a duration in matter of hours and minutes.
+   */
   public static String longCoarseHumanTimeFromMillis(long durationMillis) {
     long durationSeconds = durationMillis / 1000;
     if(durationSeconds < 60) {
@@ -131,12 +134,20 @@ public class Utils {
     return longHumanTimeFromMillis(durationSeconds * 1000);
   }
 
-  public static String pluralize(int num, String noun) {
+  /**
+   * Returns the (english) pluralization of a word.
+   * e.g. "dog" vs. "dogs"
+   */
+  public static String pluralizeWord(int num, String noun) {
     return num == 1 ? noun : noun + (noun.endsWith("s") ? "es" : "s");
   }
 
+  /**
+   * Returns the count and pluralized version of a word.
+   * e.g. "1 dog" vs. "3 dogs"
+   */
   public static String pluralizeWithCount(int num, String noun) {
-    return String.format("%d %s", num, pluralize(num, noun));
+    return String.format("%d %s", num, pluralizeWord(num, noun));
   }
 
   public static long parseLong(String str, long defaultValue) {
@@ -155,49 +166,16 @@ public class Utils {
     }
   }
 
-  public static int[] convertMillisToHoursMinutesSeconds(long milliseconds) {
-    int seconds = (int) (milliseconds / 1000.d);
-    int minutes = (int) (seconds / 60.d);
-    int hours = (int) (minutes / 60.0d);
-
-    seconds = seconds - minutes * 60;
-    minutes = minutes - hours * 60;
-
-    return new int[] { hours, minutes, seconds };
-  }
-
   public static int getHoursFromMillis(long milliseconds) {
-    return convertMillisToHoursMinutesSeconds(milliseconds)[0];
+    return bucketMilliseconds(milliseconds)[0];
   }
 
   public static int getMinutesFromMillis(long milliseconds) {
-    return convertMillisToHoursMinutesSeconds(milliseconds)[1];
+    return bucketMilliseconds(milliseconds)[1];
   }
 
   public static int getSecondsFromMillis(long milliseconds) {
-    return convertMillisToHoursMinutesSeconds(milliseconds)[2];
-  }
-
-  /**
-   * Creates a sentence from a set of items.
-   */
-  public static String toSentence(String[] items) {
-    if(items.length == 0) {
-      return "";
-    }
-    if(items.length == 1) {
-      return items[0];
-    }
-    if(items.length == 2) {
-      return String.format("%s and %s", items[0], items[1]);
-    }
-
-    String joined = "";
-    for(int i = 0; i < items.length - 1; i++) {
-      joined += items[i] + ", ";
-    }
-
-    return String.format("%s and %s", joined.substring(0, joined.length() - 2), items[items.length - 1]);
+    return bucketMilliseconds(milliseconds)[2];
   }
 
   public static String humanTimeOfDay(Date occurredAt) {
@@ -223,16 +201,69 @@ public class Utils {
     return "at night";
   }
 
-  public static String humanPastDateFromMs(long unixEpochMs) {
-    return humanPastDate(new Date(unixEpochMs));
+  /**
+   * Returns a time difference in a human format.
+   * e.g. "about two weeks ago".
+   */
+  public static String humanPastTimeFromTimestamp(long unixEpochMs, long now) {
+    return humanPastTime(new Date(unixEpochMs), new Date(now));
   }
 
-  public static String humanPastDate(Date pastDate) {
-    return humanPastDate(new Date(), pastDate);
+  /** Return a color value to use for the book. */
+  public static int calculateBookColor(Book book) {
+    final String colorKey = book.getTitle() + book.getAuthor();
+    float color = 360 * (Math.abs(colorKey.hashCode()) / (float) Integer.MAX_VALUE);
+    return Color.HSVToColor(new float[]{color, 0.4f, 0.5f});
   }
 
-  // TODO internationalize
-  public static String humanPastDate(Date now, Date then) {
+  /** Returns the sessions a sorted stops list for the segmented progress bar. */
+  public static float[] getSessionStops(Collection<Session> sessions) {
+    float[] stops = new float[sessions.size()];
+    int i = 0;
+    for(Session session : sessions) {
+      stops[i++] = session.getEndPosition();
+    }
+
+    Arrays.sort(stops);
+    return stops;
+  }
+
+  /** Lifted from Google Guava. */
+  public static boolean equal(Object a, Object b) {
+    return a == b || (a != null && a.equals(b));
+  }
+
+  private static int[] bucketMilliseconds(long milliseconds) {
+    int seconds = (int) (milliseconds / 1000.d);
+    int minutes = (int) (seconds / 60.d);
+    int hours = (int) (minutes / 60.0d);
+
+    seconds = seconds - minutes * 60;
+    minutes = minutes - hours * 60;
+
+    return new int[]{hours, minutes, seconds};
+  }
+
+  private static String toSentence(String[] items) {
+    if(items.length == 0) {
+      return "";
+    }
+    if(items.length == 1) {
+      return items[0];
+    }
+    if(items.length == 2) {
+      return String.format("%s and %s", items[0], items[1]);
+    }
+
+    String joined = "";
+    for(int i = 0; i < items.length - 1; i++) {
+      joined += items[i] + ", ";
+    }
+
+    return String.format("%s and %s", joined.substring(0, joined.length() - 2), items[items.length - 1]);
+  }
+
+  private static String humanPastTime(Date then, Date now) {
     if(then.after(now)) {
       return "";
     }
@@ -284,29 +315,5 @@ public class Utils {
     final SimpleDateFormat dateFormat = new SimpleDateFormat("'on 'MMM d, yyyy", Locale.ENGLISH);
 
     return dateFormat.format(then);
-  }
-
-  /** Return a color value to use for the book. */
-  public static int calculateBookColor(Book book) {
-    final String colorKey = book.getTitle() + book.getAuthor();
-    float color = 360 * (Math.abs(colorKey.hashCode()) / (float) Integer.MAX_VALUE);
-    return Color.HSVToColor(new float[] { color, 0.4f, 0.5f });
-  }
-
-  /** Returns the sessions a sorted stops list for the segmented progress bar. */
-  public static float[] getSessionStops(Collection<Session> sessions) {
-    float[] stops = new float[sessions.size()];
-    int i = 0;
-    for(Session session : sessions) {
-      stops[i++] = session.getEndPosition();
-    }
-
-    Arrays.sort(stops);
-    return stops;
-  }
-
-  /** Lifted from Google Guava. */
-  public static boolean equal(Object a, Object b) {
-    return a == b || (a != null && a.equals(b));
   }
 }

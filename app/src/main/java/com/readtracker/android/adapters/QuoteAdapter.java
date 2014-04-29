@@ -56,7 +56,8 @@ public class QuoteAdapter extends ArrayAdapter<Quote> {
 
     TextView textDate = (TextView) convertView.findViewById(R.id.textDate);
 
-    String metadata = Utils.humanPastDateFromMs(quote.getAddTimestampMs());
+    final long now = System.currentTimeMillis();
+    String metadata = Utils.humanPastTimeFromTimestamp(quote.getAddTimestampMs(), now);
 
     textDate.setText(metadata);
     final int backgroundColor = getContext().getResources().getColor(R.color.background);
