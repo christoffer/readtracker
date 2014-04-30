@@ -72,11 +72,9 @@ public class SettingsActivity extends PreferenceActivity {
     final Preference exportData = findPreference(EXPORT_JSON);
     exportData.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
       @Override public boolean onPreferenceClick(Preference preference) {
-        final String jsonFile = JSONExporter.from(SettingsActivity.this).exportToDisk();
-        if(jsonFile != null) {
-          File file = new File(jsonFile);
-          assert file.exists();
-          Uri uri = Uri.fromFile(file);
+        final File exportedJsonFile = JSONExporter.from(SettingsActivity.this).exportToDisk();
+        if(exportedJsonFile != null && exportedJsonFile.exists()) {
+          Uri uri = Uri.fromFile(exportedJsonFile);
           Intent exportIntent = new Intent(Intent.ACTION_SEND);
           exportIntent.putExtra(Intent.EXTRA_STREAM, uri);
           exportIntent.setType("text/plain");

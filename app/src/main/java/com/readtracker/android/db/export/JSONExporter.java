@@ -40,25 +40,28 @@ public class JSONExporter {
 
   /**
    * Exports all model data to the default path.
-   * @return full path to the written file if successfully exported, <code>null</code> otherwise.
+   * @return the written file if successfully exported, <code>null</code> otherwise.
    */
-  public String exportToDisk() {
+  public File exportToDisk() {
     File outputDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-    String path = new File(outputDir, DEFAULT_EXPORT_FILENAME).getAbsolutePath();
-    return exportToDisk(path);
+    final File exportFile = new File(outputDir, DEFAULT_EXPORT_FILENAME);
+    if(exportToDisk(exportFile)) {
+      return exportFile;
+    }
+    return null;
   }
 
   /**
    * Exports all model data to a file.
-   * @return full path to the written file if successfully exported, <code>null</code> otherwise.
+   * @return true if exported, false otherwise.
    */
-  public String exportToDisk(String path)  {
+  public boolean exportToDisk(File outputFile)  {
     try {
       final String jsonData = exportAll();
-      FileOutputStream fos = new FileOutputStream(path);
+      FileOutputStream fos = new FileOutputStream(outputFile);
       fos.write(jsonData.getBytes());
       fos.close();
-      return path;
+      return true;
     } catch(JSONException ex) {
       Log.w(TAG, "Failed to export JSON data", ex);
     } catch(FileNotFoundException ex) {
@@ -67,7 +70,7 @@ public class JSONExporter {
       Log.w(TAG, "Failed to export JSON data", ex);
     }
 
-    return null;
+    return false;
   }
 
   /** Exports all model data as a JSON string. */
