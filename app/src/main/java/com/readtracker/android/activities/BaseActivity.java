@@ -12,7 +12,6 @@ import android.widget.Toast;
 import com.readtracker.BuildConfig;
 import com.readtracker.android.ReadTrackerApp;
 import com.readtracker.android.db.DatabaseManager;
-import com.readtracker.android.interfaces.BackgroundJob;
 import com.readtracker.android.support.ApplicationSettingsHelper;
 import com.squareup.otto.Bus;
 
