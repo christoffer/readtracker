@@ -19,8 +19,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
-import com.readtracker.android.IntentKeys;
 import com.readtracker.R;
+import com.readtracker.android.IntentKeys;
 import com.readtracker.android.adapters.BookItem;
 import com.readtracker.android.adapters.GoogleBookItem;
 import com.readtracker.android.adapters.SearchResultAdapter;

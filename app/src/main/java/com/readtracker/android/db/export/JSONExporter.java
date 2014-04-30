@@ -3,7 +3,6 @@ package com.readtracker.android.db.export;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Environment;
-import android.preference.Preference;
 import android.util.Log;
 
 import com.readtracker.android.ReadTrackerApp;
@@ -11,7 +10,6 @@ import com.readtracker.android.db.Book;
 import com.readtracker.android.db.DatabaseManager;
 import com.readtracker.android.db.Quote;
 import com.readtracker.android.db.Session;
-import com.readtracker.android.support.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -22,7 +20,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
-import java.util.zip.CheckedOutputStream;
 
 /** Serializer and deserializer of model data to and from JSON. */
 public class JSONExporter {

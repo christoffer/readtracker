@@ -23,7 +23,6 @@ import com.readtracker.android.db.Book;
 import com.readtracker.android.db.DatabaseManager;
 import com.readtracker.android.fragments.BookListFragment;
 import com.readtracker.android.fragments.HomeFragmentAdapter;
-import com.squareup.otto.Produce;
 import com.squareup.otto.Subscribe;
 
 import java.lang.ref.WeakReference;

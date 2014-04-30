@@ -2,7 +2,6 @@ package com.readtracker.android.activities;
 
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -14,9 +13,6 @@ import com.readtracker.android.ReadTrackerApp;
 import com.readtracker.android.db.DatabaseManager;
 import com.readtracker.android.support.ApplicationSettingsHelper;
 import com.squareup.otto.Bus;
-
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 
 /**
  * Base activity

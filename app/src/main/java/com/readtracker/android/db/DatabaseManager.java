@@ -3,9 +3,7 @@ package com.readtracker.android.db;
 import android.util.Log;
 
 import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.SelectArg;
-import com.j256.ormlite.stmt.Where;
 
 import org.jetbrains.annotations.Nullable;
 

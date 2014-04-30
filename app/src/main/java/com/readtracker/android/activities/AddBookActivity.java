@@ -15,8 +15,8 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 
-import com.readtracker.android.IntentKeys;
 import com.readtracker.R;
+import com.readtracker.android.IntentKeys;
 import com.readtracker.android.db.Book;
 import com.readtracker.android.db.DatabaseManager;
 import com.readtracker.android.thirdparty.views.Switch;

@@ -14,7 +14,6 @@ import com.readtracker.R;
 import com.readtracker.android.IntentKeys;
 import com.readtracker.android.ReadTrackerApp;
 import com.readtracker.android.db.export.JSONExporter;
-import com.readtracker.android.support.ApplicationSettingsHelper;
 
 import java.io.File;
 

@@ -4,8 +4,8 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.webkit.WebView;
 
-import com.readtracker.android.IntentKeys;
 import com.readtracker.R;
+import com.readtracker.android.IntentKeys;
 
 /** Generic WebView for viewing a http url. */
 public class InAppBrowserActivity extends Activity {
