@@ -9,7 +9,7 @@ import android.widget.Button;
 
 public class DrawableGenerator {
   // Reuse this temporary container for color conversions
-  private static float[] hsv = new float[3];
+  private static final float[] hsv = new float[3];
 
   public static StateListDrawable generateButtonBackground(int baseColor) {
     StateListDrawable states = new StateListDrawable();

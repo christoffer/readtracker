@@ -193,7 +193,7 @@ public class AddQuoteActivity extends BookBaseActivity {
   }
 
   private static class CreateOrUpdateQuoteTask extends AsyncTask<Void, Void, Quote> {
-    private Quote mQuote;
+    private final Quote mQuote;
 
     private final WeakReference<AddQuoteActivity> mActivity;
     private final DatabaseManager mDatabaseManager;

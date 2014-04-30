@@ -17,18 +17,36 @@ public class Book extends Model {
 
   public static enum State {Unknown, Finished, Reading}
 
-  @DatabaseField(columnName = Columns.TITLE) private String mTitle;
-  @DatabaseField(columnName = Columns.AUTHOR) private String mAuthor;
-  @DatabaseField(columnName = Columns.COVER_IMAGE_URL) private String mCoverImageUrl;
-  @DatabaseField(columnName = Columns.PAGE_COUNT) private Float mPageCount;
+  /* Database fields */
+
+  @DatabaseField(columnName = Columns.TITLE)
+  private String mTitle;
+
+  @DatabaseField(columnName = Columns.AUTHOR)
+  private String mAuthor;
+
+  @DatabaseField(columnName = Columns.COVER_IMAGE_URL)
+  private String mCoverImageUrl;
+
+  @DatabaseField(columnName = Columns.PAGE_COUNT)
+  private Float mPageCount;
+
   @DatabaseField(columnName = Columns.STATE, dataType = DataType.ENUM_STRING)
-  State mState = State.Reading;
-  @DatabaseField(columnName = Columns.CURRENT_POSITION) private Float mCurrentPosition;
+  private State mState = State.Reading;
+
+  @DatabaseField(columnName = Columns.CURRENT_POSITION)
+  private Float mCurrentPosition;
+
   @DatabaseField(columnName = Columns.CURRENT_POSITION_TIMESTAMP)
   private Long mCurrentPositionTimestampMs;
+
   @DatabaseField(columnName = Columns.FIRST_POSITION_TIMESTAMP)
   private Long mFirstPositionTimestampMs;
-  @DatabaseField(columnName = Columns.CLOSING_REMARK) private String mClosingRemark;
+
+  @DatabaseField(columnName = Columns.CLOSING_REMARK)
+  private String mClosingRemark;
+
+  /* End database fields */
 
   // Use manual handling of foreign keys here as we want to have complete
   // control over when and where these are loaded.

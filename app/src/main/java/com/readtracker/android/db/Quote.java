@@ -11,15 +11,26 @@ import java.util.Arrays;
  */
 @DatabaseTable(tableName = "quotes")
 public class Quote extends Model {
-  @DatabaseField(columnName = Columns.CONTENT) private String mContent;
-  @DatabaseField(columnName = Columns.ADD_TIMESTAMP) private Long mAddTimestampMs;
-  @DatabaseField(columnName = Columns.POSITION) private Float mPosition;
+
+  /* Database fields */
+
+  @DatabaseField(columnName = Columns.CONTENT)
+  private String mContent;
+
+  @DatabaseField(columnName = Columns.ADD_TIMESTAMP)
+  private Long mAddTimestampMs;
+
+  @DatabaseField(columnName = Columns.POSITION)
+  private Float mPosition;
+
   @DatabaseField(
       columnName = Columns.BOOK_ID,
       foreign = true,
       canBeNull = false,
       columnDefinition = "integer references books (_id) on delete cascade")
   private Book mBook;
+
+  /* End database fields */
 
   public Quote() { }
 

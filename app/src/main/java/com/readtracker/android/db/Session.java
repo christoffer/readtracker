@@ -12,16 +12,28 @@ import java.util.Arrays;
 @DatabaseTable(tableName = "sessions")
 public class Session extends Model {
 
-  @DatabaseField(columnName = Columns.START_POSITION) private float mStartPosition;
-  @DatabaseField(columnName = Columns.END_POSITION) private float mEndPosition;
-  @DatabaseField(columnName = Columns.DURATION_SECONDS) private long mDurationSeconds;
-  @DatabaseField(columnName = Columns.TIMESTAMP) private long mTimestampMs;
+  /* Database fields */
+
+  @DatabaseField(columnName = Columns.START_POSITION)
+  private float mStartPosition;
+
+  @DatabaseField(columnName = Columns.END_POSITION)
+  private float mEndPosition;
+
+  @DatabaseField(columnName = Columns.DURATION_SECONDS)
+  private long mDurationSeconds;
+
+  @DatabaseField(columnName = Columns.TIMESTAMP)
+  private long mTimestampMs;
+
   @DatabaseField(
       columnName = Columns.BOOK_ID,
       foreign = true,
       canBeNull = false,
       columnDefinition = "integer references books (_id) on delete cascade")
   private Book mBook;
+
+  /* End database fields. */
 
   public Session() {
   }

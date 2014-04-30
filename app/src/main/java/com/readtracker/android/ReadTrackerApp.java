@@ -80,18 +80,8 @@ public class ReadTrackerApp extends Application {
     mInstance = this;
   }
 
-  // TODO don't expose this object, use database manager instead
-  public DatabaseHelper getDatabaseHelper() {
-    return mDatabaseHelper;
-  }
-
   public DatabaseManager getDatabaseManager() {
     return mDatabaseManager;
-  }
-
-  // TODO don't expose this object, use getAppSettings() instead
-  public static SharedPreferences getApplicationPreferences() {
-    return mInstance.mPreferences;
   }
 
   /**

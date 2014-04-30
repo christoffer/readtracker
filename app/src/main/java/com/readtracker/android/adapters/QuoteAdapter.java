@@ -20,15 +20,15 @@ import java.util.List;
 public class QuoteAdapter extends ArrayAdapter<Quote> {
   private int mColor;
 
-  private Comparator<Quote> mQuoteComparator = new Comparator<Quote>() {
+  private final Comparator<Quote> mQuoteComparator = new Comparator<Quote>() {
     @Override
     public int compare(Quote a, Quote b) {
       return a.getAddTimestampMs() > b.getAddTimestampMs() ? -1 : 1;
     }
   };
 
-  public QuoteAdapter(Context context, int textViewResourceId, List<Quote> quotes) {
-    super(context, textViewResourceId, quotes);
+  public QuoteAdapter(Context context, List<Quote> quotes) {
+    super(context, R.layout.quote_list_item, quotes);
     sortQuotes();
   }
 
@@ -46,7 +46,7 @@ public class QuoteAdapter extends ArrayAdapter<Quote> {
     Quote quote = getItem(position);
 
     if(convertView == null) {
-      convertView = LayoutInflater.from(getContext()).inflate(R.layout.quote_list_item, null);
+      convertView = LayoutInflater.from(getContext()).inflate(R.layout.quote_list_item, parent, false);
     }
 
     TextView textContent = (TextView) convertView.findViewById(R.id.textContent);

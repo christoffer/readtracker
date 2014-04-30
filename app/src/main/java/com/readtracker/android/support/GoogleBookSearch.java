@@ -54,14 +54,12 @@ public class GoogleBookSearch {
 
     Log.i(TAG, "Searching for query: " + queryString);
 
-    Uri uri = new Uri.Builder().
+    return new Uri.Builder().
       scheme("https").
       authority("www.googleapis.com").
       path("books/v1/volumes").
       appendQueryParameter("q", queryString).
       build();
-
-    return uri;
   }
 
   private static String parseISBNQueryString(String queryString) {
@@ -71,26 +69,5 @@ public class GoogleBookSearch {
       return String.format("isbn:%s", cleanedNumber);
     }
     return null;
-  }
-
-  /**
-   * Return a mocked list of books.
-   * Useful for testing.
-   * @return a list of mocked search results.
-   * @throws GoogleBookSearchException never (just here for API compatibility)
-   */
-  public static ArrayList<GoogleBook> mockSearchResults() throws GoogleBookSearchException {
-    return new ArrayList<GoogleBook>(20) {{
-      add(new GoogleBook("Franz Kafka", "Letters to Milena", null));
-      add(new GoogleBook("Franz Kafka", "The Penal Colony", null));
-      add(new GoogleBook("Franz Kafka", "Letters to Felice", null));
-      add(new GoogleBook("Franz Kafka", "Metamorphosis", null));
-      add(new GoogleBook("Franz Kafka", "The Complete Stories", null));
-      add(new GoogleBook("Franz Kafka", "America: With an introduction by Edwin Muir", null));
-      add(new GoogleBook("Franz Kafka", "The Trial", null));
-      add(new GoogleBook("June. O. Leavitt", "The Mystical Life of Franz Kafka", null));
-      add(new GoogleBook("Richard T. Gray", "A Franz Kafka Encyclopedia", null));
-      add(new GoogleBook("Sander L. Gilman", "Franz Kafka, the Jewish Patient", null));
-    }};
   }
 }

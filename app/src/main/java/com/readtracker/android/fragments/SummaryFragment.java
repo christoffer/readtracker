@@ -78,7 +78,7 @@ public class SummaryFragment extends BaseFragment {
       mSessionView.setSessions(sessions);
 
       populateReadingState(mBook.getState(), color);
-      popluateClosingRemark(mBook.getClosingRemark());
+      populateClosingRemark(mBook.getClosingRemark());
       populateSummary();
       populateTimeLeft();
     } else {
@@ -110,7 +110,7 @@ public class SummaryFragment extends BaseFragment {
     mTextReadingState.setText(readingState);
   }
 
-  private void popluateClosingRemark(String closingRemark) {
+  private void populateClosingRemark(String closingRemark) {
     if(closingRemark != null) {
       mTextClosingRemark.setText(closingRemark);
     } else {

@@ -21,8 +21,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 public abstract class BookBaseActivity extends BaseActivity {
-  private static final String TAG = BookBaseActivity.class.getSimpleName();
-
   public static final String KEY_BOOK_ID = "BOOK_ID";
 
   // Task for loading data in the background
@@ -96,7 +94,7 @@ public abstract class BookBaseActivity extends BaseActivity {
     ActionBar actionBar = getSupportActionBar();
 
     // Set the cover as the home icon. Unfortunately it seems like there's no easy way of getting
-    // the imageview from the actionbar pre-11. So Gingerbread will be stuck with the default image...
+    // the ImageView from the actionbar pre-11. So Gingerbread will be stuck with the default image...
     if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
       ImageView homeIcon = (ImageView) findViewById(android.R.id.home);
       if(homeIcon != null && !TextUtils.isEmpty(book.getCoverImageUrl())) {
@@ -157,13 +155,13 @@ public abstract class BookBaseActivity extends BaseActivity {
     private final int mBookId;
 
     private final DatabaseManager mDatabaseManager;
-    private final boolean mLoadeRelated;
+    private final boolean mLoadRelated;
 
     LoadDataTask(BookBaseActivity activity, int bookId) {
       mActivityRef = new WeakReference<BookBaseActivity>(activity);
       mBookId = bookId;
       mDatabaseManager = activity.getApp().getDatabaseManager();
-      mLoadeRelated = activity.shouldLoadRelatedBookData();
+      mLoadRelated = activity.shouldLoadRelatedBookData();
     }
 
     @Override
@@ -175,7 +173,7 @@ public abstract class BookBaseActivity extends BaseActivity {
       if(book == null) {
         Log.w("LoadDataTask", "Failed to load book");
         return null;
-      } else if(mLoadeRelated) {
+      } else if(mLoadRelated) {
         book.loadSessions(mDatabaseManager);
         book.loadQuotes(mDatabaseManager);
       }
@@ -193,7 +191,7 @@ public abstract class BookBaseActivity extends BaseActivity {
 
   /** Emitted when the BookActivity has loaded the book, with all it's sessions and quotes. */
   public static class BookLoadedEvent {
-    private Book mBook;
+    private final Book mBook;
 
     BookLoadedEvent(Book book) { mBook = book; }
 

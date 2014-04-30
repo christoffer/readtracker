@@ -5,8 +5,6 @@ public class GoogleBookSearchException extends Exception {
 
   private String mMessage = "";
 
-  public GoogleBookSearchException() {}
-
   public GoogleBookSearchException(String message) {
     mMessage = message;
   }

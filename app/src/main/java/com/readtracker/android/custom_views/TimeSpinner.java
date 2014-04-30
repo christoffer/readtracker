@@ -20,28 +20,26 @@ public class TimeSpinner extends View {
   private int mMaxSize = 0;
 
   private Paint mTickPaint;
+  private Paint mHighlightPaint;
 
   @SuppressWarnings("UnusedDeclaration")
   public TimeSpinner(Context context) {
     super(context, null);
+    initialize();
   }
 
   @SuppressWarnings("UnusedDeclaration")
   public TimeSpinner(Context context, AttributeSet attrs) {
     super(context, attrs);
     initialize();
-    setDrawingCacheEnabled(true);
   }
 
   @Override protected void onDraw(Canvas canvas) {
-    Paint p = new Paint();
-    p.setStyle(Paint.Style.FILL);
-
-    p.setColor(mIsHighlighted ? mFillColorHighlighted : mFillColor);
+    mHighlightPaint.setColor(mIsHighlighted ? mFillColorHighlighted : mFillColor);
 
     float midX = getWidth() / 2.0f;
     float midY = getHeight() / 2.0f;
-    canvas.drawCircle(midX, midY, Math.min(midX, midY) - 35.0f, p);
+    canvas.drawCircle(midX, midY, Math.min(midX, midY) - 35.0f, mHighlightPaint);
     drawTicks(canvas, 60, 15, 2, 10, mSecondaryColor);
     drawTicks(canvas, 12, 25, 4, 0, mPrimaryColor);
   }
@@ -89,6 +87,11 @@ public class TimeSpinner extends View {
     mTickPaint = new Paint();
     mTickPaint.setStyle(Paint.Style.FILL);
     mTickPaint.setAntiAlias(true);
+
+    mHighlightPaint = new Paint();
+    mHighlightPaint.setStyle(Paint.Style.FILL);
+
+    setDrawingCacheEnabled(true);
   }
 
   public void setHighlighted(boolean isHighlighted) {

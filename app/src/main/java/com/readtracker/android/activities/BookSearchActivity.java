@@ -61,7 +61,7 @@ public class BookSearchActivity extends BaseActivity {
     setContentView(R.layout.activity_book_search);
     ButterKnife.inject(this);
 
-    mBookSearchAdapter = new SearchResultAdapter(this, R.layout.list_item_book, R.id.textTitle, new ArrayList<BookItem>());
+    mBookSearchAdapter = new SearchResultAdapter(this, new ArrayList<BookItem>());
     mListSearchResults.setAdapter(mBookSearchAdapter);
 
     // Suggest that the soft input keyboard is visible at once
@@ -173,7 +173,7 @@ public class BookSearchActivity extends BaseActivity {
    */
   private void search(String query) {
     // TODO replace with a spinner in the text editor field
-    getApp().showProgressDialog(BookSearchActivity.this, "Searching...");
+    getApp().showProgressDialog(BookSearchActivity.this, getString(R.string.book_search_searching));
     (new BookSearchTask()).execute(query);
   }
 

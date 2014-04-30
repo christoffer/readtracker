@@ -100,11 +100,6 @@ public class SessionTimer {
     return mStartTimestampMs != STOPPED_TIME;
   }
 
-  /** Returns true if the timer has been started and stopped, and is currently not running. */
-  public boolean isPaused() {
-    return isStarted() && !isRunning();
-  }
-
   /** Loads the timer state from preferences. If no stored timer was found, the timer is reset. */
   public void initializeFromPreferences(SharedPreferences prefs) {
     Log.d(TAG, "Loading from preferences");
@@ -126,16 +121,16 @@ public class SessionTimer {
 
   /** Saves the timer state to preferences. */
   public void saveToPreferences(SharedPreferences prefs) {
-    Log.d(TAG, "Saving to prefences");
+    Log.d(TAG, "Saving to preferences");
     prefs.edit()
       .putLong(PREF_ELAPSED, mElapsedMs)
       .putLong(PREF_TIMESTAMP, mStartTimestampMs)
       .commit();
   }
 
-  /** Removes any timer state from the prefernces. */
+  /** Removes any timer state from the preferences. */
   public void clearFromPreferences(SharedPreferences prefs) {
-    Log.d(TAG, "Clearing from prefences");
+    Log.d(TAG, "Clearing from preferences");
     prefs.edit()
       .remove(PREF_ELAPSED)
       .remove(PREF_TIMESTAMP)

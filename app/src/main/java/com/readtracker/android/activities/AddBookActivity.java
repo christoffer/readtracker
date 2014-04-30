@@ -30,7 +30,7 @@ import butterknife.InjectView;
 
 /** Activity for adding or editing a book. */
 public class AddBookActivity extends BookBaseActivity {
-  public static final String TAG = AddBookActivity.class.getName();
+  private static final String TAG = AddBookActivity.class.getName();
 
   public static final int RESULT_ADDED_BOOK = RESULT_FIRST_USER + 1;
   public static final int RESULT_DELETED_BOOK = RESULT_FIRST_USER + 2;
@@ -279,10 +279,10 @@ public class AddBookActivity extends BookBaseActivity {
     // make dupes of long titles invisible to the user
     public static final Pattern DUPE_COUNT_PATTERN = Pattern.compile("^[(](\\d+)[)](.*)");
 
-    protected final WeakReference<AddBookActivity> mActivity;
-    protected final DatabaseManager mDatabaseMgr;
-    protected final Book mBook;
-    protected final String mUnknownTitleString;
+    final WeakReference<AddBookActivity> mActivity;
+    final DatabaseManager mDatabaseMgr;
+    final Book mBook;
+    final String mUnknownTitleString;
 
     public BackgroundBookTask(AddBookActivity activity, Book book) {
       mBook = book;

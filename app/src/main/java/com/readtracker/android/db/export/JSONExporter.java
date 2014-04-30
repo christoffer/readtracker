@@ -1,7 +1,6 @@
 package com.readtracker.android.db.export;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
 
@@ -30,7 +29,6 @@ public class JSONExporter {
   private final DatabaseManager mDatabaseMgr;
 
   public static JSONExporter from(Activity activity) {
-    Context context = activity;
     return new JSONExporter(((ReadTrackerApp) activity.getApplication()).getDatabaseManager());
   }
 
@@ -40,6 +38,7 @@ public class JSONExporter {
 
   /**
    * Exports all model data to the default path.
+   *
    * @return the written file if successfully exported, <code>null</code> otherwise.
    */
   public File exportToDisk() {
@@ -53,9 +52,10 @@ public class JSONExporter {
 
   /**
    * Exports all model data to a file.
+   *
    * @return true if exported, false otherwise.
    */
-  public boolean exportToDisk(File outputFile)  {
+  public boolean exportToDisk(File outputFile) {
     try {
       final String jsonData = exportAll();
       FileOutputStream fos = new FileOutputStream(outputFile);

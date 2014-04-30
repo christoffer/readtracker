@@ -234,9 +234,9 @@ public class SessionView extends View {
   }
 
   private class Node {
-    public long durationSeconds;
-    public float progress; // 0..1
-    public long occurredAt;
+    public final long durationSeconds;
+    public final float progress; // 0..1
+    public final long occurredAt;
 
     public Node(Session session) {
       this.durationSeconds = session.getDurationSeconds();

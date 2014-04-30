@@ -12,7 +12,7 @@ import com.squareup.otto.Bus;
 /**
  * A base fragment that attaches to a BaseActivity.
  */
-public class BaseFragment extends Fragment {
+public abstract class BaseFragment extends Fragment {
   private Bus mBus;
   private DatabaseManager mDatabaseManager;
 

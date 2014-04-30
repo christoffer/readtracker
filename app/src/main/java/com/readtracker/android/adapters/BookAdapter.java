@@ -37,9 +37,9 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
   private final Context mContext;
 
   // Layout to inflate when rendering items
-  private int mLayoutResource;
+  private final int mLayoutResource;
 
-  private static Comparator<Book> sBookComparator = new Comparator<Book>() {
+  private static final Comparator<Book> sBookComparator = new Comparator<Book>() {
     @Override public int compare(Book a, Book b) {
       final long keyA = a.getCurrentPositionTimestampMs() == null ? 0 : a.getCurrentPositionTimestampMs();
       final long keyB = b.getCurrentPositionTimestampMs() == null ? 0 : b.getCurrentPositionTimestampMs();
@@ -49,7 +49,7 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
   };
 
   // Books in this list
-  private List<Book> mBooks = new ArrayList<Book>();
+  private final List<Book> mBooks = new ArrayList<Book>();
 
   private Book.State mStateFilter = null;
 

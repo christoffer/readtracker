@@ -17,7 +17,7 @@ import com.squareup.otto.Bus;
 /**
  * Base activity
  */
-public class BaseActivity extends ActionBarActivity {
+public abstract class BaseActivity extends ActionBarActivity {
   private ReadTrackerApp mApplication;
   private Bus mBus;
   private DatabaseManager mDatabaseManager;
@@ -33,7 +33,7 @@ public class BaseActivity extends ActionBarActivity {
     mDatabaseManager = getApp().getDatabaseManager();
   }
 
-  public ReadTrackerApp getApp() {
+  ReadTrackerApp getApp() {
     return mApplication;
   }
 
@@ -50,7 +50,7 @@ public class BaseActivity extends ActionBarActivity {
   protected void onPause() {
     super.onPause();
     if(BuildConfig.DEBUG) {
-      Log.v(getClass().getSimpleName(), "Unregistering from bus");
+      Log.v(getClass().getSimpleName(), "Unregister from bus");
     }
     mBus.unregister(this);
   }
@@ -58,7 +58,7 @@ public class BaseActivity extends ActionBarActivity {
   /**
    * Returns the current application settings.
    */
-  protected ApplicationSettingsHelper getAppSettings() {
+  ApplicationSettingsHelper getAppSettings() {
     return getApp().getAppSettings();
   }
 
@@ -72,8 +72,9 @@ public class BaseActivity extends ActionBarActivity {
   /**
    * Override this method to change what features that gets requested for the activity.
    */
+  @SuppressWarnings("EmptyMethod")
   protected void requestWindowFeatures() {
-    // NOOP
+    // Nothing
   }
 
   /**
@@ -104,7 +105,7 @@ public class BaseActivity extends ActionBarActivity {
    * @param dpValue The value in DIP
    * @return the value in pixels
    */
-  public int getPixels(int dpValue) {
+  int getPixels(int dpValue) {
     return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dpValue, getResources().getDisplayMetrics());
   }
 

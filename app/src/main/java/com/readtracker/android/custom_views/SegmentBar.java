@@ -18,10 +18,12 @@ public class SegmentBar extends View {
   private float[] mStops;
   private static final int DIVIDER_WIDTH = 2; // px
 
+  @SuppressWarnings("UnusedDeclaration")
   public SegmentBar(Context context) {
     this(context, null);
   }
 
+  @SuppressWarnings("UnusedDeclaration")
   public SegmentBar(Context context, AttributeSet attrs) {
     super(context, attrs);
     initResources();
@@ -51,15 +53,6 @@ public class SegmentBar extends View {
     mColor = color;
     initResources();
     invalidate();
-  }
-
-  /**
-   * Gets the color of the progress bar segments
-   *
-   * @return the color of the progress bar segments
-   */
-  public int getColor() {
-    return mColor;
   }
 
   /**
