@@ -1,4 +1,4 @@
-package googlebooks;
+package com.readtracker.android.googlebooks;
 
 import android.net.Uri;
 

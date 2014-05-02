@@ -1,22 +1,4 @@
-package googlebooks;
-
-import android.net.Uri;
-import android.util.Log;
-
-import com.readtracker.android.support.HttpUtils;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import googlebooks.model.Volume;
+package com.readtracker.android.googlebooks;
 
 public class GoogleBookSearch {
   private static final String TAG = GoogleBookSearch.class.getName();

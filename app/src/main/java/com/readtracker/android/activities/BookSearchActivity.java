@@ -23,8 +23,8 @@ import com.readtracker.android.IntentKeys;
 import com.readtracker.android.adapters.BookItem;
 import com.readtracker.android.adapters.SearchResultAdapter;
 
-import googlebooks.ApiProvider;
-import googlebooks.model.Volume;
+import com.readtracker.android.googlebooks.ApiProvider;
+import com.readtracker.android.googlebooks.model.Volume;
 
 import com.readtracker.android.support.Utils;
 import com.readtracker.android.thirdparty.SafeViewFlipper;
@@ -35,8 +35,8 @@ import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import googlebooks.GoogleBooksApi;
-import googlebooks.GoogleBooksClient;
+import com.readtracker.android.googlebooks.GoogleBooksApi;
+import com.readtracker.android.googlebooks.GoogleBooksClient;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;

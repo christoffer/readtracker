@@ -1,4 +1,4 @@
-package googlebooks.model;
+package com.readtracker.android.googlebooks.model;
 
 import com.google.gson.annotations.SerializedName;
 

@@ -1,8 +1,8 @@
-package googlebooks;
+package com.readtracker.android.googlebooks;
 
 import java.util.List;
 
-import googlebooks.model.Volume;
+import com.readtracker.android.googlebooks.model.Volume;
 import retrofit.http.GET;
 import retrofit.http.Query;
 

@@ -1,4 +1,4 @@
-package com.readtracker.android.test;
+package com.readtracker.android;
 
 import com.readtracker.android.db.Session;
 import com.readtracker.android.support.Utils;

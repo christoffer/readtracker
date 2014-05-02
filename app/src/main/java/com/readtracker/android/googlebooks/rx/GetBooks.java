@@ -1,10 +1,10 @@
-package googlebooks.rx;
+package com.readtracker.android.googlebooks.rx;
 
-import googlebooks.model.Volume;
+import com.readtracker.android.googlebooks.model.Volume;
 
 import java.util.List;
 
-import googlebooks.GoogleBooksApi;
+import com.readtracker.android.googlebooks.GoogleBooksApi;
 import rx.Observable;
 import rx.Subscriber;
 
