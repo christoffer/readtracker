@@ -14,12 +14,16 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Generic utility functions
  */
 public class Utils {
   private static final long DAYS = 60 * 60 * 24 * 1000;
+  private static final Pattern ISBNPattern = Pattern.compile("^(?:isbn[ :]+)([0-9 -]+)$");
+
 
   /**
    * Returns a string representation like "3 hours, 12 minutes"
@@ -308,5 +312,14 @@ public class Utils {
   /** Lifted from Google Guava. */
   public static boolean equal(Object a, Object b) {
     return a == b || (a != null && a.equals(b));
+  }
+
+  public static String parseISBNQueryString(String queryString) {
+    Matcher isbnMatcher = ISBNPattern.matcher(queryString.toLowerCase().trim());
+    if(isbnMatcher.matches()) {
+      String cleanedNumber = isbnMatcher.group(0).replaceAll("[^0-9]+", "");
+      return String.format("isbn:%s", cleanedNumber);
+    }
+    return null;
   }
 }
