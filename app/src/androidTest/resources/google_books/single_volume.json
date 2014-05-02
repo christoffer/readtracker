@@ -1,0 +1,63 @@
+{
+   "kind": "books#volume",
+   "id": "KPjmuogFmU0C",
+   "etag": "MG10/YzBF2A",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/KPjmuogFmU0C",
+   "volumeInfo": {
+    "title": "Android Apps Entwicklung für Dummies",
+    "authors": [
+     "Donn Felker"
+    ],
+    "publisher": "John Wiley & Sons",
+    "publishedDate": "2011-09-06",
+    "description": "Welcher Smartphone-Besitzer hatte nicht schon einmal eine kreative Idee für eine eigene App? In diesem Buch erfahren Sie, wie Sie Ihre Ideen umsetzen und eigene Apps für Ihr Android-Smartphone programmieren können. Schritt für Schritt erklärt der Autor, wie Sie das kostenlos verfügbare SDK (Self Development Kit) herunterladen, mit der Programmiersoftware Eclipse arbeiten, mit der Programmiersprache Java Android Applikationen programmieren und wie Sie Ihre eigenen Apps sogar auf dem Android Markt verkaufen können. Legen Sie los und entwickeln Sie Ihre ganz persönlichen Apps!",
+    "industryIdentifiers": [
+     {
+      "type": "ISBN_13",
+      "identifier": "9783527707324"
+     },
+     {
+      "type": "ISBN_10",
+      "identifier": "3527707328"
+     }
+    ],
+    "pageCount": 344,
+    "printType": "BOOK",
+    "categories": [
+     "Computers"
+    ],
+    "contentVersion": "0.10.10.0.preview.1",
+    "imageLinks": {
+     "smallThumbnail": "http://bks8.books.google.de/books?id=KPjmuogFmU0C&printsec=frontcover&img=1&zoom=5&edge=curl&source=gbs_api",
+     "thumbnail": "http://bks8.books.google.de/books?id=KPjmuogFmU0C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+    },
+    "language": "de",
+    "previewLink": "http://books.google.de/books?id=KPjmuogFmU0C&printsec=frontcover&dq=android&hl=&cd=1&source=gbs_api",
+    "infoLink": "http://books.google.de/books?id=KPjmuogFmU0C&dq=android&hl=&source=gbs_api",
+    "canonicalVolumeLink": "http://books.google.de/books/about/Android_Apps_Entwicklung_f%C3%BCr_Dummies.html?hl=&id=KPjmuogFmU0C"
+   },
+   "saleInfo": {
+    "country": "DE",
+    "saleability": "NOT_FOR_SALE",
+    "isEbook": false
+   },
+   "accessInfo": {
+    "country": "DE",
+    "viewability": "PARTIAL",
+    "embeddable": true,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": false
+    },
+    "pdf": {
+     "isAvailable": false
+    },
+    "webReaderLink": "http://books.google.de/books/reader?id=KPjmuogFmU0C&hl=&printsec=frontcover&output=reader&source=gbs_api",
+    "accessViewStatus": "SAMPLE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "Welcher Smartphone-Besitzer hatte nicht schon einmal eine kreative Idee für eine eigene App?"
+   }
+}

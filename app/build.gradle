@@ -79,4 +79,6 @@ dependencies {
     compile 'com.netflix.rxjava:rxjava-core:0.17.6'
     compile 'com.netflix.rxjava:rxjava-android:0.17.6'
     compile files('lib/annotations.jar')
+
+    androidTestCompile 'com.squareup:fest-android:1.0.7'
 }

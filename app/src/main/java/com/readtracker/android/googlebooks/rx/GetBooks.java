@@ -10,8 +10,6 @@ import rx.Subscriber;
 
 public class GetBooks implements Observable.OnSubscribe<List<Volume>> {
 
-  private static final String TAG = GetBooks.class.getSimpleName();
-
   private final GoogleBooksApi mApi;
   private final String mQuery;
 
