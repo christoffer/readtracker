@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.readtracker.android.R;
+import com.readtracker.R;
 import com.readtracker.android.custom_views.ProgressPicker;
 import com.readtracker.android.db.Book;
 import com.readtracker.android.support.DrawableGenerator;

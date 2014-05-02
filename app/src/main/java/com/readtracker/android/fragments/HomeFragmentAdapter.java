@@ -5,7 +5,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.util.Log;
 
-import com.readtracker.android.R;
+import com.readtracker.R;
 import com.readtracker.android.activities.BaseActivity;
 import com.readtracker.android.db.Book;
 
@@ -49,12 +49,12 @@ public class HomeFragmentAdapter extends FragmentPagerAdapter {
   @Override public Fragment getItem(int position) {
     if(position == FRAGMENT_FINISHED) {
       if(mUseCompactFinishList) {
-        return BookListFragment.newInstance(R.layout.finished_book_item_compact, Book.State.Finished);
+        return BookListFragment.newInstance(R.layout.book_list_item_finished_compact, Book.State.Finished);
       } else {
-        return BookListFragment.newInstance(R.layout.finished_book_item, Book.State.Finished);
+        return BookListFragment.newInstance(R.layout.book_list_item_finished, Book.State.Finished);
       }
     } else if(position == FRAGMENT_ACTIVE) {
-      return BookListFragment.newInstance(R.layout.local_reading_item_active, Book.State.Reading);
+      return BookListFragment.newInstance(R.layout.book_list_item_reading, Book.State.Reading);
     }
 
     Log.w(TAG, "Could not figure out what fragment to return. Returning null.");

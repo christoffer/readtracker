@@ -1,0 +1,41 @@
+language: java
+jdk: oraclejdk7
+cache:
+  apt: true
+  directories:
+    - $HOME/.gradle
+
+before_install:
+  # required libs for android build tools
+  - if [ `uname -m` = x86_64 ]; then sudo apt-get update; fi
+  - if [ `uname -m` = x86_64 ]; then sudo apt-get install -qq --force-yes libgd2-xpm ia32-libs ia32-libs-multiarch; fi
+  # for gradle output style
+  - export TERM=dumb
+  # newer version of gradle
+  - wget http://services.gradle.org/distributions/gradle-1.11-bin.zip
+  - unzip -qq gradle-1.11-bin.zip
+  - export GRADLE_HOME=$PWD/gradle-1.11
+  - export PATH=$GRADLE_HOME/bin:$PATH
+  # just to test gradle version, against our provided one
+  - gradle -v
+  # newest android SDK 22.6.1
+  - wget http://dl.google.com/android/android-sdk_r22.6.1-linux.tgz
+  - tar -zxf android-sdk_r22.6.1-linux.tgz
+  - export ANDROID_HOME=`pwd`/android-sdk-linux
+  - export PATH=${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/build-tools
+  # manually set sdk.dir variable, according to local paths
+  - echo "sdk.dir=$ANDROID_HOME" > local.properties
+  # list packages for debug purpose
+  - android list sdk -a -e -u
+  - (while [ 1 ]; do echo y; sleep 1; done) | android update sdk -a -t tools,platform-tools,extra-android-support,extra-android-m2repository,android-19,build-tools-19.0.1,sysimg-19 --force --no-ui
+
+before_script:
+  - echo no | android create avd --force -n test -t android-19 --abi armeabi-v7a
+  - emulator -avd test -no-skin -no-audio -no-window &
+  - bash scripts/wait_for_emulator.sh
+  - adb shell input keyevent 82 &
+
+script:
+  - ./gradlew connectedAndroidTest
+
+install: ./gradlew assembleDebugTest --stacktrace

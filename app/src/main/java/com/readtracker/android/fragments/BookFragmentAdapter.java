@@ -5,9 +5,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.readtracker.android.R;
+import com.readtracker.R;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 /**

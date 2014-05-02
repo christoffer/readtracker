@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.readtracker.android.R;
+import com.readtracker.R;
 import com.readtracker.android.db.Book;
 import com.readtracker.android.support.DrawableGenerator;
 import com.readtracker.android.support.Utils;

@@ -3,8 +3,7 @@ package com.readtracker.android.db;
 import android.util.Log;
 
 import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.stmt.PreparedQuery;
-import com.j256.ormlite.stmt.Where;
+import com.j256.ormlite.stmt.SelectArg;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -117,8 +116,10 @@ public class DatabaseManager {
   /** Returns true if the database contains a book with the given title, false otherwise. */
   public boolean isUniqueTitle(String title) {
     try {
+      SelectArg titleArg = new SelectArg();
+      titleArg.setValue(title);
       return db.getDaoByClass(Book.class).queryBuilder()
-          .where().eq(Book.Columns.TITLE, title)
+          .where().eq(Book.Columns.TITLE, titleArg)
           .countOf() == 0;
     } catch(SQLException e) {
       throw new RuntimeException(e);

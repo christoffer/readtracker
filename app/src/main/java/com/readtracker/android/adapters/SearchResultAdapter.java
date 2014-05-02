@@ -9,7 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.readtracker.android.R;
+import com.readtracker.R;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -19,11 +19,8 @@ import butterknife.InjectView;
 
 /** Adapter for displaying book search results. */
 public class SearchResultAdapter extends ArrayAdapter<BookItem> {
-  protected static final String TAG = SearchResultAdapter.class.getSimpleName();
 
-  /**
-   * Cache item to avoid repeated view look-ups
-   */
+  /** Cache item to avoid repeated view look-ups */
   static class ViewHolder {
     public ViewHolder(View view) {
       ButterKnife.inject(this, view);
@@ -33,8 +30,8 @@ public class SearchResultAdapter extends ArrayAdapter<BookItem> {
     @InjectView(R.id.imageCover) ImageView imageCover;
   }
 
-  public SearchResultAdapter(Context context, int resource, int textViewResourceId, List<BookItem> books) {
-    super(context, resource, textViewResourceId, books);
+  public SearchResultAdapter(Context context, List<BookItem> books) {
+    super(context, R.layout.list_item_book, R.id.textTitle, books);
   }
 
   @Override
@@ -44,7 +41,7 @@ public class SearchResultAdapter extends ArrayAdapter<BookItem> {
 
     // Inflate the view of it's not yet initialized
     if(convertView == null) {
-      convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_item_book, null);
+      convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_item_book, parent, false);
 
       // Cache the items view look-ups
       viewHolder = new ViewHolder(convertView);
@@ -58,10 +55,10 @@ public class SearchResultAdapter extends ArrayAdapter<BookItem> {
     // Assign values from the item to the view
     viewHolder.textTitle.setText(item.title);
     viewHolder.textAuthor.setText(item.author);
-    viewHolder.imageCover.setImageResource(android.R.drawable.ic_menu_gallery);
+    viewHolder.imageCover.setImageResource(R.drawable.bookmark);
 
     if(item.coverURL != null) {
-      viewHolder.imageCover.setImageResource(android.R.drawable.ic_menu_gallery);
+      viewHolder.imageCover.setImageResource(R.drawable.bookmark);
       viewHolder.imageCover.setVisibility(View.VISIBLE);
       if(!TextUtils.isEmpty(item.coverURL)) {
         Picasso.with(getContext()).load(item.coverURL).into(viewHolder.imageCover);

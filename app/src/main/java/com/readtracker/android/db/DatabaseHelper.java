@@ -8,7 +8,6 @@ import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
-import com.readtracker.android.IntentKeys;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -351,7 +350,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
       "SELECT " +
       "id, title, author, coverURL, case(measure_in_percent) when 1 then null else case totalPages when 0 then null else totalPages end end, " +
       "case rm_state when 2 then 'Reading' when 3 then 'Finished' when 4 then 'Finished' else 'Unknown' end, ifnull(1.0 * currentPage / totalPages , null), " +
-      "lastReadAt, started_at, rm_closing_remark " +
+      "lastReadAt * 1000, started_at * 1000, rm_closing_remark " +
       "FROM localreading;";
     db.execSQL(query);
   }
@@ -359,7 +358,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
   private void convertLocalHighlightToQuote(SQLiteDatabase db) {
     final String query = "insert into quotes " +
       "(id, book_id, content, position, add_timestamp) " +
-      "select id, reading_id, content, position, strftime('%s', highlighted_at) from localhighlight;";
+      "select id, reading_id, content, position, strftime('%s', highlighted_at) * 1000 from localhighlight;";
     db.execSQL(query);
   }
 
@@ -369,7 +368,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
       "select outer_session.id, readingId, " +
       "progress as end_pos, " +
       "(select inner_session.progress from localsession as inner_session where inner_session.progress < outer_session.progress AND inner_session.readingId = outer_session.readingId order by inner_session.progress desc limit 1) as start_pos, " +
-      "strftime('%s', occurredAt), durationSeconds " +
+      "strftime('%s', occurredAt) * 1000, durationSeconds " +
       "from localsession as outer_session inner join localreading on localreading.id = readingId " +
       "order by readingId;";
     db.execSQL(query);

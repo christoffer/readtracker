@@ -12,13 +12,12 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
 
-import com.readtracker.android.R;
+import com.readtracker.R;
 import com.readtracker.android.db.Session;
 import com.readtracker.android.support.Utils;
 
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -81,6 +80,8 @@ public class SessionView extends View {
     // Draw lines in a separate pass since they are in the background of everything else
     drawLines(canvas);
 
+    final long now = System.currentTimeMillis();
+
     for(int i = 0, mNodesLength = mNodes.length; i < mNodesLength; i++) {
       Node node = mNodes[i];
 
@@ -89,7 +90,7 @@ public class SessionView extends View {
       final float y = i == 0 ? SEGMENT_HEIGHT * 0.5f : i * SEGMENT_HEIGHT + getPaddingTop();
 
       String primaryText = Utils.hoursAndMinutesFromMillis(node.durationSeconds * 1000);
-      String secondaryText = Utils.humanPastDate(node.occurredAt);
+      String secondaryText = Utils.humanPastTimeFromTimestamp(node.occurredAt, now);
 
       boolean drawFlipped = node.progress > 0.5;
       drawText(canvas, x, y, radius, primaryText, secondaryText, drawFlipped);
@@ -233,14 +234,14 @@ public class SessionView extends View {
   }
 
   private class Node {
-    public long durationSeconds;
-    public float progress; // 0..1
-    public Date occurredAt;
+    public final long durationSeconds;
+    public final float progress; // 0..1
+    public final long occurredAt;
 
     public Node(Session session) {
       this.durationSeconds = session.getDurationSeconds();
       this.progress = session.getEndPosition();
-      this.occurredAt = new Date(session.getTimestamp());
+      this.occurredAt = session.getTimestampMs();
     }
   }
 

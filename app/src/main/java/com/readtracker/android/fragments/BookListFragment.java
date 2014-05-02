@@ -2,13 +2,15 @@ package com.readtracker.android.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
-import com.readtracker.android.R;
+import com.readtracker.R;
 import com.readtracker.android.ReadTrackerApp;
+import com.readtracker.android.activities.HomeActivity;
 import com.readtracker.android.adapters.BookAdapter;
 import com.readtracker.android.db.Book;
 import com.squareup.otto.Bus;
@@ -57,10 +59,14 @@ public class BookListFragment extends ListFragment {
   public void onActivityCreated(Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
 
-    mBookAdapter = new BookAdapter(getActivity(), mItemLayoutResId, mBookStateFilter);
+    HomeActivity homeActivity = (HomeActivity) getActivity();
+
+    mBookAdapter = new BookAdapter(homeActivity, mItemLayoutResId, mBookStateFilter);
+    Log.d(TAG, "Created adapter");
+    mBookAdapter.setBooks(homeActivity.getBooks());
     setListAdapter(mBookAdapter);
 
-    mBus = ReadTrackerApp.from(getActivity()).getBus();
+    mBus = ReadTrackerApp.from(homeActivity).getBus();
   }
 
   @Override public void onResume() {

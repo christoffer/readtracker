@@ -11,15 +11,26 @@ import java.util.Arrays;
  */
 @DatabaseTable(tableName = "quotes")
 public class Quote extends Model {
-  @DatabaseField(columnName = Columns.CONTENT) private String mContent;
-  @DatabaseField(columnName = Columns.ADD_TIMESTAMP) private Long mAddTimestamp;
-  @DatabaseField(columnName = Columns.POSITION) private Float mPosition;
+
+  /* Database fields */
+
+  @DatabaseField(columnName = Columns.CONTENT)
+  private String mContent;
+
+  @DatabaseField(columnName = Columns.ADD_TIMESTAMP)
+  private Long mAddTimestampMs;
+
+  @DatabaseField(columnName = Columns.POSITION)
+  private Float mPosition;
+
   @DatabaseField(
       columnName = Columns.BOOK_ID,
       foreign = true,
       canBeNull = false,
       columnDefinition = "integer references books (_id) on delete cascade")
   private Book mBook;
+
+  /* End database fields */
 
   public Quote() { }
 
@@ -31,9 +42,9 @@ public class Quote extends Model {
 
   public void setContent(String content) { mContent = content; }
 
-  public Long getAddTimestamp() { return mAddTimestamp; }
+  public Long getAddTimestampMs() { return mAddTimestampMs; }
 
-  public void setAddTimestamp(Long addTimestamp) { mAddTimestamp = addTimestamp; }
+  public void setAddTimestampMs(Long addTimestampMs) { mAddTimestampMs = addTimestampMs; }
 
   public Float getPosition() { return mPosition; }
 
@@ -53,12 +64,12 @@ public class Quote extends Model {
 
       return Utils.equal(getBook(), other.getBook())
           && Utils.equal(getContent(), other.getContent())
-          && Utils.equal(getAddTimestamp(), other.getAddTimestamp());
+          && Utils.equal(getAddTimestampMs(), other.getAddTimestampMs());
     }
     return false;
   }
 
   @Override public int hashCode() {
-    return Arrays.hashCode(new Object[]{getContent(), getBook(), getAddTimestamp()});
+    return Arrays.hashCode(new Object[]{getContent(), getBook(), getAddTimestampMs()});
   }
 }

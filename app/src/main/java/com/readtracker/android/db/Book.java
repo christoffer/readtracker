@@ -17,18 +17,36 @@ public class Book extends Model {
 
   public static enum State {Unknown, Finished, Reading}
 
-  @DatabaseField(columnName = Columns.TITLE) private String mTitle;
-  @DatabaseField(columnName = Columns.AUTHOR) private String mAuthor;
-  @DatabaseField(columnName = Columns.COVER_IMAGE_URL) private String mCoverImageUrl;
-  @DatabaseField(columnName = Columns.PAGE_COUNT) private Float mPageCount;
+  /* Database fields */
+
+  @DatabaseField(columnName = Columns.TITLE)
+  private String mTitle;
+
+  @DatabaseField(columnName = Columns.AUTHOR)
+  private String mAuthor;
+
+  @DatabaseField(columnName = Columns.COVER_IMAGE_URL)
+  private String mCoverImageUrl;
+
+  @DatabaseField(columnName = Columns.PAGE_COUNT)
+  private Float mPageCount;
+
   @DatabaseField(columnName = Columns.STATE, dataType = DataType.ENUM_STRING)
-  State mState = State.Reading;
-  @DatabaseField(columnName = Columns.CURRENT_POSITION) private Float mCurrentPosition;
+  private State mState = State.Reading;
+
+  @DatabaseField(columnName = Columns.CURRENT_POSITION)
+  private Float mCurrentPosition;
+
   @DatabaseField(columnName = Columns.CURRENT_POSITION_TIMESTAMP)
-  private Long mCurrentPositionTimestamp;
+  private Long mCurrentPositionTimestampMs;
+
   @DatabaseField(columnName = Columns.FIRST_POSITION_TIMESTAMP)
-  private Long mFirstPositionTimestamp;
-  @DatabaseField(columnName = Columns.CLOSING_REMARK) private String mClosingRemark;
+  private Long mFirstPositionTimestampMs;
+
+  @DatabaseField(columnName = Columns.CLOSING_REMARK)
+  private String mClosingRemark;
+
+  /* End database fields */
 
   // Use manual handling of foreign keys here as we want to have complete
   // control over when and where these are loaded.
@@ -96,13 +114,13 @@ public class Book extends Model {
 
   public void setCurrentPosition(float currentPosition) { mCurrentPosition = currentPosition; }
 
-  public Long getCurrentPositionTimestamp() { return mCurrentPositionTimestamp; }
+  public Long getCurrentPositionTimestampMs() { return mCurrentPositionTimestampMs; }
 
-  public void setCurrentPositionTimestamp(Long currentPositionTimestamp) { mCurrentPositionTimestamp = currentPositionTimestamp; }
+  public void setCurrentPositionTimestampMs(Long currentPositionTimestampMs) { mCurrentPositionTimestampMs = currentPositionTimestampMs; }
 
-  public Long getFirstPositionTimestamp() { return mFirstPositionTimestamp; }
+  public Long getFirstPositionTimestampMs() { return mFirstPositionTimestampMs; }
 
-  public void setFirstPositionTimestamp(Long firstPositionTimestamp) { mFirstPositionTimestamp = firstPositionTimestamp; }
+  public void setFirstPositionTimestampMs(Long firstPositionTimestampMs) { mFirstPositionTimestampMs = firstPositionTimestampMs; }
 
   public String getClosingRemark() { return mClosingRemark; }
 
@@ -163,13 +181,13 @@ public class Book extends Model {
 
   /** Returns an estimated time left, based on the progress and time of all loaded sessions. */
   public int calculateEstimatedSecondsLeft() {
-    if(mState != State.Reading || mCurrentPosition <= 0.0 || mCurrentPosition >= 1.0) {
+    if(mState != State.Reading || getCurrentPosition() <= 0.0 || getCurrentPosition() >= 1.0) {
       return 0;
     }
 
     final long secondsSpent = calculateSecondsSpent();
-    final float secondsPerPosition = secondsSpent / mCurrentPosition; // TODO use start-end for sessions for accuracy
-    final float positionsToRead = 1.0f - mCurrentPosition;
+    final float secondsPerPosition = secondsSpent / getCurrentPosition(); // TODO use start-end for sessions for accuracy
+    final float positionsToRead = 1.0f - getCurrentPosition();
 
     return (int) (positionsToRead * secondsPerPosition);
   }

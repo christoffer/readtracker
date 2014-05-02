@@ -17,13 +17,12 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.readtracker.android.R;
+import com.readtracker.R;
 import com.readtracker.android.ReadTrackerApp;
 import com.readtracker.android.db.Book;
 import com.readtracker.android.db.DatabaseManager;
 import com.readtracker.android.fragments.BookListFragment;
 import com.readtracker.android.fragments.HomeFragmentAdapter;
-import com.squareup.otto.Produce;
 import com.squareup.otto.Subscribe;
 
 import java.lang.ref.WeakReference;
@@ -49,6 +48,7 @@ public class HomeActivity extends BaseActivity {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    Log.d(TAG, "onCreate");
     requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
     setContentView(R.layout.activity_home);
     ButterKnife.inject(this);
@@ -63,14 +63,18 @@ public class HomeActivity extends BaseActivity {
     pagerTabStrip.setTabIndicatorColor(getResources().getColor(R.color.base_color));
 
     resetFragmentAdapter();
+    loadBooks();
     mViewPager.setCurrentItem(mFragmentAdapter.getDefaultPage());
+  }
 
+  @Override protected void onStart() {
+    super.onStart();
     loadBooks();
   }
 
-  @Produce
-  public CatalogueLoadedEvent produceBooksLoadedEvent() {
-    return new CatalogueLoadedEvent(mBooks);
+  @Override protected void onDestroy() {
+    super.onDestroy();
+    Log.d(TAG, "Destroying");
   }
 
   @Subscribe
@@ -111,11 +115,7 @@ public class HomeActivity extends BaseActivity {
     if(requestCode == ActivityCodes.SETTINGS) {
       // Reset the adapter to refresh views if the user toggled compact mode
       resetFragmentAdapter();
-      loadBooks();
     } else if(shouldReload || needReloadDueToAddedBook) {
-      // Push new changes and reload local lists
-      loadBooks();
-
       if(data != null && data.getBooleanExtra(BookActivity.KEY_FINISHED, false)) {
         // Came back with a success result for a finished book, let the view pager show it
         if(mViewPager != null) {
@@ -129,6 +129,11 @@ public class HomeActivity extends BaseActivity {
   public boolean onSearchRequested() {
     exitToBookSearch();
     return true;
+  }
+
+  /** Returns a list of all books currently loaded. */
+  public List<Book> getBooks() {
+    return mBooks;
   }
 
   private void resetFragmentAdapter() {

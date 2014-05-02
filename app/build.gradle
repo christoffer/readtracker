@@ -20,14 +20,37 @@ android {
     defaultConfig {
         minSdkVersion 10
         targetSdkVersion 19
-        versionCode 1
-        versionName "1.0"
+        versionCode 16
+        versionName "3.1"
+        testPackageName "com.readtracker.android.test"
+    }
+
+    signingConfigs {
+        release {
+            /*
+               Values below should be defined in: ~/.gradle/gradle.properties
+               READTRACKER_RELEASE_STORE_FILE={path to your keystore}
+               READTRACKER_RELEASE_STORE_PASSWORD=*****
+               READTRACKER_RELEASE_KEY_ALIAS=*****
+               READTRACKER_RELEASE_KEY_PASSWORD=*****
+             */
+
+            // Let the presences of READTRACKER_RELEASE_STORE_FILE serve as an indicator that
+            // gradle.properties is setup properly.
+            if(hasProperty('READTRACKER_RELEASE_STORE_FILE')) {
+                storeFile file(READTRACKER_RELEASE_STORE_FILE)
+                storePassword READTRACKER_RELEASE_STORE_PASSWORD
+                keyAlias READTRACKER_RELEASE_KEY_ALIAS
+                keyPassword READTRACKER_RELEASE_KEY_PASSWORD
+            }
+        }
     }
 
     buildTypes {
         release {
-            runProguard false
+            runProguard true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
+            signingConfig signingConfigs.release
         }
 
         debug {
@@ -38,6 +61,10 @@ android {
 
     lintOptions {
         abortOnError false
+    }
+
+    packagingOptions {
+        exclude 'META-INF/services/javax.annotation.processing.Processor'
     }
 }
 

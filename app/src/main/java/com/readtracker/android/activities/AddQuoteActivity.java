@@ -15,7 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.readtracker.android.R;
+import com.readtracker.R;
 import com.readtracker.android.custom_views.ProgressPicker;
 import com.readtracker.android.db.Book;
 import com.readtracker.android.db.DatabaseManager;
@@ -24,7 +24,6 @@ import com.readtracker.android.support.DrawableGenerator;
 import com.readtracker.android.support.Utils;
 
 import java.lang.ref.WeakReference;
-import java.util.Date;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -126,7 +125,7 @@ public class AddQuoteActivity extends BookBaseActivity {
     DrawableGenerator.applyButtonBackground(color, mSaveButton);
     mSaveButton.setEnabled(true);
 
-    float quotePosition = book.getCurrentPosition();
+    Float quotePosition = book.getCurrentPosition();
     if(mEditQuote != null) {
       mQuoteTextEdit.setText(mEditQuote.getContent());
       quotePosition = mEditQuote.getPosition();
@@ -136,7 +135,7 @@ public class AddQuoteActivity extends BookBaseActivity {
     }
 
     if(book.hasPageNumbers()) {
-      mProgressPicker.setPositionAndPageCount(quotePosition, book.getPageCount());
+      mProgressPicker.setPositionAndPageCount(quotePosition == null ? 0 : quotePosition, book.getPageCount());
     } else {
       mProgressPicker.setVisibility(View.GONE);
       findViewById(R.id.textLabelEnterPosition).setVisibility(View.GONE);
@@ -194,7 +193,7 @@ public class AddQuoteActivity extends BookBaseActivity {
   }
 
   private static class CreateOrUpdateQuoteTask extends AsyncTask<Void, Void, Quote> {
-    private Quote mQuote;
+    private final Quote mQuote;
 
     private final WeakReference<AddQuoteActivity> mActivity;
     private final DatabaseManager mDatabaseManager;
@@ -203,7 +202,7 @@ public class AddQuoteActivity extends BookBaseActivity {
       if(quote == null) {
         Log.v(TAG, "Creating quote");
         mQuote = new Quote();
-        mQuote.setAddTimestamp(new Date().getTime());
+        mQuote.setAddTimestampMs(System.currentTimeMillis());
         mQuote.setBook(book);
       } else {
         mQuote = quote;

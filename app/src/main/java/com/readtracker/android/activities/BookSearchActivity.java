@@ -18,8 +18,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
+import com.readtracker.R;
 import com.readtracker.android.IntentKeys;
-import com.readtracker.android.R;
 import com.readtracker.android.adapters.BookItem;
 import com.readtracker.android.adapters.SearchResultAdapter;
 
@@ -72,7 +72,7 @@ public class BookSearchActivity extends BaseActivity {
     ButterKnife.inject(this);
 
     mGoogleBooksApi = ApiProvider.provideGoogleBooksApi();
-    mBookSearchAdapter = new SearchResultAdapter(this, R.layout.list_item_book, R.id.textTitle, new ArrayList<BookItem>());
+    mBookSearchAdapter = new SearchResultAdapter(this, new ArrayList<BookItem>());
     mListSearchResults.setAdapter(mBookSearchAdapter);
 
     // Suggest that the soft input keyboard is visible at once
@@ -253,7 +253,5 @@ public class BookSearchActivity extends BaseActivity {
       mInputMethodManager.hideSoftInputFromWindow(mEditTextSearch.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
     }
   }
-
-
 
 }

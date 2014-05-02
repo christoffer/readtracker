@@ -11,7 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.readtracker.android.R;
+import com.readtracker.R;
 import com.readtracker.android.db.Book;
 import com.readtracker.android.db.DatabaseManager;
 import com.readtracker.android.db.Model;
@@ -142,6 +142,7 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialog.E
   protected void onBookLoaded(Book book) {
     Log.v(TAG, "Book loaded: " + book);
     mCurrentSession.setBook(book);
+    mCurrentSession.setStartPosition(book.getCurrentPosition());
     postEvent(new BookLoadedEvent(book));
     setupFragments(book);
     mPagerTabStrip.setVisibility(View.VISIBLE);
@@ -200,11 +201,11 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialog.E
         Log.d(TAG, "Saving book and session");
         final Book book = getBook();
 
-        mCurrentSession.setTimestamp(System.currentTimeMillis());
+        mCurrentSession.setTimestampMs(System.currentTimeMillis() / 1000);
 
         // Snapshot the session as the latest state of the book
         book.setCurrentPosition(mCurrentSession.getEndPosition());
-        book.setCurrentPositionTimestamp(mCurrentSession.getTimestamp());
+        book.setCurrentPositionTimestampMs(mCurrentSession.getTimestampMs());
 
         // Pass a flag to the receiver, allowing it to act on the fact that
         // the resulting book is finished.

@@ -19,8 +19,8 @@ import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.readtracker.android.BuildConfig;
-import com.readtracker.android.R;
+import com.readtracker.BuildConfig;
+import com.readtracker.R;
 import com.readtracker.android.activities.BaseActivity;
 import com.readtracker.android.activities.BookActivity;
 import com.readtracker.android.custom_views.PauseableSpinAnimation;
@@ -66,9 +66,6 @@ public class ReadFragment extends BaseFragment {
 
   // Book to track
   private Book mBook;
-
-  // The position that the book had when loaded
-  private float mStartPosition;
 
   private final SessionTimer mSessionTimer = new SessionTimer();
 
@@ -116,24 +113,6 @@ public class ReadFragment extends BaseFragment {
     populateFieldsDeferred();
   }
 
-  //  @Override public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//    super.onActivityResult(requestCode, resultCode, data);
-//    if(requestCode == REQUEST_CODE_END_SESSION) {
-//      if(resultCode == EndSessionDialog.RESULT_END_SESSION) {
-//        float endPosition = data.getExtras().getFloat(EndSessionDialog.KEY_END_POSITION);
-//        getBus().post(new NewSessionEvent(buildSession(endPosition)));
-//      } else if(resultCode == EndSessionDialog.RESULT_FINISH_BOOK) {
-//        // Bounce off to finish book screen when the book has finished loading
-//        Intent intent = new Intent(getActivity(), FinishBookActivity.class);
-//        intent.putExtra(BookBaseActivity.KEY_BOOK_ID, ((BookActivity) getActivity()).getBookId());
-//        startActivityForResult(intent, REQUEST_CODE_FINISH_BOOK);
-//      }
-//    } else if(requestCode == REQUEST_CODE_FINISH_BOOK && resultCode == Activity.RESULT_OK) {
-//      String closingRemark = data.getStringExtra(FinishBookActivity.KEY_CLOSING_REMARK);
-//      getBus().post(new NewSessionEvent(buildSession(1.0f), closingRemark));
-//    }
-//  }
-//
   @Override public void onStart() {
     super.onStart();
     mSessionTimer.initializeFromPreferences(getPreferences());
@@ -153,7 +132,6 @@ public class ReadFragment extends BaseFragment {
   @Subscribe public void onBookLoadedEvent(BookActivity.BookLoadedEvent event) {
     Log.v(TAG, "Got book loaded event: " + event);
     mBook = event.getBook();
-    mStartPosition = event.getBook() == null ? 0f : mBook.getCurrentPosition();
     populateFieldsDeferred();
   }
 
@@ -412,8 +390,8 @@ public class ReadFragment extends BaseFragment {
     TimerTask mTask;
 
     // Make sure the callback happens on the main thread
-    Handler mHandler = new Handler(Looper.getMainLooper());
-    Runnable mUpdateRunnable = new Runnable() {
+    final Handler mHandler = new Handler(Looper.getMainLooper());
+    final Runnable mUpdateRunnable = new Runnable() {
       @Override public void run() {
         onUpdate();
       }
