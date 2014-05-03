@@ -8,12 +8,12 @@ import com.readtracker.android.googlebooks.GoogleBooksApi;
 import rx.Observable;
 import rx.Subscriber;
 
-public class GetBooks implements Observable.OnSubscribe<List<Volume>> {
+public class SearchBooks implements Observable.OnSubscribe<List<Volume>> {
 
   private final GoogleBooksApi mApi;
   private final String mQuery;
 
-  public GetBooks(GoogleBooksApi api, String query) {
+  public SearchBooks(GoogleBooksApi api, String query) {
     mApi = api;
     mQuery = query;
   }

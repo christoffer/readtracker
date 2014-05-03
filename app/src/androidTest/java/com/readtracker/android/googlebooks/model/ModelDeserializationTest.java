@@ -1,19 +1,10 @@
 package com.readtracker.android.googlebooks.model;
 
 import android.test.AndroidTestCase;
-import android.test.InstrumentationTestCase;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.readtracker.android.test.TestUtils;
-
-import junit.framework.TestCase;
-
-import java.io.IOException;
-import java.net.URL;
-import java.util.Enumeration;
-
-import dalvik.system.PathClassLoader;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -26,8 +17,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
  *   VolumeInfo
  *    ImageLinks
  *
- * This test uses actual response data to verify our ability to parse
- * the response data
+ * This test uses actual API data to verify our ability to parse/deserialize it
  *
  * TODO This could become a JUnit4 test once betterGradle Android plugin support is available
  */
@@ -51,6 +41,7 @@ public class ModelDeserializationTest extends AndroidTestCase {
     // Verify Volume wrapper
     assertThat(volume).isNotNull();
     assertThat(volume.getId()).isEqualTo("KPjmuogFmU0C");
+    assertTrue(volume.isValid());
 
     // Verify VolumeInfo contents
     VolumeInfo volumeInfo = volume.getVolumeInfo();
