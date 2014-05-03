@@ -240,23 +240,25 @@ public class BookSearchActivity extends BaseActivity {
   }
 
   public void setSearchResults(List<Volume> foundBooks) {
+    Log.d(TAG, String.format("Setting book search results. Got %d books", foundBooks == null ? 0 : foundBooks.size()));
     mEditTextSearch.setEnabled(true);
     mBookSearchAdapter.clear();
 
     if(foundBooks == null) {
       toastLong(getString(R.string.book_search_no_results));
-      foundBooks = new ArrayList<Volume>();
-    }
-
-    Log.d(TAG, "Setting book search results. Got " + foundBooks.size() + " books");
-
-    if(foundBooks.size() > 0) {
+    } else if(foundBooks.size() > 0) {
       for(Volume book : foundBooks) {
-        mBookSearchAdapter.add(new BookItem(
-            book.getVolumeInfo().getTitle(),
-            Arrays.toString(book.getVolumeInfo().getAuthors()),
-            book.getVolumeInfo().getImageLinks().getThumbNail(),
-            book.getVolumeInfo().getPageCount()));
+        if(book.isValid()) {
+          mBookSearchAdapter.add(new BookItem(
+              book.getVolumeInfo().getTitle(),
+              Arrays.toString(book.getVolumeInfo().getAuthors()),
+              book.getVolumeInfo().getImageLinks().getThumbNail(),
+              book.getVolumeInfo().getPageCount()));
+        }
+      }
+      // We had books, but none were valid
+      if(mBookSearchAdapter.isEmpty()) {
+        toastLong(getString(R.string.book_search_no_results));
       }
       mInputMethodManager.hideSoftInputFromWindow(mEditTextSearch.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
     }

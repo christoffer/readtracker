@@ -10,7 +10,6 @@ public class ApiProvider {
     String apiUrl = new Uri.Builder().scheme("https").authority("www.googleapis.com").toString();
     RestAdapter restAdapter = new RestAdapter.Builder()
         .setEndpoint(apiUrl)
-            //    .setRequestInterceptor(ri)
         .setLogLevel(RestAdapter.LogLevel.FULL)
         .build();
 
