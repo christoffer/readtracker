@@ -194,7 +194,7 @@ public class BookSearchActivity extends BaseActivity {
    */
   private void search(String rawQuery) {
     // TODO replace with a spinner in the text editor field
-    getApp().showProgressDialog(BookSearchActivity.this, "Searching...");
+    getApp().showProgressDialog(BookSearchActivity.this, getString(R.string.book_search_progress));
     String isbnQueryString = Utils.parseISBNQueryString(rawQuery);
     rx.Observable<ApiResponse<Volume>> booksObservable = GoogleBooksClient.searchBooks(mGoogleBooksApi, isbnQueryString == null ? rawQuery : isbnQueryString);
     mSearchSubscription = booksObservable.subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<ApiResponse<Volume>>() {
@@ -207,7 +207,7 @@ public class BookSearchActivity extends BaseActivity {
         Log.e(TAG, "Error searching Google Books", throwable);
         getApp().clearProgressDialog();
         if(isNetworkError(throwable)) {
-          toastLong("Check your internet connection");
+          toastLong(getString(R.string.general_no_internet_connection));
         }
       }
     });

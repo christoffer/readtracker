@@ -78,9 +78,11 @@
   <string name="general_author">Author</string>
   <string name="general_title">Title</string>
   <string name="general_unknown_title">Unknown title</string>
+  <string name="general_no_internet_connection">No internet connection</string>
 
   <string name="book_search_search">Search</string>
   <string name="book_search_search_google_books">Search Google Books...</string>
+  <string name="book_search_progress">Searching...</string>
   <string name="book_search_new_book">New book...</string>
   <string name="book_search_no_results">No results</string>
 
