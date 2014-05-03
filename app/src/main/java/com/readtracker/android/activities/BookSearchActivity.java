@@ -86,10 +86,10 @@ public class BookSearchActivity extends BaseActivity {
   }
 
   @Override protected void onDestroy() {
-    super.onDestroy();
     if(mSearchSubscription != null && !mSearchSubscription.isUnsubscribed()) {
       mSearchSubscription.unsubscribe();
     }
+    super.onDestroy();
   }
 
   @Override
