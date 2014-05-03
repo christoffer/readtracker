@@ -43,6 +43,8 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
+import static com.readtracker.android.support.Utils.isNetworkError;
+
 /**
  * Screen for searching for books on Google Books
  */
@@ -203,9 +205,10 @@ public class BookSearchActivity extends BaseActivity {
     }, new Action1<Throwable>() {
       @Override public void call(Throwable throwable) {
         Log.e(TAG, "Error searching Google Books", throwable);
-        // TODO Show error Dialog
         getApp().clearProgressDialog();
-        toastLong("Errir!");
+        if(isNetworkError(throwable)) {
+          toastLong("Check your internet connection");
+        }
       }
     });
   }

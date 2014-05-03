@@ -6,6 +6,7 @@ import android.graphics.Color;
 import com.readtracker.android.db.Book;
 import com.readtracker.android.db.Session;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,6 +15,8 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import retrofit.RetrofitError;
 
 /**
  * Generic utility functions
@@ -225,5 +228,13 @@ public class Utils {
       return String.format("isbn:%s", cleanedNumber);
     }
     return null;
+  }
+
+  public static boolean isNetworkError(Throwable throwable) {
+    if(throwable instanceof RetrofitError) {
+      return ((RetrofitError) throwable).isNetworkError();
+    } else {
+      return false;
+    }
   }
 }
