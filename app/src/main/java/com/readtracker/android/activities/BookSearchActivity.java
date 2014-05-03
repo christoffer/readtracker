@@ -243,7 +243,7 @@ public class BookSearchActivity extends BaseActivity {
     mEditTextSearch.setEnabled(true);
     mBookSearchAdapter.clear();
 
-    if(foundBooks == null || foundBooks.isEmpty()) {
+    if(foundBooks == null) {
       toastLong(getString(R.string.book_search_no_results));
       foundBooks = new ArrayList<Volume>();
     }
