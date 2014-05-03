@@ -2,6 +2,7 @@ package com.readtracker.android.googlebooks;
 
 import java.util.List;
 
+import com.readtracker.android.googlebooks.model.ApiResponse;
 import com.readtracker.android.googlebooks.model.Volume;
 import retrofit.http.GET;
 import retrofit.http.Query;
@@ -11,5 +12,5 @@ import retrofit.http.Query;
  */
 public interface GoogleBooksApi {
     @GET("/books/v1/volumes")
-    public List<Volume> findBooks(@Query("q") String query);
+    public ApiResponse<Volume> searchBooks(@Query("q") String query);
 }

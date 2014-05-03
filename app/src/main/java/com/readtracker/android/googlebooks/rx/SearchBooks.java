@@ -1,14 +1,13 @@
 package com.readtracker.android.googlebooks.rx;
 
+import com.readtracker.android.googlebooks.model.ApiResponse;
 import com.readtracker.android.googlebooks.model.Volume;
-
-import java.util.List;
 
 import com.readtracker.android.googlebooks.GoogleBooksApi;
 import rx.Observable;
 import rx.Subscriber;
 
-public class SearchBooks implements Observable.OnSubscribe<List<Volume>> {
+public class SearchBooks implements Observable.OnSubscribe<ApiResponse<Volume>> {
 
   private final GoogleBooksApi mApi;
   private final String mQuery;
@@ -19,9 +18,9 @@ public class SearchBooks implements Observable.OnSubscribe<List<Volume>> {
   }
 
   @Override
-  public void call(Subscriber<? super List<Volume>> subscriber) {
+  public void call(Subscriber<? super ApiResponse<Volume>> subscriber) {
     try {
-      subscriber.onNext(mApi.findBooks(mQuery));
+      subscriber.onNext(mApi.searchBooks(mQuery));
       subscriber.onCompleted();
     } catch(Exception e) {
       subscriber.onError(e);

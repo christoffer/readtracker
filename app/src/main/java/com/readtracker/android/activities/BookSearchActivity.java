@@ -24,6 +24,7 @@ import com.readtracker.android.adapters.BookItem;
 import com.readtracker.android.adapters.SearchResultAdapter;
 
 import com.readtracker.android.googlebooks.ApiProvider;
+import com.readtracker.android.googlebooks.model.ApiResponse;
 import com.readtracker.android.googlebooks.model.Volume;
 
 import com.readtracker.android.support.Utils;
@@ -193,14 +194,18 @@ public class BookSearchActivity extends BaseActivity {
     // TODO replace with a spinner in the text editor field
     getApp().showProgressDialog(BookSearchActivity.this, "Searching...");
     String isbnQueryString = Utils.parseISBNQueryString(rawQuery);
-    rx.Observable<List<Volume>> books = GoogleBooksClient.findBooks(mGoogleBooksApi, isbnQueryString == null ? rawQuery : isbnQueryString);
-    mSearchSubscription = books.subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<List<Volume>>() {
-      @Override public void call(List<Volume> volumes) {
-        setSearchResults(volumes);
+    rx.Observable<ApiResponse<Volume>> booksObservable = GoogleBooksClient.searchBooks(mGoogleBooksApi, isbnQueryString == null ? rawQuery : isbnQueryString);
+    mSearchSubscription = booksObservable.subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<ApiResponse<Volume>>() {
+      @Override public void call(ApiResponse<Volume> volumes) {
+        getApp().clearProgressDialog();
+        setSearchResults(volumes.getItems());
       }
     }, new Action1<Throwable>() {
       @Override public void call(Throwable throwable) {
-        // TODO Dialog
+        Log.e(TAG, "Error searching Google Books", throwable);
+        // TODO Show error Dialog
+        getApp().clearProgressDialog();
+        toastLong("Errir!");
       }
     });
   }
@@ -235,7 +240,7 @@ public class BookSearchActivity extends BaseActivity {
     mEditTextSearch.setEnabled(true);
     mBookSearchAdapter.clear();
 
-    if(foundBooks == null) {
+    if(foundBooks == null || foundBooks.isEmpty()) {
       toastLong(getString(R.string.book_search_no_results));
       foundBooks = new ArrayList<Volume>();
     }
