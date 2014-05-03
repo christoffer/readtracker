@@ -224,8 +224,8 @@ public class Utils {
   public static String parseISBNQueryString(String queryString) {
     Matcher isbnMatcher = ISBNPattern.matcher(queryString.toLowerCase().trim());
     if(isbnMatcher.matches()) {
-      String cleanedNumber = isbnMatcher.group(0).replaceAll("[^0-9]+", "");
-      return String.format("isbn:%s", cleanedNumber);
+      String sanitizedNumber = isbnMatcher.group(0).replaceAll("[^0-9]+", "");
+      return String.format("isbn:%s", sanitizedNumber);
     }
     return null;
   }

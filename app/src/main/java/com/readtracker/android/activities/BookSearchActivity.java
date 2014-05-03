@@ -152,7 +152,7 @@ public class BookSearchActivity extends BaseActivity {
       @Override
       public void onItemClick(AdapterView parent, View view, int position, long id) {
         BookItem clickedBook = mBookSearchAdapter.getItem(position);
-        exitToBookInit(clickedBook.title, clickedBook.author, clickedBook.coverURL, clickedBook.pageCount);
+        startAddBookActivity(clickedBook.title, clickedBook.author, clickedBook.coverURL, clickedBook.pageCount);
       }
     });
 
@@ -214,14 +214,14 @@ public class BookSearchActivity extends BaseActivity {
   }
 
   /**
-   * Exits to the Add book dialog with the given pre-filled data
+   * Starts the Add Book Activity with the given pre-filled data
    *
    * @param title     title of book
    * @param author    author of book
    * @param coverURL  cover url
-   * @param pageCount number of pages in the book (Use -1 if not available)
+   * @param pageCount number of pages in the book
    */
-  private void exitToBookInit(String title, String author, String coverURL, long pageCount) {
+  private void startAddBookActivity(String title, String author, String coverURL, long pageCount) {
     Intent intent = new Intent(this, AddBookActivity.class);
     intent.putExtra(IntentKeys.TITLE, title);
     intent.putExtra(IntentKeys.AUTHOR, author);
