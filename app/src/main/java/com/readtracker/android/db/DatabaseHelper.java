@@ -6,11 +6,14 @@ import android.util.Log;
 
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.db.SqliteAndroidDatabaseType;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
+import com.readtracker.BuildConfig;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +25,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
   }
 
   public static final String DATABASE_NAME = "readtracker.db";
-  public static final int DATABASE_VERSION = 11;
+  public static final int DATABASE_VERSION = 12;
   private static final String TAG = DatabaseHelper.class.getName();
 
   private Dao<LocalReading, Integer> readingDao = null;
@@ -129,6 +132,11 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
       if(runningVersion == 10) {
         _upgradeToVersion11(db, connectionSource);
+        runningVersion++;
+      }
+
+      if(runningVersion == 11) {
+        _upgradeToVersion12(db, connectionSource);
         runningVersion++;
       }
 
@@ -342,6 +350,32 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     convertLocalReadingsToBook(db);
     convertLocalSessionToSession(db);
     convertLocalHighlightToQuote(db);
+  }
+
+  private void _upgradeToVersion12(SQLiteDatabase db, ConnectionSource connectionSource) throws SQLException {
+    Log.i(TAG, "Running database upgrade 12");
+    DatabaseManager dbMgr = new DatabaseManager(this);
+    List<Session> sessions = dbMgr.getAll(Session.class);
+
+    // Version 3.1 had a bug where the session would get set in seconds, rather than milliseconds.
+    // This caused some sessions to be timestamped somewhere in the early 1970 (~17 January).
+    // We fix this by finding any session that has a timestamp < 1971 and bumping them by
+    // 1000x. 1971 is somewhat arbitrary, but it's close enough to 0 (Jan 1st, 1970) that we have
+    // a very low chance of bumping timestamps from sessions users have back dated.
+    final long JAN_1ST_1971 = 31536000000L;
+    for(Session session : sessions) {
+      if(session.getTimestampMs() < JAN_1ST_1971) {
+        // Most likely a session with a timestamp affected by the 3.1 bug, bump it into the present.
+        if(BuildConfig.DEBUG) {
+          Log.i(TAG, String.format("Bumping timestamp of session: %d, from %s to %s",
+              session.getId(),
+              new Date(session.getTimestampMs()),
+              new Date(session.getTimestampMs() * 1000)));
+        }
+        session.setTimestampMs(session.getTimestampMs() * 1000);
+        dbMgr.save(session);
+      }
+    }
   }
 
   private void convertLocalReadingsToBook(SQLiteDatabase db) {
