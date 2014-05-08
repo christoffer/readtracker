@@ -125,11 +125,11 @@ public class SessionView extends View {
     final float textPadding = TEXT_PADDING; // Padding between the text and the box
     final float primaryTextHeight = mPrimaryTextPaint.measureText("X");
     final float secondaryTextHeight = mSecondaryTextPaint.measureText("X");
-    final float lineHeight = 1.5f;
+    final float lineHeight = 0.8f;
 
     // Calculate dimensions of the text box
     final float largestTextWidth = Math.max(mPrimaryTextPaint.measureText(primaryText), mSecondaryTextPaint.measureText(secondaryText));
-    final float textBoxHeight = primaryTextHeight + secondaryTextHeight + 2 * textPadding + lineHeight * primaryTextHeight; // use line height of 1.5
+    final float textBoxHeight = primaryTextHeight + secondaryTextHeight + 2 * textPadding + lineHeight * primaryTextHeight;
     RectF textBox = new RectF(0, 0, textPadding * 2 + largestTextWidth, textBoxHeight);
 
     // Let the x, y position be the rightmost edge if drawFlipped is set
