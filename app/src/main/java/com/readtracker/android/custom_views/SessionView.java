@@ -90,7 +90,7 @@ public class SessionView extends View {
       final float y = i == 0 ? SEGMENT_HEIGHT * 0.5f : i * SEGMENT_HEIGHT + getPaddingTop();
 
       String primaryText = Utils.hoursAndMinutesFromMillis(node.durationSeconds * 1000);
-      String secondaryText = Utils.humanPastTimeFromTimestamp(node.occurredAt, now);
+      String secondaryText = Utils.humanPastTimeFromTimestamp(node.sessionTimestampMs, now);
 
       boolean drawFlipped = node.progress > 0.5;
       drawText(canvas, x, y, radius, primaryText, secondaryText, drawFlipped);
@@ -236,12 +236,12 @@ public class SessionView extends View {
   private class Node {
     public final long durationSeconds;
     public final float progress; // 0..1
-    public final long occurredAt;
+    public final long sessionTimestampMs;
 
     public Node(Session session) {
       this.durationSeconds = session.getDurationSeconds();
       this.progress = session.getEndPosition();
-      this.occurredAt = session.getTimestampMs();
+      this.sessionTimestampMs = session.getTimestampMs();
     }
   }
 
