@@ -24,6 +24,11 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     super(context, DATABASE_NAME, null, DATABASE_VERSION);
   }
 
+  public DatabaseHelper(Context context, String databaseName,
+                        SQLiteDatabase.CursorFactory factory, int databaseVersion) {
+    super(context, databaseName, factory, databaseVersion);
+  }
+
   public static final String DATABASE_NAME = "readtracker.db";
   public static final int DATABASE_VERSION = 12;
   private static final String TAG = DatabaseHelper.class.getName();
@@ -355,13 +360,17 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
   private void _upgradeToVersion12(SQLiteDatabase db, ConnectionSource connectionSource) throws SQLException {
     Log.i(TAG, "Running database upgrade 12");
     DatabaseManager dbMgr = new DatabaseManager(this);
-    List<Session> sessions = dbMgr.getAll(Session.class);
+    DatabaseHelper.migrateVersion31Sessions(dbMgr);
+  }
 
+  /** Helper method for migrating sessions with timestamps from the broken 3.1 version. */
+  static void migrateVersion31Sessions(DatabaseManager databaseManager) {
     // Version 3.1 had a bug where the session would get set in seconds, rather than milliseconds.
     // This caused some sessions to be timestamped somewhere in the early 1970 (~17 January).
     // We fix this by finding any session that has a timestamp < 1971 and bumping them by
     // 1000x. 1971 is somewhat arbitrary, but it's close enough to 0 (Jan 1st, 1970) that we have
     // a very low chance of bumping timestamps from sessions users have back dated.
+    List<Session> sessions = databaseManager.getAll(Session.class);
     final long JAN_1ST_1971 = 31536000000L;
     for(Session session : sessions) {
       if(session.getTimestampMs() < JAN_1ST_1971) {
@@ -373,7 +382,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
               new Date(session.getTimestampMs() * 1000)));
         }
         session.setTimestampMs(session.getTimestampMs() * 1000);
-        dbMgr.save(session);
+        databaseManager.save(session);
       }
     }
   }
