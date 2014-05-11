@@ -251,7 +251,7 @@ public class BookSearchActivity extends BaseActivity {
         if(book.isValid()) {
           mBookSearchAdapter.add(new BookItem(
               book.getVolumeInfo().getTitle(),
-              Arrays.toString(book.getVolumeInfo().getAuthors()),
+              Utils.toDisplayString(book.getVolumeInfo().getAuthors()),
               book.getVolumeInfo().getImageLinks().getThumbNail(),
               book.getVolumeInfo().getPageCount()));
         }

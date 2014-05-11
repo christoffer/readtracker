@@ -8,6 +8,8 @@ import junit.framework.TestCase;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.fest.assertions.api.Assertions.assertThat;
+
 public class UtilsTest extends TestCase {
 
   private static final long SECONDS = 1000; /* convert ms to seconds */
@@ -104,6 +106,22 @@ public class UtilsTest extends TestCase {
     assertFalse(Utils.equal(a, c));
     assertFalse(Utils.equal(null, b));
     assertFalse(Utils.equal(a, null));
+  }
+
+  public void test_stringListFormatEmpty() {
+    assertThat(Utils.toDisplayString(null)).isNull();
+    assertThat(Utils.toDisplayString(new String[]{})).isNull();
+  }
+
+  public void test_stringListSingleItem() {
+    assertThat(Utils.toDisplayString(new String[]{"a"})).isEqualTo("a");
+  }
+  public void test_stringListTwoItems() {
+    assertThat(Utils.toDisplayString(new String[]{"a", "b"})).isEqualTo("a and b");
+  }
+
+  public void test_stringListManyItems() {
+    assertThat(Utils.toDisplayString(new String[]{"a", "b", "c"})).isEqualTo("a, b and c");
   }
 
   /** Small helper class for calling humanPastTimeFromTimestamp succinctly . */

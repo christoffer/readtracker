@@ -1,12 +1,10 @@
 package com.readtracker.android.support;
 
-
 import android.graphics.Color;
 
 import com.readtracker.android.db.Book;
 import com.readtracker.android.db.Session;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -236,5 +234,21 @@ public class Utils {
     } else {
       return false;
     }
+  }
+
+  public static String toDisplayString(String[] items) {
+    if(items == null || items.length == 0) return null;
+    if(items.length == 1) return items[0];
+
+    StringBuilder sb = new StringBuilder();
+    for(int i = 0; i < items.length; i++) {
+      if(i == items.length - 1) {
+        sb.append(" and ");
+      } else if (i > 0) {
+        sb.append(", ");
+      }
+      sb.append(items[i]);
+    }
+    return sb.toString();
   }
 }
