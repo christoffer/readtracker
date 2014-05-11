@@ -44,14 +44,14 @@ public class ModelDeserializationTest extends AndroidTestCase {
     assertTrue(volume.isValid());
 
     // Verify VolumeInfo contents
-    VolumeInfo volumeInfo = volume.getVolumeInfo();
+    Volume.VolumeInfo volumeInfo = volume.getVolumeInfo();
     assertThat(volumeInfo).isNotNull();
     assertThat(volumeInfo.getTitle()).isEqualTo("Android Apps Entwicklung für Dummies");
     assertThat(volumeInfo.getAuthors()).isEqualTo(new String[]{ "Donn Felker" });
     assertThat(volumeInfo.getPageCount()).isEqualTo(344);
 
     // ImageLinks contents
-    ImageLinks imageLinks = volumeInfo.getImageLinks();
+    Volume.ImageLinks imageLinks = volumeInfo.getImageLinks();
     assertThat(imageLinks).isNotNull();
     assertThat(imageLinks.getThumbNail()).isEqualTo("http://bks8.books.google.de/books?id=KPjmuogFmU0C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api");
 
