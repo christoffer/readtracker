@@ -249,11 +249,12 @@ public class BookSearchActivity extends BaseActivity {
     } else if(foundBooks.size() > 0) {
       for(Volume book : foundBooks) {
         if(book.isValid()) {
+          Volume.VolumeInfo volInfo = book.getVolumeInfo();
           mBookSearchAdapter.add(new BookItem(
-              book.getVolumeInfo().getTitle(),
-              Utils.toDisplayString(book.getVolumeInfo().getAuthors()),
-              book.getVolumeInfo().getImageLinks().getThumbNail(),
-              book.getVolumeInfo().getPageCount()));
+              volInfo.getTitle(),
+              Utils.toDisplayString(volInfo.getAuthors()),
+              volInfo.getImageLinks().getThumbNail(),
+              volInfo.getPageCount()));
         }
       }
       // We had books, but none were valid
