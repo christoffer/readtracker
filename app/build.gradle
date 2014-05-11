@@ -22,7 +22,6 @@ android {
         targetSdkVersion 19
         versionCode 16
         versionName "3.1"
-        testPackageName "com.readtracker.android.test"
     }
 
     signingConfigs {
@@ -76,5 +75,10 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.2.0'
     compile 'com.squareup:otto:1.3.4'
     compile 'com.jakewharton:butterknife:4.0.1'
+    compile 'com.squareup.retrofit:retrofit:1.5.0'
+    compile 'com.netflix.rxjava:rxjava-core:0.17.6'
+    compile 'com.netflix.rxjava:rxjava-android:0.17.6'
     compile files('lib/annotations.jar')
+
+    androidTestCompile 'com.squareup:fest-android:1.0.7'
 }

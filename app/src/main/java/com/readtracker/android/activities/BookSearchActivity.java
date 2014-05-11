@@ -2,7 +2,6 @@ package com.readtracker.android.activities;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -22,17 +21,29 @@ import android.widget.TextView.OnEditorActionListener;
 import com.readtracker.R;
 import com.readtracker.android.IntentKeys;
 import com.readtracker.android.adapters.BookItem;
-import com.readtracker.android.adapters.GoogleBookItem;
 import com.readtracker.android.adapters.SearchResultAdapter;
-import com.readtracker.android.support.GoogleBook;
-import com.readtracker.android.support.GoogleBookSearch;
-import com.readtracker.android.support.GoogleBookSearchException;
+
+import com.readtracker.android.googlebooks.ApiProvider;
+import com.readtracker.android.googlebooks.model.ApiResponse;
+import com.readtracker.android.googlebooks.model.Volume;
+
+import com.readtracker.android.support.Utils;
 import com.readtracker.android.thirdparty.SafeViewFlipper;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import com.readtracker.android.googlebooks.GoogleBooksApi;
+import com.readtracker.android.googlebooks.GoogleBooksClient;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
+
+import static com.readtracker.android.support.Utils.isNetworkError;
 
 /**
  * Screen for searching for books on Google Books
@@ -54,6 +65,8 @@ public class BookSearchActivity extends BaseActivity {
 
   private SearchResultAdapter mBookSearchAdapter;
   private InputMethodManager mInputMethodManager;
+  private GoogleBooksApi mGoogleBooksApi;
+  private Subscription mSearchSubscription;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -61,6 +74,7 @@ public class BookSearchActivity extends BaseActivity {
     setContentView(R.layout.activity_book_search);
     ButterKnife.inject(this);
 
+    mGoogleBooksApi = ApiProvider.provideGoogleBooksApi();
     mBookSearchAdapter = new SearchResultAdapter(this, new ArrayList<BookItem>());
     mListSearchResults.setAdapter(mBookSearchAdapter);
 
@@ -69,6 +83,13 @@ public class BookSearchActivity extends BaseActivity {
     mInputMethodManager.showSoftInput(mEditTextSearch, InputMethodManager.SHOW_IMPLICIT);
 
     bindEvents();
+  }
+
+  @Override protected void onDestroy() {
+    if(mSearchSubscription != null && !mSearchSubscription.isUnsubscribed()) {
+      mSearchSubscription.unsubscribe();
+    }
+    super.onDestroy();
   }
 
   @Override
@@ -131,7 +152,7 @@ public class BookSearchActivity extends BaseActivity {
       @Override
       public void onItemClick(AdapterView parent, View view, int position, long id) {
         BookItem clickedBook = mBookSearchAdapter.getItem(position);
-        exitToBookInit(clickedBook.title, clickedBook.author, clickedBook.coverURL, (int) clickedBook.pageCount);
+        startAddBookActivity(clickedBook.title, clickedBook.author, clickedBook.coverURL, clickedBook.pageCount);
       }
     });
 
@@ -169,23 +190,38 @@ public class BookSearchActivity extends BaseActivity {
   /**
    * Search Google books for the given query
    *
-   * @param query search term
+   * @param rawQuery search term
    */
-  private void search(String query) {
+  private void search(String rawQuery) {
     // TODO replace with a spinner in the text editor field
-    getApp().showProgressDialog(BookSearchActivity.this, getString(R.string.book_search_searching));
-    (new BookSearchTask()).execute(query);
+    getApp().showProgressDialog(BookSearchActivity.this, getString(R.string.book_search_progress));
+    String isbnQueryString = Utils.parseISBNQueryString(rawQuery);
+    rx.Observable<ApiResponse<Volume>> booksObservable = GoogleBooksClient.searchBooks(mGoogleBooksApi, isbnQueryString == null ? rawQuery : isbnQueryString);
+    mSearchSubscription = booksObservable.subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<ApiResponse<Volume>>() {
+      @Override public void call(ApiResponse<Volume> volumes) {
+        getApp().clearProgressDialog();
+        setSearchResults(volumes.getItems());
+      }
+    }, new Action1<Throwable>() {
+      @Override public void call(Throwable throwable) {
+        Log.e(TAG, "Error searching Google Books", throwable);
+        getApp().clearProgressDialog();
+        if(isNetworkError(throwable)) {
+          toastLong(getString(R.string.general_no_internet_connection));
+        }
+      }
+    });
   }
 
   /**
-   * Exits to the Add book dialog with the given pre-filled data
+   * Starts the Add Book Activity with the given pre-filled data
    *
    * @param title     title of book
    * @param author    author of book
    * @param coverURL  cover url
-   * @param pageCount number of pages in the book (Use -1 if not available)
+   * @param pageCount number of pages in the book
    */
-  private void exitToBookInit(String title, String author, String coverURL, int pageCount) {
+  private void startAddBookActivity(String title, String author, String coverURL, long pageCount) {
     Intent intent = new Intent(this, AddBookActivity.class);
     intent.putExtra(IntentKeys.TITLE, title);
     intent.putExtra(IntentKeys.AUTHOR, author);
@@ -203,42 +239,29 @@ public class BookSearchActivity extends BaseActivity {
     startActivityForResult(intent, REQUEST_ADD_BOOK);
   }
 
-  public void setSearchResults(ArrayList<GoogleBook> foundBooks) {
-    getApp().clearProgressDialog();
+  public void setSearchResults(List<Volume> foundBooks) {
+    Log.d(TAG, String.format("Setting book search results. Got %d books", foundBooks == null ? 0 : foundBooks.size()));
     mEditTextSearch.setEnabled(true);
     mBookSearchAdapter.clear();
 
     if(foundBooks == null) {
       toastLong(getString(R.string.book_search_no_results));
-      foundBooks = new ArrayList<GoogleBook>();
-    }
-
-    Log.d(TAG, "Setting book search results. Got " + foundBooks.size() + " books");
-
-    if(foundBooks.size() > 0) {
-      for(GoogleBook book : foundBooks) {
-        mBookSearchAdapter.add(new GoogleBookItem(book));
+    } else if(foundBooks.size() > 0) {
+      for(Volume book : foundBooks) {
+        if(book.isValid()) {
+          Volume.VolumeInfo volInfo = book.getVolumeInfo();
+          mBookSearchAdapter.add(new BookItem(
+              volInfo.getTitle(),
+              Utils.toDisplayString(volInfo.getAuthors()),
+              volInfo.getImageLinks().getThumbNail(),
+              volInfo.getPageCount()));
+        }
+      }
+      // We had books, but none were valid
+      if(mBookSearchAdapter.isEmpty()) {
+        toastLong(getString(R.string.book_search_no_results));
       }
       mInputMethodManager.hideSoftInputFromWindow(mEditTextSearch.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-    }
-  }
-
-  /**
-   * Perform a book search on the server
-   */
-  private class BookSearchTask extends AsyncTask<String, Void, ArrayList<GoogleBook>> {
-
-    protected void onPostExecute(ArrayList<GoogleBook> foundBooks) {
-      setSearchResults(foundBooks);
-    }
-
-    @Override
-    protected ArrayList<GoogleBook> doInBackground(String... searchWords) {
-      try {
-        return GoogleBookSearch.search(searchWords[0]);
-      } catch(GoogleBookSearchException e) {
-        return null;
-      }
     }
   }
 

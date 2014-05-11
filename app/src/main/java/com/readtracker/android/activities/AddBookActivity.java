@@ -143,7 +143,7 @@ public class AddBookActivity extends BookBaseActivity {
     mTitleEdit.setText(intent.getStringExtra(IntentKeys.TITLE));
     mAuthorEdit.setText(intent.getStringExtra(IntentKeys.AUTHOR));
     mCoverURL = intent.getStringExtra(IntentKeys.COVER_URL);
-    setInitialPageCount(intent.getIntExtra(IntentKeys.PAGE_COUNT, 0));
+    setInitialPageCount(intent.getLongExtra(IntentKeys.PAGE_COUNT, 0));
 
     bindEvents();
   }

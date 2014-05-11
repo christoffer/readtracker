@@ -1,6 +1,5 @@
 package com.readtracker.android.support;
 
-
 import android.graphics.Color;
 
 import com.readtracker.android.db.Book;
@@ -12,12 +11,17 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import retrofit.RetrofitError;
 
 /**
  * Generic utility functions
  */
 public class Utils {
   private static final long DAYS = 60 * 60 * 24 * 1000;
+  private static final Pattern ISBNPattern = Pattern.compile("^(?:isbn[ :]+)([0-9 -]+)$");
 
   /**
    * Returns a string representation like "3 hours, 12 minutes"
@@ -213,5 +217,38 @@ public class Utils {
     final SimpleDateFormat dateFormat = new SimpleDateFormat("'on 'MMM d, yyyy", Locale.ENGLISH);
 
     return dateFormat.format(then);
+  }
+
+  public static String parseISBNQueryString(String queryString) {
+    Matcher isbnMatcher = ISBNPattern.matcher(queryString.toLowerCase().trim());
+    if(isbnMatcher.matches()) {
+      String sanitizedNumber = isbnMatcher.group(0).replaceAll("[^0-9]+", "");
+      return String.format("isbn:%s", sanitizedNumber);
+    }
+    return null;
+  }
+
+  public static boolean isNetworkError(Throwable throwable) {
+    if(throwable instanceof RetrofitError) {
+      return ((RetrofitError) throwable).isNetworkError();
+    } else {
+      return false;
+    }
+  }
+
+  public static String toDisplayString(String[] items) {
+    if(items == null || items.length == 0) return null;
+    if(items.length == 1) return items[0];
+
+    StringBuilder sb = new StringBuilder();
+    for(int i = 0; i < items.length; i++) {
+      if(i == items.length - 1) {
+        sb.append(" and ");
+      } else if (i > 0) {
+        sb.append(", ");
+      }
+      sb.append(items[i]);
+    }
+    return sb.toString();
   }
 }

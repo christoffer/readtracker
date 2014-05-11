@@ -1,4 +1,4 @@
-package com.readtracker.android.test;
+package com.readtracker.android;
 
 import com.readtracker.android.db.Session;
 import com.readtracker.android.support.Utils;
@@ -7,6 +7,8 @@ import junit.framework.TestCase;
 
 import java.util.Arrays;
 import java.util.List;
+
+import static org.fest.assertions.api.Assertions.assertThat;
 
 public class UtilsTest extends TestCase {
 
@@ -104,6 +106,22 @@ public class UtilsTest extends TestCase {
     assertFalse(Utils.equal(a, c));
     assertFalse(Utils.equal(null, b));
     assertFalse(Utils.equal(a, null));
+  }
+
+  public void test_stringListFormatEmpty() {
+    assertThat(Utils.toDisplayString(null)).isNull();
+    assertThat(Utils.toDisplayString(new String[]{})).isNull();
+  }
+
+  public void test_toDisplayStringSingleItem() {
+    assertThat(Utils.toDisplayString(new String[]{"a"})).isEqualTo("a");
+  }
+  public void test_toDisplayStringTwoItems() {
+    assertThat(Utils.toDisplayString(new String[]{"a", "b"})).isEqualTo("a and b");
+  }
+
+  public void test_toDisplayStringManyItems() {
+    assertThat(Utils.toDisplayString(new String[]{"a", "b", "c"})).isEqualTo("a, b and c");
   }
 
   /** Small helper class for calling humanPastTimeFromTimestamp succinctly . */
