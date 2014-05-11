@@ -113,14 +113,14 @@ public class UtilsTest extends TestCase {
     assertThat(Utils.toDisplayString(new String[]{})).isNull();
   }
 
-  public void test_stringListSingleItem() {
+  public void test_toDisplayStringSingleItem() {
     assertThat(Utils.toDisplayString(new String[]{"a"})).isEqualTo("a");
   }
-  public void test_stringListTwoItems() {
+  public void test_toDisplayStringTwoItems() {
     assertThat(Utils.toDisplayString(new String[]{"a", "b"})).isEqualTo("a and b");
   }
 
-  public void test_stringListManyItems() {
+  public void test_toDisplayStringManyItems() {
     assertThat(Utils.toDisplayString(new String[]{"a", "b", "c"})).isEqualTo("a, b and c");
   }
 
