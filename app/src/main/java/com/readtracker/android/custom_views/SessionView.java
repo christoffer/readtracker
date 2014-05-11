@@ -60,8 +60,8 @@ public class SessionView extends View {
 
     int height = mNodes == null ? 0 : SEGMENT_HEIGHT * mNodes.length;
 
-    final boolean isOverflow = specHeightMode == MeasureSpec.AT_MOST &&
-      height > specHeightSize;
+    final boolean isOverflow = specHeightMode == MeasureSpec.AT_MOST
+        && height > specHeightSize;
 
     if(specHeightMode == MeasureSpec.EXACTLY || isOverflow) {
       height = specHeightSize;
