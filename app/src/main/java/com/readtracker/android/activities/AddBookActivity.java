@@ -157,12 +157,12 @@ public class AddBookActivity extends BookBaseActivity {
     if(book.hasPageNumbers()) {
       int pageCount = (int) ((float) book.getPageCount());
       mPageCountEdit.setText(String.valueOf(pageCount));
+      mPageCountEdit.setEnabled(true);
       mPagePctToggle.setChecked(true);
-      mPagePctToggle.setEnabled(true);
     } else {
       mPageCountEdit.setText("100%");
+      mPageCountEdit.setEnabled(false);
       mPagePctToggle.setChecked(false);
-      mPagePctToggle.setEnabled(false);
     }
 
     mCoverURL = book.getCoverImageUrl();
