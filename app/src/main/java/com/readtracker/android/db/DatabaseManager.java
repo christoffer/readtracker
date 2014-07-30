@@ -74,6 +74,25 @@ public class DatabaseManager {
     }
   }
 
+  /**
+   * Saves all instances to the database.
+   */
+  public <T extends Model> void saveAll(List<T> items) {
+    for(T item : items) {
+      save(item);
+    }
+  }
+
+  /**
+   * Saves all instances to the database.
+   */
+  public <T extends Model> void saveAll(T... items) {
+    for(T item : items) {
+      save(item);
+    }
+  }
+
+
   public <T extends Model> boolean delete(T instance) {
     @SuppressWarnings("unchecked")
     Dao<T, Integer> dao = (Dao<T, Integer>) db.getDaoByClass(instance.getClass());

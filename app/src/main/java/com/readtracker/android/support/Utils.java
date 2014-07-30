@@ -6,6 +6,13 @@ import android.graphics.Color;
 import com.readtracker.android.db.Book;
 import com.readtracker.android.db.Session;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -213,5 +220,28 @@ public class Utils {
     final SimpleDateFormat dateFormat = new SimpleDateFormat("'on 'MMM d, yyyy", Locale.ENGLISH);
 
     return dateFormat.format(then);
+  }
+
+  /** Returns the string content of a file. */
+  public static String readInputFile(File importFile) throws IOException {
+    return readInputStream(new FileInputStream(importFile));
+  }
+
+  /**
+   * Reads an InputStream and returns it as a String.
+   */
+  public static String readInputStream(InputStream inputStream) throws IOException {
+    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "UTF8"));
+    StringBuilder out = new StringBuilder();
+    String line;
+    while((line = reader.readLine()) != null) {
+      out.append(line);
+    }
+    reader.close();
+    return out.toString();
+  }
+
+  public static boolean isEmpty(String string) {
+    return string == null || string.length() == 0;
   }
 }

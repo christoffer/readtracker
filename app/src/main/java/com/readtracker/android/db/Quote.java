@@ -34,6 +34,14 @@ public class Quote extends Model {
 
   public Quote() { }
 
+  public Quote merge(Quote otherQuote) {
+    mContent = otherQuote.mContent;
+    mAddTimestampMs = otherQuote.mAddTimestampMs;
+    mBook = otherQuote.mBook;
+    mPosition = otherQuote.mPosition;
+    return this;
+  }
+
   public Book getBook() { return mBook; }
 
   public void setBook(Book book) { mBook = book; }

@@ -38,6 +38,14 @@ public class Session extends Model {
   public Session() {
   }
 
+  /** Copy constructor */
+  public Session(Session other) {
+    mStartPosition = other.mStartPosition;
+    mEndPosition = other.mEndPosition;
+    mDurationSeconds = other.mDurationSeconds;
+    mTimestampMs = other.mTimestampMs;
+  }
+
   public Float getStartPosition() { return mStartPosition; }
 
   public void setStartPosition(float startPosition) { mStartPosition = startPosition; }
@@ -46,11 +54,11 @@ public class Session extends Model {
 
   public void setEndPosition(float endPosition) { mEndPosition = endPosition; }
 
-  public Long getDurationSeconds() { return mDurationSeconds; }
+  public long getDurationSeconds() { return mDurationSeconds; }
 
   public void setDurationSeconds(long durationSeconds) { mDurationSeconds = durationSeconds; }
 
-  public Long getTimestampMs() { return mTimestampMs; }
+  public long getTimestampMs() { return mTimestampMs; }
 
   public void setTimestampMs(long timestampMs) { mTimestampMs = timestampMs; }
 
@@ -64,6 +72,13 @@ public class Session extends Model {
     public static final String DURATION_SECONDS = "duration_seconds";
     public static final String TIMESTAMP = "timestamp";
     public static final String BOOK_ID = "book_id";
+  }
+
+  public void merge(Session other) {
+    mStartPosition = other.mStartPosition;
+    mEndPosition = other.mEndPosition;
+    mDurationSeconds = other.mDurationSeconds;
+    mTimestampMs = other.mTimestampMs;
   }
 
   @Override public boolean equals(Object o) {

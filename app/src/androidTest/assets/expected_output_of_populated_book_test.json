@@ -1,0 +1,74 @@
+{
+    "format_version": 2,
+    "books": [
+        {
+          "title": "Metamorphosis",
+          "author": "Franz Kafka",
+          "state": "Finished",
+          "current_position": 0.5,
+          "current_position_timestamp": 213456789,
+          "first_position_timestamp": 123456789,
+          "closing_remark": "Dude, poor guy!",
+          "cover_image_url": "https://images-of-books\/metamorphosis.png",
+          "page_count": 123.45,
+          "sessions": [
+            {
+              "start_position": 0.45,
+              "end_position": 0.75,
+              "duration_seconds": 1234,
+              "timestamp": 4000000
+            },
+            {
+              "start_position": 0.75,
+              "end_position": 1,
+              "duration_seconds": 600,
+              "timestamp": 5000000
+            }
+          ],
+          "quotes": [
+            {
+              "content": "unicorn",
+              "position": 0.45,
+              "add_timestamp": 123456799
+            },
+            {
+              "content": "guppy",
+              "position": 0,
+              "add_timestamp": 4564321
+            }
+          ]
+        },
+        {
+            "author": "Donn Felker",
+            "sessions": [
+                {
+                    "timestamp": 1399535743000,
+                    "end_position": 0.00872093066573143,
+                    "start_position": 0,
+                    "duration_seconds": 3
+                },
+                {
+                    "timestamp": 1400856553800,
+                    "end_position": 0.9800000190734863,
+                    "start_position": 0.008720931,
+                    "duration_seconds": 1146
+                }
+            ],
+            "title": "Android Apps Entwicklung für Dummies",
+            "quotes": [],
+            "state": "Finished",
+            "current_position": 0.00872093066573143,
+            "current_position_timestamp": 1400856553800,
+            "cover_image_url": "http:\/\/bks8.books.google.de\/books?id=KPjmuog",
+            "page_count": 344
+        },
+        {
+          "state": "Reading",
+          "current_position": 0,
+          "author": "",
+          "title": "",
+          "sessions": [],
+          "quotes": []
+        }
+    ]
+}

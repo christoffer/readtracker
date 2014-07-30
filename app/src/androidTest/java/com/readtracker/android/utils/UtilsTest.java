@@ -1,4 +1,4 @@
-package com.readtracker.android.test;
+package com.readtracker.android.utils;
 
 import com.readtracker.android.db.Session;
 import com.readtracker.android.support.Utils;
@@ -10,10 +10,10 @@ import java.util.List;
 
 public class UtilsTest extends TestCase {
 
-  private static final long SECONDS = 1000; /* convert ms to seconds */
-  private static final long MINUTES = 60 * SECONDS; /* convert ms to minutes */
-  private static final long HOURS = 60 * MINUTES; /* convert ms to minutes */
-  private static final long DAYS = 24 * HOURS; /* convert ms to days*/
+  private static final long SECONDS = 1000; /* buildAll ms to seconds */
+  private static final long MINUTES = 60 * SECONDS; /* buildAll ms to minutes */
+  private static final long HOURS = 60 * MINUTES; /* buildAll ms to minutes */
+  private static final long DAYS = 24 * HOURS; /* buildAll ms to days*/
 
   public void test_hoursAndMinutesFromMillis() {
     assertEquals("0 minutes", Utils.hoursAndMinutesFromMillis(0));

@@ -14,3 +14,5 @@ project.properties
 local.properties
 .gradle/*
 proguard4.6-out
+build/
+app/src/main/gen

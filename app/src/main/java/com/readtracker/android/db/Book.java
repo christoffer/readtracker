@@ -58,6 +58,9 @@ public class Book extends Model {
   /** Load all sessions for this book from the database. */
   public void loadSessions(DatabaseManager databaseManager) {
     mSessions = databaseManager.getSessionsForBook(this);
+    for(Session session: mSessions) {
+      session.setBook(this);
+    }
   }
 
   public List<Session> getSessions() {
@@ -66,6 +69,9 @@ public class Book extends Model {
 
   public void loadQuotes(DatabaseManager databaseManager) {
     mQuotes = databaseManager.getQuotesForBook(this);
+    for(Quote quote : mQuotes) {
+      quote.setBook(this);
+    }
   }
 
   public List<Quote> getQuotes() {
@@ -192,4 +198,16 @@ public class Book extends Model {
     return (int) (positionsToRead * secondsPerPosition);
   }
 
+  /** Overwrite information in this book with information form another book. */
+  public void merge(Book otherBook) {
+    mTitle = otherBook.mTitle;
+    mAuthor = otherBook.mAuthor;
+    mCoverImageUrl = otherBook.mCoverImageUrl;
+    mPageCount = otherBook.mPageCount;
+    mState = otherBook.mState;
+    mCurrentPosition = otherBook.mCurrentPosition;
+    mCurrentPositionTimestampMs = otherBook.mCurrentPositionTimestampMs;
+    mFirstPositionTimestampMs = otherBook.mFirstPositionTimestampMs;
+    mClosingRemark = otherBook.mClosingRemark;
+  }
 }

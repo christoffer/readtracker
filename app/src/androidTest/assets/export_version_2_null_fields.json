@@ -1,0 +1,31 @@
+{
+    "format_version": 2,
+    "books": [
+        {
+          "title": null,
+          "author": null,
+          "state": null,
+          "current_position": null,
+          "current_position_timestamp": null,
+          "first_position_timestamp": null,
+          "closing_remark": null,
+          "cover_image_url": null,
+          "page_count": null,
+          "sessions": [
+            {
+                "timestamp": null,
+                "end_position": null,
+                "start_position": null,
+                "duration_seconds": null
+            }
+          ],
+          "quotes": [
+            {
+              "content": null,
+              "position": null,
+              "add_timestamp": null
+            }
+          ]
+        }
+    ]
+}

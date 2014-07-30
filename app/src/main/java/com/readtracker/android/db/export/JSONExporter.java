@@ -22,8 +22,9 @@ import java.util.List;
 
 /** Serializer and deserializer of model data to and from JSON. */
 public class JSONExporter {
-  private static final String TAG = JSONExporter.class.getSimpleName();
+  public static final int FORMAT_VERSION = 2;
 
+  private static final String TAG = JSONExporter.class.getSimpleName();
   private static final String DEFAULT_EXPORT_FILENAME = "readtracker.json";
 
   private final DatabaseManager mDatabaseMgr;
@@ -42,10 +43,11 @@ public class JSONExporter {
    * @return the written file if successfully exported, <code>null</code> otherwise.
    */
   public File exportToDisk() {
+    List<Book> books = mDatabaseMgr.getAll(Book.class);
     File outputDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-    final File exportFile = new File(outputDir, DEFAULT_EXPORT_FILENAME);
-    if(exportToDisk(exportFile)) {
-      return exportFile;
+    final File destination = new File(outputDir, DEFAULT_EXPORT_FILENAME);
+    if(exportToDisk(books, destination)) {
+      return destination;
     }
     return null;
   }
@@ -55,9 +57,9 @@ public class JSONExporter {
    *
    * @return true if exported, false otherwise.
    */
-  public boolean exportToDisk(File outputFile) {
+  public boolean exportToDisk(List<Book> books, File outputFile) {
     try {
-      final String jsonData = exportAll();
+      final String jsonData = exportAll(books).toString();
       FileOutputStream fos = new FileOutputStream(outputFile);
       fos.write(jsonData.getBytes());
       fos.close();
@@ -73,29 +75,35 @@ public class JSONExporter {
     return false;
   }
 
-  /** Exports all model data as a JSON string. */
-  private String exportAll() throws JSONException {
-    List<Book> books = mDatabaseMgr.getAll(Book.class);
-    StringBuilder jsonSB = new StringBuilder();
+  /** Exports all books as a JSON object. */
+  JSONObject exportAll(List<Book> books) throws JSONException {
+    JSONObject export = new JSONObject();
+
+    JSONArray exportedBooks = new JSONArray();
 
     for(Book book : books) {
       book.loadQuotes(mDatabaseMgr);
       book.loadSessions(mDatabaseMgr);
-      jsonSB.append(exportCompleteBook(book));
+      JSONObject exportedBook = exportCompleteBook(book);
+      exportedBooks.put(exportedBook);
     }
 
-    return jsonSB.toString();
+    export.put("books", exportedBooks);
+    export.put("format_version", FORMAT_VERSION);
+
+    return export;
   }
 
-  private String exportCompleteBook(Book book) throws JSONException {
+  private JSONObject exportCompleteBook(Book book) throws JSONException {
     JSONObject json = createSingleBookJson(book);
+
     json.put("sessions", createSessionListJson(book.getSessions()));
     json.put("quotes", createQuoteListJson(book.getQuotes()));
 
-    return json.toString(4);
+    return json;
   }
 
-  private JSONArray createSessionListJson(List<Session> sessions) throws JSONException {
+  JSONArray createSessionListJson(List<Session> sessions) throws JSONException {
     JSONArray sessionsJson = new JSONArray();
     for(Session session : sessions) {
       sessionsJson.put(createSingleSessionJson(session));
@@ -103,7 +111,7 @@ public class JSONExporter {
     return sessionsJson;
   }
 
-  private JSONArray createQuoteListJson(List<Quote> quotes) throws JSONException {
+  JSONArray createQuoteListJson(List<Quote> quotes) throws JSONException {
     JSONArray quotesJson = new JSONArray();
     for(Quote quote : quotes) {
       quotesJson.put(createSingleQuoteJson(quote));
@@ -111,21 +119,24 @@ public class JSONExporter {
     return quotesJson;
   }
 
-  private JSONObject createSingleBookJson(Book book) throws JSONException {
+  JSONObject createSingleBookJson(Book book) throws JSONException {
     JSONObject json = new JSONObject();
     json.put(Book.Columns.TITLE, book.getTitle());
     json.put(Book.Columns.AUTHOR, book.getAuthor());
     json.put(Book.Columns.COVER_IMAGE_URL, book.getCoverImageUrl());
     json.put(Book.Columns.PAGE_COUNT, book.getPageCount());
-    json.put(Book.Columns.STATE, book.getState());
     json.put(Book.Columns.CURRENT_POSITION, book.getCurrentPosition());
     json.put(Book.Columns.CURRENT_POSITION_TIMESTAMP, book.getCurrentPositionTimestampMs());
     json.put(Book.Columns.FIRST_POSITION_TIMESTAMP, book.getFirstPositionTimestampMs());
     json.put(Book.Columns.CLOSING_REMARK, book.getClosingRemark());
+
+    String stateName = book.getState() == null ? null : book.getState().toString();
+    json.put(Book.Columns.STATE, stateName);
+
     return json;
   }
 
-  private JSONObject createSingleSessionJson(Session session) throws JSONException {
+  JSONObject createSingleSessionJson(Session session) throws JSONException {
     JSONObject json = new JSONObject();
     json.put(Session.Columns.START_POSITION, session.getStartPosition());
     json.put(Session.Columns.END_POSITION, session.getEndPosition());
@@ -134,7 +145,7 @@ public class JSONExporter {
     return json;
   }
 
-  private JSONObject createSingleQuoteJson(Quote quote) throws JSONException {
+  JSONObject createSingleQuoteJson(Quote quote) throws JSONException {
     JSONObject json = new JSONObject();
     json.put(Quote.Columns.CONTENT, quote.getContent());
     json.put(Quote.Columns.ADD_TIMESTAMP, quote.getAddTimestampMs());
