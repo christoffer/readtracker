@@ -72,19 +72,23 @@ public class SettingsActivity extends PreferenceActivity {
     final Preference exportData = findPreference(EXPORT_JSON);
     exportData.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
       @Override public boolean onPreferenceClick(Preference preference) {
-        final File exportedJsonFile = JSONExporter.from(SettingsActivity.this).exportToDisk();
-        if(exportedJsonFile != null && exportedJsonFile.exists()) {
-          Uri uri = Uri.fromFile(exportedJsonFile);
-          Intent exportIntent = new Intent(Intent.ACTION_SEND);
-          exportIntent.putExtra(Intent.EXTRA_STREAM, uri);
-          exportIntent.setType("text/plain");
-          startActivity(Intent.createChooser(exportIntent, getString(R.string.settings_export_json_save_data)));
-        } else {
-          Log.w(TAG, "Failed to export to disk");
-          Toast.makeText(SettingsActivity.this, R.string.settings_export_json_failed, Toast.LENGTH_SHORT).show();
-        }
-        return true;
+        return onExportDataClick();
       }
     });
+  }
+
+  private boolean onExportDataClick() {
+    final File exportedJsonFile = JSONExporter.from(SettingsActivity.this).exportToDisk();
+    if(exportedJsonFile != null && exportedJsonFile.exists()) {
+      Uri uri = Uri.fromFile(exportedJsonFile);
+      Intent exportIntent = new Intent(Intent.ACTION_SEND);
+      exportIntent.putExtra(Intent.EXTRA_STREAM, uri);
+      exportIntent.setType("text/plain");
+      startActivity(Intent.createChooser(exportIntent, getString(R.string.settings_export_json_save_data)));
+    } else {
+      Log.w(TAG, "Failed to export to disk");
+      Toast.makeText(SettingsActivity.this, R.string.settings_export_json_failed, Toast.LENGTH_SHORT).show();
+    }
+    return true;
   }
 }
