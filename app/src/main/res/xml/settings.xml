@@ -9,6 +9,11 @@
 
   <PreferenceCategory android:title="@string/settings_title_data">
     <Preference
+      android:title="@string/settings_import_json"
+      android:summary="@string/settings_import_summary"
+      android:key="data.import_json"/>
+
+    <Preference
       android:title="@string/settings_export_json"
       android:summary="@string/settings_export_summary"
       android:key="data.export_json"/>

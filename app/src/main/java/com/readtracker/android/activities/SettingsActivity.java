@@ -21,6 +21,7 @@ public class SettingsActivity extends PreferenceActivity {
   private static final String TAG = SettingsActivity.class.getName();
 
   private static final String SETTINGS_COMPACT_FINISH_LIST = "settings.compact_finish_list";
+  private static final String IMPORT_JSON = "data.import_json";
   private static final String EXPORT_JSON = "data.export_json";
   private static final String ABOUT_VERSION = "about.version";
   private static final String ABOUT_LEGAL = "about.legal";
@@ -69,6 +70,13 @@ public class SettingsActivity extends PreferenceActivity {
       }
     });
 
+    final Preference importData = findPreference(IMPORT_JSON);
+    importData.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+      @Override public boolean onPreferenceClick(Preference preference) {
+        return onDataImportClick();
+      }
+    });
+
     final Preference exportData = findPreference(EXPORT_JSON);
     exportData.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
       @Override public boolean onPreferenceClick(Preference preference) {
@@ -90,5 +98,9 @@ public class SettingsActivity extends PreferenceActivity {
       Toast.makeText(SettingsActivity.this, R.string.settings_export_json_failed, Toast.LENGTH_SHORT).show();
     }
     return true;
+  }
+
+  private boolean onDataImportClick() {
+    return false;
   }
 }

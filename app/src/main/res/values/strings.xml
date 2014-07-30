@@ -99,6 +99,8 @@
   <string name="settings_compact_finish_list_summary">Hides the closing remarks for finished books</string>
   <string name="settings_export_json">Export data</string>
   <string name="settings_export_summary">Exports all ReadTracker data as a JSON file.</string>
+  <string name="settings_import_json">Import data</string>
+  <string name="settings_import_summary">Imports data from a ReadTracker export file.</string>
   <string name="settings_export_json_save_data">Save exported data</string>
   <string name="settings_export_json_failed">Export failed</string>
   <string name="settings_title_settings">Settings</string>
