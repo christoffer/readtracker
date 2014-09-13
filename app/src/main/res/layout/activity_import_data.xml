@@ -25,6 +25,7 @@
     android:paddingBottom="10dp"
     android:paddingLeft="0dp"
     android:paddingRight="0dp"
+    android:background="@drawable/selector_clickable_text"
 
     android:drawableLeft="@drawable/icon_back_up"
     android:drawableStart="@drawable/icon_back_up"
