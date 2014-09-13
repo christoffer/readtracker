@@ -1,9 +1,10 @@
 package com.readtracker.android.activities;
 
+import android.app.ProgressDialog;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -14,11 +15,10 @@ import android.widget.Toast;
 
 import com.readtracker.R;
 import com.readtracker.android.ReadTrackerApp;
-import com.readtracker.android.db.export.ImportError;
+import com.readtracker.android.db.export.ImportException;
 import com.readtracker.android.db.export.JSONImporter;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Comparator;
 
 import butterknife.ButterKnife;
@@ -27,7 +27,6 @@ import butterknife.OnClick;
 
 public class ImportActivity extends BaseActivity {
 
-  public static final String KEY_PICKED_FILE = "picked-file";
   private static final String TAG = ImportActivity.class.getSimpleName();
 
   @InjectView(R.id.current_folder_text) TextView currentFolderText;
@@ -42,12 +41,24 @@ public class ImportActivity extends BaseActivity {
     }
   };
 
+  public static final File DOWNLOADS_DIR = Environment.getExternalStoragePublicDirectory(
+      Environment.DIRECTORY_DOWNLOADS
+  );
+
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
     setContentView(R.layout.activity_import_data);
     ButterKnife.inject(this);
 
+    setupFileAdapter();
+
+    // NOTE Defaulting to downloads directory because that's the location most likely to contain
+    // the users export data.
+    setCurrentDirectory(DOWNLOADS_DIR);
+  }
+
+  private void setupFileAdapter() {
     fileBrowseAdapter = new FileBrowserAdapter(this);
     fileList.setAdapter(fileBrowseAdapter);
     fileList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -57,16 +68,11 @@ public class ImportActivity extends BaseActivity {
           if(clickedFile.isDirectory()) {
             setCurrentDirectory(clickedFile);
           } else if(clickedFile.isFile()) {
-            importDataFromFile(clickedFile);
+            importDataFromFileAsync(clickedFile);
           }
         }
       }
     });
-
-    File defaultDir = Environment.getExternalStoragePublicDirectory(
-        Environment.DIRECTORY_DOWNLOADS
-    );
-    setCurrentDirectory(defaultDir);
   }
 
   @OnClick(R.id.current_folder_text) void onCurrentFolderClick() {
@@ -76,23 +82,11 @@ public class ImportActivity extends BaseActivity {
     }
   }
 
-  private void importDataFromFile(File importFile) {
+  private void importDataFromFileAsync(File importFile) {
     if(importFile.exists() && importFile.canRead()) {
       Log.i(TAG, "Importing from file " + importFile.getAbsolutePath());
-      JSONImporter importer = new JSONImporter(ReadTrackerApp.from(this).getDatabaseManager());
-      try {
-        importer.importFile(importFile);
-        Log.i(TAG, "Imported file " + importFile);
-        setResult(RESULT_OK);
-        finish();
-      } catch(ImportError importError) {
-        Log.e(TAG, "Error while importing file", importError);
-        String msg = getString(R.string.error_import_failed_broken_file, importFile.getName());
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
-      } catch(IOException e) {
-        Log.e(TAG, "Error while importing file", e);
-        Toast.makeText(this, R.string.error_import_failed_read_file, Toast.LENGTH_SHORT).show();
-      }
+      fileList.setEnabled(false);
+      new ImportTask().execute(importFile);
     } else {
       Log.w(TAG, "Invalid file selected: " + importFile);
     }
@@ -129,18 +123,69 @@ public class ImportActivity extends BaseActivity {
       fileListItem.setText(file.getName());
 
       int iconResource, textColorResource;
-      if(file.isFile()) {
-        iconResource = R.drawable.icon_file;
-        textColorResource = R.color.text_color_primary;
-      } else {
+      if(file.isDirectory()) {
         iconResource = R.drawable.icon_folder;
         textColorResource = R.color.text_color_secondary;
+      } else {
+        iconResource = R.drawable.icon_file;
+        textColorResource = R.color.text_color_primary;
       }
 
       fileListItem.setCompoundDrawablesWithIntrinsicBounds(iconResource, 0, 0, 0);
       fileListItem.setTextColor(getContext().getResources().getColor(textColorResource));
 
       return fileListItem;
+    }
+  }
+
+  private class ImportTask extends AsyncTask<File, Void, File> {
+    private final JSONImporter importer;
+
+    private ProgressDialog dialog = new ProgressDialog(ImportActivity.this);
+    private Exception exception;
+
+    public ImportTask() {
+      this.importer = new JSONImporter(
+          ReadTrackerApp.from(ImportActivity.this).getDatabaseManager()
+      );
+    }
+
+    @Override protected void onPreExecute() {
+      dialog.setMessage(getString(R.string.importing_files));
+      dialog.show();
+    }
+
+    @Override protected File doInBackground(File... args) {
+      final File importFile = args[0];
+      try {
+        importer.importFile(importFile);
+      } catch(Exception e) {
+        Log.e(TAG, "Error while importing file", exception);
+        exception = e;
+      }
+
+      return importFile;
+    }
+
+    @Override protected void onPostExecute(File importFile) {
+      dialog.dismiss();
+      fileList.setEnabled(true);
+
+      if(exception == null) {
+        Log.i(TAG, "Imported file " + importFile);
+        setResult(RESULT_OK);
+        finish();
+        return;
+      }
+
+      if(exception instanceof ImportException) {
+        String msg = getString(R.string.error_import_failed_broken_file, importFile.getName());
+        Toast.makeText(ImportActivity.this, msg, Toast.LENGTH_SHORT).show();
+      } else {
+        Toast.makeText(
+            ImportActivity.this, R.string.error_import_failed_read_file, Toast.LENGTH_SHORT
+        ).show();
+      }
     }
   }
 }
