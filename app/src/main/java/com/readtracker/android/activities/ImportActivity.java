@@ -19,6 +19,7 @@ import com.readtracker.android.db.export.JSONImporter;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Comparator;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -33,6 +34,13 @@ public class ImportActivity extends BaseActivity {
   @InjectView(R.id.file_list) ListView fileList;
 
   private FileBrowserAdapter fileBrowseAdapter;
+  private static Comparator<? super File> fileListComparator = new Comparator<File>() {
+    @Override public int compare(File first, File second) {
+      if(first.isDirectory() && !second.isDirectory()) return -1;
+      if(second.isDirectory() && !first.isDirectory()) return 1;
+      return first.getName().compareTo(second.getName());
+    }
+  };
 
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -100,6 +108,7 @@ public class ImportActivity extends BaseActivity {
     for(File file : files) {
       fileBrowseAdapter.add(file);
     }
+    fileBrowseAdapter.sort(fileListComparator);
     fileBrowseAdapter.notifyDataSetChanged();
   }
 
