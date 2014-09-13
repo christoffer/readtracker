@@ -384,4 +384,10 @@
         <item name="textSize">16sp</item>
     </style>
 
+  <style name="horizontal_divider">
+    <item name="android:layout_height">1px</item>
+    <item name="android:layout_width">match_parent</item>
+    <item name="android:background">@color/base_color</item>
+  </style>
+
 </resources>

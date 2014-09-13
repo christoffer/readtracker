@@ -1,20 +1,24 @@
 package com.readtracker.android.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.readtracker.R;
+import com.readtracker.android.ReadTrackerApp;
+import com.readtracker.android.db.export.ImportError;
+import com.readtracker.android.db.export.JSONImporter;
 
 import java.io.File;
+import java.io.IOException;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -23,6 +27,7 @@ import butterknife.OnClick;
 public class ImportActivity extends BaseActivity {
 
   public static final String KEY_PICKED_FILE = "picked-file";
+  private static final String TAG = ImportActivity.class.getSimpleName();
 
   @InjectView(R.id.current_folder_text) TextView currentFolderText;
   @InjectView(R.id.file_list) ListView fileList;
@@ -44,10 +49,7 @@ public class ImportActivity extends BaseActivity {
           if(clickedFile.isDirectory()) {
             setCurrentDirectory(clickedFile);
           } else if(clickedFile.isFile()) {
-            Intent result = new Intent();
-            result.putExtra(KEY_PICKED_FILE, clickedFile.getAbsolutePath());
-            setResult(RESULT_OK, result);
-            finish();
+            importDataFromFile(clickedFile);
           }
         }
       }
@@ -59,11 +61,32 @@ public class ImportActivity extends BaseActivity {
     setCurrentDirectory(defaultDir);
   }
 
-  @OnClick(R.id.current_folder_text)
-  void onCurrentFolderClick() {
+  @OnClick(R.id.current_folder_text) void onCurrentFolderClick() {
     final File parentDir = (File) currentFolderText.getTag();
     if(parentDir != null) {
       setCurrentDirectory(parentDir);
+    }
+  }
+
+  private void importDataFromFile(File importFile) {
+    if(importFile.exists() && importFile.canRead()) {
+      Log.i(TAG, "Importing from file " + importFile.getAbsolutePath());
+      JSONImporter importer = new JSONImporter(ReadTrackerApp.from(this).getDatabaseManager());
+      try {
+        importer.importFile(importFile);
+        Log.i(TAG, "Imported file " + importFile);
+        setResult(RESULT_OK);
+        finish();
+      } catch(ImportError importError) {
+        Log.e(TAG, "Error while importing file", importError);
+        String msg = getString(R.string.error_import_failed_broken_file, importFile.getName());
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+      } catch(IOException e) {
+        Log.e(TAG, "Error while importing file", e);
+        Toast.makeText(this, R.string.error_import_failed_read_file, Toast.LENGTH_SHORT).show();
+      }
+    } else {
+      Log.w(TAG, "Invalid file selected: " + importFile);
     }
   }
 
@@ -90,37 +113,29 @@ public class ImportActivity extends BaseActivity {
     }
 
     @Override public View getView(int position, View convertView, ViewGroup parent) {
-      ViewHolder holder;
       if(convertView == null) {
         convertView = LayoutInflater.from(parent.getContext())
             .inflate(R.layout.file_list_entry, parent, false);
-        holder = new ViewHolder(convertView);
-        convertView.setTag(holder);
-      } else {
-        holder = (ViewHolder) convertView.getTag();
       }
 
       File file = getItem(position);
-      holder.filenameText.setText(file.getName());
 
-      int iconResource;
+      final TextView entryView = (TextView) convertView;
+      entryView.setText(file.getName());
+
+      int iconResource, textColorResource;
       if(file.isFile()) {
         iconResource = R.drawable.icon_file;
+        textColorResource = R.color.text_color_primary;
       } else {
         iconResource = R.drawable.icon_folder;
+        textColorResource = R.color.text_color_secondary;
       }
-      holder.itemIconImage.setImageDrawable(getContext().getResources().getDrawable(iconResource));
 
-      return convertView;
-    }
+      entryView.setCompoundDrawablesWithIntrinsicBounds(iconResource, 0, 0, 0);
+      entryView.setTextColor(getContext().getResources().getColor(textColorResource));
 
-    protected static class ViewHolder {
-      @InjectView(R.id.item_icon_image) ImageView itemIconImage;
-      @InjectView(R.id.filename_text) TextView filenameText;
-
-      public ViewHolder(View view) {
-        ButterKnife.inject(this, view);
-      }
+      return entryView;
     }
   }
 }

@@ -4,6 +4,7 @@
   <string name="activity_label_add_book">Add book</string>
   <string name="activity_label_settings">Settings</string>
   <string name="activity_label_book_settings">Book settings</string>
+  <string name="activity_import_file">Import ReadTracker data</string>
 
   <string name="textOn">ON</string>
   <string name="textOff">OFF</string>
@@ -109,4 +110,8 @@
   <string name="settings_version">Version</string>
   <string name="settings_icons_by">Icons by <b>Icons8</b></string>
   <string name="settings_legal">Legal</string>
+
+  <string name="error_import_failed_read_file">Could not import the data. An error occurred when reading the file.</string>
+  <string name="error_import_failed_broken_file">Import failed. Please make sure %1$s is a ReadTracker export file.</string>
+  <string name="import_locate_file">Locate the previously exported ReadTracker file.</string>
 </resources>

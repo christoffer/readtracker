@@ -7,15 +7,19 @@ import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.readtracker.R;
 import com.readtracker.android.IntentKeys;
 import com.readtracker.android.ReadTrackerApp;
+import com.readtracker.android.db.export.ImportError;
 import com.readtracker.android.db.export.JSONExporter;
+import com.readtracker.android.db.export.JSONImporter;
 
 import java.io.File;
+import java.io.IOException;
 
 public class SettingsActivity extends PreferenceActivity {
   private static final String TAG = SettingsActivity.class.getName();
@@ -85,6 +89,12 @@ public class SettingsActivity extends PreferenceActivity {
         return onExportDataClick();
       }
     });
+  }
+
+  @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    if(requestCode == REQUEST_IMPORT && resultCode == RESULT_OK) {
+      finish();
+    }
   }
 
   private boolean onExportDataClick() {

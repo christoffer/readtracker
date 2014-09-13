@@ -4,22 +4,43 @@
               xmlns:tools="http://schemas.android.com/tools"
               android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="match_parent">
+              android:layout_height="match_parent"
+              android:paddingLeft="20dp"
+              android:paddingRight="20dp">
+
+  <TextView
+    android:text="@string/import_locate_file"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="35dp"
+    android:paddingBottom="35dp"
+    />
 
   <TextView
     android:id="@+id/current_folder_text"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
-    android:padding="10dp"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp"
+    android:paddingLeft="0dp"
+    android:paddingRight="0dp"
+
     android:drawableLeft="@drawable/icon_back_up"
     android:drawableStart="@drawable/icon_back_up"
+
     android:drawablePadding="20dp"
     tools:text="/sdcard/0"
+    />
+
+  <View
+    style="@style/horizontal_divider"
+    android:layout_marginTop="5dp"
+    android:layout_marginBottom="5dp"
     />
 
   <ListView
     android:id="@+id/file_list"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" />
+    android:layout_height="match_parent"/>
 </LinearLayout>
