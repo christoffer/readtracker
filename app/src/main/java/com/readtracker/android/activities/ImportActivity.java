@@ -117,20 +117,16 @@ public class ImportActivity extends BaseActivity {
    */
   protected static class FileBrowserAdapter extends ArrayAdapter<File> {
     public FileBrowserAdapter(ImportActivity importActivity) {
-      super(importActivity, R.layout.file_list_entry);
+      super(importActivity, R.layout.file_list_item);
       setNotifyOnChange(false);
     }
 
     @Override public View getView(int position, View convertView, ViewGroup parent) {
-      if(convertView == null) {
-        convertView = LayoutInflater.from(parent.getContext())
-            .inflate(R.layout.file_list_entry, parent, false);
-      }
+      TextView fileListItem = (TextView) super.getView(position, convertView, parent);
 
       File file = getItem(position);
 
-      final TextView entryView = (TextView) convertView;
-      entryView.setText(file.getName());
+      fileListItem.setText(file.getName());
 
       int iconResource, textColorResource;
       if(file.isFile()) {
@@ -141,10 +137,10 @@ public class ImportActivity extends BaseActivity {
         textColorResource = R.color.text_color_secondary;
       }
 
-      entryView.setCompoundDrawablesWithIntrinsicBounds(iconResource, 0, 0, 0);
-      entryView.setTextColor(getContext().getResources().getColor(textColorResource));
+      fileListItem.setCompoundDrawablesWithIntrinsicBounds(iconResource, 0, 0, 0);
+      fileListItem.setTextColor(getContext().getResources().getColor(textColorResource));
 
-      return entryView;
+      return fileListItem;
     }
   }
 }
