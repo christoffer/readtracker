@@ -27,6 +27,8 @@ public class SettingsActivity extends PreferenceActivity {
   private static final String ABOUT_LEGAL = "about.legal";
   private static final String ICONS8 = "about.icons8";
 
+  private static final int REQUEST_IMPORT = 0x01;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -101,6 +103,8 @@ public class SettingsActivity extends PreferenceActivity {
   }
 
   private boolean onDataImportClick() {
-    return false;
+    Intent intent = new Intent(this, ImportActivity.class);
+    startActivityForResult(intent, REQUEST_IMPORT);
+    return true;
   }
 }

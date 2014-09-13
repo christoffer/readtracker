@@ -85,6 +85,7 @@
         android:value="com.readtracker.android.activities.HomeActivity"/>>
     </activity>
 
+    <activity android:name=".android.activities.ImportActivity" />
     <activity android:name=".android.activities.InAppBrowserActivity"/>
 
   </application>
