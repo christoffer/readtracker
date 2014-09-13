@@ -113,5 +113,5 @@
 
   <string name="error_import_failed_read_file">Could not import the data. An error occurred when reading the file.</string>
   <string name="error_import_failed_broken_file">Import failed. Please make sure %1$s is a ReadTracker export file.</string>
-  <string name="import_locate_file">Locate the previously exported ReadTracker file.</string>
+  <string name="import_locate_file">Locate your previously exported ReadTracker file.</string>
 </resources>
