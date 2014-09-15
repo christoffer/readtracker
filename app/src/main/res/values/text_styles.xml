@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:rt="http://schemas.android.com/apk/res/com.readtracker.android">
   <style name="text_display_4">
-    <item name="fontWeight">thin</item>
+    <item name="fontWeight">light</item>
     <item name="android:textSize">112sp</item>
   </style>
 

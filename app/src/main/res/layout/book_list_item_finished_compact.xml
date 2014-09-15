@@ -21,7 +21,7 @@
   <!--
     note that textTitle and textAuthor will have their text size set dynamically
    -->
-  <TextView
+  <com.readtracker.android.custom_views.ReadTrackerTextView
     android:id="@+id/textTitle"
     style="@style/text_subhead"
     android:layout_height="wrap_content"
@@ -32,7 +32,7 @@
     android:singleLine="true"
     tools:text="Metamorphosis" />
 
-  <TextView
+  <com.readtracker.android.custom_views.ReadTrackerTextView
     android:id="@+id/textAuthor"
     style="@style/default_text"
     android:layout_height="wrap_content"
@@ -44,7 +44,7 @@
     android:singleLine="true"
     tools:text="Franz Kafka" />
 
-  <TextView
+  <com.readtracker.android.custom_views.ReadTrackerTextView
     android:id="@+id/textFinishedAt"
     style="@style/text_caption"
     android:layout_height="wrap_content"

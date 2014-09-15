@@ -30,7 +30,7 @@
 
   <declare-styleable name="ReadTrackerTextView">
     <attr name="fontWeight" format="enum">
-      <enum name="thin" value="0" />
+      <enum name="light" value="0" />
       <enum name="regular" value="1" />
       <enum name="medium" value="2" />
     </attr>

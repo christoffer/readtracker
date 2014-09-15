@@ -23,7 +23,7 @@
       android:layout_height="wrap_content"
       android:orientation="vertical">
 
-      <TextView
+      <com.readtracker.android.custom_views.ReadTrackerTextView
         style="@style/text_caption"
         android:id="@+id/textReadingState"
         android:layout_width="wrap_content"
@@ -39,7 +39,7 @@
         android:paddingBottom="3dp"
         tools:text="Finished" />
 
-      <TextView
+      <com.readtracker.android.custom_views.ReadTrackerTextView
         style="@style/text_body_1"
         android:id="@+id/textClosingRemark"
         android:layout_width="fill_parent"
@@ -50,7 +50,7 @@
         android:textColor="@color/text_white_87"
         tools:text="Very interesting concept, and actually a bit scary. Definitely looking forward to reading the rest of the series." />
 
-      <TextView
+      <com.readtracker.android.custom_views.ReadTrackerTextView
         style="@style/text_body_2"
         android:id="@+id/textSummary"
         android:layout_width="fill_parent"
@@ -68,7 +68,7 @@
         android:layout_height="4dp"
         android:layout_marginBottom="16dp" />
 
-      <TextView
+      <com.readtracker.android.custom_views.ReadTrackerTextView
         style="@style/text_body_2"
         android:id="@+id/textTimeLeft"
         android:layout_width="match_parent"
