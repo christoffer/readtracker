@@ -27,4 +27,13 @@
         <attr name="textColorHint" format="color" />
         <attr name="textColorLink" format="color" />
     </declare-styleable>
+
+  <declare-styleable name="ReadTrackerTextView">
+    <attr name="fontWeight" format="enum">
+      <enum name="thin" value="0" />
+      <enum name="regular" value="1" />
+      <enum name="medium" value="2" />
+    </attr>
+    <attr name="fontAllCaps" format="boolean" />
+  </declare-styleable>
 </resources>
