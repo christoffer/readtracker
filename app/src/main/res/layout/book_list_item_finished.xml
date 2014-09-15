@@ -2,12 +2,7 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:tools="http://schemas.android.com/tools"
-  android:layout_width="fill_parent"
-  android:layout_height="wrap_content"
-  android:paddingTop="20dp"
-  android:paddingBottom="24dp"
-  android:paddingLeft="16dp"
-  android:paddingRight="16dp">
+                style="@style/book_list_item">
 
   <ImageView
     android:id="@+id/imageCover"
@@ -16,7 +11,7 @@
     android:scaleType="centerCrop"
     android:layout_marginLeft="16dp"
     android:layout_alignParentRight="true"
-    android:contentDescription="@string/reading_item_cover_content_desc" />
+    android:contentDescription="@string/reading_item_cover_content_desc"/>
 
   <!--
     note that textTitle and textAuthor will have their text size set dynamically
@@ -30,7 +25,7 @@
 
     android:textColor="@color/text_white_87"
     android:singleLine="true"
-    tools:text="Metamorphosis" />
+    tools:text="Metamorphosis"/>
 
   <com.readtracker.android.custom_views.ReadTrackerTextView
     android:id="@+id/textAuthor"
@@ -42,7 +37,7 @@
 
     android:textColor="@color/text_white_54"
     android:singleLine="true"
-    tools:text="Franz Kafka" />
+    tools:text="Franz Kafka"/>
 
   <com.readtracker.android.custom_views.ReadTrackerTextView
     android:id="@+id/textClosingRemark"
@@ -56,7 +51,7 @@
     android:background="@drawable/quote_background"
     android:paddingLeft="12dp"
     tools:text="– Something something something something smething seomthjigs"
-    android:typeface="serif" />
+    android:typeface="serif"/>
 
   <com.readtracker.android.custom_views.ReadTrackerTextView
     android:id="@+id/textFinishedAt"
@@ -67,6 +62,6 @@
     android:layout_marginTop="8dp"
 
     android:textColor="@color/text_white_54"
-    tools:text="Finished Nov 13th, 2012" />
+    tools:text="Finished Nov 13th, 2012"/>
 
 </RelativeLayout>

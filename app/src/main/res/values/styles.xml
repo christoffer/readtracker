@@ -367,4 +367,14 @@
     <item name="android:background">@color/base_color</item>
   </style>
 
+  <!-- Repeated style for the book list layouts -->
+  <style name="book_list_item">
+    <item name="android:layout_width">fill_parent</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:paddingTop">20dp</item>
+    <item name="android:paddingBottom">16dp</item>
+    <item name="android:paddingLeft">16dp</item>
+    <item name="android:paddingRight">24dp</item>
+  </style>
+
 </resources>
