@@ -46,7 +46,7 @@ public class SummaryFragment extends BaseFragment {
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     Log.d(TAG, "onCreateView()");
-    View rootView = inflater.inflate(R.layout.fragment_sessions, container, false);
+    View rootView = inflater.inflate(R.layout.summary_fragment, container, false);
     ButterKnife.inject(this, rootView);
     return rootView;
   }
