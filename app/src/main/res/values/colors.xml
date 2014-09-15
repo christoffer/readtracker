@@ -16,6 +16,13 @@
   <color name="text_color_primary">#fffffded</color>
   <color name="text_color_secondary">#aafffded</color>
 
+  <!-- Base text colors -->
+  <color name="text_white_87">#dfffffff</color>
+  <color name="text_white_54">#8affffff</color>
+
+  <color name="text_black_87">#df000000</color>
+  <color name="text_black_54">#8a000000</color>
+
   <!-- color variations -->
   <color name="midnight_dark_tint">#ff101414</color>
   <color name="midnight_medium_disabled">#88181e20</color>
