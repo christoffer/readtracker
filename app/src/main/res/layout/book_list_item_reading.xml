@@ -4,10 +4,10 @@
                 xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="fill_parent"
   android:layout_height="wrap_content"
-  android:paddingTop="24dp"
-  android:paddingLeft="6dp"
-  android:paddingRight="6dp"
-  android:paddingBottom="12dp">
+  android:paddingTop="20dp"
+  android:paddingLeft="16dp"
+  android:paddingRight="16dp"
+  android:paddingBottom="24dp">
 
   <ImageView
     android:id="@+id/imageCover"
@@ -17,25 +17,28 @@
     android:scaleType="centerCrop"
     android:contentDescription="@string/reading_item_cover_content_desc" />
 
-  <TextView
+  <com.readtracker.android.custom_views.ReadTrackerTextView
     android:id="@+id/textTitle"
-    style="@style/default_text"
-    android:layout_marginRight="12dp"
-    android:layout_marginBottom="1dp"
+    style="@style/text_subhead"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginRight="16dp"
+
+    android:textColor="@color/text_white_87"
     android:layout_toLeftOf="@id/imageCover"
-    android:layout_width="fill_parent"
     android:singleLine="true"
-    android:textColor="@color/text_color_primary"
     tools:text="Metamorphosis" />
 
-  <TextView
+  <com.readtracker.android.custom_views.ReadTrackerTextView
     android:id="@+id/textAuthor"
-    style="@style/default_text"
-    android:layout_marginRight="12dp"
+    style="@style/text_body_1"
+    android:layout_height="wrap_content"
+    android:layout_width="fill_parent"
+    android:layout_marginRight="16dp"
     android:layout_below="@id/textTitle"
     android:layout_toLeftOf="@id/imageCover"
-    android:layout_width="fill_parent"
-    android:textColor="@color/text_color_secondary"
+
+    android:textColor="@color/text_white_54"
     android:singleLine="true"
     tools:text="Franz Kafka" />
 

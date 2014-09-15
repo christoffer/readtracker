@@ -1,6 +1,11 @@
 package com.readtracker.android.adapters;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.LayerDrawable;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.RectShape;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -148,6 +153,18 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
   }
 
   static class ViewHolder {
+    private GradientDrawable stripeGradient;
+
+    // Required fields
+    @InjectView(R.id.textTitle) TextView titleText;
+    @InjectView(R.id.textAuthor) TextView authorText;
+
+    // Optional fields *
+    @Optional @InjectView(R.id.progressReadingProgress) SegmentBar segmentedProgressBar;
+    @Optional @InjectView(R.id.imageCover) ImageView coverImage;
+    @Optional @InjectView(R.id.textClosingRemark) TextView closingRemarkText;
+    @Optional @InjectView(R.id.textFinishedAt) TextView finishedAtText;
+
     ViewHolder(View view) {
       ButterKnife.inject(this, view);
     }
@@ -157,11 +174,13 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
       titleText.setText(book.getTitle());
       authorText.setText(book.getAuthor());
 
+      final int bookColor = Utils.calculateBookColor(book);
+
       // Optional fields
       if(segmentedProgressBar != null) {
         segmentedProgressBar.setVisibility(View.VISIBLE);
         segmentedProgressBar.setStops(Utils.getSessionStops(book.getSessions()));
-        segmentedProgressBar.setColor(Utils.calculateBookColor(book));
+        segmentedProgressBar.setColor(bookColor);
       }
 
       if(coverImage != null) {
@@ -174,6 +193,13 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
 
       if(closingRemarkText != null) {
         final TextView closingRemark = closingRemarkText;
+        final LayerDrawable bg = (LayerDrawable) closingRemark.getBackground();
+
+        if(stripeGradient == null) {
+          stripeGradient = (GradientDrawable) bg.findDrawableByLayerId(R.id.stripe_layer);
+        }
+
+        stripeGradient.setColor(bookColor);
         if(!TextUtils.isEmpty(book.getClosingRemark())) {
           closingRemark.setVisibility(View.VISIBLE);
           closingRemark.setText(book.getClosingRemark());
@@ -192,15 +218,5 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
         }
       }
     }
-
-    // Required fields
-    @InjectView(R.id.textTitle) TextView titleText;
-    @InjectView(R.id.textAuthor) TextView authorText;
-
-    // Optional fields *
-    @Optional @InjectView(R.id.progressReadingProgress) SegmentBar segmentedProgressBar;
-    @Optional @InjectView(R.id.imageCover) ImageView coverImage;
-    @Optional @InjectView(R.id.textClosingRemark) TextView closingRemarkText;
-    @Optional @InjectView(R.id.textFinishedAt) TextView finishedAtText;
   }
 }
