@@ -40,6 +40,7 @@ public class ExportedFileParser {
     book.setFirstPositionTimestampMs(json.getLong("first_position_timestamp"));
     book.setPageCount(json.getFloat("page_count"));
     book.setCoverImageUrl(json.getString("cover_image_url"));
+    book.setClosingRemark(json.getString("closing_remark"));
 
     String stateName = json.getString("state");
     book.setState(stateName == null ? Book.State.Unknown : Book.State.valueOf(stateName));
