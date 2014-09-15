@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="fill_parent"
   android:orientation="vertical"
   android:layout_height="fill_parent"
@@ -23,53 +24,61 @@
       android:orientation="vertical">
 
       <TextView
+        style="@style/text_caption"
+        android:id="@+id/textReadingState"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/textReadingState"
-        android:textSize="14sp"
-        android:editable="false"
-        android:gravity="center_horizontal"
         android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="12dp"
+        android:layout_marginTop="8dp"
+
+        android:textColor="@color/text_white_87"
+        android:gravity="center_horizontal"
         android:paddingLeft="6dp"
         android:paddingRight="6dp"
         android:paddingTop="3dp"
-        android:paddingBottom="3dp" />
+        android:paddingBottom="3dp"
+        tools:text="Finished" />
 
       <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        style="@style/text_body_1"
         android:id="@+id/textClosingRemark"
-        android:textSize="14sp"
-        android:editable="false"
-        android:layout_marginBottom="12dp"
-        android:typeface="serif" />
-
-      <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+
+        android:textColor="@color/text_white_87"
+        tools:text="Very interesting concept, and actually a bit scary. Definitely looking forward to reading the rest of the series." />
+
+      <TextView
+        style="@style/text_body_2"
         android:id="@+id/textSummary"
-        android:textSize="12sp"
-        android:editable="false"
-        android:layout_marginBottom="12dp"
-        android:textColor="@color/text_color_secondary" />
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+
+        android:textColor="@color/text_white_87"
+        tools:text="Reading for 1 hour and 33 minutes over 1 sessions." />
 
       <com.readtracker.android.custom_views.SegmentBar
         android:id="@+id/segmentBar"
         android:layout_width="fill_parent"
-        android:paddingLeft="12dp"
-        android:paddingRight="12dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
         android:layout_height="4dp"
-        android:layout_marginBottom="12dp" />
+        android:layout_marginBottom="16dp" />
 
       <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        style="@style/text_body_2"
         android:id="@+id/textTimeLeft"
-        android:textSize="12sp"
-        android:editable="false"
-        android:layout_marginBottom="12dp"
-        android:textColor="@color/text_color_secondary" />
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+
+        android:textColor="@color/text_white_87"
+        tools:text="You have about 14 hours and 24 minutes left of reading, given you keep the same pace.
+
+That's about 1 hour and 1 minute per day to finish it in two weeks."/>
 
       <com.readtracker.android.custom_views.SessionView
         android:id="@+id/sessionView"
