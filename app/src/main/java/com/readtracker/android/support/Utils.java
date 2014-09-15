@@ -1,15 +1,12 @@
 package com.readtracker.android.support;
 
 
-import android.graphics.Color;
-
 import com.readtracker.android.db.Book;
 import com.readtracker.android.db.Session;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -25,6 +22,30 @@ import java.util.Locale;
  */
 public class Utils {
   private static final long DAYS = 60 * 60 * 24 * 1000;
+
+  // Colors from Google's Material Design Guide:
+  // http://www.google.com/design/spec/style/color.html#color-ui-color-palette
+  private static final int[] GOOGLE_MATERIAL_COLORS = new int[]{
+      0xffe51c23,
+      0xffe91e63,
+      0xff9c27b0,
+      0xff673ab7,
+      0xff3f51b5,
+      0xff5677fc,
+      0xff03a9f4,
+      0xff00bcd4,
+      0xff009688,
+      0xff259b24,
+      0xff8bc34a,
+      0xffcddc39,
+      0xffffeb3b,
+      0xffffc107,
+      0xffff9800,
+      0xffff5722,
+      0xff795548,
+      0xff9e9e9e,
+      0xff607d8,
+  };
 
   /**
    * Returns a string representation like "3 hours, 12 minutes"
@@ -115,9 +136,8 @@ public class Utils {
 
   /** Return a color value to use for the book. */
   public static int calculateBookColor(Book book) {
-    final String colorKey = book.getTitle() + book.getAuthor();
-    float color = 360 * (Math.abs(colorKey.hashCode()) / (float) Integer.MAX_VALUE);
-    return Color.HSVToColor(new float[]{color, 0.4f, 0.5f});
+    final int key = (book.getTitle() + book.getAuthor()).hashCode();
+    return GOOGLE_MATERIAL_COLORS[Math.abs(key) % GOOGLE_MATERIAL_COLORS.length];
   }
 
   /** Returns the sessions a sorted stops list for the segmented progress bar. */
