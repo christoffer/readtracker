@@ -31,7 +31,9 @@ public class ReadTrackerTextView extends TextView {
   public ReadTrackerTextView(Context context, AttributeSet attrs, int defStyle) {
     super(context, attrs, defStyle);
 
-    initFontResources(getContext());
+    if(!isInEditMode()) {
+      initFontResources(getContext());
+    }
 
     TypedArray typedArray = context.getTheme().obtainStyledAttributes(
         attrs, R.styleable.ReadTrackerTextView, 0, 0
@@ -72,6 +74,11 @@ public class ReadTrackerTextView extends TextView {
   public void setFontWeight(FontWeight fontWeight) {
     this.fontWeight = fontWeight;
 
+    if(isInEditMode()) {
+      // Edit mode doesn't support custom typefaces
+      return;
+    }
+
     if(fontWeight == FontWeight.LIGHT) {
       setTypeface(FONT_LIGHT);
     } else if(fontWeight == FontWeight.REGULAR) {
@@ -87,7 +94,7 @@ public class ReadTrackerTextView extends TextView {
 
   public void setFontAllCaps(boolean fontAllCaps) {
     this.fontAllCaps = fontAllCaps;
-    if(android.os.Build.VERSION.SDK_INT > android.os.Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+    if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
       setAllCaps(this.fontAllCaps);
     }
   }
