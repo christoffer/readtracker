@@ -9,7 +9,6 @@ import com.readtracker.android.test_support.TestUtils;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -20,7 +19,7 @@ public class JSONImporter_importData extends DatabaseTestCase {
     return new JSONImporter(getDatabaseManager());
   }
 
-  public void test_import_version_1_file() throws Exception, ImportError {
+  public void test_import_version_1_file() throws Exception, ImportException {
     File fileToImport = _copyResourceFile("assets/export_version_1.json");
 
     assertEquals(0, getDatabaseManager().getAll(Book.class).size());
@@ -29,7 +28,7 @@ public class JSONImporter_importData extends DatabaseTestCase {
     _assertImportedBooks();
   }
 
-  public void test_import_version_2_file() throws Exception, ImportError {
+  public void test_import_version_2_file() throws Exception, ImportException {
     File fileToImport = _copyResourceFile("assets/export_version_2.json");
 
     assertEquals(0, getDatabaseManager().getAll(Book.class).size());
@@ -38,7 +37,7 @@ public class JSONImporter_importData extends DatabaseTestCase {
     _assertImportedBooks();
   }
 
-  public void test_import_with_no_merge_conflict() throws Exception, ImportError {
+  public void test_import_with_no_merge_conflict() throws Exception, ImportException {
     Book bookToImport = TestUtils.buildBook("постои конфликт", "авторот", 200);
     File fileToImport = _createExportFileForBooks(Arrays.asList(bookToImport));
 
@@ -54,7 +53,7 @@ public class JSONImporter_importData extends DatabaseTestCase {
     assertFalse(books.get(0).getTitle().equals(books.get(1).getTitle()));
   }
 
-  public void test_import_with_simple_merge_conflict() throws Exception, ImportError {
+  public void test_import_with_simple_merge_conflict() throws Exception, ImportException {
     Book existing = TestUtils.buildBook("Metamorphosis", "Franz Kafka", 200);
     getDatabaseManager().save(existing);
     final long preId = existing.getId();
@@ -76,7 +75,7 @@ public class JSONImporter_importData extends DatabaseTestCase {
     assertEquals(300f, bookAfterImport.getPageCount());
   }
 
-  public void test_import_with_nested_merge_conflicts() throws Exception, ImportError {
+  public void test_import_with_nested_merge_conflicts() throws Exception, ImportException {
     // Create a book in the database that we later want to import
     Book imported = TestUtils.buildBook("Metamorphosis", "Franz Kafka", 200);
     {

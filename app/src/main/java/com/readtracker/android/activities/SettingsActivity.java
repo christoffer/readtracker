@@ -21,10 +21,13 @@ public class SettingsActivity extends PreferenceActivity {
   private static final String TAG = SettingsActivity.class.getName();
 
   private static final String SETTINGS_COMPACT_FINISH_LIST = "settings.compact_finish_list";
+  private static final String IMPORT_JSON = "data.import_json";
   private static final String EXPORT_JSON = "data.export_json";
   private static final String ABOUT_VERSION = "about.version";
   private static final String ABOUT_LEGAL = "about.legal";
   private static final String ICONS8 = "about.icons8";
+
+  private static final int REQUEST_IMPORT = 0x01;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -69,22 +72,45 @@ public class SettingsActivity extends PreferenceActivity {
       }
     });
 
+    final Preference importData = findPreference(IMPORT_JSON);
+    importData.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+      @Override public boolean onPreferenceClick(Preference preference) {
+        return onImportDataClick();
+      }
+    });
+
     final Preference exportData = findPreference(EXPORT_JSON);
     exportData.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
       @Override public boolean onPreferenceClick(Preference preference) {
-        final File exportedJsonFile = JSONExporter.from(SettingsActivity.this).exportToDisk();
-        if(exportedJsonFile != null && exportedJsonFile.exists()) {
-          Uri uri = Uri.fromFile(exportedJsonFile);
-          Intent exportIntent = new Intent(Intent.ACTION_SEND);
-          exportIntent.putExtra(Intent.EXTRA_STREAM, uri);
-          exportIntent.setType("text/plain");
-          startActivity(Intent.createChooser(exportIntent, getString(R.string.settings_export_json_save_data)));
-        } else {
-          Log.w(TAG, "Failed to export to disk");
-          Toast.makeText(SettingsActivity.this, R.string.settings_export_json_failed, Toast.LENGTH_SHORT).show();
-        }
-        return true;
+        return onExportDataClick();
       }
     });
+  }
+
+  @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    if(requestCode == REQUEST_IMPORT && resultCode == RESULT_OK) {
+      finish();
+    }
+  }
+
+  private boolean onExportDataClick() {
+    final File exportedJsonFile = JSONExporter.from(SettingsActivity.this).exportToDisk();
+    if(exportedJsonFile != null && exportedJsonFile.exists()) {
+      Uri uri = Uri.fromFile(exportedJsonFile);
+      Intent exportIntent = new Intent(Intent.ACTION_SEND);
+      exportIntent.putExtra(Intent.EXTRA_STREAM, uri);
+      exportIntent.setType("text/plain");
+      startActivity(Intent.createChooser(exportIntent, getString(R.string.settings_export_json_save_data)));
+    } else {
+      Log.w(TAG, "Failed to export to disk");
+      Toast.makeText(SettingsActivity.this, R.string.settings_export_json_failed, Toast.LENGTH_SHORT).show();
+    }
+    return true;
+  }
+
+  private boolean onImportDataClick() {
+    Intent intent = new Intent(this, ImportActivity.class);
+    startActivityForResult(intent, REQUEST_IMPORT);
+    return true;
   }
 }

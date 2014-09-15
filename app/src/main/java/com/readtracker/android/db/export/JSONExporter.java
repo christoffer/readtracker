@@ -25,7 +25,10 @@ public class JSONExporter {
   public static final int FORMAT_VERSION = 2;
 
   private static final String TAG = JSONExporter.class.getSimpleName();
+
   private static final String DEFAULT_EXPORT_FILENAME = "readtracker.json";
+  private static final File DEFAULT_EXPORT_DIRECTORY =
+      Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
 
   private final DatabaseManager mDatabaseMgr;
 
@@ -44,8 +47,7 @@ public class JSONExporter {
    */
   public File exportToDisk() {
     List<Book> books = mDatabaseMgr.getAll(Book.class);
-    File outputDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-    final File destination = new File(outputDir, DEFAULT_EXPORT_FILENAME);
+    final File destination = new File(DEFAULT_EXPORT_DIRECTORY, DEFAULT_EXPORT_FILENAME);
     if(exportToDisk(books, destination)) {
       return destination;
     }

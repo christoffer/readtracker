@@ -26,7 +26,7 @@ public class JSONImporter {
   /**
    * Imports a previously a exported data file from any previous version of ReadTracker.
    */
-  public void importFile(File importFile) throws IOException, ImportError {
+  public void importFile(File importFile) throws IOException, ImportException {
     String fileContent = Utils.readInputFile(importFile);
     int formatVersion = getFormatVersion(fileContent);
 
@@ -35,7 +35,7 @@ public class JSONImporter {
     } else if(formatVersion == 2) {
       importFromVersion2(fileContent);
     } else {
-      throw new UnexpectedImportDataFormat("Unknown format version");
+      throw new UnexpectedImportDataFormatException("Unknown format version");
     }
   }
 
@@ -46,7 +46,7 @@ public class JSONImporter {
    * { "title": "Metamorphosis", ... }{ "title": "Game of Thrones", ... }
    * </code>
    */
-  private void importFromVersion1(String fileContent) throws ImportError {
+  private void importFromVersion1(String fileContent) throws ImportException {
     // Convert version 1 to version 2 and use version 2 importer
     fileContent = fileContent.replaceAll("[}][{]", "}, {");
     fileContent = String.format("{ \"format_version\": 2, \"books\": [%s] }", fileContent);
@@ -65,14 +65,14 @@ public class JSONImporter {
    * }
    * </code>
    */
-  private void importFromVersion2(String fileContent) throws ImportError {
+  private void importFromVersion2(String fileContent) throws ImportException {
     try {
       ExportedFileParser fileParser = new ExportedFileParser();
       List<Book> booksToImport = fileParser.parse(fileContent);
       importAndMergeBooks(booksToImport);
     } catch(JSONException e) {
       final String message = String.format("Unknown import format error: %s", e.getMessage());
-      throw new UnexpectedImportDataFormat(message);
+      throw new UnexpectedImportDataFormatException(message);
     }
   }
 
@@ -134,7 +134,7 @@ public class JSONImporter {
     }
   }
 
-  private int getFormatVersion(String exportFileContent) throws UnexpectedImportDataFormat {
+  private int getFormatVersion(String exportFileContent) throws UnexpectedImportDataFormatException {
     try {
       JSONObject data = new JSONObject(exportFileContent);
       if(data.has("format_version")) {
@@ -150,6 +150,6 @@ public class JSONImporter {
       // unknown file format
     }
 
-    throw new UnexpectedImportDataFormat("Failed to get format version from content");
+    throw new UnexpectedImportDataFormatException("Failed to get format version from content");
   }
 }
