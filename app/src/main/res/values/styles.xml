@@ -1,17 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-
-  <style name="default_button">
-    <item name="android:layout_width">fill_parent</item>
-    <item name="android:layout_height">48dp</item>
-    <item name="android:textSize">18dp</item>
-    <item name="android:paddingLeft">24dp</item>
-    <item name="android:paddingRight">24dp</item>
-    <item name="android:background">@drawable/default_button_new</item>
-    <item name="android:textColor">@color/default_button_text_new</item>
-    <item name="android:gravity">center</item>
-    <item name="android:layout_gravity">center</item>
-  </style>
+<resources >
 
   <style name="default_button_primary_action" parent="default_button">
     <item name="android:background">@drawable/slate_3dp</item>
@@ -284,17 +272,6 @@
     <item name="android:background">@drawable/inverted_action_button</item>
   </style>
 
-  <!--
-  flipper at the bottom of the screen that switches between two sets of
-  buttons
-  -->
-  <style name="flipper_action_buttons">
-    <item name="android:layout_width">fill_parent</item>
-    <item name="android:layout_height">wrap_content</item>
-    <item name="android:inAnimation">@anim/slide_up_appear</item>
-    <item name="android:outAnimation">@anim/slide_down_disappear</item>
-  </style>
-
   <style name="reading_session_text_active">
     <item name="android:textSize">40dp</item>
     <item name="android:textStyle">normal</item>
@@ -340,15 +317,14 @@
     <item name="android:layout_height">wrap_content</item>
   </style>
 
-  <style name="free_text_input">
-    <item name="android:layout_width">fill_parent</item>
-    <item name="android:layout_height">fill_parent</item>
-    <item name="android:background">@drawable/default_input_field</item>
-    <item name="android:textColor">@color/text_color_primary</item>
-    <item name="android:typeface">serif</item>
-    <item name="android:textStyle">italic</item>
-    <item name="android:textSize">16dp</item>
-    <item name="android:padding">24dp</item>
+  <style name="free_text_input" parent="text_subhead">
+    <item name="android:layout_width">match_parent</item>
+    <item name="android:layout_height">match_parent</item>
+    <item name="android:textColor">@color/text_white_87</item>
+    <item name="android:paddingTop">24dp</item>
+    <item name="android:paddingBottom">24dp</item>
+    <item name="android:paddingLeft">24dp</item>
+    <item name="android:paddingRight">24dp</item>
     <item name="android:inputType">text|textCapSentences|textAutoCorrect|textMultiLine</item>
     <item name="android:gravity">fill_horizontal</item>
   </style>

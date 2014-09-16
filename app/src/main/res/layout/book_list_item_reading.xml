@@ -12,7 +12,7 @@
     android:scaleType="centerCrop"
     android:contentDescription="@string/reading_item_cover_content_desc" />
 
-  <com.readtracker.android.custom_views.ReadTrackerTextView
+  <com.readtracker.android.custom_views.StyledTextView
     android:id="@+id/textTitle"
     style="@style/text_subhead"
     android:layout_width="match_parent"
@@ -24,7 +24,7 @@
     android:singleLine="true"
     tools:text="Metamorphosis" />
 
-  <com.readtracker.android.custom_views.ReadTrackerTextView
+  <com.readtracker.android.custom_views.StyledTextView
     android:id="@+id/textAuthor"
     style="@style/text_body_1"
     android:layout_height="wrap_content"

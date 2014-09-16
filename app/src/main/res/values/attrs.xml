@@ -28,7 +28,7 @@
         <attr name="textColorLink" format="color" />
     </declare-styleable>
 
-  <declare-styleable name="ReadTrackerTextView">
+  <declare-styleable name="FontStyle">
     <attr name="fontWeight" format="enum">
       <enum name="light" value="0" />
       <enum name="regular" value="1" />

@@ -74,7 +74,7 @@
       android:layout_height="0dp"
       android:layout_weight="1" />
 
-    <Button
+    <com.readtracker.android.custom_views.StyledButton
       android:id="@+id/add_or_save_button"
       style="@style/default_button"
       android:layout_marginTop="24dp"

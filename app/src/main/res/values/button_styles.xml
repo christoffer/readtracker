@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:rt="http://schemas.android.com/apk/res/com.readtracker.android">
+
+  <style name="default_button" parent="text_button">
+    <item name="android:layout_width">fill_parent</item>
+    <item name="android:layout_height">48dp</item>
+    <item name="android:paddingLeft">16dp</item>
+    <item name="android:paddingRight">16dp</item>
+    <item name="android:background">@drawable/default_button_new</item>
+    <item name="android:textColor">@color/selector_button_text_color</item>
+    <item name="android:gravity">center</item>
+    <item name="android:layout_gravity">center</item>
+  </style>
+
+  <style name="flipper_action_buttons" parent="default_button">
+    <item name="android:inAnimation">@anim/slide_up_appear</item>
+    <item name="android:outAnimation">@anim/slide_down_disappear</item>
+  </style>
+
+</resources>

@@ -21,6 +21,7 @@ import com.readtracker.android.activities.HomeActivity;
 import com.readtracker.android.custom_views.SegmentBar;
 import com.readtracker.android.db.Book;
 import com.readtracker.android.support.DrawableGenerator;
+import com.readtracker.android.support.UiUtils;
 import com.readtracker.android.support.Utils;
 import com.squareup.otto.Subscribe;
 import com.squareup.picasso.Picasso;
@@ -153,8 +154,6 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
   }
 
   static class ViewHolder {
-    private GradientDrawable stripeGradient;
-
     // Required fields
     @InjectView(R.id.textTitle) TextView titleText;
     @InjectView(R.id.textAuthor) TextView authorText;
@@ -193,19 +192,15 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
 
       if(closingRemarkText != null) {
         final TextView closingRemark = closingRemarkText;
-        final LayerDrawable bg = (LayerDrawable) closingRemark.getBackground();
 
-        if(stripeGradient == null) {
-          stripeGradient = (GradientDrawable) bg.findDrawableByLayerId(R.id.stripe_layer);
-        }
-
-        stripeGradient.setColor(bookColor);
         if(!TextUtils.isEmpty(book.getClosingRemark())) {
           closingRemark.setVisibility(View.VISIBLE);
           closingRemark.setText(book.getClosingRemark());
         } else {
           closingRemark.setVisibility(View.GONE);
         }
+
+        UiUtils.applyQuoteBackgroundColor(closingRemarkText, bookColor);
       }
 
       if(finishedAtText != null) {

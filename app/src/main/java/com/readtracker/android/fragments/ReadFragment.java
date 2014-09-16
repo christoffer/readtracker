@@ -64,14 +64,14 @@ public class ReadFragment extends BaseFragment {
   // Flipper for showing start vs. stop/done
   @InjectView(R.id.time_spinner_controls_flipper) SafeViewFlipper mTimeSpinnerControlsFlipper;
 
+  @InjectView(R.id.duration_wheel_view)  WheelView mDurationWheelView;
+
   // Book to track
   private Book mBook;
 
   private final SessionTimer mSessionTimer = new SessionTimer();
 
   private final UpdateDurationWheelTimer mUpdateWheelViewTimer = new UpdateDurationWheelTimer(this);
-
-  @InjectView(R.id.duration_wheel_view)  WheelView mDurationWheelView;
 
   // Display child index for flipper session control
   private static final int FLIPPER_PAGE_START_BUTTON = 0;

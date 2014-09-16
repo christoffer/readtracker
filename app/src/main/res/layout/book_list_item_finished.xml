@@ -16,7 +16,7 @@
   <!--
     note that textTitle and textAuthor will have their text size set dynamically
    -->
-  <com.readtracker.android.custom_views.ReadTrackerTextView
+  <com.readtracker.android.custom_views.StyledTextView
     android:id="@+id/textTitle"
     style="@style/text_subhead"
     android:layout_height="wrap_content"
@@ -27,7 +27,7 @@
     android:singleLine="true"
     tools:text="Metamorphosis"/>
 
-  <com.readtracker.android.custom_views.ReadTrackerTextView
+  <com.readtracker.android.custom_views.StyledTextView
     android:id="@+id/textAuthor"
     style="@style/default_text"
     android:layout_height="wrap_content"
@@ -39,7 +39,7 @@
     android:singleLine="true"
     tools:text="Franz Kafka"/>
 
-  <com.readtracker.android.custom_views.ReadTrackerTextView
+  <com.readtracker.android.custom_views.StyledTextView
     android:id="@+id/textClosingRemark"
     style="@style/text_body_1"
     android:layout_height="wrap_content"
@@ -53,7 +53,7 @@
     tools:text="– Something something something something smething seomthjigs"
     android:typeface="serif"/>
 
-  <com.readtracker.android.custom_views.ReadTrackerTextView
+  <com.readtracker.android.custom_views.StyledTextView
     android:id="@+id/textFinishedAt"
     style="@style/text_caption"
     android:layout_height="wrap_content"

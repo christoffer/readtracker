@@ -10,29 +10,24 @@ import android.widget.Button;
 public class DrawableGenerator {
   // Reuse this temporary container for color conversions
   private static final float[] hsv = new float[3];
+  private static final int TRANSPARENT = 0x00000000;
 
   public static StateListDrawable generateButtonBackground(int baseColor) {
     StateListDrawable states = new StateListDrawable();
 
-    baseColor = multiplyHSV(baseColor, 1.0f, 0.8f, 0.5f);
-
-    int fillColor = baseColor;
-
-    // Focused
-    int focusedOutlineColor = multiplyHSV(fillColor, 1.0f, 1.05f, 1.3f);
-    states.addState(new int[]{ android.R.attr.state_focused }, createButtonDrawable(fillColor, focusedOutlineColor));
-
     // Pressed
-    fillColor = multiplyHSV(baseColor, 1.0f, 1.05f, 1.2f);
-    states.addState(new int[]{ android.R.attr.state_pressed }, createButtonDrawable(fillColor, outlineColorFor(fillColor)));
+    states.addState(new int[]{ android.R.attr.state_pressed },
+        createButtonDrawable(baseColor, TRANSPARENT));
 
     // Disabled
-    fillColor = multiplyHSV(baseColor, 1.0f, 0.5f, 0.5f);
-    states.addState(new int[]{ -android.R.attr.state_enabled }, createButtonDrawable(fillColor, outlineColorFor(fillColor)));
+    final int disabledColor = multiplyHSV(baseColor, 1.0f, 0.1f, 0.5f);
+    states.addState(new int[]{ -android.R.attr.state_enabled },
+        createButtonDrawable(disabledColor, outlineColorFor(disabledColor)));
 
     // Default
-    fillColor = baseColor;
-    states.addState(new int[]{ }, createButtonDrawable(fillColor, outlineColorFor(fillColor)));
+    //fillColor = baseColor;
+    states.addState(new int[]{ },
+        createButtonDrawable(TRANSPARENT, TRANSPARENT));
 
     return states;
   }
@@ -50,14 +45,9 @@ public class DrawableGenerator {
 
     activeColor = multiplyHSV(activeColor, 1.0f, 0.75f, 0.75f);
 
-    // Focused
-    GradientDrawable fillDrawable = new GradientDrawable();
-    fillDrawable.setStroke(3, activeColor);
-    states.addState(new int[]{ android.R.attr.state_focused }, fillDrawable);
-
     // Pressed
     ColorDrawable pressedDrawable = new ColorDrawable(activeColor);
-    fillDrawable.setAlpha(64);
+    pressedDrawable.setAlpha(1); // 50%
     states.addState(new int[]{ android.R.attr.state_pressed }, pressedDrawable);
 
     // Default

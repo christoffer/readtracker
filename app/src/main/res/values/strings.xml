@@ -89,8 +89,8 @@
   <string name="finish_book_finish">Finish</string>
 
   <string name="sessions_blank_text">No reading history to display</string>
-  <string name="end_session_where_did_you_stop_reading">Where did you stop reading?</string>
-  <string name="end_session_scroll_to_end_to_finish">Scroll to the very end if you finished the book</string>
+  <string name="end_session_where_did_you_stop_reading">Where did you leave off?</string>
+  <string name="end_session_scroll_to_end_to_finish">Scroll to the very end to finished the book, or press and hold to set the number directly.</string>
   <string name="end_session_finish_book">Finish book</string>
 
   <string name="add_quote_delete_quote">Delete Quote</string>
@@ -115,4 +115,5 @@
   <string name="error_import_failed_broken_file">Import failed. Please make sure %1$s is a ReadTracker export file.</string>
   <string name="import_locate_file">Locate your previously exported ReadTracker file.</string>
   <string name="importing_files">Importing…</string>
+  <string name="finish_book_description">"If you'd like, you can leave a little note of your thoughts on the book while they are fresh in memory.\n\nYour future self will appreciate it."</string>
 </resources>

@@ -6,15 +6,22 @@
   android:orientation="vertical"
   android:padding="24dp">
 
-  <TextView
-    style="@style/default_text"
-    android:text="@string/end_session_where_did_you_stop_reading"
-    android:layout_gravity="center_horizontal" />
+  <com.readtracker.android.custom_views.StyledTextView
+    style="@style/text_subhead"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal"
+    android:textColor="@color/text_white_87"
+    android:text="@string/end_session_where_did_you_stop_reading"/>
 
-  <TextView
-    style="@style/ui_hint"
-    android:text="@string/end_session_scroll_to_end_to_finish"
-    android:layout_gravity="center_horizontal" />
+  <com.readtracker.android.custom_views.StyledTextView
+    style="@style/text_body_1"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal"
+    android:layout_marginTop="4dp"
+    android:textColor="@color/text_white_54"
+    android:text="@string/end_session_scroll_to_end_to_finish"/>
 
   <com.readtracker.android.custom_views.ProgressPicker
     android:id="@+id/progress_picker"
@@ -31,12 +38,12 @@
     android:inAnimation="@anim/slide_up_appear"
     android:outAnimation="@anim/slide_down_disappear">
 
-    <Button
-      android:id="@+id/save_button"
+    <com.readtracker.android.custom_views.StyledButton
       style="@style/default_button"
+      android:id="@+id/save_button"
       android:text="@string/general_save" />
 
-    <Button
+    <com.readtracker.android.custom_views.StyledButton
       android:id="@+id/finish_button"
       style="@style/default_button"
       android:text="@string/end_session_finish_book" />
