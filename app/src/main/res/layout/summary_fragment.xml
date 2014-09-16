@@ -5,7 +5,11 @@
   android:layout_width="fill_parent"
   android:orientation="vertical"
   android:layout_height="fill_parent"
-  android:padding="12dp">
+  android:paddingTop="16dp"
+  android:paddingBottom="16dp"
+  android:paddingLeft="16dp"
+  android:paddingRight="16dp"
+  >
 
   <TextView
     style="@style/text_blank_state"
@@ -24,29 +28,11 @@
       android:orientation="vertical">
 
       <com.readtracker.android.custom_views.StyledTextView
-        style="@style/text_caption"
-        android:id="@+id/textReadingState"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="8dp"
-
-        android:textColor="@color/text_white_87"
-        android:gravity="center_horizontal"
-        android:paddingLeft="6dp"
-        android:paddingRight="6dp"
-        android:paddingTop="3dp"
-        android:paddingBottom="3dp"
-        tools:text="Finished" />
-
-      <com.readtracker.android.custom_views.StyledTextView
-        style="@style/text_body_1"
+        style="@style/text_subhead"
         android:id="@+id/textClosingRemark"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
-
         android:textColor="@color/text_white_87"
         tools:text="Very interesting concept, and actually a bit scary. Definitely looking forward to reading the rest of the series." />
 

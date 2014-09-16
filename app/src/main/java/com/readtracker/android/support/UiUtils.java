@@ -3,6 +3,9 @@ package com.readtracker.android.support;
 import android.content.res.AssetManager;
 import android.content.res.TypedArray;
 import android.graphics.Typeface;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.LayerDrawable;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.TextView;
@@ -17,6 +20,9 @@ public class UiUtils {
   private static Typeface FONT_MEDIUM = null;
   private static Typeface FONT_LIGHT = null;
 
+  /**
+   * Apply the FontStyle to a TextView from xml attributes.
+   */
   public static void applyFontStyle(TextView view, AttributeSet attrs) {
     if(!view.isInEditMode()) {
       initFontResources(view);
@@ -41,6 +47,20 @@ public class UiUtils {
 
     } finally {
       typedArray.recycle();
+    }
+  }
+
+  /**
+   * Helper for changing the color of @drawable/quote_background
+   */
+  public static void applyQuoteBackgroundColor(TextView textView, int color) {
+    final LayerDrawable bg = (LayerDrawable) textView.getBackground();
+    final GradientDrawable stripeGradient = (GradientDrawable) bg.findDrawableByLayerId(
+        R.id.stripe_layer
+    );
+
+    if(stripeGradient != null) {
+      stripeGradient.setColor(color);
     }
   }
 

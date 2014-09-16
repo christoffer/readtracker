@@ -1,9 +1,8 @@
 package com.readtracker.android.fragments;
 
-import android.graphics.drawable.ShapeDrawable;
-import android.graphics.drawable.shapes.RoundRectShape;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,7 +34,6 @@ public class SummaryFragment extends BaseFragment {
   @InjectView(R.id.sessionView) SessionView mSessionView;
   @InjectView(R.id.segmentBar) SegmentBar mSegmentBar;
   @InjectView(R.id.textSummary) TextView mTextSummary;
-  @InjectView(R.id.textReadingState) TextView mTextReadingState;
   @InjectView(R.id.textClosingRemark) TextView mTextClosingRemark;
   @InjectView(R.id.textTimeLeft) TextView mTextTimeLeft;
 
@@ -77,7 +75,6 @@ public class SummaryFragment extends BaseFragment {
       mSessionView.setColor(color);
       mSessionView.setSessions(sessions);
 
-      populateReadingState(mBook.getState(), color);
       populateClosingRemark(mBook.getClosingRemark());
       populateSummary();
       populateTimeLeft();
@@ -87,34 +84,11 @@ public class SummaryFragment extends BaseFragment {
     }
   }
 
-  private void populateReadingState(Book.State state, int color) {
-    if(state == Book.State.Reading || state == Book.State.Unknown) {
-      mTextReadingState.setVisibility(View.GONE);
-      return;
-    }
-
-    String readingState = "";
-
-    if(state == Book.State.Finished) {
-      readingState = "Finished";
-    }
-
-    final float radius[] = new float[8];
-    for(int i = 0; i < 8; i++) {
-      radius[i] = 3;
-    }
-    RoundRectShape roundedRect = new RoundRectShape(radius, null, null);
-    ShapeDrawable background = new ShapeDrawable(roundedRect);
-    background.getPaint().setColor(color);
-    mTextReadingState.setBackgroundDrawable(background);
-    mTextReadingState.setText(readingState);
-  }
-
   private void populateClosingRemark(String closingRemark) {
-    if(closingRemark != null) {
-      mTextClosingRemark.setText(closingRemark);
-    } else {
+    if(TextUtils.isEmpty(closingRemark)) {
       mTextClosingRemark.setVisibility(View.GONE);
+    } else {
+      mTextClosingRemark.setText(closingRemark);
     }
   }
 
@@ -159,7 +133,7 @@ public class SummaryFragment extends BaseFragment {
   private static String getPepTalk(float estimatedSecondsLeft) {
     String pepTalk = null;
     float hoursLeft = estimatedSecondsLeft / (60.0f * 60.0f);
-    if(hoursLeft == 0){
+    if(hoursLeft == 0) {
       return null;
     } else if(hoursLeft < 1) {
       pepTalk = "Why not finish it today?";
@@ -167,17 +141,17 @@ public class SummaryFragment extends BaseFragment {
       // hours per day to finish in 3 days
       final int secondsPerDayForGoal = (int) ((hoursLeft / 3.0f) * 3600);
       pepTalk = String.format("That's about %s per day to finish it in three days.",
-        Utils.longCoarseHumanTimeFromMillis(secondsPerDayForGoal * 1000));
+          Utils.longCoarseHumanTimeFromMillis(secondsPerDayForGoal * 1000));
     } else if(hoursLeft < 10) {
       // hours per day to finish in a week
       final int secondsPerDayForGoal = (int) ((hoursLeft / 7.0f) * 3600);
       pepTalk = String.format("That's about %s per day to finish it in a week.",
-        Utils.longCoarseHumanTimeFromMillis(secondsPerDayForGoal * 1000));
+          Utils.longCoarseHumanTimeFromMillis(secondsPerDayForGoal * 1000));
     } else if(hoursLeft < 20) {
       // hours per day to finish in two weeks
       final int secondsPerDayForGoal = (int) ((hoursLeft / 14.0f) * 3600);
       pepTalk = String.format("That's about %s per day to finish it in two weeks.",
-        Utils.longCoarseHumanTimeFromMillis(secondsPerDayForGoal * 1000));
+          Utils.longCoarseHumanTimeFromMillis(secondsPerDayForGoal * 1000));
     }
     return pepTalk;
   }
