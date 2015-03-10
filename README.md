@@ -6,6 +6,10 @@ Published on [Google Play](https://play.google.com/store/apps/details?id=com.rea
 
 ![Alt text](https://travis-ci.org/christoffer/readtracker.svg?branch=master "Build status")
 
+# Maintainers wanted!
+
+If you would find this project interesting, feel free to contact me to take over maintenance. Sadly, I have no spare time to work on it myself.
+
 
 ## Note
 
