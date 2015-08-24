@@ -26,5 +26,5 @@ before_script:
 script:
     - android list target
     - ./gradlew assembleDebug
-    - ./gradlew assembleTest
+    # - ./gradlew assembleTest
     # - ./gradlew build connectedAndroidTest
