@@ -1,12 +1,3 @@
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-
-    dependencies {
-        classpath 'com.android.tools.build:gradle:0.12.2'
-    }
-}
 apply plugin: 'com.android.application'
 
 repositories {
@@ -23,7 +14,7 @@ android {
         targetSdkVersion 19
         versionCode 18
         versionName "3.2"
-        testPackageName "com.readtracker.android.test"
+        testApplicationId "com.readtracker.android.test"
     }
 
     signingConfigs {
@@ -52,7 +43,7 @@ android {
 
     buildTypes {
         release {
-            runProguard true
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
             signingConfig signingConfigs.release
         }
