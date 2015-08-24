@@ -25,6 +25,6 @@ before_script:
 
 script:
     - android list target
-    - TERM=dumb ./gradlew assembleDebug
-    - ./gradlew test
+    - ./gradlew assembleDebug
+    - ./gradlew assembleTest
     # - ./gradlew build connectedAndroidTest
