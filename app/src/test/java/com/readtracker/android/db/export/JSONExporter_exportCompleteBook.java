@@ -30,7 +30,7 @@ public class JSONExporter_exportCompleteBook extends DatabaseTestCase {
 
     // Convert to string to get type agnostic comparison
     String actual = getExporter().exportAll(books).toString();
-    String expected = TestUtils.readFixtureFile("assets/expected_output_of_populated_book_test.json");
+    String expected = TestUtils.readFixtureFile("expected_output_of_populated_book_test.json");
 
     JSONAssert.assertEquals(expected, actual, true);
   }
@@ -48,7 +48,7 @@ public class JSONExporter_exportCompleteBook extends DatabaseTestCase {
     String exportFileContent = Utils.readInputStream(inputStream);
 
     JSONObject actual = new JSONObject(exportFileContent);
-    String expected = TestUtils.readFixtureFile("assets/expected_output_of_populated_book_test.json");
+    String expected = TestUtils.readFixtureFile("expected_output_of_populated_book_test.json");
 
     JSONAssert.assertEquals(expected, actual, JSONCompareMode.NON_EXTENSIBLE);
   }

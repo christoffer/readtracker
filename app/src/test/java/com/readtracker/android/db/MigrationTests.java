@@ -1,7 +1,12 @@
 package com.readtracker.android.db;
 
+import android.content.Context;
+import android.test.mock.MockContext;
+
 import com.readtracker.android.test_support.DatabaseTestCase;
 import com.readtracker.android.test_support.TestUtils;
+
+import junit.framework.Assert;
 
 import java.util.List;
 
@@ -9,7 +14,10 @@ public class MigrationTests extends DatabaseTestCase {
 
   @Override protected DatabaseHelper createDatabaseHelper() {
     int migrationStartVersion = 11;
-    return new DatabaseHelper(getContext(), DATABASE_NAME, null, migrationStartVersion);
+    Context context = new MockContext();
+    setContext(context);
+    Assert.assertNotNull(context);
+    return new DatabaseHelper(context, DATABASE_NAME, null, migrationStartVersion);
   }
 
   public void test_migration_12() {
