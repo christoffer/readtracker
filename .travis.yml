@@ -25,6 +25,6 @@ before_script:
 
 script:
     - android list target
-    - ./gradlew assembleTest
+    - ./gradlew clean test --stacktrace # unit tests
     - ./gradlew assembleDebug
-    # - ./gradlew build connectedAndroidTest
+    # - ./gradlew build connectedAndroidTest #instrumentation tests
