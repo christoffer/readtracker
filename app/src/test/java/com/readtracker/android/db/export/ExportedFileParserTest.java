@@ -12,7 +12,7 @@ import java.util.List;
 public class ExportedFileParserTest extends TestCase {
 
   public void test_build_book_from_json() throws Exception {
-    List<Book> books = _parseTestFile("assets/export_version_2.json");
+    List<Book> books = _parseTestFile("export_version_2.json");
     SharedExampleAsserts.assertExampleBooksVersion2(books);
   }
 
@@ -20,7 +20,7 @@ public class ExportedFileParserTest extends TestCase {
    * Check that the parser handles null in json correctly.
    */
   public void test_build_null_values_from_json() throws Exception {
-    List<Book> books = _parseTestFile("assets/export_version_2_null_fields.json");
+    List<Book> books = _parseTestFile("export_version_2_null_fields.json");
     assertEquals(1, books.size());
     Book book = books.get(0);
     SharedExampleAsserts.assertNullBookVersion2(book);
@@ -28,7 +28,7 @@ public class ExportedFileParserTest extends TestCase {
 
   /** Check that the parser handles missing fields json correctly. */
   public void test_build_missing_values_from_json() throws Exception {
-    List<Book> books = _parseTestFile("assets/export_version_2_missing_fields.json");
+    List<Book> books = _parseTestFile("export_version_2_missing_fields.json");
     assertEquals(1, books.size());
     Book book = books.get(0);
     SharedExampleAsserts.assertNullBookVersion2(book);

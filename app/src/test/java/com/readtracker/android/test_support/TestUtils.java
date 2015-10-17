@@ -121,8 +121,7 @@ public class TestUtils {
    * Reads the content of a file in the class path and returns its content as a String.
    */
   public static String readFixtureFile(String filename) {
-    InputStream inputStream = Thread.currentThread().getContextClassLoader()
-        .getResourceAsStream(filename);
+    InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(filename);
 
     if(inputStream == null) {
       throw new IllegalArgumentException("The resources file [" + filename + "] was not found.");

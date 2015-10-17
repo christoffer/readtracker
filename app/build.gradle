@@ -1,12 +1,3 @@
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-
-    dependencies {
-        classpath 'com.android.tools.build:gradle:0.12.2'
-    }
-}
 apply plugin: 'com.android.application'
 
 repositories {
@@ -23,8 +14,13 @@ android {
         targetSdkVersion 19
         versionCode 18
         versionName "3.2"
-        testPackageName "com.readtracker.android.test"
+        testApplicationId "com.readtracker.android.test"
     }
+
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
+
 
     signingConfigs {
         release {
@@ -52,7 +48,7 @@ android {
 
     buildTypes {
         release {
-            runProguard true
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
             signingConfig signingConfigs.release
         }
@@ -70,6 +66,15 @@ android {
     packagingOptions {
         exclude 'META-INF/services/javax.annotation.processing.Processor'
     }
+
+
+    sourceSets {
+        test {
+            resources {
+                srcDirs = ['src/test/assets']
+            }
+        }
+    }
 }
 
 dependencies {
@@ -81,5 +86,6 @@ dependencies {
     compile 'com.squareup:otto:1.3.4'
     compile 'com.jakewharton:butterknife:4.0.1'
     compile files('lib/annotations.jar')
-    androidTestCompile 'org.skyscreamer:jsonassert:1.2.3'
+    testCompile 'org.skyscreamer:jsonassert:1.2.3'
+    testCompile 'junit:junit:4.12'
 }

@@ -1,10 +1,15 @@
 package com.readtracker.android.db.export;
 
+import android.content.Context;
+import android.test.mock.MockContext;
+
 import com.readtracker.android.db.Book;
 import com.readtracker.android.db.Quote;
 import com.readtracker.android.db.Session;
 import com.readtracker.android.test_support.DatabaseTestCase;
 import com.readtracker.android.test_support.TestUtils;
+
+import junit.framework.Assert;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -20,7 +25,7 @@ public class JSONImporter_importData extends DatabaseTestCase {
   }
 
   public void test_import_version_1_file() throws Exception, ImportException {
-    File fileToImport = _copyResourceFile("assets/export_version_1.json");
+    File fileToImport = _copyResourceFile("export_version_1.json");
 
     assertEquals(0, getDatabaseManager().getAll(Book.class).size());
     getImporter().importFile(fileToImport);
@@ -29,7 +34,7 @@ public class JSONImporter_importData extends DatabaseTestCase {
   }
 
   public void test_import_version_2_file() throws Exception, ImportException {
-    File fileToImport = _copyResourceFile("assets/export_version_2.json");
+    File fileToImport = _copyResourceFile("export_version_2.json");
 
     assertEquals(0, getDatabaseManager().getAll(Book.class).size());
     getImporter().importFile(fileToImport);
@@ -129,7 +134,10 @@ public class JSONImporter_importData extends DatabaseTestCase {
   }
 
   private File _createExportFileForBooks(List<Book> books) throws Exception {
-    File exportFile = new File(getContext().getFilesDir(), randomString());
+    Context context = new MockContext();
+    setContext(context);
+    Assert.assertNotNull(context);
+    File exportFile = new File(context.getFilesDir(), randomString());
     String content = new JSONExporter(getDatabaseManager()).exportAll(books).toString();
     FileOutputStream fos = new FileOutputStream(exportFile);
     fos.write(content.getBytes());
@@ -148,7 +156,10 @@ public class JSONImporter_importData extends DatabaseTestCase {
   }
 
   private File _copyResourceFile(String resourcePath) throws IOException {
-    File exportFile = new File(getContext().getFilesDir(), randomString());
+    Context context = new MockContext();
+    setContext(context);
+    Assert.assertNotNull(context);
+    File exportFile = new File(context.getFilesDir(), randomString());
     String content = TestUtils.readFixtureFile(resourcePath);
     FileOutputStream fos = new FileOutputStream(exportFile);
     fos.write(content.getBytes());
