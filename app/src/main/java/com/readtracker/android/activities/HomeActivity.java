@@ -47,9 +47,9 @@ public class HomeActivity extends BaseActivity {
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
+    supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
     super.onCreate(savedInstanceState);
     Log.d(TAG, "onCreate");
-    requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
     setContentView(R.layout.activity_home);
     ButterKnife.inject(this);
 
