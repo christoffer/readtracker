@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-  xmlns:app="http://schemas.android.com/apk/res-auto"
-
-  android:layout_height="fill_parent"
-  android:layout_width="fill_parent"
-  android:fillViewport="true">
+    android:layout_height="fill_parent"
+    android:layout_width="fill_parent"
+    android:fillViewport="true">
 
   <LinearLayout
     android:layout_width="fill_parent"
@@ -60,13 +58,13 @@
         android:gravity="center_horizontal"
         android:ellipsize="end" />
 
-      <com.readtracker.android.thirdparty.views.Switch
+      <SwitchCompat
         android:id="@+id/page_pct_toggle"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
         android:layout_weight="1"
-        app:textOn="Pages"
-        app:textOff="%"
+        android:textOn="Pages"
+        android:textOff="%"
         android:checked="true" />
 
     </LinearLayout>

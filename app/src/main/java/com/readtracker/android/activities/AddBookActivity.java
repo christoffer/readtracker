@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.widget.SwitchCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -19,7 +20,6 @@ import com.readtracker.R;
 import com.readtracker.android.IntentKeys;
 import com.readtracker.android.db.Book;
 import com.readtracker.android.db.DatabaseManager;
-import com.readtracker.android.thirdparty.views.Switch;
 
 import java.lang.ref.WeakReference;
 import java.util.regex.Matcher;
@@ -41,7 +41,7 @@ public class AddBookActivity extends BookBaseActivity {
   @InjectView(R.id.author_edit) EditText mAuthorEdit;
   @InjectView(R.id.page_count_edit) EditText mPageCountEdit;
   @InjectView(R.id.add_or_save_button) Button mAddOrSaveButton;
-  @InjectView(R.id.page_pct_toggle) Switch mPagePctToggle;
+  @InjectView(R.id.page_pct_toggle) SwitchCompat mPagePctToggle;
 
   // Store the cover url from the intent that starts the activity
   private String mCoverURL;
