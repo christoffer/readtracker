@@ -99,8 +99,10 @@ public class ImportActivity extends BaseActivity {
 
     File[] files = dir.listFiles();
     fileBrowseAdapter.clear();
-    for(File file : files) {
-      fileBrowseAdapter.add(file);
+    if(files != null) {
+      for(File file : files) {
+        fileBrowseAdapter.add(file);
+      }
     }
     fileBrowseAdapter.sort(fileListComparator);
     fileBrowseAdapter.notifyDataSetChanged();
