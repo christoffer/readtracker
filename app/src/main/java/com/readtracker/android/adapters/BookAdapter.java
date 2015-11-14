@@ -24,6 +24,7 @@ import com.readtracker.android.support.DrawableGenerator;
 import com.readtracker.android.support.UiUtils;
 import com.readtracker.android.support.Utils;
 import com.squareup.otto.Subscribe;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -183,7 +184,7 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
       }
 
       if(coverImage != null) {
-        coverImage.setImageResource(R.drawable.bookmark);
+        coverImage.setImageResource(R.drawable.ic_image_white_48dp);
         if(!TextUtils.isEmpty(book.getCoverImageUrl())) {
           coverImage.setVisibility(View.VISIBLE);
           Picasso.with(coverImage.getContext()).load(book.getCoverImageUrl()).into(coverImage);
