@@ -23,7 +23,7 @@
     <Preference
       android:title="@string/settings_version"
       android:key="about.version"/>
-    
+
     <Preference
       android:title="@string/settings_legal"
       android:key="about.legal"/>
