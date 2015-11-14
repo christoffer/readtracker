@@ -8,6 +8,7 @@ import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -33,9 +34,6 @@ import static com.readtracker.android.fragments.BookFragmentAdapter.Page;
  */
 public class BookActivity extends BookBaseActivity implements EndSessionDialog.EndSessionDialogListener {
   protected static final String TAG = BookActivity.class.getSimpleName();
-
-  private static final int NO_GROUP = 0;
-  private static final int MENU_EDIT_BOOK = 1;
 
   public static final int REQUEST_ADD_QUOTE = 1;
   public static final int REQUEST_EDIT_BOOK = 2;
@@ -134,8 +132,9 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialog.E
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
-    menu.add(NO_GROUP, MENU_EDIT_BOOK, 0, "Edit book settings");
-    return true;
+    MenuInflater inflater = getMenuInflater();
+    inflater.inflate(R.menu.edit_book_menu, menu);
+    return super.onCreateOptionsMenu(menu);
   }
 
   @Override
@@ -156,7 +155,7 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialog.E
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
     switch(item.getItemId()) {
-      case MENU_EDIT_BOOK:
+      case R.id.edit_book_menu_edit:
         Intent intent = new Intent(this, AddBookActivity.class);
         intent.putExtra(BookBaseActivity.KEY_BOOK_ID, getBookIdFromIntent());
         startActivityForResult(intent, REQUEST_EDIT_BOOK);

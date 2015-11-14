@@ -58,6 +58,8 @@
   <string name="add_book_delete_explanation">This will delete the book and the entire reading history from the device.\n\nThere is no way to undo this operation.</string>
   <string name="add_book_delete_failed">Failed to delete book</string>
 
+  <string name="edit_book_menu_edit">Edit book settings</string>
+
   <string name="book_error_updating">An error occurred, the book could not be saved.</string>
 
   <string name="reading_start">Start</string>
@@ -116,4 +118,6 @@
   <string name="import_locate_file">Locate your previously exported ReadTracker file.</string>
   <string name="importing_files">Importing…</string>
   <string name="finish_book_description">"If you'd like, you can leave a little note of your thoughts on the book while they are fresh in memory.\n\nYour future self will appreciate it."</string>
+
+  <string name="file_browser_root_folder">/ (device root folder)</string>
 </resources>

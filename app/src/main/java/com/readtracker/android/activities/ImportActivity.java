@@ -93,9 +93,18 @@ public class ImportActivity extends BaseActivity {
   }
 
   private void setCurrentDirectory(File dir) {
-    // Set title
-    currentFolderText.setText(dir.getAbsolutePath());
     currentFolderText.setTag(dir.getParentFile());
+
+    // Set the icon, while considering the case where the user navigated all the way to the top
+    if(dir.getParent() == null) {
+      currentFolderText.setText(R.string.file_browser_root_folder);
+      currentFolderText.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+    } else {
+      currentFolderText.setText(dir.getAbsolutePath());
+      currentFolderText.setCompoundDrawablesWithIntrinsicBounds(
+          R.drawable.ic_chevron_left_white_48dp, 0, 0, 0
+      );
+    }
 
     File[] files = dir.listFiles();
     fileBrowseAdapter.clear();
@@ -126,10 +135,10 @@ public class ImportActivity extends BaseActivity {
 
       int iconResource, textColorResource;
       if(file.isDirectory()) {
-        iconResource = R.drawable.icon_folder;
+        iconResource = R.drawable.ic_folder_white_48dp;
         textColorResource = R.color.text_color_secondary;
       } else {
-        iconResource = R.drawable.icon_file;
+        iconResource = 0; // Remove the icon for files
         textColorResource = R.color.text_color_primary;
       }
 

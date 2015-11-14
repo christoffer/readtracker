@@ -21,16 +21,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
-    android:paddingTop="10dp"
-    android:paddingBottom="10dp"
-    android:paddingLeft="0dp"
-    android:paddingRight="0dp"
+    android:padding="0dp"
     android:background="@drawable/selector_light_background_on_press"
-
-    android:drawableLeft="@drawable/icon_back_up"
-    android:drawableStart="@drawable/icon_back_up"
-
-    android:drawablePadding="20dp"
+    android:drawablePadding="8dp"
     tools:text="/sdcard/0"
     />
 

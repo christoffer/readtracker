@@ -7,8 +7,7 @@
           android:background="@drawable/selector_light_background_on_press"
           android:layout_width="match_parent"
           android:layout_height="match_parent"
-          android:paddingTop="10dp"
-          android:paddingBottom="10dp"
           android:gravity="center_vertical"
-          android:drawablePadding="20dp"
+          android:drawablePadding="8dp"
+          android:minHeight="48dp"
           tools:text="Jumbo galumbo.txt"/>
