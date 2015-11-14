@@ -92,27 +92,11 @@ public abstract class BookBaseActivity extends BaseActivity {
 
   private void setupActionBar(Book book) {
     ActionBar actionBar = getSupportActionBar();
-
-    // Set the cover as the home icon. Unfortunately it seems like there's no easy way of getting
-    // the ImageView from the actionbar pre-11. So Gingerbread will be stuck with the default image...
-    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-      ImageView homeIcon = (ImageView) findViewById(android.R.id.home);
-      if(homeIcon != null && !TextUtils.isEmpty(book.getCoverImageUrl())) {
-        int size = getActionBarHeight();
-        if(size == 0) size = 48; // Arbitrary default value
-        Picasso.with(this)
-            .load(book.getCoverImageUrl())
-            .placeholder(R.drawable.bookmark)
-            .resize(size, size)
-            .centerCrop()
-            .into(homeIcon);
-        actionBar.setDisplayShowHomeEnabled(true);
-      }
+    if(actionBar != null) {
+      actionBar.setTitle(book.getTitle());
+      actionBar.setSubtitle(book.getAuthor());
+      actionBar.setDisplayHomeAsUpEnabled(true);
     }
-
-    actionBar.setTitle(book.getTitle());
-    actionBar.setSubtitle(book.getAuthor());
-    actionBar.setDisplayHomeAsUpEnabled(true);
   }
 
   /** Callback from the async task loading the book (with associated data) from the database. */
