@@ -30,7 +30,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
   }
 
   public static final String DATABASE_NAME = "readtracker.db";
-  public static final int DATABASE_VERSION = 12;
+  public static final int DATABASE_VERSION = 13;
   private static final String TAG = DatabaseHelper.class.getName();
 
   private Dao<LocalReading, Integer> readingDao = null;
@@ -142,6 +142,11 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
       if(runningVersion == 11) {
         _upgradeToVersion12(db, connectionSource);
+        runningVersion++;
+      }
+
+      if(runningVersion == 12) {
+        _upgradeToVersion13(db, connectionSource);
         runningVersion++;
       }
 
@@ -361,6 +366,11 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     Log.i(TAG, "Running database upgrade 12");
     DatabaseManager dbMgr = new DatabaseManager(this);
     DatabaseHelper.migrateVersion31Sessions(dbMgr);
+  }
+
+  private void _upgradeToVersion13(SQLiteDatabase db, ConnectionSource connectionSource) throws SQLException {
+    Log.i(TAG, "Running database upgrade 13");
+    db.execSQL("ALTER TABLE books ADD COLUMN " + Book.Columns.BOOK_PALETTE_JSON + " TEXT NULL;");
   }
 
   /** Helper method for migrating sessions with timestamps from the broken 3.1 version. */

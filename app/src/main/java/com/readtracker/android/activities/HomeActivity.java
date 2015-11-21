@@ -17,12 +17,15 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.readtracker.BuildConfig;
 import com.readtracker.R;
 import com.readtracker.android.ReadTrackerApp;
 import com.readtracker.android.db.Book;
 import com.readtracker.android.db.DatabaseManager;
+import com.readtracker.android.db.Session;
 import com.readtracker.android.fragments.BookListFragment;
 import com.readtracker.android.fragments.HomeFragmentAdapter;
+import com.readtracker.android.support.DebugUtils;
 import com.squareup.otto.Subscribe;
 
 import java.lang.ref.WeakReference;
@@ -36,6 +39,7 @@ public class HomeActivity extends BaseActivity {
   private static final String TAG = HomeActivity.class.getSimpleName();
 
   private static final int REQUEST_READING_SESSION = 1;
+  private static final int MENU_ITEM_DEBUG_GENERATE_BOOK = 1;
 
   // List of books loaded from the database
   private List<Book> mBooks = new ArrayList<Book>();
@@ -86,6 +90,10 @@ public class HomeActivity extends BaseActivity {
   public boolean onCreateOptionsMenu(Menu menu) {
     MenuInflater inflater = getMenuInflater();
     inflater.inflate(R.menu.home, menu);
+
+    if(BuildConfig.DEBUG) {
+      menu.add(Menu.NONE, MENU_ITEM_DEBUG_GENERATE_BOOK, Menu.NONE, "Generate Debug Books");
+    }
     return true;
   }
 
@@ -97,6 +105,21 @@ public class HomeActivity extends BaseActivity {
       exitToSettings();
     } else if(clickedId == R.id.add_book_menu) {
       exitToBookSearch();
+    } else if (clickedId == MENU_ITEM_DEBUG_GENERATE_BOOK) {
+      // NOTE(christoffer) Database operation on network thread is ok, because: hey, it's debug :)
+      DatabaseManager dbManager = ReadTrackerApp.from(this).getDatabaseManager();
+      ArrayList<Book> books = new ArrayList<Book>();
+      for(int i = 0; i < 5; i++) {
+        Book book = DebugUtils.generateRandomBook();
+        dbManager.save(book);
+        if(book != null) {
+          ArrayList<Session> sessions = DebugUtils.getSessionsForBook(book);
+          dbManager.saveAll(sessions);
+        } else {
+          Log.d(TAG, "eh, nul?");
+        }
+      }
+      loadBooks();
     } else {
       return false;
     }
@@ -184,7 +207,7 @@ public class HomeActivity extends BaseActivity {
     }
 
     getSupportActionBar().setSubtitle(R.string.home_loading_books);
-    setProgressBarIndeterminateVisibility(Boolean.TRUE);
+    setSupportProgressBarIndeterminateVisibility(Boolean.TRUE);
 
     mLoadCatalogueTask = new LoadCatalogueTask(this);
     mLoadCatalogueTask.execute();
@@ -207,7 +230,7 @@ public class HomeActivity extends BaseActivity {
     private final DatabaseManager mDatabaseManager;
 
     public LoadCatalogueTask(HomeActivity activity) {
-      mActivity = new WeakReference<HomeActivity>(activity);
+      mActivity = new WeakReference<>(activity);
       mDatabaseManager = ReadTrackerApp.from(activity).getDatabaseManager();
     }
 

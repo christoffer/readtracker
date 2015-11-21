@@ -6,9 +6,11 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.readtracker.android.db.Book;
 import com.readtracker.android.db.DatabaseHelper;
 import com.readtracker.android.db.DatabaseManager;
 import com.readtracker.android.support.ApplicationSettingsHelper;
+import com.readtracker.android.support.LoadBookCoverTask;
 import com.squareup.otto.Bus;
 
 public class ReadTrackerApp extends Application {
@@ -41,9 +43,7 @@ public class ReadTrackerApp extends Application {
   private ApplicationSettingsHelper mAppSettingsHelper;
   private DatabaseManager mDatabaseManager;
 
-  public ReadTrackerApp() {
-
-  }
+  public ReadTrackerApp() {}
 
   /** Gets the application class from a Context. */
   public static ReadTrackerApp from(Context context) {
@@ -54,6 +54,7 @@ public class ReadTrackerApp extends Application {
   public Bus getBus() {
     if(mBus == null) {
       mBus = new Bus();
+      Log.d(TAG, String.format("Bus instance in app %s", System.identityHashCode(mBus)));
     }
     return mBus;
   }
@@ -137,5 +138,11 @@ public class ReadTrackerApp extends Application {
 
   public SharedPreferences getPreferences() {
     return getSharedPreferences(PREFERENCES_FILE_NAME, MODE_PRIVATE);
+  }
+
+  public void processBookCover(Book book, LoadBookCoverTask.Callback callback) {
+    // TODO(christoffer) Implement some task management on a per-book basis here
+    LoadBookCoverTask task = new LoadBookCoverTask(this, book, callback);
+    task.execute();
   }
 }

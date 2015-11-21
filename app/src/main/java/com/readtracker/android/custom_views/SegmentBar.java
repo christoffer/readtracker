@@ -27,7 +27,7 @@ public class SegmentBar extends View {
   public SegmentBar(Context context, AttributeSet attrs) {
     super(context, attrs);
     initResources();
-    if(isInEditMode()) {
+    if(true || isInEditMode()) {
       if(Math.random() > 0.25) {
         // Throw in some sample segments
         int numSegments = 43 + (int) (Math.random() * 10);

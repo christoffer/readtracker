@@ -8,8 +8,13 @@ import org.json.JSONObject;
 public class JsonBuilder {
   JSONObject mJsonObject = new JSONObject();
 
-  public JsonBuilder add(String key, Object value) throws JSONException {
-    mJsonObject.put(key, value);
+  public JsonBuilder add(String key, Object value) {
+    try {
+      mJsonObject.put(key, value);
+    } catch(JSONException e) {
+      e.printStackTrace();
+      throw new RuntimeException(e.getMessage());
+    }
     return this;
   }
 

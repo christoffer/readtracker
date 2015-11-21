@@ -1,9 +1,15 @@
 package com.readtracker.android.db;
 
+import android.support.annotation.NonNull;
+
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import com.readtracker.BuildConfig;
+import com.readtracker.android.support.BookPalette;
 import com.readtracker.android.support.Utils;
+
+import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,6 +20,8 @@ import java.util.List;
  */
 @DatabaseTable(tableName = "books")
 public class Book extends Model {
+
+  private BookPalette mBookPalette;
 
   public static enum State {Unknown, Finished, Reading}
 
@@ -46,6 +54,9 @@ public class Book extends Model {
   @DatabaseField(columnName = Columns.CLOSING_REMARK)
   private String mClosingRemark;
 
+  @DatabaseField(columnName = Columns.BOOK_PALETTE_JSON)
+  private String mBookPaletteJSON;
+
   /* End database fields */
 
   // Use manual handling of foreign keys here as we want to have complete
@@ -58,7 +69,7 @@ public class Book extends Model {
   /** Load all sessions for this book from the database. */
   public void loadSessions(DatabaseManager databaseManager) {
     mSessions = databaseManager.getSessionsForBook(this);
-    for(Session session: mSessions) {
+    for(Session session : mSessions) {
       session.setBook(this);
     }
   }
@@ -132,6 +143,10 @@ public class Book extends Model {
 
   public void setClosingRemark(String closingRemark) { mClosingRemark = closingRemark; }
 
+  public String getBookPaletteJSON() { return mBookPaletteJSON; }
+
+  public void setBookPaletteJSON(String bookPaletteJSON) { mBookPaletteJSON = bookPaletteJSON; }
+
   public static abstract class Columns extends Model.Columns {
     public static final String TITLE = "title";
     public static final String AUTHOR = "author";
@@ -142,6 +157,38 @@ public class Book extends Model {
     public static final String CURRENT_POSITION_TIMESTAMP = "current_position_timestamp";
     public static final String FIRST_POSITION_TIMESTAMP = "first_position_timestamp";
     public static final String CLOSING_REMARK = "closing_remark";
+    public static final String BOOK_PALETTE_JSON = "book_palette_json";
+  }
+
+  /** Returns a BookPalette to use for this books colors. */
+  @NonNull
+  public BookPalette getBookPalette() {
+    if(mBookPalette == null)
+      if(mBookPaletteJSON != null) {
+        try {
+          mBookPalette = new BookPalette(mBookPaletteJSON);
+        } catch(JSONException e) {
+          if(BuildConfig.DEBUG) e.printStackTrace();
+          mBookPalette = new BookPalette();
+        }
+      } else {
+        // No palette data loaded for this book yet, use the default as a stand in
+        mBookPalette = new BookPalette();
+      }
+
+    return mBookPalette;
+  }
+
+  /** Sets a palette to use for this books colors. */
+  public void setBookPalette(BookPalette bookPalette) {
+    mBookPalette = bookPalette;
+    try {
+      mBookPaletteJSON = bookPalette == null ? null : mBookPalette.toJSON();
+    } catch(JSONException e) {
+      if(BuildConfig.DEBUG) e.printStackTrace();
+      mBookPalette = null;
+      mBookPaletteJSON = null;
+    }
   }
 
   /** Returns true if this book has page numbers set. */

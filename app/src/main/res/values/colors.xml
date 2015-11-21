@@ -51,4 +51,5 @@
   <color name="activity_background">#ff000000</color>
 
   <color name="overlay_background">#dd000000</color>
+  <color name="default_book_color">#ff00f0f0</color>
 </resources>

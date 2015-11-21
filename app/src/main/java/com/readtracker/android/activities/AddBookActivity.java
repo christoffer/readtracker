@@ -260,6 +260,7 @@ public class AddBookActivity extends BookBaseActivity {
     } else {
       setResult(RESULT_ADDED_BOOK, data);
     }
+    // TODO(christoffer) Post BookUpdatedEvent
     finish();
   }
 

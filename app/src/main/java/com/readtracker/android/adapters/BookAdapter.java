@@ -1,11 +1,10 @@
 package com.readtracker.android.adapters;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.LayerDrawable;
-import android.graphics.drawable.ShapeDrawable;
-import android.graphics.drawable.shapes.RectShape;
+import android.graphics.Bitmap;
+import android.graphics.drawable.StateListDrawable;
+import android.os.Build;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,16 +16,18 @@ import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import com.readtracker.R;
+import com.readtracker.android.ReadTrackerApp;
 import com.readtracker.android.activities.HomeActivity;
 import com.readtracker.android.custom_views.SegmentBar;
 import com.readtracker.android.db.Book;
+import com.readtracker.android.support.BookPalette;
 import com.readtracker.android.support.DrawableGenerator;
+import com.readtracker.android.support.LoadBookCoverTask;
 import com.readtracker.android.support.UiUtils;
 import com.readtracker.android.support.Utils;
 import com.squareup.otto.Subscribe;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -56,7 +57,7 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
   };
 
   // Books in this list
-  private final List<Book> mBooks = new ArrayList<Book>();
+  private final List<Book> mBooks = new ArrayList<>();
 
   private Book.State mStateFilter = null;
 
@@ -104,10 +105,19 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
     Book book = getItem(position);
     viewHolder.populate(book);
 
-    int backColor = mContext.getResources().getColor(R.color.background);
-    int activeColor = mContext.getResources().getColor(R.color.default_button_color_pressed);
+    int backColor = ContextCompat.getColor(mContext, R.color.background);
+    int activeColor = ContextCompat.getColor(mContext, R.color.default_button_color_pressed);
 
-    convertView.setBackgroundDrawable(DrawableGenerator.generateListItemBackground(activeColor, backColor));
+    StateListDrawable background = DrawableGenerator.generateListItemBackground(
+        activeColor, backColor
+    );
+
+    if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+      //noinspection deprecation
+      convertView.setBackgroundDrawable(background);
+    } else {
+      convertView.setBackground(background);
+    }
     return convertView;
   }
 
@@ -155,41 +165,47 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
   }
 
   static class ViewHolder {
-    // Required fields
+    private final ReadTrackerApp app;
+
     @InjectView(R.id.textTitle) TextView titleText;
     @InjectView(R.id.textAuthor) TextView authorText;
 
-    // Optional fields *
     @Optional @InjectView(R.id.progressReadingProgress) SegmentBar segmentedProgressBar;
     @Optional @InjectView(R.id.imageCover) ImageView coverImage;
     @Optional @InjectView(R.id.textClosingRemark) TextView closingRemarkText;
     @Optional @InjectView(R.id.textFinishedAt) TextView finishedAtText;
+    private int currentBookHash = 0;
 
     ViewHolder(View view) {
       ButterKnife.inject(this, view);
+      app = (ReadTrackerApp) view.getContext().getApplicationContext();
     }
 
-    void populate(Book book) {
+    void populate(final Book book) {
+      currentBookHash = book.hashCode();
+
       // Required fields
       titleText.setText(book.getTitle());
       authorText.setText(book.getAuthor());
 
-      final int bookColor = Utils.calculateBookColor(book);
+      BookPalette palette = book.getBookPalette();
 
       // Optional fields
       if(segmentedProgressBar != null) {
         segmentedProgressBar.setVisibility(View.VISIBLE);
         segmentedProgressBar.setStops(Utils.getSessionStops(book.getSessions()));
-        segmentedProgressBar.setColor(bookColor);
+        segmentedProgressBar.setColor(palette.getMutedColor());
       }
 
       if(coverImage != null) {
-        coverImage.setImageResource(R.drawable.ic_image_white_48dp);
-        if(!TextUtils.isEmpty(book.getCoverImageUrl())) {
-          coverImage.setVisibility(View.VISIBLE);
-          Picasso.with(coverImage.getContext()).load(book.getCoverImageUrl()).into(coverImage);
-        }
+        // Defer image visibility until the image has been loaded
+        coverImage.setVisibility(View.INVISIBLE);
       }
+
+      PopulateColoredFieldsCallback callback = new PopulateColoredFieldsCallback(
+          book.hashCode(), this
+      );
+      ((ReadTrackerApp) app.getApplicationContext()).processBookCover(book, callback);
 
       if(closingRemarkText != null) {
         final TextView closingRemark = closingRemarkText;
@@ -197,11 +213,10 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
         if(!TextUtils.isEmpty(book.getClosingRemark())) {
           closingRemark.setVisibility(View.VISIBLE);
           closingRemark.setText(book.getClosingRemark());
+          UiUtils.applyQuoteBackgroundColor(closingRemark, palette.getMutedColor());
         } else {
           closingRemark.setVisibility(View.GONE);
         }
-
-        UiUtils.applyQuoteBackgroundColor(closingRemarkText, bookColor);
       }
 
       if(finishedAtText != null) {
@@ -212,6 +227,38 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
         } else {
           finishedAtText.setVisibility(View.GONE);
         }
+      }
+    }
+
+    void setPalette(BookPalette palette) {
+      if(segmentedProgressBar != null) segmentedProgressBar.setColor(palette.getMutedColor());
+      if(closingRemarkText != null) {
+        UiUtils.applyQuoteBackgroundColor(closingRemarkText, palette.getMutedColor());
+      }
+    }
+
+    private static class PopulateColoredFieldsCallback implements LoadBookCoverTask.Callback {
+      private final int mBookHashOnStart;
+      private final WeakReference<ViewHolder> mViewHolder;
+
+      public PopulateColoredFieldsCallback(int bookHashOnStart, ViewHolder viewHolder) {
+        mBookHashOnStart = bookHashOnStart;
+        mViewHolder = new WeakReference<>(viewHolder);
+      }
+
+      @Override public void onBookCoverProcessed(Book book, Bitmap coverImageBitmap) {
+        ViewHolder viewHolder = mViewHolder.get();
+        if(viewHolder == null || viewHolder.currentBookHash != mBookHashOnStart) {
+          // The view has been reused since the task started, let the task started for the new
+          // book updated the UI instead.
+          return;
+        }
+
+        if(viewHolder.coverImage != null) {
+          viewHolder.coverImage.setVisibility(View.VISIBLE);
+          viewHolder.coverImage.setImageBitmap(coverImageBitmap);
+        }
+        viewHolder.setPalette(book.getBookPalette());
       }
     }
   }

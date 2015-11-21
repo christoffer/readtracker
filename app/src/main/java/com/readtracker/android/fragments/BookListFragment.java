@@ -14,6 +14,7 @@ import com.readtracker.android.activities.HomeActivity;
 import com.readtracker.android.adapters.BookAdapter;
 import com.readtracker.android.db.Book;
 import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
 
 /** List fragments for displaying a list of Books. */
 public class BookListFragment extends ListFragment {
@@ -71,6 +72,7 @@ public class BookListFragment extends ListFragment {
 
   @Override public void onResume() {
     super.onResume();
+    Log.d(TAG, "Registered on bus");
     if(mBus != null) mBus.register(mBookAdapter);
   }
 
