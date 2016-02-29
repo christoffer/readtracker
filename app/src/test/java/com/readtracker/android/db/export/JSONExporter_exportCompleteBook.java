@@ -8,6 +8,7 @@ import com.readtracker.android.test_support.DatabaseTestCase;
 import com.readtracker.android.test_support.TestUtils;
 
 import org.json.JSONObject;
+import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 
@@ -25,6 +26,7 @@ public class JSONExporter_exportCompleteBook extends DatabaseTestCase {
     return new JSONExporter(getDatabaseManager());
   }
 
+  @Test
   public void test_export_populated_book() throws Exception {
     List<Book> books = populateBooksForExpectedOutput();
 
@@ -35,6 +37,7 @@ public class JSONExporter_exportCompleteBook extends DatabaseTestCase {
     JSONAssert.assertEquals(expected, actual, true);
   }
 
+  @Test
   // Similar to export_all_books, but tests the write out to disk
   public void test_export_to_disk() throws Exception {
     List<Book> books = populateBooksForExpectedOutput();

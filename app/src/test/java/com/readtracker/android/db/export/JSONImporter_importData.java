@@ -11,6 +11,11 @@ import com.readtracker.android.test_support.TestUtils;
 
 import junit.framework.Assert;
 
+import org.junit.Test;
+import org.robolectric.annotation.Config;
+import org.robolectric.annotation.Implements;
+import org.robolectric.annotation.RealObject;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -20,10 +25,13 @@ import java.util.List;
 import static com.readtracker.android.test_support.TestUtils.randomString;
 
 public class JSONImporter_importData extends DatabaseTestCase {
+
   private JSONImporter getImporter() {
     return new JSONImporter(getDatabaseManager());
   }
 
+
+  @Test
   public void test_import_version_1_file() throws Exception, ImportException {
     File fileToImport = _copyResourceFile("export_version_1.json");
 
@@ -33,6 +41,7 @@ public class JSONImporter_importData extends DatabaseTestCase {
     _assertImportedBooks();
   }
 
+  @Test
   public void test_import_version_2_file() throws Exception, ImportException {
     File fileToImport = _copyResourceFile("export_version_2.json");
 
@@ -42,6 +51,7 @@ public class JSONImporter_importData extends DatabaseTestCase {
     _assertImportedBooks();
   }
 
+  @Test
   public void test_import_with_no_merge_conflict() throws Exception, ImportException {
     Book bookToImport = TestUtils.buildBook("постои конфликт", "авторот", 200);
     File fileToImport = _createExportFileForBooks(Arrays.asList(bookToImport));
@@ -58,6 +68,7 @@ public class JSONImporter_importData extends DatabaseTestCase {
     assertFalse(books.get(0).getTitle().equals(books.get(1).getTitle()));
   }
 
+  @Test
   public void test_import_with_simple_merge_conflict() throws Exception, ImportException {
     Book existing = TestUtils.buildBook("Metamorphosis", "Franz Kafka", 200);
     getDatabaseManager().save(existing);
@@ -80,6 +91,7 @@ public class JSONImporter_importData extends DatabaseTestCase {
     assertEquals(300f, bookAfterImport.getPageCount());
   }
 
+  @Test
   public void test_import_with_nested_merge_conflicts() throws Exception, ImportException {
     // Create a book in the database that we later want to import
     Book imported = TestUtils.buildBook("Metamorphosis", "Franz Kafka", 200);
@@ -134,7 +146,7 @@ public class JSONImporter_importData extends DatabaseTestCase {
   }
 
   private File _createExportFileForBooks(List<Book> books) throws Exception {
-    Context context = new MockContext();
+    Context context = getContext();
     setContext(context);
     Assert.assertNotNull(context);
     File exportFile = new File(context.getFilesDir(), randomString());
@@ -156,7 +168,7 @@ public class JSONImporter_importData extends DatabaseTestCase {
   }
 
   private File _copyResourceFile(String resourcePath) throws IOException {
-    Context context = new MockContext();
+    Context context = getContext();
     setContext(context);
     Assert.assertNotNull(context);
     File exportFile = new File(context.getFilesDir(), randomString());
