@@ -2,9 +2,42 @@
 buildscript{
     repositories {
         mavenCentral()
+        maven { url 'https://github.com/christoffer/readmill-java-wrapper/raw/master/snapshots' }
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.3.1'
+        classpath 'com.android.tools.build:gradle:1.5.0'
     }
+}
+
+allprojects {
+    repositories {
+        jcenter()
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
+
+// Define versions in a single place
+ext {
+    // Sdk and tools
+    compileSdkVersion = 23
+    targetSdkVersion = 23
+    minimumSdkVersion = 10
+    buildToolsVersion = '23.0.1'
+
+    // App dependencies
+    supportLibraryVersion = '23.0.1'
+    ormLiteVersion = '4.48'
+    picassoVersion = '2.2.0'
+    ottoVersion = '1.3.4'
+    butterknifeVersion = '4.0.1'
+    junitVersion = '4.12'
+    mockitoVersion = '1.10.19'
+    jsonAssertVersion = '1.2.3'
+    runnerVersion = '0.4.1'
+    rulesVersion = '0.4.1'
+    espressoVersion = '2.2.1'
 }
