@@ -27,4 +27,4 @@ script:
     - android list target
     - ./gradlew clean test --stacktrace # unit tests
     - ./gradlew assembleDebug
-    - ./gradlew build connectedDebugAndroidTest # instrumentation tests
+    - ./gradlew connectedCheck # instrumentation tests
