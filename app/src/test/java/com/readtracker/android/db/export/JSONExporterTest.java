@@ -8,6 +8,7 @@ import com.readtracker.android.test_support.DatabaseTestCase;
 import com.readtracker.android.test_support.TestUtils;
 
 import org.json.JSONObject;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
@@ -20,14 +21,14 @@ import java.util.List;
 
 import static com.readtracker.android.test_support.TestUtils.buildSession;
 
-public class JSONExporter_exportCompleteBook extends DatabaseTestCase {
+public class JSONExporterTest extends DatabaseTestCase {
 
   private JSONExporter getExporter() {
     return new JSONExporter(getDatabaseManager());
   }
 
   @Test
-  public void test_export_populated_book() throws Exception {
+  public void jsonExporterTest_ExportPopulatedBook_ReturnsStringOfOutputPath() throws Exception {
     List<Book> books = populateBooksForExpectedOutput();
 
     // Convert to string to get type agnostic comparison
@@ -39,7 +40,7 @@ public class JSONExporter_exportCompleteBook extends DatabaseTestCase {
 
   @Test
   // Similar to export_all_books, but tests the write out to disk
-  public void test_export_to_disk() throws Exception {
+  public void jsonExporterTest_ExportPopulatedBook_ReturnsExportedJsonFromIO() throws Exception {
     List<Book> books = populateBooksForExpectedOutput();
 
     String exportFilename = TestUtils.randomString();
@@ -56,6 +57,7 @@ public class JSONExporter_exportCompleteBook extends DatabaseTestCase {
     JSONAssert.assertEquals(expected, actual, JSONCompareMode.NON_EXTENSIBLE);
   }
 
+  @Ignore
   private List<Book> populateBooksForExpectedOutput() {
     Book metamorphosis = new Book();
     metamorphosis.setTitle("Metamorphosis");

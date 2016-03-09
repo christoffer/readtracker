@@ -1,10 +1,13 @@
 package com.readtracker.android.db;
 
-import junit.framework.TestCase;
+import android.test.AndroidTestCase;
 
-public class BookTest extends TestCase {
+import org.junit.Test;
 
-  public void test_merge() throws Exception {
+public class BookTest extends AndroidTestCase {
+
+  @Test
+  public void bookTest_MergeInformationBookToBook_ReturnsBookCopy() throws Exception {
     Book original = new Book();
     original.setTitle("Metamorphosis");
     original.setAuthor("Franz Kafka");

@@ -1,20 +1,18 @@
 package com.readtracker.android.db.export;
 
 import android.content.Context;
-import android.test.mock.MockContext;
 
 import com.readtracker.android.db.Book;
 import com.readtracker.android.db.Quote;
 import com.readtracker.android.db.Session;
 import com.readtracker.android.test_support.DatabaseTestCase;
+import com.readtracker.android.test_support.SharedExampleAsserts;
 import com.readtracker.android.test_support.TestUtils;
 
 import junit.framework.Assert;
 
+import org.junit.Ignore;
 import org.junit.Test;
-import org.robolectric.annotation.Config;
-import org.robolectric.annotation.Implements;
-import org.robolectric.annotation.RealObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -24,7 +22,7 @@ import java.util.List;
 
 import static com.readtracker.android.test_support.TestUtils.randomString;
 
-public class JSONImporter_importData extends DatabaseTestCase {
+public class JSONImporterTest extends DatabaseTestCase {
 
   private JSONImporter getImporter() {
     return new JSONImporter(getDatabaseManager());
@@ -32,7 +30,7 @@ public class JSONImporter_importData extends DatabaseTestCase {
 
 
   @Test
-  public void test_import_version_1_file() throws Exception, ImportException {
+  public void jsonImporterTest_ImportBookVersionOne() throws Exception, ImportException {
     File fileToImport = _copyResourceFile("export_version_1.json");
 
     assertEquals(0, getDatabaseManager().getAll(Book.class).size());
@@ -42,7 +40,7 @@ public class JSONImporter_importData extends DatabaseTestCase {
   }
 
   @Test
-  public void test_import_version_2_file() throws Exception, ImportException {
+  public void jsonImporterTest_ImportBookVersionTwo() throws Exception, ImportException {
     File fileToImport = _copyResourceFile("export_version_2.json");
 
     assertEquals(0, getDatabaseManager().getAll(Book.class).size());
@@ -52,7 +50,7 @@ public class JSONImporter_importData extends DatabaseTestCase {
   }
 
   @Test
-  public void test_import_with_no_merge_conflict() throws Exception, ImportException {
+  public void jsonImporterTest_ImportBookWithNoMergeConflict() throws Exception, ImportException {
     Book bookToImport = TestUtils.buildBook("постои конфликт", "авторот", 200);
     File fileToImport = _createExportFileForBooks(Arrays.asList(bookToImport));
 
@@ -69,7 +67,7 @@ public class JSONImporter_importData extends DatabaseTestCase {
   }
 
   @Test
-  public void test_import_with_simple_merge_conflict() throws Exception, ImportException {
+  public void jsonImporterTest_ImportBookWithSimpleMergeConflict() throws Exception, ImportException {
     Book existing = TestUtils.buildBook("Metamorphosis", "Franz Kafka", 200);
     getDatabaseManager().save(existing);
     final long preId = existing.getId();
@@ -92,7 +90,7 @@ public class JSONImporter_importData extends DatabaseTestCase {
   }
 
   @Test
-  public void test_import_with_nested_merge_conflicts() throws Exception, ImportException {
+  public void jsonImporterTest_ImportBookWithNestedMergeConflict() throws Exception, ImportException {
     // Create a book in the database that we later want to import
     Book imported = TestUtils.buildBook("Metamorphosis", "Franz Kafka", 200);
     {
@@ -145,6 +143,7 @@ public class JSONImporter_importData extends DatabaseTestCase {
     assertEquals(Long.valueOf(3), book.getQuotes().get(2).getAddTimestampMs());
   }
 
+  @Ignore
   private File _createExportFileForBooks(List<Book> books) throws Exception {
     Context context = getContext();
     setContext(context);
@@ -157,6 +156,7 @@ public class JSONImporter_importData extends DatabaseTestCase {
     return exportFile;
   }
 
+  @Ignore
   private void _assertImportedBooks() {
     List<Book> booksInDatabase = getDatabaseManager().getAll(Book.class);
     for(Book book : booksInDatabase) {
@@ -167,6 +167,7 @@ public class JSONImporter_importData extends DatabaseTestCase {
     SharedExampleAsserts.assertExampleBooksVersion2(booksInDatabase);
   }
 
+  @Ignore
   private File _copyResourceFile(String resourcePath) throws IOException {
     Context context = getContext();
     setContext(context);

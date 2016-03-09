@@ -1,4 +1,4 @@
-package com.readtracker.android.db.export;
+package com.readtracker.android.test_support;
 
 import com.readtracker.android.db.Book;
 import com.readtracker.android.db.Quote;
@@ -17,6 +17,7 @@ import static junit.framework.Assert.assertNull;
  * look after being imported.
  */
 public class SharedExampleAsserts {
+
   /** Asserts that all data in the example used for version 2 import/export is consistent */
   public static void assertExampleBooksVersion2(List<Book> books) {
     assertEquals(2, books.size());

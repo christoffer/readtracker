@@ -1,12 +1,13 @@
 package com.readtracker.android.db;
 
-import com.readtracker.android.test_support.TestUtils;
+import android.test.AndroidTestCase;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
-public class SessionTest extends TestCase {
-  public void test_merge() throws Exception {
-    Book book = new Book();
+public class SessionTest extends AndroidTestCase {
+
+  @Test
+  public void sessionTest_MergeInformationFromSessionToSession_ReturnsSessionCopy() throws Exception {
     Session original = new Session();
 
     original.setDurationSeconds(123);

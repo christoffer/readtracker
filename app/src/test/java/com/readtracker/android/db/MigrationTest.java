@@ -10,7 +10,7 @@ import org.junit.Test;
 
 import java.util.List;
 
-public class MigrationTests extends DatabaseTestCase {
+public class MigrationTest extends DatabaseTestCase {
 
   @Ignore
   public DatabaseHelper createDatabaseHelper() {
@@ -20,7 +20,7 @@ public class MigrationTests extends DatabaseTestCase {
   }
 
   @Test
-  public void test_migration_12() {
+  public void migrationTest_MigrateFrom11to12_BugFix() {
     Book book = TestUtils.buildRandomBook();
     getDatabaseManager().save(book);
 
