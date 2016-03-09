@@ -85,7 +85,7 @@ dependencies {
     compile files('lib/annotations.jar')
     testCompile "org.skyscreamer:jsonassert:$rootProject.ext.jsonAssertVersion"
     testCompile "junit:junit:$rootProject.ext.junitVersion"
-
+    testCompile "org.robolectric:robolectric:$rootProject.ext.roboelectricVersion"
     androidTestCompile "com.android.support.test:runner:$rootProject.ext.runnerVersion"
     androidTestCompile "com.android.support.test:rules:$rootProject.ext.rulesVersion"
     androidTestCompile "com.android.support.test.espresso:espresso-core:$rootProject.ext.espressoVersion"
