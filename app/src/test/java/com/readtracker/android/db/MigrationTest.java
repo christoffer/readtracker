@@ -12,13 +12,26 @@ import java.util.List;
 
 public class MigrationTest extends DatabaseTestCase {
 
-  @Ignore
+  /**
+   * Helper function to return a DatabaseHelper entity for managing
+   * the db connection and setup for the tests.
+   * @return DatabaseHelper
+   */
   public DatabaseHelper createDatabaseHelper() {
     int migrationStartVersion = 11;
     Assert.assertNotNull(getContext());
     return new DatabaseHelper(getContext(), DATABASE_NAME, null, migrationStartVersion);
   }
 
+  /**
+   * Migrate broken session timestamps from version 3.1
+   *
+   * Create a session with a timestamp < 1971, that will be corrupted once
+   * it's saved in the buggy 3.1 version of OrmLite. It is expected that it
+   * will be saved in seconds instead of milliseconds. Then we create another
+   * session that we expect to be perfectly fine. We fix the broken data if we find any
+   * using the migrateVersion31Sessions function. Then we assert the results.
+   */
   @Test
   public void migrationTest_MigrateFrom11to12_BugFix() {
     Book book = TestUtils.buildRandomBook();

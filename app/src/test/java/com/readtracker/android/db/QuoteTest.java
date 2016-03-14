@@ -6,8 +6,12 @@ import org.junit.Test;
 
 public class QuoteTest extends AndroidTestCase {
 
+  /**
+   * Create a book entity and set a quote on it. Merge this information
+   * into another book entity and assert the information.
+   */
   @Test
-  public void quoteTest_MergeInformationFromBookToBook_ReturnsBookCopy() throws Exception {
+  public void quoteTest_MergeInformationFromBookToBook_ReturnsBookCopy() {
     Book book = new Book();
     Quote original = new Quote();
 

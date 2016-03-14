@@ -23,10 +23,19 @@ import static com.readtracker.android.test_support.TestUtils.buildSession;
 
 public class JSONExporterTest extends DatabaseTestCase {
 
+  /**
+   * Helper method for returning the JSON serializer
+   * @return JSONExporter
+   */
   private JSONExporter getExporter() {
     return new JSONExporter(getDatabaseManager());
   }
 
+  /**
+   * Get a list of books that we assemble, export it into
+   * JSON and assert agains the expected output.
+   * @throws Exception
+   */
   @Test
   public void jsonExporterTest_ExportPopulatedBook_ReturnsStringOfOutputPath() throws Exception {
     List<Book> books = populateBooksForExpectedOutput();
@@ -38,8 +47,12 @@ public class JSONExporterTest extends DatabaseTestCase {
     JSONAssert.assertEquals(expected, actual, true);
   }
 
+  /**
+   * Similar to jsonExporterTest_ExportPopulatedBook_ReturnsStringOfOutputPath(),
+   * but tests the write out to disk.
+   * @throws Exception
+   */
   @Test
-  // Similar to export_all_books, but tests the write out to disk
   public void jsonExporterTest_ExportPopulatedBook_ReturnsExportedJsonFromIO() throws Exception {
     List<Book> books = populateBooksForExpectedOutput();
 
@@ -57,7 +70,10 @@ public class JSONExporterTest extends DatabaseTestCase {
     JSONAssert.assertEquals(expected, actual, JSONCompareMode.NON_EXTENSIBLE);
   }
 
-  @Ignore
+  /**
+   * Helper method to assemble a list of books with known data.
+   * @return List<Book> with data, quotes and sessions.
+   */
   private List<Book> populateBooksForExpectedOutput() {
     Book metamorphosis = new Book();
     metamorphosis.setTitle("Metamorphosis");

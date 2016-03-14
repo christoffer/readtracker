@@ -6,8 +6,12 @@ import org.junit.Test;
 
 public class BookTest extends AndroidTestCase {
 
+  /**
+   * Create a book entity with some set data, synchronize the data from one book onto another,
+   * and assert that the data is correct.
+   */
   @Test
-  public void bookTest_MergeInformationBookToBook_ReturnsBookCopy() throws Exception {
+  public void bookTest_MergeInformationBookToBook_ReturnsBookCopy() {
     Book original = new Book();
     original.setTitle("Metamorphosis");
     original.setAuthor("Franz Kafka");

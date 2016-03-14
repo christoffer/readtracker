@@ -6,8 +6,12 @@ import org.junit.Test;
 
 public class SessionTest extends AndroidTestCase {
 
+  /**
+   * Create a book entity and set a random session on it. Merges this
+   * information onto another book entity and assert the session.
+   */
   @Test
-  public void sessionTest_MergeInformationFromSessionToSession_ReturnsSessionCopy() throws Exception {
+  public void sessionTest_MergeInformationFromSessionToSession_ReturnsSessionCopy() {
     Session original = new Session();
 
     original.setDurationSeconds(123);
