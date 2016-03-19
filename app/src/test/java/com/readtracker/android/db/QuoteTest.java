@@ -1,10 +1,17 @@
 package com.readtracker.android.db;
 
-import junit.framework.TestCase;
+import android.test.AndroidTestCase;
 
-public class QuoteTest extends TestCase {
+import org.junit.Test;
 
-  public void test_merge() throws Exception {
+public class QuoteTest extends AndroidTestCase {
+
+  /**
+   * Create a book entity and set a quote on it. Merge this information
+   * into another book entity and assert the information.
+   */
+  @Test
+  public void quoteTest_MergeInformationFromBookToBook_ReturnsBookCopy() {
     Book book = new Book();
     Quote original = new Quote();
 

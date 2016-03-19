@@ -25,8 +25,11 @@ public class DatabaseTestCase extends AndroidTestCase {
   private DatabaseHelper mDatabaseHelper;
   private Context context;
 
+  /**
+   * Set the context (using RoboElectric), clean up the database and set the database manager.
+   */
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
 
     context = RuntimeEnvironment.application;
     setContext(context);
@@ -36,27 +39,26 @@ public class DatabaseTestCase extends AndroidTestCase {
     mDatabaseManager = new DatabaseManager(getDatabaseHelper());
   }
 
+  /**
+   * Delete the database
+   */
   @After
-  public void tearDown() throws Exception {
+  public void tearDown() {
     deleteDatabase();
   }
 
-  @Ignore
   protected DatabaseHelper createDatabaseHelper() {
     return new DatabaseHelper(getContext(), DATABASE_NAME, null, DATABASE_VERSION);
   }
 
-  @Ignore
   protected void deleteDatabase() {
     context.deleteDatabase(DATABASE_NAME);
   }
 
-  @Ignore
   protected DatabaseManager getDatabaseManager() {
     return mDatabaseManager;
   }
 
-  @Ignore
   protected DatabaseHelper getDatabaseHelper() {
     return mDatabaseHelper;
   }

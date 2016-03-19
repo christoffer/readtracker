@@ -8,6 +8,7 @@ import com.readtracker.android.test_support.DatabaseTestCase;
 import com.readtracker.android.test_support.TestUtils;
 
 import org.json.JSONObject;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
@@ -20,14 +21,23 @@ import java.util.List;
 
 import static com.readtracker.android.test_support.TestUtils.buildSession;
 
-public class JSONExporter_exportCompleteBook extends DatabaseTestCase {
+public class JSONExporterTest extends DatabaseTestCase {
 
+  /**
+   * Helper method for returning the JSON serializer
+   * @return JSONExporter
+   */
   private JSONExporter getExporter() {
     return new JSONExporter(getDatabaseManager());
   }
 
+  /**
+   * Get a list of books that we assemble, export it into
+   * JSON and assert agains the expected output.
+   * @throws Exception
+   */
   @Test
-  public void test_export_populated_book() throws Exception {
+  public void jsonExporterTest_ExportPopulatedBook_ReturnsStringOfOutputPath() throws Exception {
     List<Book> books = populateBooksForExpectedOutput();
 
     // Convert to string to get type agnostic comparison
@@ -37,9 +47,13 @@ public class JSONExporter_exportCompleteBook extends DatabaseTestCase {
     JSONAssert.assertEquals(expected, actual, true);
   }
 
+  /**
+   * Similar to jsonExporterTest_ExportPopulatedBook_ReturnsStringOfOutputPath(),
+   * but tests the write out to disk.
+   * @throws Exception
+   */
   @Test
-  // Similar to export_all_books, but tests the write out to disk
-  public void test_export_to_disk() throws Exception {
+  public void jsonExporterTest_ExportPopulatedBook_ReturnsExportedJsonFromIO() throws Exception {
     List<Book> books = populateBooksForExpectedOutput();
 
     String exportFilename = TestUtils.randomString();
@@ -56,6 +70,10 @@ public class JSONExporter_exportCompleteBook extends DatabaseTestCase {
     JSONAssert.assertEquals(expected, actual, JSONCompareMode.NON_EXTENSIBLE);
   }
 
+  /**
+   * Helper method to assemble a list of books with known data.
+   * @return List<Book> with data, quotes and sessions.
+   */
   private List<Book> populateBooksForExpectedOutput() {
     Book metamorphosis = new Book();
     metamorphosis.setTitle("Metamorphosis");
