@@ -28,7 +28,7 @@ public class TestUtils {
 
   /** Adds a variety of non-english UTF8 characters to a string. */
   public static String utf8ize(String string) {
-    return String.format("üß空間%sχώρος", string);
+    return String.format("üß空間χώρος", string);
   }
 
   /** Returns a Book with a random title and author. */
