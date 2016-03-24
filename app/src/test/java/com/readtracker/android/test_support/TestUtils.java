@@ -28,7 +28,7 @@ public class TestUtils {
 
   /** Adds a variety of non-english UTF8 characters to a string. */
   public static String utf8ize(String string) {
-    return String.format("üß空間%sχώρος", string);
+    return String.format("üß空間χώρος", string);
   }
 
   /** Returns a Book with a random title and author. */
@@ -119,6 +119,8 @@ public class TestUtils {
 
   /**
    * Reads the content of a file in the class path and returns its content as a String.
+   * @param filename String to file name from resources
+   * @return String The input stream from the file
    */
   public static String readFixtureFile(String filename) {
     InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(filename);
@@ -133,6 +135,13 @@ public class TestUtils {
     }
   }
 
+  /**
+   * Build a book based on title author and page count
+   * @param title String
+   * @param author String
+   * @param pageCount String
+   * @return Book entity
+   */
   public static Book buildBook(String title, String author, float pageCount) {
     Book book = new Book();
     book.setTitle(title);
