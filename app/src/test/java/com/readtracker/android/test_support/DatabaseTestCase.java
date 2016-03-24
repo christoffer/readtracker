@@ -16,8 +16,7 @@ import org.robolectric.annotation.Config;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(manifest=Config.NONE)
-@Ignore
-public class DatabaseTestCase extends AndroidTestCase {
+abstract public class DatabaseTestCase extends AndroidTestCase {
   public final static String DATABASE_NAME = "readtracker-test.db";
   public static int DATABASE_VERSION = DatabaseHelper.DATABASE_VERSION;
 
