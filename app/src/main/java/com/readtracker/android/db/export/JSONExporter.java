@@ -1,7 +1,7 @@
 package com.readtracker.android.db.export;
 
 import android.app.Activity;
-import android.os.Environment;
+import android.content.Context;
 import android.util.Log;
 
 import com.readtracker.android.ReadTrackerApp;
@@ -15,7 +15,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
@@ -26,39 +25,36 @@ public class JSONExporter {
 
   private static final String TAG = JSONExporter.class.getSimpleName();
 
-  private static final String DEFAULT_EXPORT_FILENAME = "readtracker.json";
-  private static final File DEFAULT_EXPORT_DIRECTORY =
-      Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-
   private final DatabaseManager mDatabaseMgr;
+  private final Context mContext;
 
   public static JSONExporter from(Activity activity) {
-    return new JSONExporter(((ReadTrackerApp) activity.getApplication()).getDatabaseManager());
+    Context appContext = activity.getApplicationContext();
+    ReadTrackerApp app = (ReadTrackerApp) activity.getApplication();
+    return new JSONExporter(appContext, app.getDatabaseManager());
   }
 
-  JSONExporter(DatabaseManager db) {
+  JSONExporter(Context context, DatabaseManager db) {
+    mContext = context;
     mDatabaseMgr = db;
   }
 
   /**
-   * Exports all model data to the default path.
+   * Exports all model data to the default path (user's private app files).
    *
    * @return the written file if successfully exported, <code>null</code> otherwise.
    */
-  public File exportToDisk() {
-    List<Book> books = mDatabaseMgr.getAll(Book.class);
-    File destination;
-    if(DEFAULT_EXPORT_DIRECTORY.exists()) {
-      destination = new File(DEFAULT_EXPORT_DIRECTORY, DEFAULT_EXPORT_FILENAME);
-    } else if (Environment.getExternalStorageDirectory().exists()){
-      destination = new File(Environment.getExternalStorageDirectory(), DEFAULT_EXPORT_FILENAME);
-    } else {
-      Log.d(TAG, "Couldn't find a place to export");
-      destination = null;
-    }
-
-    if(destination != null && exportToDisk(books, destination)) {
-      return destination;
+  public File exportAllBooksToDefaultDirectory() {
+    File outputDir = mContext.getFilesDir();
+    try {
+      final File outputFile = File.createTempFile("readtracker-export", ".json", outputDir);
+      List<Book> books = mDatabaseMgr.getAll(Book.class);
+      if(exportBooksToFile(books, outputFile)) {
+        Log.d(TAG, "Saved export to " + outputFile.toString());
+        return outputFile;
+      }
+    } catch(IOException e) {
+      Log.e(TAG, "Failed to create temporary file", e);
     }
 
     return null;
@@ -69,7 +65,7 @@ public class JSONExporter {
    *
    * @return true if exported, false otherwise.
    */
-  public boolean exportToDisk(List<Book> books, File outputFile) {
+  public boolean exportBooksToFile(List<Book> books, File outputFile) {
     try {
       final String jsonData = exportAll(books).toString();
       FileOutputStream fos = new FileOutputStream(outputFile);
@@ -77,9 +73,7 @@ public class JSONExporter {
       fos.close();
       return true;
     } catch(JSONException ex) {
-      Log.w(TAG, "Failed to export JSON data", ex);
-    } catch(FileNotFoundException ex) {
-      Log.w(TAG, "Failed to export JSON data", ex);
+      Log.w(TAG, "Failed to export JSON data (failed to create JSON)", ex);
     } catch(IOException ex) {
       Log.w(TAG, "Failed to export JSON data", ex);
     }
