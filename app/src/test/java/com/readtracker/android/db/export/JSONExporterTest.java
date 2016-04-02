@@ -8,7 +8,6 @@ import com.readtracker.android.test_support.DatabaseTestCase;
 import com.readtracker.android.test_support.TestUtils;
 
 import org.json.JSONObject;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
@@ -28,7 +27,7 @@ public class JSONExporterTest extends DatabaseTestCase {
    * @return JSONExporter
    */
   private JSONExporter getExporter() {
-    return new JSONExporter(getDatabaseManager());
+    return new JSONExporter(getContext(), getDatabaseManager());
   }
 
   /**
@@ -59,7 +58,7 @@ public class JSONExporterTest extends DatabaseTestCase {
     String exportFilename = TestUtils.randomString();
     File exportFile = new File(getContext().getFilesDir(), exportFilename);
 
-    getExporter().exportToDisk(books, exportFile);
+    getExporter().exportBooksToFile(books, exportFile);
 
     InputStream inputStream = new FileInputStream(getContext().getFileStreamPath(exportFilename));
     String exportFileContent = Utils.readInputStream(inputStream);

@@ -94,7 +94,8 @@ public class SettingsActivity extends PreferenceActivity {
   }
 
   private boolean onExportDataClick() {
-    final File exportedJsonFile = JSONExporter.from(SettingsActivity.this).exportToDisk();
+    final JSONExporter jsonExporter = JSONExporter.from(SettingsActivity.this);
+    final File exportedJsonFile = jsonExporter.exportAllBooksToDefaultDirectory();
     if(exportedJsonFile != null && exportedJsonFile.exists()) {
       Uri uri = Uri.fromFile(exportedJsonFile);
       Intent exportIntent = new Intent(Intent.ACTION_SEND);

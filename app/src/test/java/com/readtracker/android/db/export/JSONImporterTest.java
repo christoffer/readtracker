@@ -184,7 +184,7 @@ public class JSONImporterTest extends DatabaseTestCase {
     setContext(context);
     Assert.assertNotNull(context);
     File exportFile = new File(context.getFilesDir(), randomString());
-    String content = new JSONExporter(getDatabaseManager()).exportAll(books).toString();
+    String content = new JSONExporter(getContext(), getDatabaseManager()).exportAll(books).toString();
     FileOutputStream fos = new FileOutputStream(exportFile);
     fos.write(content.getBytes());
     fos.close();
