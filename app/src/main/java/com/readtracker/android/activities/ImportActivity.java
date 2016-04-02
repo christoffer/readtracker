@@ -1,10 +1,15 @@
 package com.readtracker.android.activities;
 
 import android.app.ProgressDialog;
+import android.content.res.Resources;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -30,20 +35,22 @@ public class ImportActivity extends BaseActivity {
   private static final String TAG = ImportActivity.class.getSimpleName();
 
   @InjectView(R.id.current_folder_text) TextView currentFolderText;
+  @InjectView(R.id.button_common_dirs) TextView commonDirsButton;
   @InjectView(R.id.file_list) ListView fileList;
 
   private FileBrowserAdapter fileBrowseAdapter;
+  private File mHomeDirFile;
+  private File mDownloadsDirFile;
+  private File mSDCardFile;
+
+  /** Comparator that sorts by type (folders before files) and then by filename */
   private static Comparator<? super File> fileListComparator = new Comparator<File>() {
     @Override public int compare(File first, File second) {
       if(first.isDirectory() && !second.isDirectory()) return -1;
       if(second.isDirectory() && !first.isDirectory()) return 1;
-      return first.getName().compareTo(second.getName());
+      return first.getName().toLowerCase().compareTo(second.getName().toLowerCase());
     }
   };
-
-  public static final File DEFAULT_DIRECTORY = Environment.getExternalStoragePublicDirectory(
-      Environment.DIRECTORY_DOWNLOADS
-  );
 
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -53,9 +60,18 @@ public class ImportActivity extends BaseActivity {
 
     setupFileAdapter();
 
+    mHomeDirFile = getFilesDir();
+    mDownloadsDirFile = Environment.getExternalStoragePublicDirectory(
+        Environment.DIRECTORY_DOWNLOADS
+    );
+    mSDCardFile = getExternalFilesDir(null);
+
+    registerForContextMenu(commonDirsButton);
+
     // NOTE Defaulting to downloads directory because that's the location most likely to contain
     // the users export data.
-    setCurrentDirectory(DEFAULT_DIRECTORY);
+    File privateCacheDir = this.getFilesDir();
+    setCurrentDirectory(privateCacheDir);
   }
 
   private void setupFileAdapter() {
@@ -64,12 +80,17 @@ public class ImportActivity extends BaseActivity {
     fileList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
       @Override public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         File clickedFile = fileBrowseAdapter.getItem(position);
-        if(clickedFile != null && clickedFile.canRead()) {
+        if(clickedFile.exists() && clickedFile.canRead()) {
           if(clickedFile.isDirectory()) {
             setCurrentDirectory(clickedFile);
           } else if(clickedFile.isFile()) {
             importDataFromFileAsync(clickedFile);
           }
+        } else {
+          final String msg = getString(
+              R.string.error_import_failed_read_file, clickedFile.getName()
+          );
+          Toast.makeText(ImportActivity.this, msg, Toast.LENGTH_SHORT).show();
         }
       }
     });
@@ -82,19 +103,58 @@ public class ImportActivity extends BaseActivity {
     }
   }
 
-  private void importDataFromFileAsync(File importFile) {
-    if(importFile.exists() && importFile.canRead()) {
-      Log.i(TAG, "Importing from file " + importFile.getAbsolutePath());
-      fileList.setEnabled(false);
-      new ImportTask().execute(importFile);
-    } else {
-      Log.w(TAG, "Invalid file selected: " + importFile);
+  @OnClick(R.id.button_common_dirs) void onCommonDirButtonClick(View view) {
+    this.openContextMenu(view);
+  }
+
+  @Override
+  public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+    super.onCreateContextMenu(menu, v, menuInfo);
+    MenuInflater inflater = getMenuInflater();
+    inflater.inflate(R.menu.file_list_common_dirs, menu);
+
+    menu.findItem(R.id.file_list_common_home).setVisible(mHomeDirFile != null);
+    menu.findItem(R.id.file_list_common_downloads).setVisible(mDownloadsDirFile != null);
+    menu.findItem(R.id.file_list_common_sdcard).setVisible(mSDCardFile != null);
+  }
+
+  @Override public boolean onContextItemSelected(MenuItem item) {
+    switch(item.getItemId()) {
+      case R.id.file_list_common_home:
+        setCurrentDirectory(mHomeDirFile);
+        return true;
+      case R.id.file_list_common_downloads:
+        setCurrentDirectory(mDownloadsDirFile);
+        return true;
+      case R.id.file_list_common_sdcard:
+        setCurrentDirectory(mSDCardFile);
+        return true;
+
+    default:
+      return super.onContextItemSelected(item);
     }
   }
 
+  private void importDataFromFileAsync(File importFile) {
+    Log.i(TAG, "Importing from file " + importFile.getAbsolutePath());
+    fileList.setEnabled(false);
+    new ImportTask().execute(importFile);
+  }
+
   private void setCurrentDirectory(File dir) {
-    // Set title
-    currentFolderText.setText(dir.getAbsolutePath());
+    String title = dir.getAbsolutePath();
+
+    // Make the title a little prettier if it's a common dir accessed from the
+    // context menu.
+    if(dir.equals(mHomeDirFile)) {
+      title = getString(R.string.file_list_common_home);
+    } else if(dir.equals(mDownloadsDirFile)) {
+      title = getString(R.string.file_list_common_downloads);
+    } else if(dir.equals(mSDCardFile)) {
+      title = getString(R.string.file_list_common_sdcard);
+    }
+
+    currentFolderText.setText(title);
     currentFolderText.setTag(dir.getParentFile());
 
     File[] files = dir.listFiles();
@@ -128,13 +188,23 @@ public class ImportActivity extends BaseActivity {
       if(file.isDirectory()) {
         iconResource = R.drawable.icon_folder;
         textColorResource = R.color.text_color_secondary;
-      } else {
+      } else if(file.isFile()){
         iconResource = R.drawable.icon_file;
         textColorResource = R.color.text_color_primary;
+      } else {
+        // Assume unreadable file
+        iconResource = R.drawable.icon_file;
+        textColorResource = R.color.text_color_secondary_disabled;
       }
 
       fileListItem.setCompoundDrawablesWithIntrinsicBounds(iconResource, 0, 0, 0);
-      fileListItem.setTextColor(getContext().getResources().getColor(textColorResource));
+      if(Build.VERSION.SDK_INT > 23) {
+        final Resources.Theme theme = getContext().getTheme();
+        fileListItem.setTextColor(getContext().getResources().getColor(textColorResource, theme));
+      } else {
+        //noinspection deprecation
+        fileListItem.setTextColor(getContext().getResources().getColor(textColorResource));
+      }
 
       return fileListItem;
     }
@@ -184,9 +254,10 @@ public class ImportActivity extends BaseActivity {
         String msg = getString(R.string.error_import_failed_broken_file, importFile.getName());
         Toast.makeText(ImportActivity.this, msg, Toast.LENGTH_SHORT).show();
       } else {
-        Toast.makeText(
-            ImportActivity.this, R.string.error_import_failed_read_file, Toast.LENGTH_SHORT
-        ).show();
+        final String msg = getString(
+            R.string.error_import_failed_read_file, importFile.getName()
+        );
+        Toast.makeText(ImportActivity.this, msg, Toast.LENGTH_SHORT).show();
       }
     }
   }

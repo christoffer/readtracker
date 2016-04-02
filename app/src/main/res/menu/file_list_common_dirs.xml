@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+  <item
+    android:id="@+id/file_list_common_home"
+    android:title="@string/file_list_common_home" />
+
+  <item
+    android:id="@+id/file_list_common_downloads"
+    android:title="@string/file_list_common_downloads" />
+
+  <item
+    android:id="@+id/file_list_common_sdcard"
+    android:title="@string/file_list_common_sdcard" />
+
+</menu>
