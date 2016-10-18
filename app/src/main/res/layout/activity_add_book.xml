@@ -32,11 +32,12 @@
       android:hint="@string/general_author" />
 
     <TextView
+      android:id="@+id/progress_tracking_unit"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_marginTop="24dp"
       android:textColor="@color/text_color_secondary"
-      android:text="@string/add_book_number_of_pages" />
+      android:text="@string/add_book_track_page_numbers" />
 
     <LinearLayout
       android:layout_width="fill_parent"

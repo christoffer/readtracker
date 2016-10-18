@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.readtracker.R;
 import com.readtracker.android.IntentKeys;
@@ -42,6 +43,7 @@ public class AddBookActivity extends BookBaseActivity {
   @InjectView(R.id.page_count_edit) EditText mPageCountEdit;
   @InjectView(R.id.add_or_save_button) Button mAddOrSaveButton;
   @InjectView(R.id.page_pct_toggle) SwitchCompat mPagePctToggle;
+  @InjectView(R.id.progress_tracking_unit) TextView mProgressTrackingUnit;
 
   // Store the cover url from the intent that starts the activity
   private String mCoverURL;
@@ -130,9 +132,11 @@ public class AddBookActivity extends BookBaseActivity {
         if(isInPageMode) {
           final String rememberedValue = (String) mPageCountEdit.getTag();
           mPageCountEdit.setText(rememberedValue == null ? "0" : rememberedValue);
+          mProgressTrackingUnit.setText(getText(R.string.add_book_track_page_numbers));
         } else {
           mPageCountEdit.setTag(mPageCountEdit.getText().toString());
-          mPageCountEdit.setText("100%");
+          mPageCountEdit.setText(getText(R.string.general_100_percent));
+          mProgressTrackingUnit.setText(getText(R.string.add_book_track_percentage));
         }
       }
     });
@@ -160,7 +164,7 @@ public class AddBookActivity extends BookBaseActivity {
       mPageCountEdit.setEnabled(true);
       mPagePctToggle.setChecked(true);
     } else {
-      mPageCountEdit.setText("100%");
+      mPageCountEdit.setText(getString(R.string.general_100_percent));
       mPageCountEdit.setEnabled(false);
       mPagePctToggle.setChecked(false);
     }
@@ -286,7 +290,7 @@ public class AddBookActivity extends BookBaseActivity {
 
     public BackgroundBookTask(AddBookActivity activity, Book book) {
       mBook = book;
-      mActivity = new WeakReference<AddBookActivity>(activity);
+      mActivity = new WeakReference<>(activity);
       mDatabaseMgr = activity.getApp().getDatabaseManager();
       mUnknownTitleString = activity.getString(R.string.general_unknown_title);
     }
