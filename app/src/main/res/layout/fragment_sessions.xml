@@ -27,7 +27,6 @@
         android:layout_height="wrap_content"
         android:id="@+id/textReadingState"
         android:textSize="14sp"
-        android:editable="false"
         android:gravity="center_horizontal"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="12dp"
@@ -41,16 +40,13 @@
         android:layout_height="wrap_content"
         android:id="@+id/textClosingRemark"
         android:textSize="14sp"
-        android:editable="false"
-        android:layout_marginBottom="12dp"
-        android:typeface="serif" />
+        android:layout_marginBottom="12dp" />
 
       <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:id="@+id/textSummary"
         android:textSize="12sp"
-        android:editable="false"
         android:layout_marginBottom="12dp"
         android:textColor="@color/text_color_secondary" />
 
@@ -67,7 +63,6 @@
         android:layout_height="wrap_content"
         android:id="@+id/textTimeLeft"
         android:textSize="12sp"
-        android:editable="false"
         android:layout_marginBottom="12dp"
         android:textColor="@color/text_color_secondary" />
 

@@ -316,7 +316,7 @@
     <item name="android:layout_height">wrap_content</item>
     <item name="android:maxLines">1</item>
     <item name="android:layout_marginTop">6dp</item>
-    <item name="android:textSize">24dp</item>
+    <item name="android:textSize">26sp</item>
     <item name="android:paddingLeft">18dp</item>
     <item name="android:paddingRight">18dp</item>
     <item name="android:textColor">@color/text_color_primary</item>
@@ -327,14 +327,14 @@
   <!-- style for normal text usage -->
 
   <style name="default_text">
-    <item name="android:textSize">16dp</item>
+    <item name="android:textSize">14sp</item>
     <item name="android:color">@color/text_color_primary</item>
     <item name="android:layout_width">wrap_content</item>
     <item name="android:layout_height">wrap_content</item>
   </style>
 
   <style name="ui_hint">
-    <item name="android:textSize">12dp</item>
+    <item name="android:textSize">12sp</item>
     <item name="android:textColor">@color/text_color_secondary_slightly_transparent</item>
     <item name="android:layout_width">wrap_content</item>
     <item name="android:layout_height">wrap_content</item>
