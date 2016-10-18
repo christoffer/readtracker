@@ -88,6 +88,8 @@
   <string name="finish_book_hint">What did you think of the book?</string>
   <string name="finish_book_finish">Finish</string>
 
+  <string name="book_list_finished_on">Finished %1$s</string>
+
   <string name="sessions_blank_text">No reading history to display</string>
   <string name="end_session_where_did_you_stop_reading">Where did you stop reading?</string>
   <string name="end_session_scroll_to_end_to_finish">Scroll to the very end if you finished the book</string>
