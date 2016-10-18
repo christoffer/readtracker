@@ -54,7 +54,13 @@ public class GoogleBook {
     }
 
     JSONObject jsonImageLinks = jsonVolumeInfo.optJSONObject("imageLinks");
-    coverURL = getString(jsonImageLinks, "thumbnail");
+    if(jsonImageLinks != null) {
+      if(jsonImageLinks.has("small")) {
+        coverURL = getString(jsonImageLinks, "small");
+      } else if(jsonImageLinks.has("thumbnail")) {
+        coverURL = getString(jsonImageLinks, "thumbnail");
+      }
+    }
 
     this.pageCount = jsonVolumeInfo.optLong("pageCount", -1);
   }
