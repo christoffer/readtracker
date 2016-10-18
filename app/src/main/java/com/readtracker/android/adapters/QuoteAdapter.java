@@ -68,15 +68,15 @@ public class QuoteAdapter extends ArrayAdapter<Quote> {
 
   private float getTextSizeForContentLength(long length) {
     if(length < 100) {
-      return textSizeFromDP(18);
+      return textSizeFromSP(14);
     }
     if(length < 350) {
-      return textSizeFromDP(14);
+      return textSizeFromSP(12);
     }
-    return textSizeFromDP(10);
+    return textSizeFromSP(10);
   }
 
-  private float textSizeFromDP(int dp) {
-    return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, getContext().getResources().getDisplayMetrics());
+  private float textSizeFromSP(int dp) {
+    return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, dp, getContext().getResources().getDisplayMetrics());
   }
 }
