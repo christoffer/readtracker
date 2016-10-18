@@ -1,6 +1,7 @@
 package com.readtracker.android.support;
 
 import android.net.Uri;
+import android.text.TextUtils;
 import android.util.Log;
 
 import org.apache.http.HttpResponse;
@@ -19,9 +20,10 @@ public class GoogleBookSearch {
 
   private static final Pattern ISBNPattern = Pattern.compile("^(?:isbn[ :]+)([0-9 -]+)$");
 
+  @SuppressWarnings("deprecation")
   public static ArrayList<GoogleBook> search(String query) throws GoogleBookSearchException {
     Log.i(TAG, "Got raw search query:\"" + query + "\"");
-    ArrayList<GoogleBook> result = new ArrayList<GoogleBook>();
+    ArrayList<GoogleBook> result = new ArrayList<>();
 
     HttpClient httpClient = new DefaultHttpClient();
 
@@ -48,7 +50,22 @@ public class GoogleBookSearch {
     return result;
   }
 
-  protected static Uri buildQueryUri(String queryString) {
+  public static String buildQueryForTitleAndAuthor(String title, String author) {
+    String query = "";
+    if(!TextUtils.isEmpty(title)) {
+      query += "intitle:" + title;
+    }
+    if(!TextUtils.isEmpty(author)) {
+      query += "inauthor:" + author;
+    }
+
+    if(TextUtils.isEmpty(query)) {
+      return null;
+    }
+    return query;
+  }
+
+  private static Uri buildQueryUri(String queryString) {
     String isbnQueryString = parseISBNQueryString(queryString);
     queryString = isbnQueryString == null ? queryString : isbnQueryString;
 

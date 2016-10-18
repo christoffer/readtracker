@@ -158,7 +158,7 @@ public abstract class BookBaseActivity extends BaseActivity {
     private final boolean mLoadRelated;
 
     LoadDataTask(BookBaseActivity activity, int bookId) {
-      mActivityRef = new WeakReference<BookBaseActivity>(activity);
+      mActivityRef = new WeakReference<>(activity);
       mBookId = bookId;
       mDatabaseManager = activity.getApp().getDatabaseManager();
       mLoadRelated = activity.shouldLoadRelatedBookData();

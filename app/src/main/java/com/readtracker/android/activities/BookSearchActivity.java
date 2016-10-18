@@ -2,7 +2,6 @@ package com.readtracker.android.activities;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -25,8 +24,7 @@ import com.readtracker.android.adapters.BookItem;
 import com.readtracker.android.adapters.GoogleBookItem;
 import com.readtracker.android.adapters.SearchResultAdapter;
 import com.readtracker.android.support.GoogleBook;
-import com.readtracker.android.support.GoogleBookSearch;
-import com.readtracker.android.support.GoogleBookSearchException;
+import com.readtracker.android.tasks.GoogleBookSearchTask;
 import com.readtracker.android.thirdparty.SafeViewFlipper;
 
 import java.util.ArrayList;
@@ -37,7 +35,7 @@ import butterknife.InjectView;
 /**
  * Screen for searching for books on Google Books
  */
-public class BookSearchActivity extends BaseActivity {
+public class BookSearchActivity extends BaseActivity implements GoogleBookSearchTask.BookSearchResultListener {
   private static final String TAG = BookSearchActivity.class.getSimpleName();
 
   private static final int REQUEST_ADD_BOOK = 1;
@@ -49,8 +47,8 @@ public class BookSearchActivity extends BaseActivity {
   @InjectView(R.id.listSearchResult) ListView mListSearchResults;
   @InjectView(R.id.textSearch) EditText mEditTextSearch;
   @InjectView(R.id.flipperBookSearchActions) SafeViewFlipper mFlipperBookSearchActions;
-  @InjectView(R.id.buttonNew)Button mButtonNew;
-  @InjectView(R.id.buttonSearch)Button mButtonSearch;
+  @InjectView(R.id.buttonNew) Button mButtonNew;
+  @InjectView(R.id.buttonSearch) Button mButtonSearch;
 
   private SearchResultAdapter mBookSearchAdapter;
   private InputMethodManager mInputMethodManager;
@@ -85,6 +83,24 @@ public class BookSearchActivity extends BaseActivity {
       setResult(RESULT_OK, searchResultData);
       finish();
     }
+  }
+
+  @Override public void onSearchResultsRetrieved(ArrayList<GoogleBook> result) {
+    getApp().clearProgressDialog();
+    mEditTextSearch.setEnabled(true);
+    mBookSearchAdapter.clear();
+
+    if(result == null || result.size() == 0) {
+      toastLong(getString(R.string.book_search_no_results));
+      result = new ArrayList<>();
+    }
+
+    Log.d(TAG, "Setting book search results. Got " + result.size() + " books");
+
+    for(GoogleBook book : result) {
+      mBookSearchAdapter.add(new GoogleBookItem(book));
+    }
+    mInputMethodManager.hideSoftInputFromWindow(mEditTextSearch.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
   }
 
   /**
@@ -131,7 +147,9 @@ public class BookSearchActivity extends BaseActivity {
       @Override
       public void onItemClick(AdapterView parent, View view, int position, long id) {
         BookItem clickedBook = mBookSearchAdapter.getItem(position);
-        exitToBookInit(clickedBook.title, clickedBook.author, clickedBook.coverURL, (int) clickedBook.pageCount);
+        if(clickedBook != null) {
+          exitToBookInit(clickedBook.title, clickedBook.author, clickedBook.coverURL, (int) clickedBook.pageCount);
+        }
       }
     });
 
@@ -146,8 +164,8 @@ public class BookSearchActivity extends BaseActivity {
 
   private boolean isDoneAction(int actionId, KeyEvent event) {
     boolean isActionEnter = event != null
-      && event.getAction() == KeyEvent.ACTION_DOWN
-      && event.getKeyCode() == KeyEvent.KEYCODE_ENTER;
+        && event.getAction() == KeyEvent.ACTION_DOWN
+        && event.getKeyCode() == KeyEvent.KEYCODE_ENTER;
     return actionId == EditorInfo.IME_ACTION_DONE || isActionEnter;
   }
 
@@ -174,7 +192,7 @@ public class BookSearchActivity extends BaseActivity {
   private void search(String query) {
     // TODO replace with a spinner in the text editor field
     getApp().showProgressDialog(BookSearchActivity.this, getString(R.string.book_search_searching));
-    (new BookSearchTask()).execute(query);
+    GoogleBookSearchTask.search(query, this); // calls onSearchResultsRetrieved()
   }
 
   /**
@@ -202,44 +220,4 @@ public class BookSearchActivity extends BaseActivity {
     Intent intent = new Intent(this, AddBookActivity.class);
     startActivityForResult(intent, REQUEST_ADD_BOOK);
   }
-
-  public void setSearchResults(ArrayList<GoogleBook> foundBooks) {
-    getApp().clearProgressDialog();
-    mEditTextSearch.setEnabled(true);
-    mBookSearchAdapter.clear();
-
-    if(foundBooks == null) {
-      toastLong(getString(R.string.book_search_no_results));
-      foundBooks = new ArrayList<GoogleBook>();
-    }
-
-    Log.d(TAG, "Setting book search results. Got " + foundBooks.size() + " books");
-
-    if(foundBooks.size() > 0) {
-      for(GoogleBook book : foundBooks) {
-        mBookSearchAdapter.add(new GoogleBookItem(book));
-      }
-      mInputMethodManager.hideSoftInputFromWindow(mEditTextSearch.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-    }
-  }
-
-  /**
-   * Perform a book search on the server
-   */
-  private class BookSearchTask extends AsyncTask<String, Void, ArrayList<GoogleBook>> {
-
-    protected void onPostExecute(ArrayList<GoogleBook> foundBooks) {
-      setSearchResults(foundBooks);
-    }
-
-    @Override
-    protected ArrayList<GoogleBook> doInBackground(String... searchWords) {
-      try {
-        return GoogleBookSearch.search(searchWords[0]);
-      } catch(GoogleBookSearchException e) {
-        return null;
-      }
-    }
-  }
-
 }
