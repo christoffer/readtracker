@@ -13,7 +13,7 @@ public class GoogleBook {
   private String id = "";
   private String title = "";
   private String author = "";
-  private String coverURL = "";
+  private String coverURL = null;
   private long pageCount = -1;
 
   public GoogleBook(JSONObject json) {
@@ -29,6 +29,13 @@ public class GoogleBook {
     this.author = author;
     this.coverURL = coverURL;
     this.id = UUID.randomUUID().toString();
+  }
+
+  @Override public String toString() {
+    return String.format(
+        "Id: %s, Title: %s, Author: %s, Cover: %s, Page count: %d",
+        id, title, author, coverURL, pageCount
+    );
   }
 
   public void convertFromJSON(JSONObject json) {
@@ -48,7 +55,8 @@ public class GoogleBook {
       for(int i = 0; i < jsonAuthors.length(); i++) {
         try {
           authors.add(jsonAuthors.getString(i));
-        } catch(JSONException ignored) {}
+        } catch(JSONException ignored) {
+        }
       }
       author = TextUtils.join(", ", authors.toArray());
     }

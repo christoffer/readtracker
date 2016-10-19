@@ -17,6 +17,13 @@
     <item name="android:background">@drawable/slate_3dp</item>
   </style>
 
+  <style name="non_primary_button" parent="default_button">
+    <item name="android:textColor">@color/toggle_button_text_color</item>
+    <item name="android:background">@drawable/default_toggle_button_background</item>
+    <item name="android:layout_width">fill_parent</item>
+    <item name="android:gravity">center</item>
+  </style>
+
   <style name="default_toggle_button" parent="default_button">
     <item name="android:textColor">@color/toggle_button_text_color</item>
     <item name="android:background">@drawable/default_toggle_button_background</item>

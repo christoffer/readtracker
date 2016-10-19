@@ -11,25 +11,35 @@
     android:padding="12dp"
     android:orientation="vertical">
 
+    <Button
+      android:id="@+id/find_cover_button"
+      style="@style/non_primary_button"
+      android:layout_marginTop="8dp"
+      android:text="@string/add_book_find_info_on_google_books" />
+
+    <ImageButton
+      android:id="@+id/book_cover_image"
+      style="@style/non_primary_button"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center"
+      android:padding="16dp"
+      android:src="@drawable/bookmark"
+      android:longClickable="true"
+      android:contentDescription="@string/add_book_cover_button_content"
+      />
+
     <EditText
       android:id="@+id/title_edit"
       style="@style/default_input_field"
+      android:layout_marginTop="8dp"
       android:layout_marginBottom="12dp"
       android:hint="@string/general_title" />
 
     <EditText
       android:id="@+id/author_edit"
       style="@style/default_input_field"
-      android:layout_marginBottom="12dp"
       android:hint="@string/general_author" />
-
-    <TextView
-      android:id="@+id/progress_tracking_unit"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_marginTop="24dp"
-      android:textColor="@color/text_color_secondary"
-      android:text="@string/add_book_track_page_numbers" />
 
     <LinearLayout
       android:layout_width="fill_parent"
@@ -56,46 +66,10 @@
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
         android:layout_weight="1"
-        android:textOn="Pages"
-        android:textOff="%"
+        android:text="@string/add_book_pages"
         android:checked="true" />
 
     </LinearLayout>
-
-    <TextView
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_marginTop="24dp"
-      android:textColor="@color/text_color_secondary"
-      android:text="@string/add_book_cover" />
-
-    <LinearLayout
-      android:layout_width="fill_parent"
-      android:layout_height="wrap_content"
-      android:layout_marginTop="12dp"
-      android:layout_marginBottom="12dp"
-      android:orientation="vertical"
-      android:gravity="center">
-
-      <ImageView
-        android:id="@+id/book_cover_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/bookmark"
-      />
-
-      <Button
-        android:id="@+id/find_cover_button"
-        style="@style/non_primary_button"
-        android:layout_marginTop="24dp"
-        android:text="@string/add_book_find_cover" />
-
-    </LinearLayout>
-
-    <View
-      android:layout_width="fill_parent"
-      android:layout_height="0dp"
-      android:layout_weight="1" />
 
     <Button
       android:id="@+id/add_or_save_button"
