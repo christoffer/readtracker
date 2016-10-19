@@ -23,7 +23,7 @@ public class GoogleBookSearch {
   @SuppressWarnings("deprecation")
   public static ArrayList<GoogleBook> search(String query) throws GoogleBookSearchException {
     Log.i(TAG, "Got raw search query:\"" + query + "\"");
-    ArrayList<GoogleBook> result = new ArrayList<>();
+    ArrayList<GoogleBook> results = new ArrayList<>();
 
     HttpClient httpClient = new DefaultHttpClient();
 
@@ -34,35 +34,44 @@ public class GoogleBookSearch {
       HttpResponse httpResponse = httpClient.execute(httpGet);
       String responseBody = HttpUtils.getString(httpResponse);
       JSONObject json = new JSONObject(responseBody);
-      JSONArray jsonItems = json.getJSONArray("items");
-      GoogleBook googleBook;
+      JSONArray jsonItems = json.optJSONArray("items");
+
+      if(jsonItems == null) {
+        return new ArrayList<>(); // No results
+      }
+
       for(int i = 0; i < jsonItems.length(); i++) {
         JSONObject jsonObject = (JSONObject) jsonItems.get(i);
-        googleBook = new GoogleBook(jsonObject);
+        GoogleBook googleBook = new GoogleBook(jsonObject);
         if(googleBook.isValid()) {
-          result.add(googleBook);
+          results.add(googleBook);
         }
       }
-    } catch (Exception e) {
+    } catch(Exception e) {
       Log.e(TAG, "Error while searching GoogleBooks", e);
       throw new GoogleBookSearchException(e.getMessage());
     }
-    return result;
+    Log.d(TAG, String.format("Returning %s results", results.size()));
+    Log.v(TAG, String.format("Results: %s", results.toString()));
+
+    return results;
   }
 
   public static String buildQueryForTitleAndAuthor(String title, String author) {
-    String query = "";
+    ArrayList<String> query = new ArrayList<>();
     if(!TextUtils.isEmpty(title)) {
-      query += "intitle:" + title;
-    }
-    if(!TextUtils.isEmpty(author)) {
-      query += "inauthor:" + author;
+      query.add("intitle:" + title);
     }
 
-    if(TextUtils.isEmpty(query)) {
-      return null;
+    if(!TextUtils.isEmpty(author)) {
+      query.add("inauthor:" + author);
     }
-    return query;
+
+    if(query.size() > 0) {
+      return TextUtils.join(" ", query);
+    }
+
+    return null;
   }
 
   private static Uri buildQueryUri(String queryString) {
@@ -72,11 +81,11 @@ public class GoogleBookSearch {
     Log.i(TAG, "Searching for query: " + queryString);
 
     return new Uri.Builder().
-      scheme("https").
-      authority("www.googleapis.com").
-      path("books/v1/volumes").
-      appendQueryParameter("q", queryString).
-      build();
+        scheme("https").
+        authority("www.googleapis.com").
+        path("books/v1/volumes").
+        appendQueryParameter("q", queryString).
+        build();
   }
 
   private static String parseISBNQueryString(String queryString) {
