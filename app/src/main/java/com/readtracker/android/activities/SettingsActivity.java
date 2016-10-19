@@ -1,5 +1,6 @@
 package com.readtracker.android.activities;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -7,6 +8,8 @@ import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -28,6 +31,7 @@ public class SettingsActivity extends PreferenceActivity {
   private static final String ICONS8 = "about.icons8";
 
   private static final int REQUEST_IMPORT = 0x01;
+  private static final int PERMISSIONS_READ_STORAGE_FOR_IMPORT = 0x01;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -96,6 +100,8 @@ public class SettingsActivity extends PreferenceActivity {
   private boolean onExportDataClick() {
     final File exportedJsonFile = JSONExporter.from(SettingsActivity.this).exportToDisk();
     if(exportedJsonFile != null && exportedJsonFile.exists()) {
+      // TODO(christoffer) Register the file with the DownloadManager so that it appears in the
+      // Download app for easy retrieval
       Uri uri = Uri.fromFile(exportedJsonFile);
       Intent exportIntent = new Intent(Intent.ACTION_SEND);
       exportIntent.putExtra(Intent.EXTRA_STREAM, uri);
@@ -109,8 +115,34 @@ public class SettingsActivity extends PreferenceActivity {
   }
 
   private boolean onImportDataClick() {
+    if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
+      int readExternalPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
+      boolean needPermission = readExternalPermission != PackageManager.PERMISSION_GRANTED;
+      if(needPermission) {
+        ActivityCompat.requestPermissions(this,
+            new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+            PERMISSIONS_READ_STORAGE_FOR_IMPORT
+        );
+        return true;
+      }
+    }
+
+    // At this point we assume we have permission
     Intent intent = new Intent(this, ImportActivity.class);
     startActivityForResult(intent, REQUEST_IMPORT);
     return true;
+  }
+
+  @Override
+  public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    switch(requestCode) {
+      case PERMISSIONS_READ_STORAGE_FOR_IMPORT:
+        final boolean gotPermission = grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED;
+        if(gotPermission) {
+          onImportDataClick();
+        }
+        // TODO(christoffer) Should we allow the import anyway, since it might be stored somewhere
+        // internally, where the user could still access it?
+    }
   }
 }

@@ -41,7 +41,7 @@ public class ImportActivity extends BaseActivity {
     }
   };
 
-  public static final File DOWNLOADS_DIR = Environment.getExternalStoragePublicDirectory(
+  public static final File DEFAULT_DIRECTORY = Environment.getExternalStoragePublicDirectory(
       Environment.DIRECTORY_DOWNLOADS
   );
 
@@ -55,7 +55,7 @@ public class ImportActivity extends BaseActivity {
 
     // NOTE Defaulting to downloads directory because that's the location most likely to contain
     // the users export data.
-    setCurrentDirectory(DOWNLOADS_DIR);
+    setCurrentDirectory(DEFAULT_DIRECTORY);
   }
 
   private void setupFileAdapter() {
