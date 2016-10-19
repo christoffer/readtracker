@@ -63,6 +63,9 @@
   <string name="add_book_long_press_to_delete">Long press to clear</string>
   <string name="add_book_cover_button_content">Book cover image. Long press to clear.</string>
 
+  <!-- BookActivity -->
+  <string name="book_activity_edit_book_settings">Edit book settings</string>
+
   <string name="book_error_updating">An error occurred, the book could not be saved.</string>
 
   <string name="reading_start">Start</string>
