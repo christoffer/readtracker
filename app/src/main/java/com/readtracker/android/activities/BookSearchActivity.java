@@ -191,7 +191,7 @@ public class BookSearchActivity extends BaseActivity implements GoogleBookSearch
    */
   private void search(String query) {
     // TODO replace with a spinner in the text editor field
-    getApp().showProgressDialog(BookSearchActivity.this, getString(R.string.book_search_searching));
+    getApp().showProgressDialog(BookSearchActivity.this, R.string.book_search_searching);
     GoogleBookSearchTask.search(query, this); // calls onSearchResultsRetrieved()
   }
 
