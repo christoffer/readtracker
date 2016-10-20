@@ -47,10 +47,17 @@ public class JSONExporter {
    */
   public File exportToDisk() {
     List<Book> books = mDatabaseMgr.getAll(Book.class);
-    final File destination = new File(DEFAULT_EXPORT_DIRECTORY, DEFAULT_EXPORT_FILENAME);
+    File destination = new File(DEFAULT_EXPORT_DIRECTORY, DEFAULT_EXPORT_FILENAME);
+    if(!destination.exists()) {
+      // Some older devices doesn't seem to have a Download dir by default, so fallback to just the
+      // external storage directory.
+      destination = new File(Environment.getExternalStorageDirectory(), DEFAULT_EXPORT_FILENAME);
+    }
+
     if(exportToDisk(books, destination)) {
       return destination;
     }
+
     return null;
   }
 
