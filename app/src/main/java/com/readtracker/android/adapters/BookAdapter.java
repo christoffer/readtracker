@@ -165,7 +165,6 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
       }
 
       if(coverImage != null) {
-        Log.d("xxx", book.getCoverImageUrl());
         coverImage.setImageResource(R.drawable.bookmark);
         if(!TextUtils.isEmpty(book.getCoverImageUrl())) {
            Picasso.with(coverImage.getContext())
