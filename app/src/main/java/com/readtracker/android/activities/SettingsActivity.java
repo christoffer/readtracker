@@ -1,6 +1,7 @@
 package com.readtracker.android.activities;
 
 import android.Manifest;
+import android.app.DownloadManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -123,13 +124,28 @@ public class SettingsActivity extends PreferenceActivity {
     if(hasExternalStoragePermission()) {
       final File exportedJsonFile = JSONExporter.from(SettingsActivity.this).exportToDisk();
       if(exportedJsonFile != null && exportedJsonFile.exists()) {
-        // TODO(christoffer) Register the file with the DownloadManager so that it appears in the
-        // Download app for easy retrieval
-        Uri uri = Uri.fromFile(exportedJsonFile);
-        Intent exportIntent = new Intent(Intent.ACTION_SEND);
-        exportIntent.putExtra(Intent.EXTRA_STREAM, uri);
-        exportIntent.setType("text/plain");
-        startActivity(Intent.createChooser(exportIntent, getString(R.string.settings_export_json_save_data)));
+        DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+        if(downloadManager != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1) {
+          // Preferably just add it to the download manager where the user can get at it easily
+          downloadManager.addCompletedDownload(
+              exportedJsonFile.getName(),
+              getString(R.string.settings_read_tracker_exported_data_description),
+              true,
+              "text/text",
+              exportedJsonFile.getAbsolutePath(),
+              exportedJsonFile.length(),
+              true
+          );
+          Toast.makeText(this, R.string.settings_export_to_download_completed, Toast.LENGTH_LONG).show();
+        } else {
+          // Fall back to share intent
+          Uri uri = Uri.fromFile(exportedJsonFile);
+          Intent exportIntent = new Intent(Intent.ACTION_SEND);
+          exportIntent.putExtra(Intent.EXTRA_STREAM, uri);
+          exportIntent.setType("text/plain");
+          startActivity(Intent.createChooser(exportIntent, getString(R.string.settings_export_json_save_data)));
+          Toast.makeText(this, R.string.settings_export_to_sdcard_completed, Toast.LENGTH_LONG).show();
+        }
       } else {
         Log.w(TAG, "Failed to export to disk");
         Toast.makeText(SettingsActivity.this, R.string.settings_export_json_failed, Toast.LENGTH_SHORT).show();
