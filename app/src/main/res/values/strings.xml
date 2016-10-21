@@ -121,6 +121,9 @@
   <string name="settings_version">Version</string>
   <string name="settings_icons_by">Icons by <b>Icons8</b></string>
   <string name="settings_legal">Legal</string>
+  <string name="settings_read_tracker_exported_data_description">ReadTracker exported data</string>
+  <string name="settings_export_to_download_completed">ReadTracker data has been exported and added to your downloads.</string>
+  <string name="settings_export_to_sdcard_completed">ReadTracker data has been exported and added to your SD card.</string>
 
   <string name="error_import_failed_read_file">Could not import the data. An error occurred when reading the file.</string>
   <string name="error_import_failed_broken_file">Import failed. Please make sure %1$s is a ReadTracker export file.</string>
