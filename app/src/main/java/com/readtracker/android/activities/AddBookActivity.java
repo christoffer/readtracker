@@ -137,7 +137,7 @@ public class AddBookActivity extends BookBaseActivity implements GoogleBookSearc
       for(int i = 0; i < result.size(); i++) {
         String coverURL = result.get(i).getCoverURL();
         if(coverURL != null && coverURL.length() > 0) {
-          loadCover(coverURL);
+          loadCoverFromURL(coverURL);
           didFindCover = true;
           break;
         }
@@ -192,7 +192,7 @@ public class AddBookActivity extends BookBaseActivity implements GoogleBookSearc
 
     mCoverImageButton.setOnLongClickListener(new View.OnLongClickListener() {
       @Override public boolean onLongClick(View v) {
-        setCurrentCover(null);
+        setCurrentCoverURL(null);
         return true;
       }
     });
@@ -202,7 +202,7 @@ public class AddBookActivity extends BookBaseActivity implements GoogleBookSearc
     mAddOrSaveButton.setText(R.string.add_book_add);
     mTitleEdit.setText(intent.getStringExtra(IntentKeys.TITLE));
     mAuthorEdit.setText(intent.getStringExtra(IntentKeys.AUTHOR));
-    loadCover(intent.getStringExtra(IntentKeys.COVER_URL));
+    loadCoverFromURL(intent.getStringExtra(IntentKeys.COVER_URL));
     setInitialPageCount(intent.getIntExtra(IntentKeys.PAGE_COUNT, 0));
 
     bindEvents();
@@ -225,33 +225,33 @@ public class AddBookActivity extends BookBaseActivity implements GoogleBookSearc
       mPagePctToggle.setChecked(false);
     }
 
-    loadCover(book.getCoverImageUrl());
+    loadCoverFromURL(book.getCoverImageUrl());
     bindEvents();
 
     mEditMode = true;
     supportInvalidateOptionsMenu();
   }
 
-  private void loadCover(final String coverURL) {
+  private void loadCoverFromURL(final String coverURL) {
     final boolean hasCover = !TextUtils.isEmpty(coverURL);
     if(hasCover) {
       // The book might have a cover url that's outdated. Make sure that the cover loads before
       // deciding on whether or not to show the find cover button.
       Picasso.with(this).load(coverURL).into(mCoverImageButton, new Callback() {
         @Override public void onSuccess() {
-          setCurrentCover(coverURL);
+          setCurrentCoverURL(coverURL);
         }
 
         @Override public void onError() {
-          setCurrentCover(null);
+          setCurrentCoverURL(null);
         }
       });
     } else {
-      setCurrentCover(null);
+      setCurrentCoverURL(null);
     }
   }
 
-  private void setCurrentCover(String coverURL) {
+  private void setCurrentCoverURL(String coverURL) {
     if(coverURL == null) {
       mCoverURL = null;
       mCoverImageButton.setVisibility(View.GONE);
