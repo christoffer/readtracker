@@ -98,4 +98,12 @@ dependencies {
     testCompile 'org.skyscreamer:jsonassert:1.2.3'
     testCompile 'junit:junit:4.12'
     testCompile "org.robolectric:robolectric:3.0"
+    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
+    androidTestCompile 'com.android.support.test:runner:0.5'
+
+    // NOTE(christoffer) Needed to resolve a conflict with transient dependencies between
+    // Espresso (SDK 23) and the SDK used to compile the App (24).
+    configurations.androidTestCompile.dependencies.each { androidTestCompileDependency ->
+        androidTestCompileDependency.exclude group: 'com.android.support'
+    }
 }
