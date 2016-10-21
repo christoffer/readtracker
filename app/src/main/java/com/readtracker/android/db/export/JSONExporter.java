@@ -47,10 +47,20 @@ public class JSONExporter {
    */
   public File exportToDisk() {
     List<Book> books = mDatabaseMgr.getAll(Book.class);
-    final File destination = new File(DEFAULT_EXPORT_DIRECTORY, DEFAULT_EXPORT_FILENAME);
-    if(exportToDisk(books, destination)) {
+    File destination;
+    if(DEFAULT_EXPORT_DIRECTORY.exists()) {
+      destination = new File(DEFAULT_EXPORT_DIRECTORY, DEFAULT_EXPORT_FILENAME);
+    } else if (Environment.getExternalStorageDirectory().exists()){
+      destination = new File(Environment.getExternalStorageDirectory(), DEFAULT_EXPORT_FILENAME);
+    } else {
+      Log.d(TAG, "Couldn't find a place to export");
+      destination = null;
+    }
+
+    if(destination != null && exportToDisk(books, destination)) {
       return destination;
     }
+
     return null;
   }
 

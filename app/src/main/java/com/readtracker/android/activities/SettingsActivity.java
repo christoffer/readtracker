@@ -1,12 +1,18 @@
 package com.readtracker.android.activities;
 
+import android.Manifest;
+import android.app.DownloadManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -28,6 +34,8 @@ public class SettingsActivity extends PreferenceActivity {
   private static final String ICONS8 = "about.icons8";
 
   private static final int REQUEST_IMPORT = 0x01;
+  private static final int REQUEST_PERMISSION_FOR_EXPORT = 0x01;
+  private static final int REQUEST_PERMISSION_FOR_IMPORT = 0x02;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -93,24 +101,92 @@ public class SettingsActivity extends PreferenceActivity {
     }
   }
 
+  @Override
+  public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    final boolean didGetPermission = grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED;
+    switch(requestCode) {
+      case REQUEST_PERMISSION_FOR_IMPORT:
+        if(didGetPermission) {
+          onImportDataClick();
+        }
+        break;
+      case REQUEST_PERMISSION_FOR_EXPORT:
+        if(didGetPermission) {
+          onExportDataClick();
+        }
+        break;
+      default:
+        break;
+    }
+  }
+
   private boolean onExportDataClick() {
-    final File exportedJsonFile = JSONExporter.from(SettingsActivity.this).exportToDisk();
-    if(exportedJsonFile != null && exportedJsonFile.exists()) {
-      Uri uri = Uri.fromFile(exportedJsonFile);
-      Intent exportIntent = new Intent(Intent.ACTION_SEND);
-      exportIntent.putExtra(Intent.EXTRA_STREAM, uri);
-      exportIntent.setType("text/plain");
-      startActivity(Intent.createChooser(exportIntent, getString(R.string.settings_export_json_save_data)));
+    if(hasExternalStoragePermission()) {
+      final File exportedJsonFile = JSONExporter.from(SettingsActivity.this).exportToDisk();
+      if(exportedJsonFile != null && exportedJsonFile.exists()) {
+        DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+        if(downloadManager != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1) {
+          // Preferably just add it to the download manager where the user can get at it easily
+          downloadManager.addCompletedDownload(
+              exportedJsonFile.getName(),
+              getString(R.string.settings_read_tracker_exported_data_description),
+              true,
+              "text/text",
+              exportedJsonFile.getAbsolutePath(),
+              exportedJsonFile.length(),
+              true
+          );
+          Toast.makeText(this, R.string.settings_export_to_download_completed, Toast.LENGTH_LONG).show();
+        } else {
+          // Fall back to share intent
+          Uri uri = Uri.fromFile(exportedJsonFile);
+          Intent exportIntent = new Intent(Intent.ACTION_SEND);
+          exportIntent.putExtra(Intent.EXTRA_STREAM, uri);
+          exportIntent.setType("text/plain");
+          startActivity(Intent.createChooser(exportIntent, getString(R.string.settings_export_json_save_data)));
+          Toast.makeText(this, R.string.settings_export_to_sdcard_completed, Toast.LENGTH_LONG).show();
+        }
+      } else {
+        Log.w(TAG, "Failed to export to disk");
+        Toast.makeText(SettingsActivity.this, R.string.settings_export_json_failed, Toast.LENGTH_SHORT).show();
+      }
     } else {
-      Log.w(TAG, "Failed to export to disk");
-      Toast.makeText(SettingsActivity.this, R.string.settings_export_json_failed, Toast.LENGTH_SHORT).show();
+      askForExternalStoragePermissionIfPossible(REQUEST_PERMISSION_FOR_EXPORT);
     }
     return true;
   }
 
   private boolean onImportDataClick() {
-    Intent intent = new Intent(this, ImportActivity.class);
-    startActivityForResult(intent, REQUEST_IMPORT);
+    if(hasExternalStoragePermission()) {
+      Intent intent = new Intent(this, ImportActivity.class);
+      startActivityForResult(intent, REQUEST_IMPORT);
+    } else {
+      askForExternalStoragePermissionIfPossible(REQUEST_PERMISSION_FOR_IMPORT);
+    }
+
     return true;
+  }
+
+  private boolean hasExternalStoragePermission() {
+    if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
+      // NOTE(christoffer) We ask for the write permission even though the user is trying to import.
+      // Permissions are granted on a group level anyway, so we don't need to be specific if we want
+      // to read or write the data.
+      int readExternalPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+      return readExternalPermission == PackageManager.PERMISSION_GRANTED;
+    }
+
+    // At this point we assume we've already been given the permission, either via a previous
+    // prompt or by pre-jelly bean manifest permissions.
+    return true;
+  }
+
+  private void askForExternalStoragePermissionIfPossible(int requestCode) {
+    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+      ActivityCompat.requestPermissions(this,
+          new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+          requestCode
+      );
+    }
   }
 }
