@@ -97,9 +97,9 @@ public class ReadTrackerApp extends Application {
   /**
    * Remove the flag for first time usage.
    */
-  public void removeFirstTimeFlag() {
-    mPreferences.edit().putBoolean(KEY_FIRST_TIME, false).commit();
-    mFirstTimeFlag = false;
+  public void setFirstTimeFlag(boolean isFirstTime) {
+    mPreferences.edit().putBoolean(KEY_FIRST_TIME, isFirstTime).commit();
+    mFirstTimeFlag = isFirstTime;
   }
 
   /**

@@ -30,6 +30,7 @@ import com.readtracker.android.db.Session;
 import com.readtracker.android.support.DrawableGenerator;
 import com.readtracker.android.support.SessionTimer;
 import com.readtracker.android.support.SimpleAnimationListener;
+import com.readtracker.android.support.RuntimeTestUtils;
 import com.readtracker.android.support.Utils;
 import com.readtracker.android.thirdparty.SafeViewFlipper;
 import com.readtracker.android.thirdparty.widget.OnWheelChangedListener;
@@ -248,7 +249,12 @@ public class ReadFragment extends BaseFragment {
     spinAnimation.setInterpolator(new LinearInterpolator());
     spinAnimation.setFillAfter(true);
 
-    mTimeSpinner.setAnimation(spinAnimation);
+    if(!RuntimeTestUtils.isRunningTest()) {
+      // NOTE(christoffer) Apparently Espresso chokes when there are running animations
+      // because the render UI never idles.
+      // Therefore we only enable the animation if we're not running in test mode.
+      mTimeSpinner.setAnimation(spinAnimation);
+    }
     spinAnimation.pause();
   }
 

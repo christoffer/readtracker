@@ -38,7 +38,7 @@ public class HomeActivity extends BaseActivity {
   private static final int REQUEST_READING_SESSION = 1;
 
   // List of books loaded from the database
-  private List<Book> mBooks = new ArrayList<Book>();
+  private List<Book> mBooks = new ArrayList<>();
 
   @InjectView(R.id.book_list_pager) ViewPager mViewPager;
 
@@ -107,7 +107,7 @@ public class HomeActivity extends BaseActivity {
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     final boolean shouldReload = (
-      requestCode == REQUEST_READING_SESSION && resultCode == RESULT_OK
+        requestCode == REQUEST_READING_SESSION && resultCode == RESULT_OK
     );
     final boolean needReloadDueToAddedBook = requestCode == ActivityCodes.REQUEST_ADD_BOOK;
 
@@ -156,7 +156,7 @@ public class HomeActivity extends BaseActivity {
       @Override
       public void onClick(View view) {
         root.setVisibility(View.GONE);
-        getApp().removeFirstTimeFlag();
+        getApp().setFirstTimeFlag(false);
       }
     });
   }
