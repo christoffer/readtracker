@@ -32,6 +32,7 @@ import com.squareup.picasso.Picasso;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -412,6 +413,14 @@ public class AddBookActivity extends BookBaseActivity implements GoogleBookSearc
       if(mShouldMakeTitleUnique) {
         mBook.setTitle(getUniqueTitle(mBook.getTitle()));
       }
+
+      if(mBook.getCurrentPositionTimestampMs() == null) {
+        // Make the book more recent if it doesn't already have a timestamp.
+        // This is so that new books are added to the top of the book list when
+        // added.
+        mBook.setCurrentPositionTimestampMs((new Date()).getTime());
+      }
+
       return mDatabaseMgr.save(mBook);
     }
 
