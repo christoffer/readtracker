@@ -1,10 +1,13 @@
 language: android
 jdk: oraclejdk8
 sudo: false
+before_cache:
+  - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
 cache:
   apt: true
   directories:
-    - $HOME/.gradle
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
 
 android:
   components:
@@ -27,4 +30,4 @@ script:
     - android list target
     - ./gradlew clean test --stacktrace
     - ./gradlew assembleDebug
-    - ./gradlew build connectedCheck
+    - ./gradlew build connectedAndroidTest
