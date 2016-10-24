@@ -31,8 +31,11 @@ android {
                 keyAlias READTRACKER_RELEASE_KEY_ALIAS
                 keyPassword READTRACKER_RELEASE_KEY_PASSWORD
             } else {
-                throw new RuntimeException("Gradle configuration not properly setup for signing. " +
-                        "See app/build.gradle for more info")
+                // Fall back to default values
+                storeFile file(System.properties['user.home'] + File.separator + ".android" + File.separator + "debug.keystore")
+                storePassword "android"
+                keyAlias "androiddebugkey"
+                keyPassword "android"
             }
         }
     }
