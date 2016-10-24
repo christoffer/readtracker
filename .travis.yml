@@ -30,4 +30,4 @@ script:
     - android list target
     - ./gradlew clean test --stacktrace
     - ./gradlew assembleDebug
-    - ./gradlew build connectedAndroidTest
+    - ./gradlew build connectedDebugAndroidTest
