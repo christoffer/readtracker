@@ -36,13 +36,12 @@ before_install:
   - chmod +x gradlew
 
 before_script:
-  - echo no | android create avd --force -n test -t android-21 --abi armeabi-v7a
+  - echo no | android create avd --force -n test -t 3 --abi armeabi-v7a # target id 3 = android-21
   - emulator -avd test -no-skin -no-audio -no-window &
   - android-wait-for-emulator
   - adb shell input keyevent 82 &
 
 script:
-  - android list target
   - ./gradlew clean test -PdisablePreDex --stacktrace # unit tests
   - ./gradlew assembleDebug
   - ./gradlew build connectedAndroidTest # instrumentation tests
