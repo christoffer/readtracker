@@ -21,10 +21,6 @@ android:
     - android-22
     - extra-google-m2repository
     - sys-img-armeabi-v7a-android-22
-  licenses:
-    - android-sdk-preview-license-.+
-    - android-sdk-license-.+
-    - google-gdk-license-.+
 
 before_install:
   - bash scripts/accept_licenses.sh
@@ -37,6 +33,6 @@ before_script:
   - adb shell input keyevent 82 &
 
 script:
-  - ./gradlew clean test -PdisablePreDex --stacktrace # unit tests
+  - ./gradlew clean test -PdisablePreDex --stacktrace
   - ./gradlew assembleDebug
-  - ./gradlew build connectedAndroidTest # instrumentation tests
+  - ./gradlew connectedDebugAndroidTest
