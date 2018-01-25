@@ -1,7 +1,6 @@
 # Ensuring the Android SDK licenses are accepted, to let gradle download any missing dependency
 #
 # Inspired from https://developer.android.com/studio/intro/update.html#download-with-gradle
-# Inspired from
 #
 # Note: These values below represent the hashes of the agreed SDK licenses. Last changed: 2017-10-10
 # If they change in the future, gradle will not be able to download new dependencies, and the hashes
