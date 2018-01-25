@@ -1,30 +1,39 @@
 language: android
 jdk: oraclejdk8
 sudo: false
+before_cache:
+  -rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
+  -rm -fr $HOME/.gradle/caches/*/plugin-resolution/
 cache:
-  apt: true
   directories:
-    - $HOME/.gradle
+    -$HOME/.gradle/caches/
+    -$HOME/.gradle/wrapper/
+env:
+  global:
+    - ADB_INSTALL_TIMEOUT=5
 
 android:
   components:
     - tools
     - platform-tools
-    - extra-android-support
-    - extra-android-m2repository
+    - build-tools-26.0.2
     - android-24
-    - build-tools-24.0.3
-    - sys-img-armeabi-v7a-android-19
+    - android-22
+    - extra-google-m2repository
+    - sys-img-armeabi-v7a-android-22
+
+before_install:
+  - bash scripts/accept_licenses.sh
+  - chmod +x gradlew
 
 # Emulator Management: Create, Start and Wait - taken from http://docs.travis-ci.com/user/languages/android/#How-to-Create-and-Start-an-Emulator
 before_script:
-  - echo no | android create avd --force -n test -t android-19 --abi armeabi-v7a
+  - echo no | android create avd --force -n test -t android-22 --abi armeabi-v7a
   - emulator -avd test -no-skin -no-audio -no-window &
   - android-wait-for-emulator
   - adb shell input keyevent 82 &
 
 script:
-    - android list target
-    - ./gradlew clean test --stacktrace # unit tests
-    - ./gradlew assembleDebug
-    # - ./gradlew build connectedAndroidTest # instrumentation tests
+  - ./gradlew clean test -PdisablePreDex --stacktrace
+  - ./gradlew assembleDebug
+  - ./gradlew connectedDebugAndroidTest
