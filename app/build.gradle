@@ -1,9 +1,8 @@
 apply plugin: 'com.android.application'
 
 repositories {
-    mavenCentral()
+    jcenter()
     google()
-    maven { url 'https://github.com/christoffer/readmill-java-wrapper/raw/master/snapshots' }
 }
 
 android {
@@ -41,13 +40,14 @@ android {
     useLibrary 'org.apache.http.legacy'
 
     defaultConfig {
-        minSdkVersion 10
+        minSdkVersion 14
         targetSdkVersion 24
         versionCode 18
         versionName "3.2"
         testApplicationId "com.readtracker.android.test"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        javaCompileOptions.annotationProcessorOptions.includeCompileClasspath = true // FIXME: This should be thrown out together with ButterKnife (or at least update it to latest)
+        // FIXME: This should be thrown out together with ButterKnife (or at least update it to latest)
+        javaCompileOptions.annotationProcessorOptions.includeCompileClasspath = true
     }
 
     buildTypes {

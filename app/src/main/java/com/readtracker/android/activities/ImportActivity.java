@@ -52,10 +52,6 @@ public class ImportActivity extends BaseActivity {
     }
   };
 
-  public static final File DEFAULT_DIRECTORY = Environment.getExternalStoragePublicDirectory(
-      Environment.DIRECTORY_DOWNLOADS
-  );
-
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
@@ -74,7 +70,7 @@ public class ImportActivity extends BaseActivity {
 
     // NOTE(christoffer) Defaulting to downloads directory because that's the location most likely
     // to contain the users export data.
-    setCurrentDirectory(DEFAULT_DIRECTORY);
+    setCurrentDirectory(mDownloadsDirFile);
   }
 
   private void setupFileAdapter() {
