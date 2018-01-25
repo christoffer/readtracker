@@ -68,10 +68,9 @@ public class ImportActivity extends BaseActivity {
 
     registerForContextMenu(commonDirsButton);
 
-    // NOTE Defaulting to downloads directory because that's the location most likely to contain
-    // the users export data.
-    File privateCacheDir = this.getFilesDir();
-    setCurrentDirectory(privateCacheDir);
+    // NOTE(christoffer) Defaulting to downloads directory because that's the location most likely
+    // to contain the users export data.
+    setCurrentDirectory(mDownloadsDirFile);
   }
 
   private void setupFileAdapter() {
