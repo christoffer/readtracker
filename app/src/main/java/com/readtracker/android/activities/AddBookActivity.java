@@ -1,5 +1,6 @@
 package com.readtracker.android.activities;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -15,13 +16,22 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.readtracker.R;
 import com.readtracker.android.IntentKeys;
 import com.readtracker.android.db.Book;
 import com.readtracker.android.db.DatabaseManager;
+import com.readtracker.android.support.GoogleBook;
+import com.readtracker.android.support.GoogleBookSearch;
+import com.readtracker.android.tasks.GoogleBookSearchTask;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -29,7 +39,7 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 
 /** Activity for adding or editing a book. */
-public class AddBookActivity extends BookBaseActivity {
+public class AddBookActivity extends BookBaseActivity implements GoogleBookSearchTask.BookSearchResultListener {
   private static final String TAG = AddBookActivity.class.getName();
 
   public static final int RESULT_ADDED_BOOK = RESULT_FIRST_USER + 1;
@@ -42,6 +52,8 @@ public class AddBookActivity extends BookBaseActivity {
   @InjectView(R.id.page_count_edit) EditText mPageCountEdit;
   @InjectView(R.id.add_or_save_button) Button mAddOrSaveButton;
   @InjectView(R.id.page_pct_toggle) SwitchCompat mPagePctToggle;
+  @InjectView(R.id.book_cover_image) ImageButton mCoverImageButton;
+  @InjectView(R.id.find_cover_button) TextView mFindCoverButton;
 
   // Store the cover url from the intent that starts the activity
   private String mCoverURL;
@@ -115,6 +127,28 @@ public class AddBookActivity extends BookBaseActivity {
     initializeForEditMode(book);
   }
 
+  @Override public void onSearchResultsRetrieved(ArrayList<GoogleBook> result) {
+    // NOTE(christoffer) Ideally we'd like to give the user an option of picking the cover here,
+    // but for now we just pick the first result.
+    getApp().clearProgressDialog();
+    boolean didFindCover = false;
+
+    if(result != null && result.size() > 0) {
+      for(int i = 0; i < result.size(); i++) {
+        String coverURL = result.get(i).getCoverURL();
+        if(coverURL != null && coverURL.length() > 0) {
+          loadCoverFromURL(coverURL);
+          didFindCover = true;
+          break;
+        }
+      }
+    }
+
+    if(!didFindCover) {
+      Toast.makeText(this, R.string.add_book_no_cover_found, Toast.LENGTH_SHORT).show();
+    }
+  }
+
   private void bindEvents() {
     mAddOrSaveButton.setOnClickListener(new View.OnClickListener() {
       @Override
@@ -132,8 +166,34 @@ public class AddBookActivity extends BookBaseActivity {
           mPageCountEdit.setText(rememberedValue == null ? "0" : rememberedValue);
         } else {
           mPageCountEdit.setTag(mPageCountEdit.getText().toString());
-          mPageCountEdit.setText("100%");
+          mPageCountEdit.setText(getText(R.string.general_n_a));
         }
+      }
+    });
+
+    mFindCoverButton.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View view) {
+        final String title = mTitleEdit.getText().toString();
+        final String author = mAuthorEdit.getText().toString();
+
+        final String searchQuery = GoogleBookSearch.buildQueryForTitleAndAuthor(title, author);
+        if(searchQuery != null) {
+          getApp().showProgressDialog(AddBookActivity.this, R.string.add_book_looking_for_book);
+          GoogleBookSearchTask.search(searchQuery, AddBookActivity.this);
+        }
+      }
+    });
+
+    mCoverImageButton.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        Toast.makeText(AddBookActivity.this, R.string.add_book_long_press_to_delete, Toast.LENGTH_SHORT).show();
+      }
+    });
+
+    mCoverImageButton.setOnLongClickListener(new View.OnLongClickListener() {
+      @Override public boolean onLongClick(View v) {
+        setCurrentCoverURL(null);
+        return true;
       }
     });
   }
@@ -142,7 +202,7 @@ public class AddBookActivity extends BookBaseActivity {
     mAddOrSaveButton.setText(R.string.add_book_add);
     mTitleEdit.setText(intent.getStringExtra(IntentKeys.TITLE));
     mAuthorEdit.setText(intent.getStringExtra(IntentKeys.AUTHOR));
-    mCoverURL = intent.getStringExtra(IntentKeys.COVER_URL);
+    loadCoverFromURL(intent.getStringExtra(IntentKeys.COVER_URL));
     setInitialPageCount(intent.getIntExtra(IntentKeys.PAGE_COUNT, 0));
 
     bindEvents();
@@ -160,18 +220,50 @@ public class AddBookActivity extends BookBaseActivity {
       mPageCountEdit.setEnabled(true);
       mPagePctToggle.setChecked(true);
     } else {
-      mPageCountEdit.setText("100%");
+      mPageCountEdit.setText(getString(R.string.general_n_a));
       mPageCountEdit.setEnabled(false);
       mPagePctToggle.setChecked(false);
     }
 
-    mCoverURL = book.getCoverImageUrl();
+    loadCoverFromURL(book.getCoverImageUrl());
     bindEvents();
 
     mEditMode = true;
     supportInvalidateOptionsMenu();
   }
 
+  private void loadCoverFromURL(final String coverURL) {
+    final boolean hasCover = !TextUtils.isEmpty(coverURL);
+    if(hasCover) {
+      // The book might have a cover url that's outdated. Make sure that the cover loads before
+      // deciding on whether or not to show the find cover button.
+      Picasso.with(this).load(coverURL).into(mCoverImageButton, new Callback() {
+        @Override public void onSuccess() {
+          setCurrentCoverURL(coverURL);
+        }
+
+        @Override public void onError() {
+          setCurrentCoverURL(null);
+        }
+      });
+    } else {
+      setCurrentCoverURL(null);
+    }
+  }
+
+  private void setCurrentCoverURL(String coverURL) {
+    if(coverURL == null) {
+      mCoverURL = null;
+      mCoverImageButton.setVisibility(View.GONE);
+      mFindCoverButton.setVisibility(View.VISIBLE);
+    } else {
+      mCoverURL = coverURL;
+      mCoverImageButton.setVisibility(View.VISIBLE);
+      mFindCoverButton.setVisibility(View.GONE);
+    }
+  }
+
+  @SuppressLint("SetTextI18n")
   private void setInitialPageCount(long pageCount) {
     if(pageCount > 0) {
       mPageCountEdit.setText(Long.toString(pageCount));
@@ -277,16 +369,16 @@ public class AddBookActivity extends BookBaseActivity {
   abstract static class BackgroundBookTask extends AsyncTask<Void, Void, Boolean> {
     // choose to prefix because the titles are truncated in the list, which would
     // make dupes of long titles invisible to the user
-    public static final Pattern DUPE_COUNT_PATTERN = Pattern.compile("^[(](\\d+)[)](.*)");
+    static final Pattern DUPE_COUNT_PATTERN = Pattern.compile("^[(](\\d+)[)](.*)");
 
     final WeakReference<AddBookActivity> mActivity;
     final DatabaseManager mDatabaseMgr;
     final Book mBook;
     final String mUnknownTitleString;
 
-    public BackgroundBookTask(AddBookActivity activity, Book book) {
+    BackgroundBookTask(AddBookActivity activity, Book book) {
       mBook = book;
-      mActivity = new WeakReference<AddBookActivity>(activity);
+      mActivity = new WeakReference<>(activity);
       mDatabaseMgr = activity.getApp().getDatabaseManager();
       mUnknownTitleString = activity.getString(R.string.general_unknown_title);
     }
@@ -311,7 +403,7 @@ public class AddBookActivity extends BookBaseActivity {
   static class UpdateBookTask extends BackgroundBookTask {
     private final boolean mShouldMakeTitleUnique;
 
-    public UpdateBookTask(AddBookActivity activity, Book book, boolean shouldMakeTitleUnique) {
+    UpdateBookTask(AddBookActivity activity, Book book, boolean shouldMakeTitleUnique) {
       super(activity, book);
       mShouldMakeTitleUnique = shouldMakeTitleUnique;
     }
@@ -354,7 +446,7 @@ public class AddBookActivity extends BookBaseActivity {
   }
 
   static class DeleteBookTask extends BackgroundBookTask {
-    public DeleteBookTask(AddBookActivity activity, Book book) {
+    DeleteBookTask(AddBookActivity activity, Book book) {
       super(activity, book);
     }
 

@@ -17,7 +17,7 @@
   More info <a href="http://www.readtracker.com">www.readtracker.com</a>]]>
   </string>
 
-  <string name="book_search_hint">Free text search or \"isbn 978-0-7645-8874-7\"</string>
+  <string name="book_search_hint">Free text search or \"isbn 978–0–7645–8874–7\"</string>
   <string name="book_search_searching">Searching…</string>
 
   <string name="home_menu_settings">Settings</string>
@@ -47,16 +47,24 @@
 
   <string name="add_book_add">Add</string>
   <string name="add_book_save">Save</string>
-  <string name="add_book_book_info">Book information</string>
   <string name="add_book_missing_title">Please enter the title</string>
   <string name="add_book_missing_author">Please enter the author</string>
   <string name="add_book_missing_page_count">Please enter the number of pages or toggle percent tracking</string>
-  <string name="add_book_saving_book">Saving book...</string>
-  <string name="add_book_number_of_pages">Length used for tracking</string>
+  <string name="add_book_saving_book">Saving book…</string>
+  <string name="add_book_pages">Pages</string>
   <string name="add_book_delete">Delete</string>
   <string name="add_book_confirm_delete">Really delete %1$s?</string>
   <string name="add_book_delete_explanation">This will delete the book and the entire reading history from the device.\n\nThere is no way to undo this operation.</string>
   <string name="add_book_delete_failed">Failed to delete book</string>
+  <string name="add_book_cover">Cover</string>
+  <string name="add_book_find_info_on_google_books">Find cover on Google Books</string>
+  <string name="add_book_looking_for_book">Searching for book info…</string>
+  <string name="add_book_no_cover_found">Couldn\'t find a cover on Google Books</string>
+  <string name="add_book_long_press_to_delete">Long press to clear</string>
+  <string name="add_book_cover_button_content">Book cover image. Long press to clear.</string>
+
+  <!-- BookActivity -->
+  <string name="book_activity_edit_book_settings">Edit book settings</string>
 
   <string name="book_error_updating">An error occurred, the book could not be saved.</string>
 
@@ -79,14 +87,17 @@
   <string name="general_author">Author</string>
   <string name="general_title">Title</string>
   <string name="general_unknown_title">Unknown title</string>
+  <string name="general_n_a">–</string>
 
   <string name="book_search_search">Search</string>
-  <string name="book_search_search_google_books">Search Google Books...</string>
-  <string name="book_search_new_book">New book...</string>
+  <string name="book_search_search_google_books">Search Google Books…</string>
+  <string name="book_search_new_book">New book…</string>
   <string name="book_search_no_results">No results</string>
 
   <string name="finish_book_hint">What did you think of the book?</string>
   <string name="finish_book_finish">Finish</string>
+
+  <string name="book_list_finished_on">Finished %1$s</string>
 
   <string name="sessions_blank_text">No reading history to display</string>
   <string name="end_session_where_did_you_stop_reading">Where did you stop reading?</string>
@@ -110,6 +121,9 @@
   <string name="settings_version">Version</string>
   <string name="settings_icons_by">Icons by <b>Icons8</b></string>
   <string name="settings_legal">Legal</string>
+  <string name="settings_read_tracker_exported_data_description">ReadTracker exported data</string>
+  <string name="settings_export_to_download_completed">ReadTracker data has been exported and added to your downloads.</string>
+  <string name="settings_export_to_sdcard_completed">ReadTracker data has been exported and added to your SD card.</string>
 
   <string name="error_import_failed_read_file">Failed to open %1$s. Maybe you don\'t have access to the file?</string>
   <string name="error_import_failed_broken_file">Import failed. Please make sure %1$s is a ReadTracker export file.</string>

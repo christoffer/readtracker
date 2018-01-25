@@ -111,9 +111,9 @@ public class ReadTrackerApp extends Application {
    * @param ctx     Context to show dialog in
    * @param message Message to show
    */
-  public void showProgressDialog(Context ctx, String message) {
+  public void showProgressDialog(Context ctx, int messageStringResourceId) {
     clearProgressDialog();
-    mProgressDialog = ProgressDialog.show(ctx, "", message);
+    mProgressDialog = ProgressDialog.show(ctx, "", ctx.getString(messageStringResourceId));
   }
 
   public void clearProgressDialog() {

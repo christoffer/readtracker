@@ -56,6 +56,7 @@ public class JSONExporter {
     } catch(IOException e) {
       Log.e(TAG, "Failed to create temporary file", e);
     }
+
     return null;
   }
 

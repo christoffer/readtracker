@@ -17,6 +17,13 @@
     <item name="android:background">@drawable/slate_3dp</item>
   </style>
 
+  <style name="non_primary_button" parent="default_button">
+    <item name="android:textColor">@color/toggle_button_text_color</item>
+    <item name="android:background">@drawable/default_toggle_button_background</item>
+    <item name="android:layout_width">fill_parent</item>
+    <item name="android:gravity">center</item>
+  </style>
+
   <style name="default_toggle_button" parent="default_button">
     <item name="android:textColor">@color/toggle_button_text_color</item>
     <item name="android:background">@drawable/default_toggle_button_background</item>
@@ -316,7 +323,7 @@
     <item name="android:layout_height">wrap_content</item>
     <item name="android:maxLines">1</item>
     <item name="android:layout_marginTop">6dp</item>
-    <item name="android:textSize">24dp</item>
+    <item name="android:textSize">26sp</item>
     <item name="android:paddingLeft">18dp</item>
     <item name="android:paddingRight">18dp</item>
     <item name="android:textColor">@color/text_color_primary</item>
@@ -327,14 +334,14 @@
   <!-- style for normal text usage -->
 
   <style name="default_text">
-    <item name="android:textSize">16dp</item>
+    <item name="android:textSize">14sp</item>
     <item name="android:color">@color/text_color_primary</item>
     <item name="android:layout_width">wrap_content</item>
     <item name="android:layout_height">wrap_content</item>
   </style>
 
   <style name="ui_hint">
-    <item name="android:textSize">12dp</item>
+    <item name="android:textSize">12sp</item>
     <item name="android:textColor">@color/text_color_secondary_slightly_transparent</item>
     <item name="android:layout_width">wrap_content</item>
     <item name="android:layout_height">wrap_content</item>

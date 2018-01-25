@@ -95,7 +95,7 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
     }
 
     Book book = getItem(position);
-    viewHolder.populate(book);
+    viewHolder.populate(convertView.getContext(), book);
 
     int backColor = mContext.getResources().getColor(R.color.background);
     int activeColor = mContext.getResources().getColor(R.color.default_button_color_pressed);
@@ -152,7 +152,7 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
       ButterKnife.inject(this, view);
     }
 
-    void populate(Book book) {
+    void populate(Context context, Book book) {
       // Required fields
       titleText.setText(book.getTitle());
       authorText.setText(book.getAuthor());
@@ -167,8 +167,10 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
       if(coverImage != null) {
         coverImage.setImageResource(R.drawable.bookmark);
         if(!TextUtils.isEmpty(book.getCoverImageUrl())) {
-          coverImage.setVisibility(View.VISIBLE);
-          Picasso.with(coverImage.getContext()).load(book.getCoverImageUrl()).into(coverImage);
+           Picasso.with(coverImage.getContext())
+               .load(book.getCoverImageUrl())
+               .placeholder(R.drawable.bookmark)
+               .into(coverImage);
         }
       }
 
@@ -185,7 +187,9 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
       if(finishedAtText != null) {
         if(book.getState() == Book.State.Finished) {
           final long now = System.currentTimeMillis();
-          finishedAtText.setText(Utils.humanPastTimeFromTimestamp(book.getCurrentPositionTimestampMs(), now));
+          String finishedOn = Utils.humanPastTimeFromTimestamp(book.getCurrentPositionTimestampMs(), now);
+          String finishedOnWithPrefix = context.getString(R.string.book_list_finished_on, finishedOn);
+          finishedAtText.setText(finishedOnWithPrefix);
           finishedAtText.setVisibility(View.VISIBLE);
         } else {
           finishedAtText.setVisibility(View.GONE);

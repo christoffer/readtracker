@@ -14,6 +14,7 @@
     android:layout_height="36dp"
     android:layout_width="36dp"
     android:scaleType="centerCrop"
+    android:src="@drawable/bookmark"
     android:layout_marginLeft="12dp"
     android:layout_alignParentRight="true"
     android:contentDescription="@string/reading_item_cover_content_desc" />
@@ -27,7 +28,6 @@
     android:layout_width="fill_parent"
     android:layout_toLeftOf="@id/imageCover"
     android:layout_marginTop="-3dp"
-    android:singleLine="true"
     android:textColor="@color/text_color_primary"
     tools:text="Metamorphosis" />
 
@@ -38,7 +38,6 @@
     android:layout_below="@id/textTitle"
     android:layout_toLeftOf="@id/imageCover"
     android:layout_marginTop="3dp"
-    android:singleLine="true"
     android:textColor="@color/text_color_secondary"
     tools:text="Franz Kafka" />
 
@@ -50,17 +49,15 @@
     android:layout_marginTop="18dp"
     android:background="@drawable/quote_background"
     android:paddingLeft="12dp"
-    android:textSize="12sp"
     android:textColor="@color/text_color_secondary"
-    tools:text="– Something something something something smething seomthjigs"
-    android:typeface="serif" />
+    tools:text="– Something something something something smething seomthjigs" />
 
   <TextView
     android:id="@+id/textFinishedAt"
     style="@style/default_text"
     android:layout_below="@id/textClosingRemark"
     android:layout_marginTop="12dp"
-    android:textSize="10sp"
+    android:textSize="12sp"
     android:textColor="@color/text_color_secondary"
     tools:text="Finished Nov 13th, 2012" />
 
