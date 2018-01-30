@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 
 repositories {
     mavenCentral()
@@ -7,7 +8,7 @@ repositories {
 }
 
 android {
-    compileSdkVersion 24
+    compileSdkVersion 25
     buildToolsVersion '27.0.3'
 
     testOptions {
@@ -42,7 +43,7 @@ android {
 
     defaultConfig {
         minSdkVersion 10
-        targetSdkVersion 24
+        targetSdkVersion 25
         versionCode 18
         versionName "3.2"
         testApplicationId "com.readtracker.android.test"
@@ -76,19 +77,22 @@ android {
 }
 
 dependencies {
-    implementation 'com.android.support:appcompat-v7:24.2.1'
-    implementation 'com.android.support:support-v4:24.2.1'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'com.android.support:appcompat-v7:25.4.0'
+    implementation 'com.android.support:support-v4:25.4.0'
     implementation 'com.j256.ormlite:ormlite-android:4.48'
     implementation 'com.j256.ormlite:ormlite-core:4.48'
     implementation 'com.squareup.picasso:picasso:2.2.0'
     implementation 'com.squareup:otto:1.3.4'
     implementation 'com.jakewharton:butterknife:4.0.1'
-    implementation files('lib/annotations.jar')
+
     testImplementation 'org.skyscreamer:jsonassert:1.2.3'
     testImplementation 'junit:junit:4.12'
-    testImplementation "org.robolectric:robolectric:3.0"
+    testImplementation 'org.robolectric:robolectric:3.5.1'
+    testImplementation 'com.android.support.test:runner:1.0.1'
+    testImplementation 'com.android.support.test:rules:1.0.1'
 
-    // Required for instrumented tests
-    androidTestImplementation 'com.android.support:support-annotations:24.2.1'
-    androidTestImplementation 'com.android.support.test:runner:0.5'
+    androidTestImplementation 'com.android.support:support-annotations:25.4.0'
+    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    androidTestImplementation 'com.android.support.test:rules:1.0.1'
 }
