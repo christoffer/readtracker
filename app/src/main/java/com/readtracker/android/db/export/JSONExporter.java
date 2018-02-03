@@ -1,6 +1,7 @@
 package com.readtracker.android.db.export;
 
 import android.app.Activity;
+import android.app.DownloadManager;
 import android.content.Context;
 import android.util.Log;
 
@@ -39,16 +40,11 @@ public class JSONExporter {
     mDatabaseMgr = db;
   }
 
-  /**
-   * Exports all model data to the default path (user's private app files).
-   *
-   * @return the written file if successfully exported, <code>null</code> otherwise.
-   */
-  public File exportAllBooksToDefaultDirectory() {
-    File outputDir = mContext.getFilesDir();
+  public File exportAllBooksToDir(File outDir) {
+    List<Book> books = mDatabaseMgr.getAll(Book.class);
+
     try {
-      final File outputFile = File.createTempFile("readtracker-export", ".json", outputDir);
-      List<Book> books = mDatabaseMgr.getAll(Book.class);
+      final File outputFile = File.createTempFile("readtracker-export", ".json", outDir);
       if(exportBooksToFile(books, outputFile)) {
         Log.d(TAG, "Saved export to " + outputFile.toString());
         return outputFile;

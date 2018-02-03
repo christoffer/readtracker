@@ -1,6 +1,5 @@
 package com.readtracker.android.activities;
 
-import android.app.DownloadManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -9,6 +8,7 @@ import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.support.annotation.NonNull;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -30,7 +30,7 @@ public class SettingsActivity extends PreferenceActivity {
   private static final String ICONS8 = "about.icons8";
 
   private static final int REQUEST_IMPORT = 0x01;
-  private static final int REQUEST_PERMISSION_FOR_EXPORT = 0x01;
+  private static final int PERMISSION_FOR_EXPORT = 0x01;
   private static final int REQUEST_PERMISSION_FOR_IMPORT = 0x02;
 
   @Override
@@ -106,7 +106,7 @@ public class SettingsActivity extends PreferenceActivity {
           onImportDataClick();
         }
         break;
-      case REQUEST_PERMISSION_FOR_EXPORT:
+      case PERMISSION_FOR_EXPORT:
         if(didGetPermission) {
           onExportDataClick();
         }
@@ -117,39 +117,62 @@ public class SettingsActivity extends PreferenceActivity {
   }
 
   private void showSendIntentForFile(File exportFile) {
-    Uri uri = Uri.fromFile(exportFile);
-    Intent exportIntent = new Intent(Intent.ACTION_SEND);
-    exportIntent.putExtra(Intent.EXTRA_STREAM, uri);
-    exportIntent.setType("text/plain");
-    startActivity(Intent.createChooser(exportIntent, getString(R.string.settings_export_json_save_data)));
+    Log.d(TAG, String.format("Showing export for file %s", exportFile));
+    try {
+      final Uri uri = FileProvider.getUriForFile(this, "com.readtracker.fileprovider", exportFile);
+      final Intent exportIntent = new Intent(Intent.ACTION_SEND);
+      // NOTE(christoffer) Use text/plain instead of something JSON specific since there's a lot more
+      // handlers that can handle sending plain text.
+      exportIntent.putExtra(Intent.EXTRA_STREAM, uri);
+      exportIntent.setType("text/plain");
+      exportIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+      startActivity(Intent.createChooser(exportIntent, getString(R.string.settings_export_json_save_data)));
+    } catch(IllegalArgumentException ex) {
+      Log.e(TAG, String.format("Failed to create file URI for exported file %s, error: %s", exportFile, ex.toString()));
+      Toast.makeText(SettingsActivity.this, R.string.settings_export_failed, Toast.LENGTH_SHORT).show();
+    }
+  }
+
+  /**
+   * Writes the JSON export data to a directory that is whitelisted for FileProvider.
+   *
+   * @return the exported File if successful, Null otherwise.
+   */
+  private File exportDataToFileProviderDir(JSONExporter jsonExporter) {
+    // NOTE(christoffer) Path below needs to be declared in @xml/filepaths
+    File tmpCacheDir = getCacheDir();
+    if(!tmpCacheDir.exists() || !tmpCacheDir.canWrite()) {
+      Log.e(TAG, String.format("Couldn't get a writable cache dir for writing the exported data (%s, exist: %b, write: %b", tmpCacheDir, tmpCacheDir.exists(), tmpCacheDir.canWrite()));
+      return null;
+    }
+
+    File fileProviderDir = new File(tmpCacheDir, "exports");
+    if (!fileProviderDir.exists()) {
+      final boolean didCreate = fileProviderDir.mkdirs();
+      if (!didCreate) {
+        Log.e(TAG, "Failed to create file exporter directory in cacheDir");
+        return null;
+      }
+    }
+
+    final File exportedJsonFile = jsonExporter.exportAllBooksToDir(fileProviderDir);
+    if (exportedJsonFile == null || !exportedJsonFile.exists()) {
+      Log.e(TAG, String.format("Failed to write intermediary JSON export file. File was not created. exportedJSONFile: %s, tmpCacheDir: %s", exportedJsonFile, fileProviderDir));
+      return null;
+    }
+
+    return exportedJsonFile;
   }
 
   private boolean onExportDataClick() {
-      final File exportedJsonFile = JSONExporter.from(SettingsActivity.this).exportAllBooksToDefaultDirectory();
-      if(exportedJsonFile != null && exportedJsonFile.exists()) {
-        DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
-        if(downloadManager != null) {
-          // Add the export file to the download directory since that's a convenient place to grab
-          // files on most (all?)) devices.
-          downloadManager.addCompletedDownload(
-              exportedJsonFile.getName(),
-              getString(R.string.settings_read_tracker_exported_data_description),
-              true,
-              "text/text",
-              exportedJsonFile.getAbsolutePath(),
-              exportedJsonFile.length(),
-              true
-          );
-          Toast.makeText(this, R.string.settings_export_to_download_completed, Toast.LENGTH_LONG).show();
-        }
+    final JSONExporter jsonExporter = JSONExporter.from(SettingsActivity.this);
+    File exportedDataFile = exportDataToFileProviderDir(jsonExporter);
 
-        // Show the share intent so that the user conveniently can move the file somewhere
-        showSendIntentForFile(exportedJsonFile);
+    if(exportedDataFile == null) {
+      Toast.makeText(SettingsActivity.this, R.string.settings_export_failed, Toast.LENGTH_SHORT).show();
     } else {
-        Log.w(TAG, "Export file was not created");
-        Toast.makeText(SettingsActivity.this, R.string.settings_export_json_failed, Toast.LENGTH_SHORT).show();
+      showSendIntentForFile(exportedDataFile);
     }
-
     return true;
   }
 
