@@ -77,7 +77,7 @@
   <string name="reading_click_to_start">Click to start reading</string>
   <string name="reading_item_cover_content_desc">Book cover</string>
   <string name="reading_list_blank_content_desc">Blank reading list</string>
-  <string name="reading_list_blank">No books</string>
+  <string name="reading_list_blank">No books in this category yet</string>
 
   <string name="general_save">Save</string>
   <string name="general_cancel">Cancel</string>

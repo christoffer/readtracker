@@ -12,6 +12,7 @@ import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.nbsp.materialfilepicker.ui.FilePickerActivity;
 import com.readtracker.R;
 import com.readtracker.android.IntentKeys;
 import com.readtracker.android.ReadTrackerApp;
@@ -177,8 +178,13 @@ public class SettingsActivity extends PreferenceActivity {
   }
 
   private boolean onImportDataClick() {
-    Intent intent = new Intent(this, ImportActivity.class);
+    Intent intent = new Intent(this, FilePickerActivity.class);
+    // intent.putExtra(FilePickerActivity.ARG_FILE_FILTER, Pattern.compile(".*\\.txt$"));
+    // intent.putExtra(FilePickerActivity.ARG_DIRECTORIES_FILTER, true);
+    // intent.putExtra(FilePickerActivity.ARG_SHOW_HIDDEN, true);
     startActivityForResult(intent, REQUEST_IMPORT);
+    // Intent intent = new Intent(this, ImportActivity.class);
+    // startActivityForResult(intent, REQUEST_IMPORT);
     return true;
   }
 }
