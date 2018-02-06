@@ -142,7 +142,8 @@ public class JSONImporter {
       }
 
       // If the file is valid JSON (apparently version 1 JSON is, or at least the Android JSON lib
-      // thinks so...), the assume it is version 1 if it has title and author in there.
+      // thinks so, even though it's not really well formed), the assume it is version 1 if it has
+      // title and author in there.
       if(data.has("title") && data.has("author")) {
         return 1;
       }

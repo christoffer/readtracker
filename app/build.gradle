@@ -1,9 +1,11 @@
 apply plugin: 'com.android.application'
 
 repositories {
-    mavenCentral()
+    jcenter()
     google()
-    maven { url 'https://github.com/christoffer/readmill-java-wrapper/raw/master/snapshots' }
+    jcenter {
+        url  "http://dl.bintray.com/lukaville/maven"
+    }
 }
 
 android {
@@ -41,13 +43,14 @@ android {
     useLibrary 'org.apache.http.legacy'
 
     defaultConfig {
-        minSdkVersion 10
+        minSdkVersion 14
         targetSdkVersion 24
         versionCode 18
         versionName "3.2"
         testApplicationId "com.readtracker.android.test"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        javaCompileOptions.annotationProcessorOptions.includeCompileClasspath = true // FIXME: This should be thrown out together with ButterKnife (or at least update it to latest)
+        // FIXME: This should be thrown out together with ButterKnife (or at least update it to latest)
+        javaCompileOptions.annotationProcessorOptions.includeCompileClasspath = true
     }
 
     buildTypes {
@@ -87,6 +90,9 @@ dependencies {
     testImplementation 'org.skyscreamer:jsonassert:1.2.3'
     testImplementation 'junit:junit:4.12'
     testImplementation "org.robolectric:robolectric:3.0"
+
+    // Material FilePicker
+    compile 'com.nbsp:library:1.8'
 
     // Required for instrumented tests
     androidTestImplementation 'com.android.support:support-annotations:24.2.1'
