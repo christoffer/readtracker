@@ -3,7 +3,7 @@ package com.readtracker.android.activities;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.TypedValue;
 import android.widget.Toast;
@@ -17,7 +17,7 @@ import com.squareup.otto.Bus;
 /**
  * Base activity
  */
-public abstract class BaseActivity extends ActionBarActivity {
+public abstract class BaseActivity extends AppCompatActivity {
   private ReadTrackerApp mApplication;
   private Bus mBus;
   private DatabaseManager mDatabaseManager;

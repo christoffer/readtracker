@@ -1,6 +1,6 @@
 <resources>
 
-  <style name="ReadTrackerTheme" parent="@android:style/Theme.Holo">
+  <style name="ReadTrackerTheme" parent="Theme.AppCompat.Light.DarkActionBar">
     <item name="textAppearance">@style/TextAppearance</item>
     <item name="android:actionBarStyle">@style/ReadTrackerActionBar</item>
     <item name="android:windowBackground">@color/activity_background</item>
@@ -8,11 +8,11 @@
     <item name="actionBarStyle">@style/ReadTrackerActionBar</item>
   </style>
 
-<style name="ReadTrackerDialog" parent="@style/ReadTrackerTheme.NoActionBar">
-    <item name="android:windowFrame">@null</item>
-    <item name="android:windowIsFloating">true</item>
-    <item name="android:windowContentOverlay">@null</item>
-</style>
+  <style name="ReadTrackerDialog" parent="@style/ReadTrackerTheme.NoActionBar">
+      <item name="android:windowFrame">@null</item>
+      <item name="android:windowIsFloating">true</item>
+      <item name="android:windowContentOverlay">@null</item>
+  </style>
 
   <style name="ReadTrackerTheme.NoActionBar" parent="@style/ReadTrackerTheme">
     <item name="android:windowActionBar">false</item>

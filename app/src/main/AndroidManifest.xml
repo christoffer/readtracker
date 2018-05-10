@@ -39,7 +39,7 @@
     <activity
       android:name=".android.activities.BookSearchActivity"
       android:label="@string/activity_label_add_book"
-      android:parentActivityName="com.readtracker.android.activities.HomeActivity"
+      android:parentActivityName=".android.activities.HomeActivity"
       android:launchMode="singleTop">
       <meta-data
         android:name="android.support.PARENT_ACTIVITY"
@@ -90,7 +90,7 @@
       android:parentActivityName="com.readtracker.android.activities.HomeActivity">
       <meta-data
         android:name="android.support.PARENT_ACTIVITY"
-        android:value="com.readtracker.android.activities.HomeActivity"/>>
+        android:value="com.readtracker.android.activities.HomeActivity"/>
     </activity>
 
     <activity
