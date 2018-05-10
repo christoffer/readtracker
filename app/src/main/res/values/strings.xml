@@ -123,13 +123,30 @@
   <string name="settings_legal">Legal</string>
   <string name="settings_read_tracker_exported_data_description">Exported data from ReadTracker</string>
   <string name="settings_export_to_download_completed">Reading data has been exported and added to your downloads.</string>
+  <string name="settings_import_running">Importing…</string>
+  <!-- 5 books imported (3 new, 2 merged), together with 54 sessions and 12 quotes. -->
+  <string name="settings_import_book_report">%1$s imported (%2$s, %3$s), together with %4$s and %5$s.</string>
+  <plurals name="plural_book">
+    <item quantity="one">%d book</item>
+    <item quantity="many">%d books</item>
+  </plurals>
+  <plurals name="plural_new">
+    <item quantity="one">%d new</item>
+    <item quantity="many">%d new</item>
+  </plurals>
+  <plurals name="plural_merged">
+    <item quantity="one">%d merged</item>
+    <item quantity="many">%d merged</item>
+  </plurals>
+  <plurals name="plural_session">
+    <item quantity="one">%d session</item>
+    <item quantity="many">%d sessions</item>
+  </plurals>
+  <plurals name="plural_quote">
+    <item quantity="one">%d quote</item>
+    <item quantity="many">%d quotes</item>
+  </plurals>
 
   <string name="error_import_failed_read_file">Failed to open %1$s. Maybe you don\'t have access to the file?</string>
   <string name="error_import_failed_broken_file">Import failed. Please make sure %1$s is a ReadTracker export file.</string>
-  <string name="import_locate_file">Locate your previously exported ReadTracker file.</string>
-  <string name="importing_files">Importing…</string>
-
-  <string name="file_list_common_home">Home</string>
-  <string name="file_list_common_downloads">Downloads</string>
-  <string name="file_list_common_sdcard">SDCard</string>
 </resources>

@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 
 repositories {
     jcenter()
@@ -89,4 +90,5 @@ dependencies {
     // Required for instrumented tests
     androidTestImplementation 'com.android.support:support-annotations:24.2.1'
     androidTestImplementation 'com.android.support.test:runner:0.5'
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }

@@ -1,26 +1,34 @@
 package com.readtracker.android.activities;
 
+import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.nbsp.materialfilepicker.MaterialFilePicker;
 import com.nbsp.materialfilepicker.ui.FilePickerActivity;
 import com.readtracker.R;
 import com.readtracker.android.IntentKeys;
 import com.readtracker.android.ReadTrackerApp;
 import com.readtracker.android.db.export.JSONExporter;
+import com.readtracker.android.db.export.JSONImporter;
+import com.readtracker.android.tasks.ImportReadTrackerFileTask;
 
 import java.io.File;
 
-public class SettingsActivity extends PreferenceActivity {
+public class SettingsActivity extends PreferenceActivity implements ImportReadTrackerFileTask.ResultListener {
   private static final String TAG = SettingsActivity.class.getName();
 
   private static final String SETTINGS_COMPACT_FINISH_LIST = "settings.compact_finish_list";
@@ -30,9 +38,10 @@ public class SettingsActivity extends PreferenceActivity {
   private static final String ABOUT_LEGAL = "about.legal";
   private static final String ICONS8 = "about.icons8";
 
-  private static final int REQUEST_IMPORT = 0x01;
-  private static final int PERMISSION_FOR_EXPORT = 0x01;
-  private static final int REQUEST_PERMISSION_FOR_IMPORT = 0x02;
+  private static final int FILE_PICKER_SELECT_FILE_REQUEST_CODE = 0x01;
+  private static final int EXPORT_PERMISSION_REQUEST_CODE = 0x01;
+  private static final int IMPORT_PERMISSION_REQUEST_CODE = 0x02;
+  private ProgressDialog progressDialog;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -80,21 +89,40 @@ public class SettingsActivity extends PreferenceActivity {
     final Preference importData = findPreference(IMPORT_JSON);
     importData.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
       @Override public boolean onPreferenceClick(Preference preference) {
-        return onImportDataClick();
+        importFileOrRequestPermission();
+        return true;
       }
     });
 
     final Preference exportData = findPreference(EXPORT_JSON);
     exportData.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
       @Override public boolean onPreferenceClick(Preference preference) {
-        return onExportDataClick();
+        exportFilesOrRequestPermission();
+        return true;
       }
     });
   }
 
   @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    if(requestCode == REQUEST_IMPORT && resultCode == RESULT_OK) {
-      finish();
+    super.onActivityResult(requestCode, resultCode, data);
+
+    if(requestCode == FILE_PICKER_SELECT_FILE_REQUEST_CODE && resultCode == RESULT_OK) {
+      String importFilePath = data.getStringExtra(FilePickerActivity.RESULT_FILE_PATH);
+      if (importFilePath == null) {
+        Log.d(TAG, "File picker returned with null file path");
+        finish();
+        return;
+      }
+
+      File importFile = new File(importFilePath);
+      if (!importFile.exists() || !importFile.canRead()) {
+        Log.d(TAG, String.format("File picker returned with file that exists: %b, canRead: %b - exiting", importFile.exists(), importFile.canRead()));
+        finish();
+        return;
+      }
+
+      Log.i(TAG, "Attempting import from file " + importFile.getAbsolutePath());
+      ImportReadTrackerFileTask.importFile(importFile, ReadTrackerApp.from(this).getDatabaseManager(), this);
     }
   }
 
@@ -102,14 +130,14 @@ public class SettingsActivity extends PreferenceActivity {
   public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
     final boolean didGetPermission = grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED;
     switch(requestCode) {
-      case REQUEST_PERMISSION_FOR_IMPORT:
+      case IMPORT_PERMISSION_REQUEST_CODE:
         if(didGetPermission) {
-          onImportDataClick();
+          importFileOrRequestPermission();
         }
         break;
-      case PERMISSION_FOR_EXPORT:
+      case EXPORT_PERMISSION_REQUEST_CODE:
         if(didGetPermission) {
-          onExportDataClick();
+          exportFilesOrRequestPermission();
         }
         break;
       default:
@@ -165,7 +193,8 @@ public class SettingsActivity extends PreferenceActivity {
     return exportedJsonFile;
   }
 
-  private boolean onExportDataClick() {
+  private void exportFilesOrRequestPermission() {
+    // TODO ask for permission
     final JSONExporter jsonExporter = JSONExporter.from(SettingsActivity.this);
     File exportedDataFile = exportDataToFileProviderDir(jsonExporter);
 
@@ -174,17 +203,43 @@ public class SettingsActivity extends PreferenceActivity {
     } else {
       showSendIntentForFile(exportedDataFile);
     }
-    return true;
   }
 
-  private boolean onImportDataClick() {
-    Intent intent = new Intent(this, FilePickerActivity.class);
-    // intent.putExtra(FilePickerActivity.ARG_FILE_FILTER, Pattern.compile(".*\\.txt$"));
-    // intent.putExtra(FilePickerActivity.ARG_DIRECTORIES_FILTER, true);
-    // intent.putExtra(FilePickerActivity.ARG_SHOW_HIDDEN, true);
-    startActivityForResult(intent, REQUEST_IMPORT);
-    // Intent intent = new Intent(this, ImportActivity.class);
-    // startActivityForResult(intent, REQUEST_IMPORT);
-    return true;
+  private void importFileOrRequestPermission() {
+    final String requiredPermission = Manifest.permission.READ_EXTERNAL_STORAGE;
+    if (ContextCompat.checkSelfPermission(this, requiredPermission) != PackageManager.PERMISSION_GRANTED) {
+      new MaterialFilePicker()
+          .withActivity(this)
+          .withRequestCode(FILE_PICKER_SELECT_FILE_REQUEST_CODE)
+          .start();
+    } else {
+      ActivityCompat.requestPermissions(this, new String[]{requiredPermission}, IMPORT_PERMISSION_REQUEST_CODE);
+    }
+  }
+
+  @Override public void onImportStart() {
+    if (this.progressDialog != null) {
+      this.progressDialog.dismiss();
+    }
+    this.progressDialog = new ProgressDialog(this);
+    this.progressDialog.setMessage(getString(R.string.settings_import_running));
+    this.progressDialog.show();
+  }
+
+  @Override public void onImportComplete(JSONImporter.ImportResultReport result) {
+    this.progressDialog.dismiss();
+    this.progressDialog = null;
+    if (result != null) {
+      // NOTE(christoffer) pluralized translations seem complicated...
+      final Resources res = getResources();
+      final int totalBooks = result.createdBookCount + result.mergedBookCount;
+      final String numBooks = res.getQuantityString(R.plurals.plural_book, totalBooks, totalBooks);
+      final String numNewBooks = res.getQuantityString(R.plurals.plural_book, result.createdBookCount, result.createdBookCount);
+      final String numMergedBook = res.getQuantityString(R.plurals.plural_book, result.mergedBookCount, result.mergedBookCount);
+      final String numQuotes = res.getQuantityString(R.plurals.plural_book, result.createdQuotesCount, result.createdQuotesCount);
+      final String numSessions = res.getQuantityString(R.plurals.plural_book, result.createdSessionCount, result.createdSessionCount);
+      final String message = res.getString(R.string.settings_import_book_report, numBooks, numNewBooks, numMergedBook, numQuotes, numSessions);
+      Toast.makeText(SettingsActivity.this, message, Toast.LENGTH_SHORT).show();
+    }
   }
 }
