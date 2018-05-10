@@ -12,7 +12,7 @@ import java.lang.ref.WeakReference;
 /**
  * Task that imports a ReadTracker export file and notifies the caller of progress and completion.
  */
-public class ImportReadTrackerFileTask extends AsyncTask<File, Void, JSONImporter.ImportResultReport> {
+public class ImportReadTrackerFileTask extends AsyncTask<File, Integer, JSONImporter.ImportResultReport> {
   private final String TAG = ImportReadTrackerFileTask.class.getName();
   private final WeakReference<DatabaseManager> dbManager;
   private final WeakReference<ResultListener> listener;
@@ -39,10 +39,7 @@ public class ImportReadTrackerFileTask extends AsyncTask<File, Void, JSONImporte
     final DatabaseManager dbManager = this.dbManager.get();
     final JSONImporter.ProgressListener progressListener = new JSONImporter.ProgressListener() {
       @Override public void onProgressUpdate(int currentBook, int totalBooks) {
-        final ResultListener listener = ImportReadTrackerFileTask.this.listener.get();
-        if (listener != null) {
-          listener.onImportUpdate(currentBook, totalBooks);
-        }
+        publishProgress(currentBook, totalBooks);
       }
     };
 
@@ -58,6 +55,14 @@ public class ImportReadTrackerFileTask extends AsyncTask<File, Void, JSONImporte
       }
     }
     return null;
+  }
+
+  @Override protected void onProgressUpdate(Integer... values) {
+    super.onProgressUpdate(values[0], values[1]);
+    final ResultListener listener = ImportReadTrackerFileTask.this.listener.get();
+    if (listener != null) {
+      listener.onImportUpdate(values[0], values[1]);
+    }
   }
 
   @Override protected void onPostExecute(JSONImporter.ImportResultReport report) {

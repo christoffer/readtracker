@@ -231,6 +231,7 @@ public class SettingsActivity extends PreferenceActivity implements ImportReadTr
       this.progressDialog.dismiss();
     }
     this.progressDialog = new ProgressDialog(this);
+    this.progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
     this.progressDialog.setMessage(getString(R.string.settings_import_running));
     this.progressDialog.show();
   }
@@ -254,6 +255,7 @@ public class SettingsActivity extends PreferenceActivity implements ImportReadTr
   }
 
   @Override public void onImportUpdate(int currentBook, int totalBooks) {
+    Log.d(TAG, String.format("import progress: %d out of %d", currentBook, totalBooks));
     if (this.progressDialog != null) {
       this.progressDialog.setIndeterminate(false);
       this.progressDialog.setMax(totalBooks);
