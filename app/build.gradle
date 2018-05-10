@@ -84,11 +84,15 @@ dependencies {
     implementation files('lib/annotations.jar')
     testImplementation 'org.skyscreamer:jsonassert:1.2.3'
     testImplementation 'junit:junit:4.12'
-    testImplementation 'org.robolectric:robolectric:3.0'
+    testImplementation 'org.robolectric:robolectric:3.5.1'
     // Material FilePicker
-    compile 'com.nbsp:library:1.8'
+    implementation 'com.nbsp:library:1.8'
     // Required for instrumented tests
-    androidTestImplementation 'com.android.support:support-annotations:24.2.1'
-    androidTestImplementation 'com.android.support.test:runner:0.5'
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    androidTestImplementation 'com.android.support:support-annotations:27.1.1'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+}
+
+configurations {
+    compile.exclude group: 'org.jetbrains', module: 'annotations'
 }

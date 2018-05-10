@@ -37,19 +37,27 @@ public class ImportReadTrackerFileTask extends AsyncTask<File, Void, JSONImporte
   @Override protected JSONImporter.ImportResultReport doInBackground(File... args) {
     final File fileToImport = args[0];
     final DatabaseManager dbManager = this.dbManager.get();
-    if(dbManager != null) {
+    final JSONImporter.ProgressListener progressListener = new JSONImporter.ProgressListener() {
+      @Override public void onProgressUpdate(int currentBook, int totalBooks) {
+        final ResultListener listener = ImportReadTrackerFileTask.this.listener.get();
+        if (listener != null) {
+          listener.onImportUpdate(currentBook, totalBooks);
+        }
+      }
+    };
+
+    if(dbManager == null) {
+      Log.d(TAG, "Database manager went away before starting the task.");
+    } else {
       try {
-        JSONImporter importer = new JSONImporter(dbManager);
+        JSONImporter importer = new JSONImporter(dbManager, progressListener);
         return importer.importFile(fileToImport);
       } catch(Exception e) {
         Log.e(TAG, "Error while importing file", exception);
         exception = e;
-        return null;
       }
-    } else {
-      Log.d(TAG, "Database manager went away before starting the task. Quitting...");
-      return null;
     }
+    return null;
   }
 
   @Override protected void onPostExecute(JSONImporter.ImportResultReport report) {
@@ -77,6 +85,7 @@ public class ImportReadTrackerFileTask extends AsyncTask<File, Void, JSONImporte
 
   public interface ResultListener {
     void onImportStart();
+    void onImportUpdate(int currentBook, int totalBooks);
     void onImportComplete(JSONImporter.ImportResultReport importReport);
   }
 }

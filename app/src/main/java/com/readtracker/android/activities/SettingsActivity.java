@@ -27,6 +27,7 @@ import com.readtracker.android.db.export.JSONImporter;
 import com.readtracker.android.tasks.ImportReadTrackerFileTask;
 
 import java.io.File;
+import java.util.Arrays;
 
 public class SettingsActivity extends PreferenceActivity implements ImportReadTrackerFileTask.ResultListener {
   private static final String TAG = SettingsActivity.class.getName();
@@ -128,6 +129,7 @@ public class SettingsActivity extends PreferenceActivity implements ImportReadTr
 
   @Override
   public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    Log.v(TAG, String.format("onRequestPermissionsResult: permissions %s, grantedResults %s", Arrays.toString(permissions), Arrays.toString(grantResults)));
     final boolean didGetPermission = grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED;
     switch(requestCode) {
       case IMPORT_PERMISSION_REQUEST_CODE:
@@ -206,14 +208,21 @@ public class SettingsActivity extends PreferenceActivity implements ImportReadTr
   }
 
   private void importFileOrRequestPermission() {
-    final String requiredPermission = Manifest.permission.READ_EXTERNAL_STORAGE;
-    if (ContextCompat.checkSelfPermission(this, requiredPermission) != PackageManager.PERMISSION_GRANTED) {
+    final String requiredPermission = Manifest.permission.WRITE_EXTERNAL_STORAGE;
+    if (ContextCompat.checkSelfPermission(this, requiredPermission) == PackageManager.PERMISSION_GRANTED) {
+      Log.v(TAG, "has permission");
       new MaterialFilePicker()
           .withActivity(this)
           .withRequestCode(FILE_PICKER_SELECT_FILE_REQUEST_CODE)
           .start();
     } else {
-      ActivityCompat.requestPermissions(this, new String[]{requiredPermission}, IMPORT_PERMISSION_REQUEST_CODE);
+      Log.v(TAG, "Doesn't have permission");
+      if (ActivityCompat.shouldShowRequestPermissionRationale(this, requiredPermission)) {
+        Log.d(TAG, "Need permission");
+      } else {
+        Log.v(TAG, "Requesting permission");
+        ActivityCompat.requestPermissions(this, new String[]{requiredPermission}, IMPORT_PERMISSION_REQUEST_CODE);
+      }
     }
   }
 
@@ -230,16 +239,25 @@ public class SettingsActivity extends PreferenceActivity implements ImportReadTr
     this.progressDialog.dismiss();
     this.progressDialog = null;
     if (result != null) {
+      Log.d(TAG, result.toString());
       // NOTE(christoffer) pluralized translations seem complicated...
       final Resources res = getResources();
       final int totalBooks = result.createdBookCount + result.mergedBookCount;
       final String numBooks = res.getQuantityString(R.plurals.plural_book, totalBooks, totalBooks);
-      final String numNewBooks = res.getQuantityString(R.plurals.plural_book, result.createdBookCount, result.createdBookCount);
-      final String numMergedBook = res.getQuantityString(R.plurals.plural_book, result.mergedBookCount, result.mergedBookCount);
-      final String numQuotes = res.getQuantityString(R.plurals.plural_book, result.createdQuotesCount, result.createdQuotesCount);
-      final String numSessions = res.getQuantityString(R.plurals.plural_book, result.createdSessionCount, result.createdSessionCount);
+      final String numNewBooks = res.getQuantityString(R.plurals.plural_new, result.createdBookCount, result.createdBookCount);
+      final String numMergedBook = res.getQuantityString(R.plurals.plural_merged, result.mergedBookCount, result.mergedBookCount);
+      final String numQuotes = res.getQuantityString(R.plurals.plural_quote, result.createdQuotesCount, result.createdQuotesCount);
+      final String numSessions = res.getQuantityString(R.plurals.plural_session, result.createdSessionCount, result.createdSessionCount);
       final String message = res.getString(R.string.settings_import_book_report, numBooks, numNewBooks, numMergedBook, numQuotes, numSessions);
-      Toast.makeText(SettingsActivity.this, message, Toast.LENGTH_SHORT).show();
+      Toast.makeText(SettingsActivity.this, message, Toast.LENGTH_LONG).show();
+    }
+  }
+
+  @Override public void onImportUpdate(int currentBook, int totalBooks) {
+    if (this.progressDialog != null) {
+      this.progressDialog.setIndeterminate(false);
+      this.progressDialog.setMax(totalBooks);
+      this.progressDialog.setProgress(currentBook);
     }
   }
 }

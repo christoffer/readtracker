@@ -14,13 +14,20 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 
 public class JSONImporter {
   private static final String TAG = JSONImporter.class.getSimpleName();
   private final DatabaseManager mDatabaseManager;
+  private final ProgressListener mProgressListener;
 
-  public JSONImporter(DatabaseManager databaseManager) {
+  public interface ProgressListener {
+    void onProgressUpdate(int currentBook, int totalBooks);
+  }
+
+  public JSONImporter(DatabaseManager databaseManager, ProgressListener listener) {
     mDatabaseManager = databaseManager;
+    mProgressListener = listener;
   }
 
   public static class ImportResultReport {
@@ -28,6 +35,13 @@ public class JSONImporter {
     public int createdBookCount = 0;
     public int createdQuotesCount = 0;
     public int createdSessionCount = 0;
+
+    @Override public String toString() {
+      return String.format(Locale.getDefault(),
+          "merged books: %d, created books: %d, created quotes: %d, created sessions: %d",
+          mergedBookCount, createdBookCount, createdQuotesCount, createdSessionCount
+      );
+    }
   }
 
   /**
@@ -88,8 +102,11 @@ public class JSONImporter {
   private ImportResultReport importAndMergeBooks(List<Book> booksToImport) {
     List<Book> existingBooks = mDatabaseManager.getAll(Book.class);
     ImportResultReport report = new ImportResultReport();
-    for(Book bookToImport : booksToImport) {
+    final int numBooksToImport = booksToImport.size();
+    for(int i = 0; i < numBooksToImport; i++) {
+      Book bookToImport = booksToImport.get(i);
       Book bookToPersist;
+      mProgressListener.onProgressUpdate(i, numBooksToImport);
 
       if(existingBooks.contains(bookToImport)) {
         Book existingBook = existingBooks.get(existingBooks.indexOf(bookToImport));

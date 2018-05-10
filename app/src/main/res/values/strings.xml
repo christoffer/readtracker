@@ -128,23 +128,23 @@
   <string name="settings_import_book_report">%1$s imported (%2$s, %3$s), together with %4$s and %5$s.</string>
   <plurals name="plural_book">
     <item quantity="one">%d book</item>
-    <item quantity="many">%d books</item>
+    <item quantity="other">%d books</item>
   </plurals>
   <plurals name="plural_new">
     <item quantity="one">%d new</item>
-    <item quantity="many">%d new</item>
+    <item quantity="other">%d new</item>
   </plurals>
   <plurals name="plural_merged">
     <item quantity="one">%d merged</item>
-    <item quantity="many">%d merged</item>
+    <item quantity="other">%d merged</item>
   </plurals>
   <plurals name="plural_session">
     <item quantity="one">%d session</item>
-    <item quantity="many">%d sessions</item>
+    <item quantity="other">%d sessions</item>
   </plurals>
   <plurals name="plural_quote">
     <item quantity="one">%d quote</item>
-    <item quantity="many">%d quotes</item>
+    <item quantity="other">%d quotes</item>
   </plurals>
 
   <string name="error_import_failed_read_file">Failed to open %1$s. Maybe you don\'t have access to the file?</string>

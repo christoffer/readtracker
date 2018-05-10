@@ -38,7 +38,7 @@ public class HomeActivity extends BaseActivity {
   private static final int REQUEST_READING_SESSION = 1;
 
   // List of books loaded from the database
-  private List<Book> mBooks = new ArrayList<Book>();
+  private List<Book> mBooks = new ArrayList<>();
 
   @InjectView(R.id.book_list_pager) ViewPager mViewPager;
 
@@ -58,8 +58,6 @@ public class HomeActivity extends BaseActivity {
       Log.d(TAG, "First time opening the app, showing introduction.");
       showIntroduction();
     }
-
-    PagerTabStrip pagerTabStrip = (PagerTabStrip) findViewById(R.id.pager_tab_strip);
 
     resetFragmentAdapter();
     loadBooks();
@@ -206,7 +204,7 @@ public class HomeActivity extends BaseActivity {
     private final DatabaseManager mDatabaseManager;
 
     public LoadCatalogueTask(HomeActivity activity) {
-      mActivity = new WeakReference<HomeActivity>(activity);
+      mActivity = new WeakReference<>(activity);
       mDatabaseManager = ReadTrackerApp.from(activity).getDatabaseManager();
     }
 
