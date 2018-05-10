@@ -46,7 +46,6 @@
       android:paddingBottom="10dp"
       android:paddingLeft="0dp"
       android:paddingRight="0dp"
-      android:background="@drawable/selector_light_background_on_press"
 
       android:drawableLeft="@drawable/icon_back_up"
       android:drawableStart="@drawable/icon_back_up"

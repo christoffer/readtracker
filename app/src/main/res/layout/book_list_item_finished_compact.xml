@@ -29,7 +29,6 @@
     android:layout_toLeftOf="@id/imageCover"
     android:layout_marginTop="-3dp"
     android:singleLine="true"
-    android:textColor="@color/text_color_primary"
     tools:text="Metamorphosis" />
 
   <TextView
@@ -41,7 +40,6 @@
     android:layout_toLeftOf="@id/imageCover"
     android:layout_marginTop="3dp"
     android:singleLine="true"
-    android:textColor="@color/text_color_secondary"
     tools:text="Franz Kafka" />
 
   <TextView
@@ -50,7 +48,6 @@
     android:layout_below="@id/textAuthor"
     android:layout_marginTop="3dp"
     android:textSize="10sp"
-    android:textColor="@color/text_color_secondary"
     tools:text="Finished Nov 13th, 2012" />
 
 </RelativeLayout>

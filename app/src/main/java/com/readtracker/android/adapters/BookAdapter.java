@@ -15,6 +15,7 @@ import com.readtracker.R;
 import com.readtracker.android.activities.HomeActivity;
 import com.readtracker.android.custom_views.SegmentBar;
 import com.readtracker.android.db.Book;
+import com.readtracker.android.support.ColorUtils;
 import com.readtracker.android.support.DrawableGenerator;
 import com.readtracker.android.support.Utils;
 import com.squareup.otto.Subscribe;
@@ -97,10 +98,10 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
     Book book = getItem(position);
     viewHolder.populate(convertView.getContext(), book);
 
-    int backColor = mContext.getResources().getColor(R.color.background);
-    int activeColor = mContext.getResources().getColor(R.color.default_button_color_pressed);
+    int backgroundColor = ColorUtils.getBackgroundColor(convertView.getContext());
+    int activeColor = ColorUtils.getPressedColor(convertView.getContext());
 
-    convertView.setBackgroundDrawable(DrawableGenerator.generateListItemBackground(activeColor, backColor));
+    convertView.setBackgroundDrawable(DrawableGenerator.generateListItemBackground(activeColor, backgroundColor));
     return convertView;
   }
 

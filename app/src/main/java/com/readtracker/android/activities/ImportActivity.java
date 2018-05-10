@@ -22,6 +22,7 @@ import com.readtracker.R;
 import com.readtracker.android.ReadTrackerApp;
 import com.readtracker.android.db.export.ImportException;
 import com.readtracker.android.db.export.JSONImporter;
+import com.readtracker.android.support.ColorUtils;
 
 import java.io.File;
 import java.util.Comparator;
@@ -171,8 +172,15 @@ public class ImportActivity extends BaseActivity {
    * Simple array adapter that presents a list of files in a directory.
    */
   protected static class FileBrowserAdapter extends ArrayAdapter<File> {
+    private final int mPrimaryColor;
+    private final int mSecondaryColor;
+    private final int mDisabledColor;
+
     public FileBrowserAdapter(ImportActivity importActivity) {
       super(importActivity, R.layout.file_list_item);
+      mPrimaryColor = ColorUtils.getPrimaryTextColor(importActivity);
+      mSecondaryColor = ColorUtils.getSecondaryTextColor(importActivity);
+      mDisabledColor = ColorUtils.getDisabledTextColor(importActivity);
       setNotifyOnChange(false);
     }
 
@@ -186,23 +194,21 @@ public class ImportActivity extends BaseActivity {
       int iconResource, textColorResource;
       if(file.isDirectory()) {
         iconResource = R.drawable.icon_folder;
-        textColorResource = R.color.text_color_secondary;
+        textColorResource = mSecondaryColor;
       } else if(file.isFile()){
         iconResource = R.drawable.icon_file;
-        textColorResource = R.color.text_color_primary;
+        textColorResource = mPrimaryColor;
       } else {
         // Assume unreadable file
         iconResource = R.drawable.icon_file;
-        textColorResource = R.color.text_color_secondary_disabled;
+        textColorResource = mDisabledColor;
       }
 
       fileListItem.setCompoundDrawablesWithIntrinsicBounds(iconResource, 0, 0, 0);
       if(Build.VERSION.SDK_INT > 23) {
-        final Resources.Theme theme = getContext().getTheme();
-        fileListItem.setTextColor(getContext().getResources().getColor(textColorResource, theme));
+        fileListItem.setTextColor(textColorResource);
       } else {
-        //noinspection deprecation
-        fileListItem.setTextColor(getContext().getResources().getColor(textColorResource));
+        fileListItem.setTextColor(textColorResource);
       }
 
       return fileListItem;

@@ -48,7 +48,7 @@
         android:id="@+id/textSummary"
         android:textSize="12sp"
         android:layout_marginBottom="12dp"
-        android:textColor="@color/text_color_secondary" />
+        />
 
       <com.readtracker.android.custom_views.SegmentBar
         android:id="@+id/segmentBar"
@@ -64,7 +64,7 @@
         android:id="@+id/textTimeLeft"
         android:textSize="12sp"
         android:layout_marginBottom="12dp"
-        android:textColor="@color/text_color_secondary" />
+        />
 
       <com.readtracker.android.custom_views.SessionView
         android:id="@+id/sessionView"

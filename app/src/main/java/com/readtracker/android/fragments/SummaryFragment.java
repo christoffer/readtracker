@@ -16,6 +16,7 @@ import com.readtracker.android.custom_views.SegmentBar;
 import com.readtracker.android.custom_views.SessionView;
 import com.readtracker.android.db.Book;
 import com.readtracker.android.db.Session;
+import com.readtracker.android.support.ColorUtils;
 import com.readtracker.android.support.Utils;
 import com.squareup.otto.Subscribe;
 
@@ -127,7 +128,8 @@ public class SummaryFragment extends BaseFragment {
       mTextSummary.setText(summary);
       mSegmentBar.setVisibility(View.GONE);
     } else {
-      mTextSummary.setTextColor(getResources().getColor(R.color.text_color_primary));
+      final int primaryTextColor = ColorUtils.getPrimaryTextColor(getContext());
+      mTextSummary.setTextColor(primaryTextColor);
       final String summary = String.format("Reading for %s over %d sessions.", Utils.longCoarseHumanTimeFromSeconds(secondsSpent), sessionCount);
       mTextSummary.setText(summary);
     }

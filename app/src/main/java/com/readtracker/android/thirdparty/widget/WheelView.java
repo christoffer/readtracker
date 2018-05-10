@@ -488,7 +488,7 @@ public class WheelView extends View {
       calliperPaint = p;
     }
 
-    setBackgroundResource(R.drawable.wheel_bg);
+    //setBackgroundResource(R.drawable.wheel_bg);
   }
 
   /**

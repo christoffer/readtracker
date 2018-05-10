@@ -27,6 +27,7 @@ import com.readtracker.android.custom_views.PauseableSpinAnimation;
 import com.readtracker.android.custom_views.TimeSpinner;
 import com.readtracker.android.db.Book;
 import com.readtracker.android.db.Session;
+import com.readtracker.android.support.ColorUtils;
 import com.readtracker.android.support.DrawableGenerator;
 import com.readtracker.android.support.SessionTimer;
 import com.readtracker.android.support.SimpleAnimationListener;
@@ -299,7 +300,8 @@ public class ReadFragment extends BaseFragment {
     }
 
     ArrayWheelAdapter<String> adapter = new ArrayWheelAdapter<String>(getActivity(), labels);
-    adapter.setTextColor(getResources().getColor(R.color.text_color_primary));
+    final int textColor = ColorUtils.getPrimaryTextColor(getActivity());
+    adapter.setTextColor(textColor);
     adapter.setTypeFace(Typeface.DEFAULT);
     adapter.setTypeStyle(Typeface.NORMAL);
     float fontSizePixels = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 12, getResources().getDisplayMetrics());

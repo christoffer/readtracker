@@ -12,8 +12,8 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
 
-import com.readtracker.R;
 import com.readtracker.android.db.Session;
+import com.readtracker.android.support.ColorUtils;
 import com.readtracker.android.support.Utils;
 
 import java.util.Arrays;
@@ -194,17 +194,19 @@ public class SessionView extends View {
     mNodePaint.setColor(mColor);
     mNodePaint.setAntiAlias(true);
 
+    int primaryColor = ColorUtils.getPrimaryTextColor(this.getContext());
     mPrimaryTextPaint = new Paint();
     mPrimaryTextPaint.setTypeface(Typeface.DEFAULT);
     mPrimaryTextPaint.setTextSize(convertDPtoPX(14));
-    mPrimaryTextPaint.setColor(getResources().getColor(R.color.text_color_primary));
+    mPrimaryTextPaint.setColor(primaryColor);
     mPrimaryTextPaint.setSubpixelText(true);
     mPrimaryTextPaint.setAntiAlias(true);
 
+    int secondaryColor = ColorUtils.getSecondaryTextColor(this.getContext());
     mSecondaryTextPaint = new Paint();
     mSecondaryTextPaint.setTypeface(Typeface.DEFAULT);
     mSecondaryTextPaint.setTextSize(convertDPtoPX(12));
-    mSecondaryTextPaint.setColor(getResources().getColor(R.color.text_color_secondary));
+    mSecondaryTextPaint.setColor(secondaryColor);
     mSecondaryTextPaint.setSubpixelText(true);
     mPrimaryTextPaint.setAntiAlias(true);
 

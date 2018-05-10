@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.readtracker.R;
 import com.readtracker.android.db.Quote;
+import com.readtracker.android.support.ColorUtils;
 import com.readtracker.android.support.DrawableGenerator;
 import com.readtracker.android.support.Utils;
 
@@ -43,24 +44,34 @@ public class QuoteAdapter extends ArrayAdapter<Quote> {
 
   @Override
   public View getView(int position, View convertView, ViewGroup parent) {
-    Quote quote = getItem(position);
+    final Quote quote = getItem(position);
 
     if(convertView == null) {
       convertView = LayoutInflater.from(getContext()).inflate(R.layout.quote_list_item, parent, false);
     }
 
-    TextView textContent = (TextView) convertView.findViewById(R.id.textContent);
-    textContent.setText(quote.getContent().trim());
-    final long contentLength = quote.getContent() == null ? 0 : quote.getContent().length();
-    textContent.setTextSize(getTextSizeForContentLength(contentLength));
+    final TextView textContent = (TextView) convertView.findViewById(R.id.textContent);
+    final TextView textDate = (TextView) convertView.findViewById(R.id.textDate);
 
-    TextView textDate = (TextView) convertView.findViewById(R.id.textDate);
+    if (quote == null) {
+      textContent.setText("N/A");
+      textContent.setTextSize(getTextSizeForContentLength(0));
+      textDate.setText("N/A");
+    } else {
+      final String content = quote.getContent();
+      if (content == null) {
+        textContent.setTextSize(getTextSizeForContentLength(0));
+        textContent.setText("N/A");
+      } else {
+        textContent.setTextSize(getTextSizeForContentLength(content.length()));
+        textContent.setText(content);
+      }
+      final long now = System.currentTimeMillis();
+      final String metadata = Utils.humanPastTimeFromTimestamp(quote.getAddTimestampMs(), now);
+      textDate.setText(metadata);
+    }
 
-    final long now = System.currentTimeMillis();
-    String metadata = Utils.humanPastTimeFromTimestamp(quote.getAddTimestampMs(), now);
-
-    textDate.setText(metadata);
-    final int backgroundColor = getContext().getResources().getColor(R.color.background);
+    final int backgroundColor = ColorUtils.getBackgroundColor(convertView.getContext());
     final int itemColor = mColor;
     convertView.setBackgroundDrawable(DrawableGenerator.generateListItemBackground(itemColor, backgroundColor));
     return convertView;

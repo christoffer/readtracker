@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import com.readtracker.R;
+import com.readtracker.android.support.ColorUtils;
 import com.readtracker.android.thirdparty.widget.OnWheelChangedListener;
 import com.readtracker.android.thirdparty.widget.WheelView;
 import com.readtracker.android.thirdparty.widget.adapters.AbstractWheelTextAdapter;
@@ -107,7 +108,8 @@ public class ProgressPicker extends LinearLayout {
   }
 
   private void configureWheelAdapterStyle(AbstractWheelTextAdapter wheelAdapter) {
-    wheelAdapter.setTextColor(getResources().getColor(R.color.text_color_primary));
+    final int textColor = ColorUtils.getPrimaryTextColor(getContext());
+    wheelAdapter.setTextColor(textColor);
     wheelAdapter.setTypeFace(Typeface.DEFAULT);
     wheelAdapter.setTypeStyle(Typeface.NORMAL);
   }

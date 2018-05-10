@@ -9,25 +9,25 @@
 
   <TextView
     android:id="@+id/textContent"
-    android:layout_height="wrap_content"
     android:layout_width="fill_parent"
-    android:textColor="@color/text_color_primary"
-    android:textSize="14sp"
-    tools:text="a small piece of the book, and an interesting piece of content, that has been lifted up into a higher level of visiblity to provide a context for discussion"
+    android:layout_height="wrap_content"
+    android:paddingBottom="6dp"
     android:paddingLeft="12dp"
-    android:paddingTop="12dp"
     android:paddingRight="12dp"
-    android:paddingBottom="6dp" />
+    android:paddingTop="12dp"
+    android:textColor="?android:attr/textColorPrimary"
+    android:textSize="14sp"
+    tools:text="a small piece of the book, and an interesting piece of content, that has been lifted up into a higher level of visiblity to provide a context for discussion"/>
 
   <TextView
     android:id="@+id/textDate"
-    android:layout_height="wrap_content"
     android:layout_width="fill_parent"
-    android:textColor="@color/text_color_secondary"
-    tools:textSize="12sp"
+    android:layout_height="wrap_content"
+    android:paddingLeft="12dp"
+    android:paddingRight="12dp"
+    android:textColor="?android:attr/textColorSecondary"
     android:textStyle="italic"
     tools:text="Nov 11th, 2012"
-    android:paddingLeft="12dp"
-    android:paddingRight="12dp" />
+    tools:textSize="12sp"/>
 
 </LinearLayout>

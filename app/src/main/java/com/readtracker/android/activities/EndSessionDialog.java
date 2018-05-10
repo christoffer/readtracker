@@ -60,7 +60,7 @@ public class EndSessionDialog extends DialogFragment implements View.OnClickList
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
-    setStyle(STYLE_NO_TITLE, R.style.ReadTrackerDialog);
+    setStyle(STYLE_NO_TITLE, R.style.ReadTrackerDialogTheme);
 
     mColor = getArguments().getInt(ARG_COLOR);
 

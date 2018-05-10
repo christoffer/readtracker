@@ -25,7 +25,6 @@
     android:layout_toLeftOf="@id/imageCover"
     android:layout_width="fill_parent"
     android:singleLine="true"
-    android:textColor="@color/text_color_primary"
     tools:text="Metamorphosis" />
 
   <TextView
@@ -35,7 +34,6 @@
     android:layout_below="@id/textTitle"
     android:layout_toLeftOf="@id/imageCover"
     android:layout_width="fill_parent"
-    android:textColor="@color/text_color_secondary"
     android:singleLine="true"
     tools:text="Franz Kafka" />
 
