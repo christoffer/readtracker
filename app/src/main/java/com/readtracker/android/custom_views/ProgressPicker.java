@@ -1,26 +1,26 @@
 package com.readtracker.android.custom_views;
 
 import android.content.Context;
-import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.NumberPicker;
 
 import com.readtracker.R;
-import com.readtracker.android.support.ColorUtils;
-import com.readtracker.android.thirdparty.widget.OnWheelChangedListener;
-import com.readtracker.android.thirdparty.widget.WheelView;
-import com.readtracker.android.thirdparty.widget.adapters.AbstractWheelTextAdapter;
-import com.readtracker.android.thirdparty.widget.adapters.NumericWheelAdapter;
-import com.readtracker.android.thirdparty.widget.adapters.PercentWheelAdapter;
+
+import java.util.Locale;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
+/**
+ * ProgressPicker is a view that lest the user select a page or percent indicating how much progress
+ * they made in a reading session.
+ */
 public class ProgressPicker extends LinearLayout {
 
-  @InjectView(R.id.position_wheel) WheelView mPositionWheel;
+  @InjectView(R.id.position_picker) NumberPicker mPositionPicker;
   private OnPositionChangeListener mListener;
 
   @SuppressWarnings("UnusedDeclaration")
@@ -40,11 +40,19 @@ public class ProgressPicker extends LinearLayout {
    */
   public float getPosition() {
 
-    final int currentPage = mPositionWheel.getCurrentItem();
-    final int totalPages = mPositionWheel.getViewAdapter().getItemsCount() - 1;
+    final int currentPage = mPositionPicker.getValue();
+    final int totalPages = mPositionPicker.getMaxValue() - 1;
 
     return totalPages > 0 ? (currentPage / (float) totalPages) : 0f;
   }
+
+  /**
+   * Returns true if the position is on the last position possible (i.e. end of the book)
+   */
+  public boolean isOnLastPosition() {
+    return mPositionPicker.getValue() == mPositionPicker.getMaxValue();
+  }
+
 
   /**
    * Sets the listener to get notified about position changes.
@@ -58,8 +66,22 @@ public class ProgressPicker extends LinearLayout {
    * and a page count (may be null, in which case percentage mode is used).
    */
   public void setPositionAndPageCount(Float position, Float pageCount) {
-    setPageCount(pageCount);
-    setPosition(position);
+    if (pageCount == null) {
+      // Make the more than questionable assumption that passing `null` for pageCount
+      // means we're tracking progress in percent.
+      // TODO(christoffer) Refactor this to avoid hacks like this
+      setupPercentTrackingMode();
+    } else {
+      setupPageTrackingMode(pageCount.intValue());
+    }
+
+    mPositionPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+      @Override public void onValueChange(NumberPicker picker, int oldValue, int newValue) {
+        if(mListener != null) mListener.onChangeProgress(newValue);
+      }
+    });
+
+    updatePosition(position);
   }
 
   private void initializeView() {
@@ -67,61 +89,39 @@ public class ProgressPicker extends LinearLayout {
     ButterKnife.inject(this, root);
   }
 
-  /**
-   * Sets the page count of the wheel. If pageCount is null, percentage mode is used.
-   */
-  private void setPageCount(Float pageCount) {
-    final AbstractWheelTextAdapter adapter;
-    if(pageCount == null) {
-      adapter = new PercentWheelAdapter(getContext());
-    } else {
-      adapter = new NumericWheelAdapter(getContext(), 0, pageCount.intValue());
-    }
-
-    setupWheelView(mPositionWheel, adapter);
+  private void setupPageTrackingMode(int pageCount) {
+    mPositionPicker.setMinValue(0);
+    mPositionPicker.setMaxValue(pageCount);
   }
 
-  private void setPosition(Float position) {
-    int itemIndex = 0;
+  private void setupPercentTrackingMode() {
+    // Use percent mode, let the user select progress based on 0.1% increments
+    String[] values = new String[1001];
+    final Locale locale = Locale.getDefault();
+    for (int i  = 0; i < 1001; i++) {
+      values[i] = String.format(locale, "%.2f%%", (float)i / 100.0f);
+    }
+    mPositionPicker.setMinValue(0);
+    mPositionPicker.setMaxValue(1000);
+    mPositionPicker.setDisplayedValues(values);
+  }
+
+  /**
+   * Update the position based on a ratio between 0 - 1.0.
+   * This assumes that the position picker range has been initialized.
+   */
+  private void updatePosition(Float position) {
+    int value = 0;
     if(position != null) {
-      itemIndex = (int) (mPositionWheel.getViewAdapter().getItemsCount() * position);
+      value = (int) (mPositionPicker.getMaxValue() * position);
     }
-    mPositionWheel.setCurrentItem(itemIndex);
-  }
-
-  /**
-   * Setup a wheel view with a numeric wheel adapter and the default style
-   */
-  private void setupWheelView(WheelView wheelView, AbstractWheelTextAdapter adapter) {
-    configureWheelAdapterStyle(adapter);
-    wheelView.setViewAdapter(adapter);
-
-    wheelView.setVisibleItems(3);
-    wheelView.setCalliperMode(WheelView.CalliperMode.NO_CALLIPERS);
-
-    wheelView.addChangingListener(new OnWheelChangedListener() {
-      @Override
-      public void onChanged(WheelView wheel, int oldValue, int newValue) {
-        if(mListener != null) mListener.onChangeProgress(newValue);
-      }
-    });
-  }
-
-  private void configureWheelAdapterStyle(AbstractWheelTextAdapter wheelAdapter) {
-    final int textColor = ColorUtils.getPrimaryTextColor(getContext());
-    wheelAdapter.setTextColor(textColor);
-    wheelAdapter.setTypeFace(Typeface.DEFAULT);
-    wheelAdapter.setTypeStyle(Typeface.NORMAL);
-  }
-
-  public boolean isOnLastPosition() {
-    return !(getPosition() < 1f);
+    mPositionPicker.setValue(value);
   }
 
   /**
    * Callback for listening to position change on the wheel view.
    */
-  public static interface OnPositionChangeListener {
-    public void onChangeProgress(int newPage);
+  public interface OnPositionChangeListener {
+    void onChangeProgress(int newPage);
   }
 }
