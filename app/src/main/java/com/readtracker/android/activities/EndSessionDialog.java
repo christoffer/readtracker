@@ -11,6 +11,7 @@ import android.widget.Button;
 import com.readtracker.R;
 import com.readtracker.android.custom_views.ProgressPicker;
 import com.readtracker.android.db.Book;
+import com.readtracker.android.support.ColorUtils;
 import com.readtracker.android.support.DrawableGenerator;
 import com.readtracker.android.support.Utils;
 import com.readtracker.android.thirdparty.SafeViewFlipper;
@@ -85,6 +86,7 @@ public class EndSessionDialog extends DialogFragment implements View.OnClickList
 
     mProgressPicker.setPositionAndPageCount(mSelectedPosition, mPageCount);
     mProgressPicker.setOnPositionChangeListener(this);
+    mProgressPicker.setColor(mColor);
 
     toggleFinishButton(mSelectedPosition == 1f);
 

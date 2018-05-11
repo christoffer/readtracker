@@ -25,6 +25,7 @@ import com.readtracker.android.activities.BookActivity;
 import com.readtracker.android.custom_views.PauseableSpinAnimation;
 import com.readtracker.android.custom_views.TimeSpinner;
 import com.readtracker.android.db.Book;
+import com.readtracker.android.support.ColorUtils;
 import com.readtracker.android.support.DrawableGenerator;
 import com.readtracker.android.support.SessionTimer;
 import com.readtracker.android.support.SimpleAnimationListener;
@@ -167,6 +168,7 @@ public class ReadFragment extends BaseFragment {
     final int bookColor = Utils.calculateBookColor(mBook);
     mTimeSpinner.setColor(bookColor);
     mTimeSpinner.setMaxSize(500);
+    ColorUtils.setNumberPickerDividerColorHack(mDurationPicker, bookColor);
     DrawableGenerator.applyButtonBackground(bookColor, mStartButton, mPauseButton, mDoneButton);
     mLastPositionText.setText(getLastPositionDescription());
     bindEvents();

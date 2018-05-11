@@ -8,6 +8,7 @@ import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 
 import com.readtracker.R;
+import com.readtracker.android.support.ColorUtils;
 
 import java.util.Locale;
 
@@ -82,6 +83,12 @@ public class ProgressPicker extends LinearLayout {
     });
 
     updatePosition(position);
+  }
+
+  public void setColor(int color) {
+    if (mPositionPicker != null) {
+      ColorUtils.setNumberPickerDividerColorHack(mPositionPicker, color);
+    }
   }
 
   private void initializeView() {

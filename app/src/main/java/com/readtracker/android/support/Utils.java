@@ -117,7 +117,7 @@ public class Utils {
   public static int calculateBookColor(Book book) {
     final String colorKey = book.getTitle() + book.getAuthor();
     float color = 360 * (Math.abs(colorKey.hashCode()) / (float) Integer.MAX_VALUE);
-    return Color.HSVToColor(new float[]{color, 0.4f, 0.5f});
+    return Color.HSVToColor(new float[]{color, 0.8f, 1.0f});
   }
 
   /** Returns the sessions a sorted stops list for the segmented progress bar. */

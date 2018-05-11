@@ -140,6 +140,7 @@ public class AddQuoteActivity extends BookBaseActivity {
       mProgressPicker.setVisibility(View.GONE);
       findViewById(R.id.textLabelEnterPosition).setVisibility(View.GONE);
     }
+    mProgressPicker.setColor(color);
 
     bindButtonEvents();
   }
