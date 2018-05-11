@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.widget.SwitchCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -14,6 +13,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -51,7 +51,7 @@ public class AddBookActivity extends BookBaseActivity implements GoogleBookSearc
   @InjectView(R.id.author_edit) EditText mAuthorEdit;
   @InjectView(R.id.page_count_edit) EditText mPageCountEdit;
   @InjectView(R.id.add_or_save_button) Button mAddOrSaveButton;
-  @InjectView(R.id.page_pct_toggle) SwitchCompat mPagePctToggle;
+  @InjectView(R.id.track_using_pages) CheckBox mTrackUsingPages;
   @InjectView(R.id.book_cover_image) ImageButton mCoverImageButton;
   @InjectView(R.id.find_cover_button) TextView mFindCoverButton;
 
@@ -157,17 +157,10 @@ public class AddBookActivity extends BookBaseActivity implements GoogleBookSearc
       }
     });
 
-    mPagePctToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+    mTrackUsingPages.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
       @Override
       public void onCheckedChanged(CompoundButton compoundButton, boolean isInPageMode) {
-        mPageCountEdit.setEnabled(isInPageMode);
-        if(isInPageMode) {
-          final String rememberedValue = (String) mPageCountEdit.getTag();
-          mPageCountEdit.setText(rememberedValue == null ? "0" : rememberedValue);
-        } else {
-          mPageCountEdit.setTag(mPageCountEdit.getText().toString());
-          mPageCountEdit.setText(getText(R.string.general_n_a));
-        }
+        setTrackUsingPages(isInPageMode);
       }
     });
 
@@ -198,6 +191,23 @@ public class AddBookActivity extends BookBaseActivity implements GoogleBookSearc
     });
   }
 
+  private void setTrackUsingPages(boolean shouldTrackUsingPages) {
+    boolean stateDidChange = false;
+
+    if (mTrackUsingPages != null) {
+      stateDidChange = mTrackUsingPages.isChecked() != shouldTrackUsingPages;
+      mTrackUsingPages.setChecked(shouldTrackUsingPages);
+    }
+    if (mPageCountEdit != null) {
+      mPageCountEdit.setEnabled(shouldTrackUsingPages);
+      mPageCountEdit.setVisibility(shouldTrackUsingPages ? View.VISIBLE : View.INVISIBLE);
+
+      if(stateDidChange) {
+        mPageCountEdit.requestFocus();
+      }
+    }
+  }
+
   private void initializeForAddingBook(Intent intent) {
     mAddOrSaveButton.setText(R.string.add_book_add);
     mTitleEdit.setText(intent.getStringExtra(IntentKeys.TITLE));
@@ -217,12 +227,9 @@ public class AddBookActivity extends BookBaseActivity implements GoogleBookSearc
     if(book.hasPageNumbers()) {
       int pageCount = (int) ((float) book.getPageCount());
       mPageCountEdit.setText(String.valueOf(pageCount));
-      mPageCountEdit.setEnabled(true);
-      mPagePctToggle.setChecked(true);
+      setTrackUsingPages(true);
     } else {
-      mPageCountEdit.setText(getString(R.string.general_n_a));
-      mPageCountEdit.setEnabled(false);
-      mPagePctToggle.setChecked(false);
+      setTrackUsingPages(false);
     }
 
     loadCoverFromURL(book.getCoverImageUrl());
@@ -291,7 +298,7 @@ public class AddBookActivity extends BookBaseActivity implements GoogleBookSearc
     book.setAuthor(newAuthor);
     book.setCoverImageUrl(mCoverURL);
 
-    if(mPagePctToggle.isChecked()) {
+    if(mTrackUsingPages.isChecked()) {
       int discretePages = Integer.parseInt(mPageCountEdit.getText().toString());
       book.setPageCount((float) discretePages);
     } else {
@@ -320,7 +327,7 @@ public class AddBookActivity extends BookBaseActivity implements GoogleBookSearc
     }
 
     // Validate a reasonable amount of page numbers
-    if(mPagePctToggle.isChecked()) {
+    if(mTrackUsingPages.isChecked()) {
       int pageCount = 0;
 
       try {

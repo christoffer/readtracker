@@ -51,7 +51,7 @@
   <string name="add_book_missing_author">Please enter the author</string>
   <string name="add_book_missing_page_count">Please enter the number of pages or toggle percent tracking</string>
   <string name="add_book_saving_book">Saving book…</string>
-  <string name="add_book_pages">Pages</string>
+  <string name="add_book_track_using_pages">Track progress using page count</string>
   <string name="add_book_delete">Delete</string>
   <string name="add_book_confirm_delete">Really delete %1$s?</string>
   <string name="add_book_delete_explanation">This will delete the book and the entire reading history from the device.\n\nThere is no way to undo this operation.</string>

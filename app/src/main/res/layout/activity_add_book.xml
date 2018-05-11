@@ -1,21 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_height="fill_parent"
-    android:layout_width="fill_parent"
-    android:fillViewport="true">
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:fillViewport="true">
 
   <LinearLayout
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:padding="12dp"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="12dp">
 
     <Button
       android:id="@+id/find_cover_button"
       style="@style/non_primary_button"
       android:layout_marginTop="8dp"
-      android:text="@string/add_book_find_info_on_google_books" />
+      android:text="@string/add_book_find_info_on_google_books"/>
 
     <ImageButton
       android:id="@+id/book_cover_image"
@@ -23,59 +24,52 @@
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_gravity="center"
+      android:contentDescription="@string/add_book_cover_button_content"
+      android:longClickable="true"
       android:padding="16dp"
       android:src="@android:drawable/ic_menu_gallery"
-      android:longClickable="true"
-      android:contentDescription="@string/add_book_cover_button_content"
       />
 
     <EditText
       android:id="@+id/title_edit"
       style="@style/default_input_field"
-      android:layout_marginTop="8dp"
       android:layout_marginBottom="12dp"
-      android:hint="@string/general_title" />
+      android:layout_marginTop="8dp"
+      android:hint="@string/general_title"/>
 
     <EditText
       android:id="@+id/author_edit"
       style="@style/default_input_field"
-      android:hint="@string/general_author" />
+      android:hint="@string/general_author"/>
 
-    <LinearLayout
-      android:layout_width="fill_parent"
+    <CheckBox
+      android:id="@+id/track_using_pages"
+      android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:layout_marginTop="12dp"
-      android:layout_marginBottom="12dp"
-      android:gravity="center_vertical">
+      android:layout_marginTop="18dp"
+      android:checked="true"
+      android:text="@string/add_book_track_using_pages"/>
 
-      <EditText
-        android:id="@+id/page_count_edit"
-        style="@style/centered_number_input_field"
-        android:layout_width="fill_parent"
-        android:layout_weight="1"
-        android:ellipsize="end"
-        android:gravity="center_horizontal"
-        android:hint="123"
-        android:inputType="number"
-        android:paddingLeft="24dp"
-        android:paddingRight="24dp"
-        android:textSize="30sp"/>
-
-      <android.support.v7.widget.SwitchCompat
-        android:id="@+id/page_pct_toggle"
-        android:layout_height="wrap_content"
-        android:layout_width="fill_parent"
-        android:layout_weight="1"
-        android:text="@string/add_book_pages"
-        android:checked="true" />
-
-    </LinearLayout>
+    <EditText
+      android:id="@+id/page_count_edit"
+      style="@style/centered_number_input_field"
+      android:layout_width="match_parent"
+      android:layout_height="62dp"
+      android:ellipsize="end"
+      android:gravity="center_horizontal"
+      android:hint="123"
+      android:inputType="number"
+      android:paddingLeft="24dp"
+      android:paddingRight="24dp"
+      android:textSize="30sp"
+      tools:ignore="HardcodedText"
+      />
 
     <Button
       android:id="@+id/add_or_save_button"
       style="@style/default_button"
       android:layout_marginTop="24dp"
-      android:text="@string/add_book_add" />
+      android:text="@string/add_book_add"/>
 
   </LinearLayout>
 </ScrollView>
