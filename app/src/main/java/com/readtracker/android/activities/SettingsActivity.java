@@ -1,19 +1,20 @@
 package com.readtracker.android.activities;
 
 import android.Manifest;
+import android.app.DownloadManager;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -47,15 +48,21 @@ public class SettingsActivity extends PreferenceActivity implements ImportReadTr
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    // TODO Fix deprecation
+    //noinspection deprecation
     addPreferencesFromResource(R.xml.settings);
 
     try {
       String versionName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+      // TODO Fix deprecation
+      //noinspection deprecation
       Preference versionPreference = findPreference(ABOUT_VERSION);
       versionPreference.setSummary(versionName);
     } catch(PackageManager.NameNotFoundException ignored) {
     }
 
+    // TODO Fix deprecation
+    //noinspection deprecation
     Preference legalPreference = findPreference(ABOUT_LEGAL);
     legalPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
       @Override
@@ -67,6 +74,8 @@ public class SettingsActivity extends PreferenceActivity implements ImportReadTr
       }
     });
 
+    // TODO Fix deprecation
+    //noinspection deprecation
     Preference icons8 = findPreference(ICONS8);
     icons8.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
       @Override public boolean onPreferenceClick(Preference preference) {
@@ -76,6 +85,8 @@ public class SettingsActivity extends PreferenceActivity implements ImportReadTr
       }
     });
 
+    // TODO Fix deprecation
+    //noinspection deprecation
     final CheckBoxPreference compactReadingList = (CheckBoxPreference) findPreference(SETTINGS_COMPACT_FINISH_LIST);
     compactReadingList.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
       @Override
@@ -87,6 +98,8 @@ public class SettingsActivity extends PreferenceActivity implements ImportReadTr
       }
     });
 
+    // TODO Fix deprecation
+    //noinspection deprecation
     final Preference importData = findPreference(IMPORT_JSON);
     importData.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
       @Override public boolean onPreferenceClick(Preference preference) {
@@ -95,6 +108,8 @@ public class SettingsActivity extends PreferenceActivity implements ImportReadTr
       }
     });
 
+    // TODO Fix deprecation
+    //noinspection deprecation
     final Preference exportData = findPreference(EXPORT_JSON);
     exportData.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
       @Override public boolean onPreferenceClick(Preference preference) {
@@ -147,82 +162,57 @@ public class SettingsActivity extends PreferenceActivity implements ImportReadTr
     }
   }
 
-  private void showSendIntentForFile(File exportFile) {
-    Log.d(TAG, String.format("Showing export for file %s", exportFile));
-    try {
-      final Uri uri = FileProvider.getUriForFile(this, "com.readtracker.fileprovider", exportFile);
-      final Intent exportIntent = new Intent(Intent.ACTION_SEND);
-      // NOTE(christoffer) Use text/plain instead of something JSON specific since there's a lot more
-      // handlers that can handle sending plain text.
-      exportIntent.putExtra(Intent.EXTRA_STREAM, uri);
-      exportIntent.setType("text/plain");
-      exportIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-      startActivity(Intent.createChooser(exportIntent, getString(R.string.settings_export_json_save_data)));
-    } catch(IllegalArgumentException ex) {
-      Log.e(TAG, String.format("Failed to create file URI for exported file %s, error: %s", exportFile, ex.toString()));
-      Toast.makeText(SettingsActivity.this, R.string.settings_export_failed, Toast.LENGTH_SHORT).show();
-    }
-  }
-
-  /**
-   * Writes the JSON export data to a directory that is whitelisted for FileProvider.
-   *
-   * @return the exported File if successful, Null otherwise.
-   */
-  private File exportDataToFileProviderDir(JSONExporter jsonExporter) {
-    // NOTE(christoffer) Path below needs to be declared in @xml/filepaths
-    File tmpCacheDir = getCacheDir();
-    if(!tmpCacheDir.exists() || !tmpCacheDir.canWrite()) {
-      Log.e(TAG, String.format("Couldn't get a writable cache dir for writing the exported data (%s, exist: %b, write: %b", tmpCacheDir, tmpCacheDir.exists(), tmpCacheDir.canWrite()));
-      return null;
-    }
-
-    File fileProviderDir = new File(tmpCacheDir, "exports");
-    if (!fileProviderDir.exists()) {
-      final boolean didCreate = fileProviderDir.mkdirs();
-      if (!didCreate) {
-        Log.e(TAG, "Failed to create file exporter directory in cacheDir");
-        return null;
-      }
-    }
-
-    final File exportedJsonFile = jsonExporter.exportAllBooksToDir(fileProviderDir);
-    if (exportedJsonFile == null || !exportedJsonFile.exists()) {
-      Log.e(TAG, String.format("Failed to write intermediary JSON export file. File was not created. exportedJSONFile: %s, tmpCacheDir: %s", exportedJsonFile, fileProviderDir));
-      return null;
-    }
-
-    return exportedJsonFile;
-  }
-
   private void exportFilesOrRequestPermission() {
-    // TODO ask for permission
-    final JSONExporter jsonExporter = JSONExporter.from(SettingsActivity.this);
-    File exportedDataFile = exportDataToFileProviderDir(jsonExporter);
+    final String requiredPermission = Manifest.permission.WRITE_EXTERNAL_STORAGE;
+    if (ContextCompat.checkSelfPermission(this, requiredPermission) == PackageManager.PERMISSION_GRANTED) {
+      Log.d(TAG, "Have permission for writing external storage");
 
-    if(exportedDataFile == null) {
-      Toast.makeText(SettingsActivity.this, R.string.settings_export_failed, Toast.LENGTH_SHORT).show();
+      final boolean isExternalStorageWritable = Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState());
+      if (!isExternalStorageWritable) {
+        Log.d(TAG, "external storage not mounted as writable");
+        Toast.makeText(this, R.string.settings_export_need_external_media, Toast.LENGTH_LONG).show();
+        return;
+      }
+
+      final JSONExporter jsonExporter = JSONExporter.from(this);
+      File exportToDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+
+      final File exportedJsonFile = jsonExporter.exportAllBooksToDir(exportToDir);
+      if (exportedJsonFile == null || !exportedJsonFile.exists()) {
+        Log.e(TAG, String.format("Failed to write intermediary JSON export file. File was not created. exportedJSONFile: %s, exportToDir: %s", exportedJsonFile, exportToDir));
+        Toast.makeText(this, R.string.settings_export_failed, Toast.LENGTH_LONG).show();
+        return;
+      }
+
+      // File written to disk. Attempt to add it to the download manager so the user can find it
+      // easily.
+      DownloadManager downloadManager = (DownloadManager)getSystemService(DOWNLOAD_SERVICE);
+      if (downloadManager == null) {
+        Log.w(TAG, "Unexpectedly got a null DownloadManager");
+      } else {
+        final String filename = exportedJsonFile.getName();
+        final String filepath = exportedJsonFile.getAbsolutePath();
+        final long fileLength = exportedJsonFile.length();
+        downloadManager.addCompletedDownload(filename, filename, true, "application/json", filepath, fileLength, true);
+      }
+      Toast.makeText(SettingsActivity.this, R.string.settings_export_success, Toast.LENGTH_SHORT).show();
     } else {
-      showSendIntentForFile(exportedDataFile);
+      Log.d(TAG, "Doesn't have permission for writing external storage");
+      ActivityCompat.requestPermissions(this, new String[]{requiredPermission}, EXPORT_PERMISSION_REQUEST_CODE);
     }
   }
 
   private void importFileOrRequestPermission() {
-    final String requiredPermission = Manifest.permission.WRITE_EXTERNAL_STORAGE;
+    final String requiredPermission = Manifest.permission.READ_EXTERNAL_STORAGE;
     if (ContextCompat.checkSelfPermission(this, requiredPermission) == PackageManager.PERMISSION_GRANTED) {
-      Log.v(TAG, "has permission");
+      Log.v(TAG, "Have permission for accessing external storage");
       new MaterialFilePicker()
           .withActivity(this)
           .withRequestCode(FILE_PICKER_SELECT_FILE_REQUEST_CODE)
           .start();
     } else {
-      Log.v(TAG, "Doesn't have permission");
-      if (ActivityCompat.shouldShowRequestPermissionRationale(this, requiredPermission)) {
-        Log.d(TAG, "Need permission");
-      } else {
-        Log.v(TAG, "Requesting permission");
-        ActivityCompat.requestPermissions(this, new String[]{requiredPermission}, IMPORT_PERMISSION_REQUEST_CODE);
-      }
+      Log.v(TAG, "Doesn't have permission for accessing external storage");
+      ActivityCompat.requestPermissions(this, new String[]{requiredPermission}, IMPORT_PERMISSION_REQUEST_CODE);
     }
   }
 

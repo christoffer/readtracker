@@ -19,16 +19,6 @@
     android:name=".android.ReadTrackerApp"
     android:theme="@style/ReadTrackerTheme">
 
-    <provider
-      android:name="android.support.v4.content.FileProvider"
-      android:authorities="com.readtracker.fileprovider"
-      android:grantUriPermissions="true"
-      android:exported="false">
-      <meta-data
-        android:name="android.support.FILE_PROVIDER_PATHS"
-        android:resource="@xml/filepaths" />
-    </provider>
-
     <activity
       android:name=".android.activities.HomeActivity"
       android:launchMode="singleTop">
