@@ -6,7 +6,6 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.CheckBoxPreference;
@@ -38,7 +37,6 @@ public class SettingsActivity extends PreferenceActivity implements ImportReadTr
   private static final String EXPORT_JSON = "data.export_json";
   private static final String ABOUT_VERSION = "about.version";
   private static final String ABOUT_LEGAL = "about.legal";
-  private static final String ICONS8 = "about.icons8";
 
   private static final int FILE_PICKER_SELECT_FILE_REQUEST_CODE = 0x01;
   private static final int EXPORT_PERMISSION_REQUEST_CODE = 0x01;
@@ -69,17 +67,6 @@ public class SettingsActivity extends PreferenceActivity implements ImportReadTr
       public boolean onPreferenceClick(Preference preference) {
         Intent intentWebView = new Intent(SettingsActivity.this, InAppBrowserActivity.class);
         intentWebView.putExtra(IntentKeys.WEB_VIEW_URL, "file:///android_asset/legal.html");
-        startActivity(intentWebView);
-        return true;
-      }
-    });
-
-    // TODO Fix deprecation
-    //noinspection deprecation
-    Preference icons8 = findPreference(ICONS8);
-    icons8.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-      @Override public boolean onPreferenceClick(Preference preference) {
-        Intent intentWebView = new Intent(Intent.ACTION_VIEW, Uri.parse("http://icons8.com/"));
         startActivity(intentWebView);
         return true;
       }
