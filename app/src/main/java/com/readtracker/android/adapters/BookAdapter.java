@@ -101,7 +101,7 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
     int backgroundColor = ColorUtils.getBackgroundColor(convertView.getContext());
     int activeColor = ColorUtils.getPressedColor(convertView.getContext());
 
-    convertView.setBackgroundDrawable(DrawableGenerator.generateListItemBackground(activeColor, backgroundColor));
+//    convertView.setBackgroundDrawable(DrawableGenerator.generateListItemBackground(activeColor, backgroundColor));
     return convertView;
   }
 

@@ -56,8 +56,6 @@ public class AddBookActivity extends BookBaseActivity implements GoogleBookSearc
   @InjectView(R.id.book_cover_image) ImageButton mCoverImageButton;
   @InjectView(R.id.find_cover_button) TextView mFindCoverButton;
 
-  @InjectView(R.id.number_test) NumberPicker mNP;
-
   // Store the cover url from the intent that starts the activity
   private String mCoverURL;
   private boolean mEditMode;
