@@ -232,6 +232,7 @@ public class SettingsActivity extends PreferenceActivity implements ImportReadTr
     }
     this.progressDialog = new ProgressDialog(this);
     this.progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+    this.progressDialog.setIndeterminate(true);
     this.progressDialog.setMessage(getString(R.string.settings_import_running));
     this.progressDialog.show();
   }
