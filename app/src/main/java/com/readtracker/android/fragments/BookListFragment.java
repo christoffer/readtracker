@@ -52,6 +52,7 @@ public class BookListFragment extends ListFragment {
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    // TODO(christoffer) Add button and blurb about importing data from previous install
     return inflater.inflate(R.layout.fragment_reading_list, container, false);
   }
 
