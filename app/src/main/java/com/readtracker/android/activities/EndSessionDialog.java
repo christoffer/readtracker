@@ -49,7 +49,7 @@ public class EndSessionDialog extends DialogFragment implements View.OnClickList
     Float pageCount = book.getPageCount();
 
     arguments.putInt(ARG_COLOR, color);
-    arguments.putFloat(EndSessionDialog.ARG_CURRENT_POSITION, currentPosition == null ? 0f : currentPosition);
+    arguments.putFloat(EndSessionDialog.ARG_CURRENT_POSITION, currentPosition);
     if(pageCount != null) {
       arguments.putFloat(EndSessionDialog.ARG_PAGE_COUNT, pageCount);
     }
@@ -122,6 +122,6 @@ public class EndSessionDialog extends DialogFragment implements View.OnClickList
 
   /** Defines an interface for activities that host the EndSessionDialog in order to receive results. */
   public interface EndSessionDialogListener {
-    public void onConfirmedSessionEndPosition(float position);
+    void onConfirmedSessionEndPosition(float position);
   }
 }
