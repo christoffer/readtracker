@@ -8,6 +8,8 @@
   <color name="colorPrimaryDark">#ff000000</color>
   <color name="colorAccent">#ff999999</color>
 
+  <color name="defaultBookColor">#ff80cbc4</color>
+
   <color name="background">#FF303030</color>
   <color name="windowBackground">#ff303030</color>
 

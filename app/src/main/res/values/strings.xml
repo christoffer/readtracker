@@ -51,10 +51,11 @@
   <string name="quote_error_failed_to_delete">Failed to delete the quote</string>
 
   <string name="add_book_save">Save</string>
-  <string name="add_book_missing_title">Please enter the title</string>
-  <string name="add_book_missing_author">Please enter the author</string>
-  <string name="add_book_missing_page_count">Please enter the number of pages or toggle percent tracking</string>
   <string name="add_book_saving_book">Saving book…</string>
+  <string name="add_book_title_hint">Title</string>
+  <string name="add_book_author_hint">Author</string>
+  <string name="add_book_please_fill_out_required_fields">Please fill all fields</string>
+  <string name="add_book_page_count_hint">100</string>
   <string name="add_book_track_using_pages">Track progress using page count</string>
   <string name="add_book_delete">Delete book</string>
   <string name="add_book_confirm_delete">Really delete %1$s?</string>

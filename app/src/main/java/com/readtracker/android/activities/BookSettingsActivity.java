@@ -6,7 +6,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -24,6 +27,8 @@ import com.readtracker.R;
 import com.readtracker.android.IntentKeys;
 import com.readtracker.android.db.Book;
 import com.readtracker.android.db.DatabaseManager;
+import com.readtracker.android.support.ColorUtils;
+import com.readtracker.android.support.DrawableGenerator;
 import com.readtracker.android.support.GoogleBook;
 import com.readtracker.android.support.GoogleBookSearch;
 import com.readtracker.android.tasks.GoogleBookSearchTask;
@@ -76,6 +81,23 @@ public class BookSettingsActivity extends BookBaseActivity implements GoogleBook
       Log.d(TAG, "Add book mode");
       initializeForAddingBook(intent);
     }
+
+    final TextWatcher textWatcher = new TextWatcher() {
+      @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+      @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+      @Override public void afterTextChanged(Editable s) {
+        validateFieldsAndUpdateState();
+      }
+    };
+
+    mTitleEdit.addTextChangedListener(textWatcher);
+    mAuthorEdit.addTextChangedListener(textWatcher);
+    mPageCountEdit.addTextChangedListener(textWatcher);
+
+    final int color = ContextCompat.getColor(this, R.color.defaultBookColor);
+    mSaveButton.setBackground(DrawableGenerator.generateButtonBackground(color));
+
+    validateFieldsAndUpdateState();
   }
 
   @Override public boolean onCreateOptionsMenu(Menu menu) {
@@ -206,6 +228,8 @@ public class BookSettingsActivity extends BookBaseActivity implements GoogleBook
         mPageCountEdit.requestFocus();
       }
     }
+
+    validateFieldsAndUpdateState();
   }
 
   private void initializeForAddingBook(Intent intent) {
@@ -214,12 +238,17 @@ public class BookSettingsActivity extends BookBaseActivity implements GoogleBook
     loadCoverFromURL(intent.getStringExtra(IntentKeys.COVER_URL));
     setInitialPageCount(intent.getIntExtra(IntentKeys.PAGE_COUNT, 0));
 
+    validateFieldsAndUpdateState();
+
     bindEvents();
   }
 
   private void initializeForEditMode(Book book) {
     mTitleEdit.setText(book.getTitle());
     mAuthorEdit.setText(book.getAuthor());
+
+    final int bookColor = ColorUtils.getColorForBook(book);
+    mSaveButton.setBackground(DrawableGenerator.generateButtonBackground(bookColor));
 
     if(book.hasPageNumbers()) {
       int pageCount = (int) ((float) book.getPageCount());
@@ -277,20 +306,23 @@ public class BookSettingsActivity extends BookBaseActivity implements GoogleBook
   }
 
   private void onAddOrUpdateClicked() {
-    if(!validateFields()) {
+    if(!validateFieldsAndUpdateState()) {
+      Log.d(TAG, "The button was enabled and clicked while fields were invalid. This should never happen.");
+      toast(R.string.add_book_please_fill_out_required_fields);
       return;
     }
 
     final String newTitle = mTitleEdit.getText().toString();
     final String newAuthor = mAuthorEdit.getText().toString();
 
-    // Be careful about changing the book title when we aren't changing the title.
 
     Book book = getBook();
     if(book == null) {
       book = new Book();
+      book.setCurrentPositionTimestampMs(System.currentTimeMillis());
     }
 
+    // Be mindful about changing the book title when we aren't changing the title.
     boolean didChangeTitle = !book.getTitle().equals(newTitle);
 
     book.setTitle(newTitle);
@@ -312,17 +344,21 @@ public class BookSettingsActivity extends BookBaseActivity implements GoogleBook
    *
    * @return true if all fields were valid, otherwise false
    */
-  private boolean validateFields() {
+  private boolean validateFieldsAndUpdateState() {
+    mTitleEdit.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+    mAuthorEdit.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+    mPageCountEdit.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+
+    boolean fieldsAreValid = true;
+
     if(mTitleEdit.getText().length() < 1) {
-      toast(R.string.add_book_missing_title);
-      mTitleEdit.requestFocus();
-      return false;
+      mTitleEdit.setCompoundDrawablesWithIntrinsicBounds(0, 0, android.R.drawable.ic_dialog_alert, 0);
+      fieldsAreValid = false;
     }
 
     if(mAuthorEdit.getText().length() < 1) {
-      toast(R.string.add_book_missing_author);
-      mAuthorEdit.requestFocus();
-      return false;
+      mAuthorEdit.setCompoundDrawablesWithIntrinsicBounds(0, 0, android.R.drawable.ic_dialog_alert, 0);
+      fieldsAreValid = false;
     }
 
     // Validate a reasonable amount of page numbers
@@ -335,13 +371,14 @@ public class BookSettingsActivity extends BookBaseActivity implements GoogleBook
       }
 
       if(pageCount < 1) {
-        toast(R.string.add_book_missing_page_count);
-        mPageCountEdit.requestFocus();
-        return false;
+        mPageCountEdit.setCompoundDrawablesWithIntrinsicBounds(0, 0, android.R.drawable.ic_dialog_alert, 0);
+        fieldsAreValid = false;
       }
     }
 
-    return true;
+    mSaveButton.setEnabled(fieldsAreValid);
+
+    return fieldsAreValid;
   }
 
   private void onBookUpdated(int bookId, boolean success) {

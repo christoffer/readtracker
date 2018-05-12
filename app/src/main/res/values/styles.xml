@@ -17,9 +17,6 @@
     <item name="android:layout_gravity">center</item>
   </style>
 
-  <style name="default_button_primary_action" parent="default_button">
-  </style>
-
   <style name="non_primary_button" parent="default_button">
     <item name="android:textSize">14sp</item>
     <item name="android:paddingTop">12dp</item>
@@ -46,7 +43,7 @@
     <item name="android:paddingRight">12dp</item>
     <item name="android:paddingTop">3dp</item>
     <item name="android:paddingBottom">3dp</item>
-    <item name="android:textSize">16dp</item>
+    <item name="android:textSize">16sp</item>
     <item name="android:gravity">center_vertical</item>
     <item name="android:inputType">text</item>
   </style>
@@ -56,7 +53,6 @@
     <item name="android:layout_height">wrap_content</item>
     <item name="android:layout_width">wrap_content</item>
     <item name="android:inputType">number</item>
-    <item name="android:textSize">40dp</item>
     <item name="android:maxLength">6</item>
     <item name="android:paddingTop">16dp</item>
     <item name="android:paddingBottom">16dp</item>
