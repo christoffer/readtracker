@@ -2,4 +2,5 @@
 <resources>
   <dimen name="gridMargins">16dp</dimen>
   <dimen name="gridGutters">16dp</dimen>
+  <dimen name="gridHalfGutter">8dp</dimen>
 </resources>

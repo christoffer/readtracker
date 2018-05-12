@@ -22,6 +22,7 @@ import com.readtracker.android.db.DatabaseManager;
 import com.readtracker.android.db.Quote;
 import com.readtracker.android.support.ColorUtils;
 import com.readtracker.android.support.DrawableGenerator;
+import com.readtracker.android.support.Utils;
 
 import java.lang.ref.WeakReference;
 
@@ -126,7 +127,7 @@ public class QuoteSettingsActivity extends BookBaseActivity {
     mBook = book;
 
     final int color = ColorUtils.getColorForBook(book);
-    final Drawable backgroundDrawable = DrawableGenerator.generateEditTextOutline(color, getPixels(1), getPixels(3));
+    final Drawable backgroundDrawable = DrawableGenerator.generateEditTextOutline(this, color, 1, 3);
     mQuoteTextEdit.setBackgroundDrawable(backgroundDrawable);
 
     DrawableGenerator.applyButtonBackground(color, mSaveButton);

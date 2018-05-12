@@ -11,6 +11,7 @@ import com.readtracker.R;
 import com.readtracker.android.db.Book;
 import com.readtracker.android.support.ColorUtils;
 import com.readtracker.android.support.DrawableGenerator;
+import com.readtracker.android.support.Utils;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -58,7 +59,7 @@ public class FinishBookActivity extends BookBaseActivity implements View.OnClick
     }
 
     final int color = ColorUtils.getColorForBook(mBook);
-    Drawable drawable = DrawableGenerator.generateEditTextOutline(color, getPixels(1), getPixels(3));
+    Drawable drawable = DrawableGenerator.generateEditTextOutline(this, color, 1, 3);
     mEditClosingRemark.setBackgroundDrawable(drawable);
 
     mButtonFinish.setBackgroundDrawable(DrawableGenerator.generateButtonBackground(color));

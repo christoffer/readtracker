@@ -1,8 +1,12 @@
 package com.readtracker.android.support;
 
 
+import android.content.Context;
 import android.graphics.Color;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 
+import com.readtracker.android.activities.FinishBookActivity;
 import com.readtracker.android.db.Book;
 import com.readtracker.android.db.Session;
 
@@ -260,7 +264,8 @@ public class Utils {
     return out.toString();
   }
 
-  public static boolean isEmpty(String string) {
-    return string == null || string.length() == 0;
+  public static int convertDPtoPixels(Context context, int dpValue) {
+    final DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+    return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dpValue, metrics);
   }
 }

@@ -1,46 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout android:id="@+id/layout"
+                xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:tools="http://schemas.android.com/tools"
-  android:layout_width="fill_parent"
-  android:layout_height="wrap_content"
-  android:paddingTop="24dp"
-  android:paddingLeft="6dp"
-  android:paddingRight="6dp"
-  android:paddingBottom="12dp">
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="12dp"
+                android:paddingLeft="6dp"
+                android:paddingRight="6dp"
+                android:paddingTop="24dp">
 
   <ImageView
     android:id="@+id/imageCover"
     android:layout_width="36dp"
     android:layout_height="36dp"
     android:layout_alignParentRight="true"
-    android:scaleType="centerCrop"
-    android:contentDescription="@string/reading_item_cover_content_desc" />
+    android:contentDescription="@string/reading_item_cover_content_desc"
+    android:scaleType="centerCrop"/>
 
   <TextView
     android:id="@+id/textTitle"
     style="@style/default_text"
-    android:layout_marginRight="12dp"
-    android:layout_marginBottom="1dp"
-    android:layout_toLeftOf="@id/imageCover"
     android:layout_width="fill_parent"
+    android:layout_marginBottom="1dp"
+    android:layout_marginRight="12dp"
+    android:layout_toLeftOf="@id/imageCover"
     android:singleLine="true"
-    tools:text="Metamorphosis" />
+    tools:text="Metamorphosis"/>
 
   <TextView
     android:id="@+id/textAuthor"
     style="@style/default_text"
-    android:layout_marginRight="12dp"
-    android:layout_below="@id/textTitle"
-    android:layout_toLeftOf="@id/imageCover"
     android:layout_width="fill_parent"
+    android:layout_below="@id/textTitle"
+    android:layout_marginRight="12dp"
+    android:layout_toLeftOf="@id/imageCover"
     android:singleLine="true"
-    tools:text="Franz Kafka" />
+    tools:text="Franz Kafka"/>
 
   <com.readtracker.android.custom_views.SegmentBar
     android:id="@+id/progressReadingProgress"
+    style="@style/progress_bar"
     android:layout_below="@id/imageCover"
-    android:layout_marginTop="12dp"
-    style="@style/progress_bar" />
+    android:layout_marginTop="12dp"/>
 
 </RelativeLayout>

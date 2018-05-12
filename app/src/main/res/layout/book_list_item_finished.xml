@@ -1,23 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
+
+<RelativeLayout
+  android:id="@+id/layout"
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="fill_parent"
   android:layout_height="wrap_content"
-  android:paddingTop="12dp"
   android:paddingBottom="12dp"
-  android:paddingLeft="24dp"
-  android:paddingRight="24dp">
+  android:paddingLeft="@dimen/gridMargins"
+  android:paddingTop="24dp"
+  >
 
   <ImageView
     android:id="@+id/imageCover"
-    android:layout_height="36dp"
     android:layout_width="36dp"
-    android:scaleType="centerCrop"
-    android:src="@android:drawable/ic_menu_gallery"
-    android:layout_marginLeft="12dp"
+    android:layout_height="36dp"
     android:layout_alignParentRight="true"
-    android:contentDescription="@string/reading_item_cover_content_desc" />
+    android:layout_marginLeft="12dp"
+    android:layout_marginRight="@dimen/gridHalfGutter"
+    android:contentDescription="@string/reading_item_cover_content_desc"
+    android:scaleType="centerCrop"
+    android:src="@android:drawable/ic_menu_gallery"/>
 
   <!--
     note that textTitle and textAuthor will have their text size set dynamically
@@ -26,34 +30,34 @@
     android:id="@+id/textTitle"
     style="@style/default_text"
     android:layout_width="fill_parent"
-    android:layout_toLeftOf="@id/imageCover"
     android:layout_marginTop="-3dp"
-    tools:text="Metamorphosis" />
+    android:layout_toLeftOf="@id/imageCover"
+    tools:text="Metamorphosis"/>
 
   <TextView
     android:id="@+id/textAuthor"
     style="@style/default_text"
     android:layout_width="fill_parent"
     android:layout_below="@id/textTitle"
+    android:layout_marginTop="2dp"
     android:layout_toLeftOf="@id/imageCover"
-    android:layout_marginTop="3dp"
-    tools:text="Franz Kafka" />
+    tools:text="Franz Kafka"/>
 
   <TextView
     android:id="@+id/textClosingRemark"
     style="@style/default_text"
     android:layout_width="fill_parent"
-    android:layout_below="@id/imageCover"
-    android:layout_marginTop="18dp"
-    android:paddingLeft="12dp"
-    tools:text="– Something something something something smething seomthjigs" />
+    android:layout_below="@id/textAuthor"
+    android:layout_marginTop="@dimen/gridHalfGutter"
+    tools:ignore="RtlSymmetry"
+    tools:text="Something something something something smething seomthjigs"
+    />
 
   <TextView
     android:id="@+id/textFinishedAt"
-    style="@style/default_text"
+    style="@style/book_list_finished_at_text"
     android:layout_below="@id/textClosingRemark"
-    android:layout_marginTop="12dp"
-    android:textSize="12sp"
-    tools:text="Finished Nov 13th, 2012" />
+    tools:text="Finished Nov 13th, 2012"
+    />
 
 </RelativeLayout>

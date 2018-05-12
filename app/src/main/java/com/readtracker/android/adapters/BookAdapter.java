@@ -1,6 +1,12 @@
 package com.readtracker.android.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
+import android.text.Layout;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.readtracker.R;
@@ -16,6 +23,7 @@ import com.readtracker.android.activities.HomeActivity;
 import com.readtracker.android.custom_views.SegmentBar;
 import com.readtracker.android.db.Book;
 import com.readtracker.android.support.ColorUtils;
+import com.readtracker.android.support.DrawableGenerator;
 import com.readtracker.android.support.Utils;
 import com.squareup.otto.Subscribe;
 import com.squareup.picasso.Picasso;
@@ -95,7 +103,7 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
     }
 
     Book book = getItem(position);
-    viewHolder.populate(convertView.getContext(), book);
+    viewHolder.populate(convertView, book);
 
     return convertView;
   }
@@ -147,7 +155,7 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
       ButterKnife.inject(this, view);
     }
 
-    void populate(Context context, Book book) {
+    void populate(View view, Book book) {
       // Required fields
       titleText.setText(book.getTitle());
       authorText.setText(book.getAuthor());
@@ -162,28 +170,35 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
       if(coverImage != null) {
         coverImage.setImageResource(android.R.drawable.ic_menu_gallery);
         if(!TextUtils.isEmpty(book.getCoverImageUrl())) {
-           Picasso.with(coverImage.getContext())
-               .load(book.getCoverImageUrl())
-               .placeholder(android.R.drawable.ic_menu_gallery)
-               .into(coverImage);
+          Picasso.with(coverImage.getContext())
+              .load(book.getCoverImageUrl())
+              .placeholder(android.R.drawable.ic_menu_gallery)
+              .into(coverImage);
         }
       }
 
       if(closingRemarkText != null) {
-        final TextView closingRemark = closingRemarkText;
         if(!TextUtils.isEmpty(book.getClosingRemark())) {
-          closingRemark.setVisibility(View.VISIBLE);
-          closingRemark.setText(book.getClosingRemark());
+          closingRemarkText.setVisibility(View.VISIBLE);
+          closingRemarkText.setText(book.getClosingRemark());
         } else {
-          closingRemark.setVisibility(View.GONE);
+          closingRemarkText.setVisibility(View.GONE);
         }
       }
 
       if(finishedAtText != null) {
+        // Colorize the dot icon next to the finished at label
+        final int bookColor = ColorUtils.getColorForBook(book);
+        Drawable[] compoundDrawables = finishedAtText.getCompoundDrawables();
+        Drawable dot = compoundDrawables.length > 0 ? compoundDrawables[0] : null;
+        if (dot != null) {
+          dot.mutate().setColorFilter(new PorterDuffColorFilter(bookColor, PorterDuff.Mode.SRC_IN));
+        }
+
         if(book.getState() == Book.State.Finished) {
           final long now = System.currentTimeMillis();
           String finishedOn = Utils.humanPastTimeFromTimestamp(book.getCurrentPositionTimestampMs(), now);
-          String finishedOnWithPrefix = context.getString(R.string.book_list_finished_on, finishedOn);
+          String finishedOnWithPrefix = view.getContext().getString(R.string.book_list_finished_on, finishedOn);
           finishedAtText.setText(finishedOnWithPrefix);
           finishedAtText.setVisibility(View.VISIBLE);
         } else {
@@ -195,6 +210,7 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
     // Required fields
     @InjectView(R.id.textTitle) TextView titleText;
     @InjectView(R.id.textAuthor) TextView authorText;
+    @InjectView(R.id.layout) RelativeLayout layout;
 
     // Optional fields *
     @Optional @InjectView(R.id.progressReadingProgress) SegmentBar segmentedProgressBar;
