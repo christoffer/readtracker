@@ -61,7 +61,7 @@
   <string name="add_book_delete_explanation">This will delete the book and the entire reading history from the device.\n\nThere is no way to undo this operation.</string>
   <string name="add_book_delete_failed">Failed to delete book</string>
   <string name="add_book_cover">Cover</string>
-  <string name="add_book_find_info_on_google_books">Find cover on Google Books</string>
+  <string name="add_book_find_info_on_google_books">Find on Google Books</string>
   <string name="add_book_looking_for_book">Searching for book info…</string>
   <string name="add_book_no_cover_found">Couldn\'t find a cover on Google Books</string>
   <string name="add_book_long_press_to_delete">Long press to clear</string>

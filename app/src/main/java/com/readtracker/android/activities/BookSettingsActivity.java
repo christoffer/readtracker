@@ -241,7 +241,9 @@ public class BookSettingsActivity extends BookBaseActivity implements GoogleBook
     if(hasCover) {
       // The book might have a cover url that's outdated. Make sure that the cover loads before
       // deciding on whether or not to show the find cover button.
-      Picasso.with(this).load(coverURL).into(mCoverImageButton, new Callback() {
+      Picasso.with(this)
+          .load(coverURL)
+          .into(mCoverImageButton, new Callback() {
         @Override public void onSuccess() {
           setCurrentCoverURL(coverURL);
         }

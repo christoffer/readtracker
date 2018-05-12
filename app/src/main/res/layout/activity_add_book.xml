@@ -12,12 +12,6 @@
     android:orientation="vertical"
     android:padding="12dp">
 
-    <Button
-      android:id="@+id/find_cover_button"
-      style="@style/non_primary_button"
-      android:layout_marginTop="8dp"
-      android:text="@string/add_book_find_info_on_google_books"/>
-
     <ImageButton
       android:id="@+id/book_cover_image"
       style="@style/non_primary_button"
@@ -27,6 +21,7 @@
       android:contentDescription="@string/add_book_cover_button_content"
       android:longClickable="true"
       android:padding="16dp"
+      android:visibility="gone"
       android:src="@android:drawable/ic_menu_gallery"
       />
 
@@ -41,6 +36,12 @@
       android:id="@+id/author_edit"
       style="@style/default_input_field"
       android:hint="@string/general_author"/>
+
+    <Button
+      android:id="@+id/find_cover_button"
+      style="@style/non_primary_button"
+      android:layout_marginTop="8dp"
+      android:text="@string/add_book_find_info_on_google_books"/>
 
     <CheckBox
       android:id="@+id/track_using_pages"
@@ -57,7 +58,7 @@
       android:layout_height="62dp"
       android:ellipsize="end"
       android:gravity="center_horizontal"
-      android:hint="123"
+      android:hint="0"
       android:inputType="number"
       android:paddingLeft="24dp"
       android:paddingRight="24dp"
