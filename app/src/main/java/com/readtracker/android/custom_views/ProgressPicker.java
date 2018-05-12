@@ -54,7 +54,6 @@ public class ProgressPicker extends LinearLayout {
     return mPositionPicker.getValue() == mPositionPicker.getMaxValue();
   }
 
-
   /**
    * Sets the listener to get notified about position changes.
    */
@@ -103,10 +102,10 @@ public class ProgressPicker extends LinearLayout {
 
   private void setupPercentTrackingMode() {
     // Use percent mode, let the user select progress based on 0.1% increments
-    String[] values = new String[1001];
-    final Locale locale = Locale.getDefault();
+    String[] values = new String[1001]; // +1 to generate inclusive range
+    final Context context = getContext();
     for (int i  = 0; i < 1001; i++) {
-      values[i] = String.format(locale, "%.2f%%", (float)i / 100.0f);
+      values[i] = context.getString(R.string.progress_picker_percent, (float)i / 10.0f);
     }
     mPositionPicker.setMinValue(0);
     mPositionPicker.setMaxValue(1000);

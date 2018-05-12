@@ -10,6 +10,8 @@
   <string name="textOn">ON</string>
   <string name="textOff">OFF</string>
 
+  <string name="progress_picker_percent">%1$.1f%%</string>
+
   <string name="introduction_text"><![CDATA[
   ReadTracker is a tool for keeping track of what and how you read your books.<br/><br/>
   Add the book you&rsquo;re currently reading to ReadTracker and start the timer every time you sit down to read.<br/><br/>
