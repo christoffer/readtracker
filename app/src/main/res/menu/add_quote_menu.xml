@@ -7,5 +7,5 @@
     android:title="@string/add_quote_delete_quote"
     android:titleCondensed="@string/general_delete"
     android:icon="@android:drawable/ic_menu_delete"
-    app:showAsAction="ifRoom"/>
+    app:showAsAction="never"/>
 </menu>
