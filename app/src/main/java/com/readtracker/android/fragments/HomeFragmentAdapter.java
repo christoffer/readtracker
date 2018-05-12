@@ -2,7 +2,6 @@ package com.readtracker.android.fragments;
 
 import android.content.res.Resources;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.util.Log;
 
@@ -29,7 +28,7 @@ public class HomeFragmentAdapter extends FragmentStatePagerAdapter {
   private final Resources mResources;
 
   // Flag to use compact mode for the finished reading list
-  private boolean mUseCompactFinishList = false;
+  private final boolean mUseCompactFinishList;
 
   public HomeFragmentAdapter(BaseActivity activity, boolean useCompactFinishList) {
     super(activity.getSupportFragmentManager());
@@ -52,16 +51,10 @@ public class HomeFragmentAdapter extends FragmentStatePagerAdapter {
 
   @Override public Fragment getItem(int position) {
     if(position == FRAGMENT_FINISHED_POSITION) {
-      if(mUseCompactFinishList) {
-        Log.d(TAG, "Creating book list fragment with compact finish views");
-        return BookListFragment.newInstance(R.layout.book_list_item_finished_compact, Book.State.Finished);
-      } else {
-        Log.d(TAG, "Creating book list fragment with expanded finish views");
-        return BookListFragment.newInstance(R.layout.book_list_item_finished, Book.State.Finished);
-      }
+        return BookListFragment.newInstance(R.layout.book_list_item_finished, Book.State.Finished, mUseCompactFinishList);
     } else if(position == FRAGMENT_ACTIVE_POSITION) {
       Log.d(TAG, "Creating book list fragment with reading views");
-      return BookListFragment.newInstance(R.layout.book_list_item_reading, Book.State.Reading);
+      return BookListFragment.newInstance(R.layout.book_list_item_reading, Book.State.Reading, mUseCompactFinishList);
     }
 
     Log.w(TAG, "Could not figure out what fragment to return. Returning null.");

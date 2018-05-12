@@ -1,12 +1,9 @@
 package com.readtracker.android.adapters;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.LayerDrawable;
-import android.text.Layout;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,7 +20,6 @@ import com.readtracker.android.activities.HomeActivity;
 import com.readtracker.android.custom_views.SegmentBar;
 import com.readtracker.android.db.Book;
 import com.readtracker.android.support.ColorUtils;
-import com.readtracker.android.support.DrawableGenerator;
 import com.readtracker.android.support.Utils;
 import com.squareup.otto.Subscribe;
 import com.squareup.picasso.Picasso;
@@ -58,14 +54,15 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
 
   // Books in this list
   private final List<Book> mBooks = new ArrayList<Book>();
-
   private Book.State mStateFilter = null;
+  private final boolean mUseCompactReadingLists;
 
-  public BookAdapter(Context context, int resource, Book.State stateFilter) {
+  public BookAdapter(Context context, int resource, Book.State stateFilter, boolean useCompactReadingLists) {
     super();
     mContext = context;
     mLayoutResource = resource;
     mStateFilter = stateFilter;
+    mUseCompactReadingLists = useCompactReadingLists;
   }
 
   public void sortBooks() {
@@ -103,7 +100,7 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
     }
 
     Book book = getItem(position);
-    viewHolder.populate(convertView, book);
+    viewHolder.populate(convertView, book, mUseCompactReadingLists);
 
     return convertView;
   }
@@ -155,7 +152,7 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
       ButterKnife.inject(this, view);
     }
 
-    void populate(View view, Book book) {
+    void populate(View view, Book book, boolean useCompactReadingLists) {
       // Required fields
       titleText.setText(book.getTitle());
       authorText.setText(book.getAuthor());
@@ -178,7 +175,7 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
       }
 
       if(closingRemarkText != null) {
-        if(!TextUtils.isEmpty(book.getClosingRemark())) {
+        if(!useCompactReadingLists && !TextUtils.isEmpty(book.getClosingRemark())) {
           closingRemarkText.setVisibility(View.VISIBLE);
           closingRemarkText.setText(book.getClosingRemark());
         } else {
@@ -187,7 +184,7 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
       }
 
       if(finishedAtText != null) {
-        // Colorize the dot icon next to the finished at label
+        // Colorize the dot icon next to the finished at label by appl
         final int bookColor = ColorUtils.getColorForBook(book);
         Drawable[] compoundDrawables = finishedAtText.getCompoundDrawables();
         Drawable dot = compoundDrawables.length > 0 ? compoundDrawables[0] : null;

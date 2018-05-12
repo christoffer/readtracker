@@ -41,7 +41,7 @@
       <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/textClosingRemark"
+        android:id="@+id/textClosingRemarkContent"
         android:textSize="14sp"
         android:layout_marginBottom="12dp" />
 

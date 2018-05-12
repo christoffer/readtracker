@@ -77,7 +77,7 @@ public class QuoteAdapter extends ArrayAdapter<Quote> {
 
     final int backgroundColor = ContextCompat.getColor(convertView.getContext(), R.color.windowBackground);
     final int itemColor = mColor;
-    convertView.setBackgroundDrawable(DrawableGenerator.generateListItemBackground(itemColor, backgroundColor));
+    convertView.setBackground(DrawableGenerator.generateListItemBackground(itemColor, backgroundColor));
     return convertView;
   }
 
@@ -91,7 +91,7 @@ public class QuoteAdapter extends ArrayAdapter<Quote> {
     return textSizeFromSP(10);
   }
 
-  private float textSizeFromSP(int dp) {
-    return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, dp, getContext().getResources().getDisplayMetrics());
+  private float textSizeFromSP(int valueInSp) {
+    return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, valueInSp, getContext().getResources().getDisplayMetrics());
   }
 }

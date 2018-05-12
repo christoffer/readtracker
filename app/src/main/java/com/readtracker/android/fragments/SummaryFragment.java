@@ -38,7 +38,7 @@ public class SummaryFragment extends BaseFragment {
   @InjectView(R.id.segmentBar) SegmentBar mSegmentBar;
   @InjectView(R.id.textSummary) TextView mTextSummary;
   @InjectView(R.id.textReadingState) TextView mTextReadingState;
-  @InjectView(R.id.textClosingRemark) TextView mTextClosingRemark;
+  @InjectView(R.id.textClosingRemarkContent) TextView mTextClosingRemark;
   @InjectView(R.id.textTimeLeft) TextView mTextTimeLeft;
 
   public static Fragment newInstance() {

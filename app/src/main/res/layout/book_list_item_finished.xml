@@ -7,10 +7,10 @@
   xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="fill_parent"
   android:layout_height="wrap_content"
-  android:paddingBottom="12dp"
-  android:paddingLeft="@dimen/gridMargins"
-  android:paddingTop="24dp"
-  >
+  android:paddingBottom="24dp"
+  android:paddingLeft="@dimen/halfGridGutter"
+  android:paddingRight="@dimen/gridMargins"
+  android:paddingTop="24dp">
 
   <ImageView
     android:id="@+id/imageCover"
@@ -18,7 +18,6 @@
     android:layout_height="36dp"
     android:layout_alignParentRight="true"
     android:layout_marginLeft="12dp"
-    android:layout_marginRight="@dimen/gridHalfGutter"
     android:contentDescription="@string/reading_item_cover_content_desc"
     android:scaleType="centerCrop"
     android:src="@android:drawable/ic_menu_gallery"/>
@@ -30,6 +29,7 @@
     android:id="@+id/textTitle"
     style="@style/default_text"
     android:layout_width="fill_parent"
+    android:layout_marginLeft="@dimen/halfGridMargins"
     android:layout_marginTop="-3dp"
     android:layout_toLeftOf="@id/imageCover"
     tools:text="Metamorphosis"/>
@@ -39,8 +39,10 @@
     style="@style/default_text"
     android:layout_width="fill_parent"
     android:layout_below="@id/textTitle"
+    android:layout_marginLeft="@dimen/halfGridMargins"
     android:layout_marginTop="2dp"
     android:layout_toLeftOf="@id/imageCover"
+    android:textColor="@color/textColorSecondary"
     tools:text="Franz Kafka"/>
 
   <TextView
@@ -48,16 +50,27 @@
     style="@style/default_text"
     android:layout_width="fill_parent"
     android:layout_below="@id/textAuthor"
-    android:layout_marginTop="@dimen/gridHalfGutter"
+    android:layout_marginLeft="13dp"
+    android:layout_marginTop="@dimen/halfGridGutter"
+    android:background="@drawable/border_left"
+    android:paddingBottom="@dimen/halfGridGutter"
+    android:paddingLeft="@dimen/halfGridGutter"
+    android:paddingTop="@dimen/halfGridGutter"
+    android:textColor="@color/textColorSecondary"
     tools:ignore="RtlSymmetry"
-    tools:text="Something something something something smething seomthjigs"
-    />
+    tools:text="Something something something something smething seomthjigs"/>
 
   <TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:id="@+id/textFinishedAt"
-    style="@style/book_list_finished_at_text"
     android:layout_below="@id/textClosingRemark"
-    tools:text="Finished Nov 13th, 2012"
-    />
+    android:layout_marginLeft="@dimen/halfGridMargins"
+    android:layout_marginTop="@dimen/halfGridGutter"
+    android:drawableLeft="@drawable/dot"
+    android:drawablePadding="4dp"
+    android:textColor="@color/textColorTertiary"
+    android:textSize="12sp"
+    tools:text="Finished Nov 13th, 2012"/>
 
 </RelativeLayout>
