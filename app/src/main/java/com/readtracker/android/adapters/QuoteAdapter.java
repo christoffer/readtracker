@@ -59,15 +59,15 @@ public class QuoteAdapter extends ArrayAdapter<Quote> {
 
     if (quote == null) {
       textContent.setText("N/A");
-      textContent.setTextSize(getTextSizeForContentLength(0));
+      applyTextSizeForContentLength(textContent, 0);
       textDate.setText("N/A");
     } else {
       final String content = quote.getContent();
       if (content == null) {
-        textContent.setTextSize(getTextSizeForContentLength(0));
+        applyTextSizeForContentLength(textContent, 0);
         textContent.setText("N/A");
       } else {
-        textContent.setTextSize(getTextSizeForContentLength(content.length()));
+        applyTextSizeForContentLength(textContent, content.length());
         textContent.setText(content);
       }
       final long now = System.currentTimeMillis();
@@ -81,17 +81,14 @@ public class QuoteAdapter extends ArrayAdapter<Quote> {
     return convertView;
   }
 
-  private float getTextSizeForContentLength(long length) {
-    if(length < 100) {
-      return textSizeFromSP(14);
+  private void applyTextSizeForContentLength(TextView textView, long contentLength) {
+    float textSizeSp = 18.0f;
+    if(contentLength > 100) {
+      textSizeSp = 16.0f;
     }
-    if(length < 350) {
-      return textSizeFromSP(12);
+    if(contentLength > 350) {
+      textSizeSp = 14.0f;
     }
-    return textSizeFromSP(10);
-  }
-
-  private float textSizeFromSP(int valueInSp) {
-    return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, valueInSp, getContext().getResources().getDisplayMetrics());
+    textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSizeSp);
   }
 }
