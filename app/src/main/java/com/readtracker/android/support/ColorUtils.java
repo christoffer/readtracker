@@ -1,47 +1,37 @@
 package com.readtracker.android.support;
 
-import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.util.Log;
-import android.util.TypedValue;
 import android.widget.NumberPicker;
 
+import com.readtracker.android.db.Book;
+
+import java.lang.reflect.Field;
+
+/**
+ * UI utilities for dealing with colors.
+ */
 public class ColorUtils {
   private static String TAG = ColorUtils.class.getName();
-  private static TypedValue mTemporaryTypedValue = new TypedValue();
 
-  static private int resolveAttrColorFromContext(Context context, int attr) {
-    context.getTheme().resolveAttribute(attr, mTemporaryTypedValue, true);
-    return mTemporaryTypedValue.data;
-  }
-
-  static public int getPrimaryTextColor(Context context) {
-    return resolveAttrColorFromContext(context, android.R.attr.textColorPrimary);
-  }
-
-  static public int getSecondaryTextColor(Context context) {
-    return resolveAttrColorFromContext(context, android.R.attr.textColorSecondary);
-  }
-
-  static public int getDisabledTextColor(Context context) {
-    return resolveAttrColorFromContext(context, android.R.attr.textColorPrimaryDisableOnly);
-  }
-
-  static public int getBackgroundColor(Context context) {
-    return resolveAttrColorFromContext(context, android.R.attr.background);
-  }
-
-  static public int getPressedColor(Context context) {
-    return resolveAttrColorFromContext(context, android.R.attr.colorPressedHighlight);
-  }
-
-  static public void setNumberPickerDividerColorHack(NumberPicker numberPicker, int color) {
-    // Super hacky introspection magic based on code from
-    // https://stackoverflow.com/questions/24233556/changing-numberpicker-divider-color
+  /**
+   * Set the colors of divides on a NumberPicker.
+   *
+   * Unfortunately Android API doesn't seem to offer a proper API for changing the color of
+   * the dividers on the NumberPicker widget. After some Googling, it seems like the solution
+   * below -- while super hacky -- is the common suggestion for solving this.
+   *
+   * See https://stackoverflow.com/questions/24233556/changing-numberpicker-divider-color
+   *
+   * @param numberPicker NumberPicker instance to set colors for
+   * @param color The color to use for the NumberPicker dividers
+   */
+  static public void setNumberPickerDividerColorUsingHack(NumberPicker numberPicker, int color) {
     final String fieldToHack = "mSelectionDivider";
-    java.lang.reflect.Field[] declaredFields = NumberPicker.class.getDeclaredFields();
-    for(java.lang.reflect.Field field : declaredFields) {
+    final Field[] declaredFields = NumberPicker.class.getDeclaredFields();
+    for(Field field : declaredFields) {
       if(field.getName().equals(fieldToHack)) {
         field.setAccessible(true);
         try {
@@ -57,5 +47,14 @@ public class ColorUtils {
         break;
       }
     }
+  }
+
+  /**
+   * Returns a color for the book instance.
+   */
+  public static int getColorForBook(Book book) {
+    final String colorKey = book.getTitle() + book.getAuthor();
+    float color = 360 * (Math.abs(colorKey.hashCode()) / (float) Integer.MAX_VALUE);
+    return Color.HSVToColor(new float[]{color, 0.8f, 1.0f});
   }
 }

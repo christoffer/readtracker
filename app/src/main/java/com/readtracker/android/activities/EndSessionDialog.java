@@ -13,7 +13,6 @@ import com.readtracker.android.custom_views.ProgressPicker;
 import com.readtracker.android.db.Book;
 import com.readtracker.android.support.ColorUtils;
 import com.readtracker.android.support.DrawableGenerator;
-import com.readtracker.android.support.Utils;
 import com.readtracker.android.thirdparty.SafeViewFlipper;
 
 import butterknife.ButterKnife;
@@ -45,7 +44,7 @@ public class EndSessionDialog extends DialogFragment implements View.OnClickList
     EndSessionDialog dialog = new EndSessionDialog();
     Bundle arguments = new Bundle();
 
-    int color = Utils.calculateBookColor(book);
+    int color = ColorUtils.getColorForBook(book);
     Float currentPosition = book.getCurrentPosition();
     Float pageCount = book.getPageCount();
 

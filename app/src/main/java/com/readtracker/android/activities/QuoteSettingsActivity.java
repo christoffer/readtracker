@@ -20,8 +20,8 @@ import com.readtracker.android.custom_views.ProgressPicker;
 import com.readtracker.android.db.Book;
 import com.readtracker.android.db.DatabaseManager;
 import com.readtracker.android.db.Quote;
+import com.readtracker.android.support.ColorUtils;
 import com.readtracker.android.support.DrawableGenerator;
-import com.readtracker.android.support.Utils;
 
 import java.lang.ref.WeakReference;
 
@@ -31,11 +31,11 @@ import butterknife.InjectView;
 /**
  * Screen for adding a quote
  */
-public class AddQuoteActivity extends BookBaseActivity {
+public class QuoteSettingsActivity extends BookBaseActivity {
   public static final String KEY_QUOTE_ID = "QUOTE_ID";
   public static final int RESULT_DELETED = RESULT_FIRST_USER + 1;
 
-  private static final String TAG = AddQuoteActivity.class.getSimpleName();
+  private static final String TAG = QuoteSettingsActivity.class.getSimpleName();
 
   @InjectView(R.id.quote_text_edit) EditText mQuoteTextEdit;
   @InjectView(R.id.save_button) Button mSaveButton;
@@ -90,6 +90,14 @@ public class AddQuoteActivity extends BookBaseActivity {
     return super.onOptionsItemSelected(item);
   }
 
+  @Override protected String getActivityTitle(Book book) {
+    return getString(R.string.quote_activity_title);
+  }
+
+  @Override protected String getActivitySubTitle(Book book) {
+    return book.getTitle();
+  }
+
   private void confirmDeleteQuote() {
     AlertDialog.Builder builder = new AlertDialog.Builder(this);
     final String title = getString(R.string.add_quote_delete_quote);
@@ -109,7 +117,6 @@ public class AddQuoteActivity extends BookBaseActivity {
       }
     });
 
-
     builder.setCancelable(true);
     builder.create().show();
   }
@@ -118,7 +125,7 @@ public class AddQuoteActivity extends BookBaseActivity {
   protected void onBookLoaded(Book book) {
     mBook = book;
 
-    final int color = Utils.calculateBookColor(book);
+    final int color = ColorUtils.getColorForBook(book);
     final Drawable backgroundDrawable = DrawableGenerator.generateEditTextOutline(color, getPixels(1), getPixels(3));
     mQuoteTextEdit.setBackgroundDrawable(backgroundDrawable);
 
@@ -129,9 +136,6 @@ public class AddQuoteActivity extends BookBaseActivity {
     if(mEditQuote != null) {
       mQuoteTextEdit.setText(mEditQuote.getContent());
       quotePosition = mEditQuote.getPosition();
-      mSaveButton.setText(R.string.general_save);
-    } else {
-      mSaveButton.setText(R.string.general_add);
     }
 
     if(book.hasPageNumbers()) {
@@ -196,10 +200,10 @@ public class AddQuoteActivity extends BookBaseActivity {
   private static class CreateOrUpdateQuoteTask extends AsyncTask<Void, Void, Quote> {
     private final Quote mQuote;
 
-    private final WeakReference<AddQuoteActivity> mActivity;
+    private final WeakReference<QuoteSettingsActivity> mActivity;
     private final DatabaseManager mDatabaseManager;
 
-    public CreateOrUpdateQuoteTask(Quote quote, Book book, String quoteText, Float position, AddQuoteActivity activity) {
+    public CreateOrUpdateQuoteTask(Quote quote, Book book, String quoteText, Float position, QuoteSettingsActivity activity) {
       if(quote == null) {
         Log.v(TAG, "Creating quote");
         mQuote = new Quote();
@@ -212,7 +216,7 @@ public class AddQuoteActivity extends BookBaseActivity {
       mQuote.setContent(quoteText);
       mQuote.setPosition(position);
 
-      mActivity = new WeakReference<AddQuoteActivity>(activity);
+      mActivity = new WeakReference<QuoteSettingsActivity>(activity);
       mDatabaseManager = activity.getApp().getDatabaseManager();
     }
 
@@ -224,7 +228,7 @@ public class AddQuoteActivity extends BookBaseActivity {
 
     @Override
     protected void onPostExecute(Quote quote) {
-      AddQuoteActivity activity = mActivity.get();
+      QuoteSettingsActivity activity = mActivity.get();
       if(activity != null) {
         activity.onQuoteSaved(quote);
       }

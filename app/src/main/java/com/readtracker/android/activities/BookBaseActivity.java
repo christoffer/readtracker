@@ -103,24 +103,24 @@ public abstract class BookBaseActivity extends BaseActivity {
       return;
     }
 
-    // Set the cover as the home icon. Unfortunately it seems like there's no easy way of getting
-    // the ImageView from the actionbar pre-11. So Gingerbread will be stuck with the default image...
-    ImageView homeIcon = (ImageView) findViewById(android.R.id.home);
-    if(homeIcon != null && !TextUtils.isEmpty(book.getCoverImageUrl())) {
-      int size = getActionBarHeight();
-      if(size == 0) size = 48; // Arbitrary default value
-      Picasso.with(this)
-          .load(book.getCoverImageUrl())
-          .placeholder(android.R.drawable.ic_menu_gallery)
-          .resize(size, size)
-          .centerCrop()
-          .into(homeIcon);
-      actionBar.setDisplayShowHomeEnabled(true);
-    }
+    final String title = getActivityTitle(book);
+    final String subtitle = getActivitySubTitle(book);
+    actionBar.setTitle(title);
+    actionBar.setSubtitle(subtitle);
+  }
 
-    actionBar.setTitle(book.getTitle());
-    actionBar.setSubtitle(book.getAuthor());
-    actionBar.setDisplayHomeAsUpEnabled(true);
+  /**
+   * Returns the title to use for the activity. Defaults to the to book title.
+   */
+  protected String getActivityTitle(Book book) {
+    return book.getTitle();
+  }
+
+  /**
+   * Returns the sub title to use for the activity. Defaults to the to book author.
+   */
+  protected String getActivitySubTitle(Book book) {
+    return book.getAuthor();
   }
 
   /** Callback from the async task loading the book (with associated data) from the database. */
@@ -137,15 +137,6 @@ public abstract class BookBaseActivity extends BaseActivity {
     flushBookReadyRunnables();
     setupActionBar(book);
     onBookLoaded(book);
-  }
-
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-    if(item.getItemId() == android.R.id.home) {
-      NavUtils.navigateUpFromSameTask(this);
-      return true;
-    }
-    return super.onOptionsItemSelected(item);
   }
 
   public int getActionBarHeight() {

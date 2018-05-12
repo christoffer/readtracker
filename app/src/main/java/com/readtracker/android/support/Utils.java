@@ -9,7 +9,6 @@ import com.readtracker.android.db.Session;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -28,6 +27,8 @@ public class Utils {
 
   /**
    * Returns a string representation like "3 hours, 12 minutes"
+   *
+   * TODO(christoffer, translation) Replace with Android translations
    *
    * @param duration the duration to represent
    * @return the duration formatted as full hours and minutes
@@ -52,6 +53,8 @@ public class Utils {
    * Parts that are 0 are left out.
    * For example:
    * 3 hours and 12 seconds.
+   *
+   * TODO(christoffer, translation) Replace with Android translations
    */
   public static String longHumanTimeFromMillis(long durationMillis) {
     int[] hms = bucketMilliseconds(durationMillis);
@@ -71,6 +74,7 @@ public class Utils {
   }
 
   /**
+   * TODO(christoffer, translation) Replace with Android translations
    * @see #longCoarseHumanTimeFromMillis(long)
    */
   public static String longCoarseHumanTimeFromSeconds(long seconds) {
@@ -78,6 +82,7 @@ public class Utils {
   }
 
   /**
+   * TODO(christoffer, translation) Replace with Android translations
    * Returns a string describing a duration in matter of hours and minutes.
    */
   public static String longCoarseHumanTimeFromMillis(long durationMillis) {
@@ -92,6 +97,7 @@ public class Utils {
   /**
    * Returns the (english) pluralization of a word.
    * e.g. "dog" vs. "dogs"
+   * TODO(christoffer, translation) Replace with Android translations
    */
   public static String pluralizeWord(int num, String noun) {
     return num == 1 ? noun : noun + (noun.endsWith("s") ? "es" : "s");
@@ -100,6 +106,7 @@ public class Utils {
   /**
    * Returns the count and pluralized version of a word.
    * e.g. "1 dog" vs. "3 dogs"
+   * TODO(christoffer, translation) Replace with Android translations
    */
   public static String pluralizeWithCount(int num, String noun) {
     return String.format("%d %s", num, pluralizeWord(num, noun));
@@ -108,16 +115,10 @@ public class Utils {
   /**
    * Returns a time difference in a human format.
    * e.g. "about two weeks ago".
+   * TODO(christoffer, translation) Replace with Android translations or the builtin Android helpers
    */
   public static String humanPastTimeFromTimestamp(long unixEpochMs, long now) {
     return humanPastTime(new Date(unixEpochMs), new Date(now));
-  }
-
-  /** Return a color value to use for the book. */
-  public static int calculateBookColor(Book book) {
-    final String colorKey = book.getTitle() + book.getAuthor();
-    float color = 360 * (Math.abs(colorKey.hashCode()) / (float) Integer.MAX_VALUE);
-    return Color.HSVToColor(new float[]{color, 0.8f, 1.0f});
   }
 
   /** Returns the sessions a sorted stops list for the segmented progress bar. */
@@ -137,6 +138,9 @@ public class Utils {
     return a == b || (a != null && a.equals(b));
   }
 
+  /**
+   * Return the number of hours, minutes and seconds of a timestamp (millisecond length)
+   */
   private static int[] bucketMilliseconds(long milliseconds) {
     int seconds = (int) (milliseconds / 1000.d);
     int minutes = (int) (seconds / 60.d);
@@ -148,6 +152,15 @@ public class Utils {
     return new int[]{hours, minutes, seconds};
   }
 
+  /**
+   * Return a sentence of a list of items.
+   *
+   * TODO(christoffer, translation) Must be some way to do this with the translation framework too
+   *
+   * toSentence(["foo"]) => "foo"
+   * toSentence(["foo", "bar"]) => "foo and bar"
+   * toSentence(["foo", "bar", "baz"]) => "foo, bar, and baz"
+   */
   private static String toSentence(String[] items) {
     if(items.length == 0) {
       return "";
@@ -167,6 +180,12 @@ public class Utils {
     return String.format("%s and %s", joined.substring(0, joined.length() - 2), items[items.length - 1]);
   }
 
+  /**
+   * Return a human readable form of a time in the past.
+   *
+   * TODO(christoffer, translation) There's probably some helper for this as well in the Android
+   * framework.
+   */
   @SuppressWarnings("deprecation")
   private static String humanPastTime(Date then, Date now) {
     if(then.after(now)) {

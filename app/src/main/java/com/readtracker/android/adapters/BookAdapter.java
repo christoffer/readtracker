@@ -15,6 +15,7 @@ import com.readtracker.R;
 import com.readtracker.android.activities.HomeActivity;
 import com.readtracker.android.custom_views.SegmentBar;
 import com.readtracker.android.db.Book;
+import com.readtracker.android.support.ColorUtils;
 import com.readtracker.android.support.Utils;
 import com.squareup.otto.Subscribe;
 import com.squareup.picasso.Picasso;
@@ -156,7 +157,7 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
       if(segmentedProgressBar != null) {
         segmentedProgressBar.setVisibility(View.VISIBLE);
         segmentedProgressBar.setStops(Utils.getSessionStops(book.getSessions()));
-        segmentedProgressBar.setColor(Utils.calculateBookColor(book));
+        segmentedProgressBar.setColor(ColorUtils.getColorForBook(book));
       }
 
       if(coverImage != null) {

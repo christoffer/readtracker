@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="app_name">ReadTracker</string>
-  <string name="activity_label_add_book">Add book</string>
+  <string name="activity_label_add_new_book">Add new book</string>
   <string name="activity_label_settings">Settings</string>
   <string name="activity_label_book_settings">Book settings</string>
+  <string name="activity_label_quote_settings">Quote from book</string>
   <string name="activity_import_file">Import ReadTracker data</string>
 
   <string name="textOn">ON</string>
@@ -22,7 +23,7 @@
 
   <string name="home_menu_settings">Settings</string>
   <string name="home_menu_add">Add</string>
-  <string name="home_menu_add_book">Add book</string>
+  <string name="home_menu_add_book">Add new book</string>
 
   <string name="home_loading_books">Loading books…</string>
   <string name="home_fragment_title_finished">Finished</string>
@@ -35,17 +36,20 @@
   <string name="book_fragment_header_read">Read</string>
   <string name="book_fragment_header_quotes">Quotes</string>
 
+  <!-- 4 hours, 2 minutes / 23 sessions -->
+  <string name="summary_fragment_summary">%1$s / %2$s</string>
+
   <string name="quote_fragment_menu_title_default">Quote</string>
   <string name="quote_fragment_delete_quote">Delete quote</string>
   <string name="quote_fragment_add_new_quote">Add quote from book</string>
   <string name="quote_fragment_no_quotes">No quotes</string>
-  <string name="quote_activity_position">Page in book where the quote starts</string>
-  <string name="quote_activity_add">Add</string>
-  <string name="quote_text">Quote text</string>
+  <string name="quote_activity_position">Page in book where the text start</string>
+  <string name="quote_activity_save">Save quote</string>
+  <string name="quote_activity_title">Quoting</string>
+  <string name="quote_text">Text</string>
   <string name="quote_error_could_not_be_saved">An error occurred. The quote could not be saved.</string>
   <string name="quote_error_failed_to_delete">Failed to delete the quote</string>
 
-  <string name="add_book_add">Add</string>
   <string name="add_book_save">Save</string>
   <string name="add_book_missing_title">Please enter the title</string>
   <string name="add_book_missing_author">Please enter the author</string>
@@ -91,11 +95,12 @@
 
   <string name="book_search_search">Search</string>
   <string name="book_search_search_google_books">Search Google Books…</string>
-  <string name="book_search_new_book">New book…</string>
+  <string name="book_search_new_book">… or add manually</string>
   <string name="book_search_no_results">No results</string>
 
   <string name="finish_book_hint">What did you think of the book?</string>
-  <string name="finish_book_finish">Finish</string>
+  <string name="finish_book_finished_reading">Finished reading</string>
+  <string name="finish_book_finish">Save and finish</string>
 
   <string name="book_list_finished_on">Finished %1$s</string>
 
@@ -128,27 +133,6 @@
   <string name="settings_import_running">Importing…</string>
   <!-- 5 books imported (3 new, 2 merged), together with 54 sessions and 12 quotes. -->
   <string name="settings_import_book_report">%1$s imported (%2$s, %3$s), together with %4$s and %5$s.</string>
-  <plurals name="plural_book">
-    <item quantity="one">%d book</item>
-    <item quantity="other">%d books</item>
-  </plurals>
-  <plurals name="plural_new">
-    <item quantity="one">%d new</item>
-    <item quantity="other">%d new</item>
-  </plurals>
-  <plurals name="plural_merged">
-    <item quantity="one">%d merged</item>
-    <item quantity="other">%d merged</item>
-  </plurals>
-  <plurals name="plural_session">
-    <item quantity="one">%d session</item>
-    <item quantity="other">%d sessions</item>
-  </plurals>
-  <plurals name="plural_quote">
-    <item quantity="one">%d quote</item>
-    <item quantity="other">%d quotes</item>
-  </plurals>
-
   <string name="error_import_failed_read_file">Failed to open %1$s. Maybe you don\'t have access to the file?</string>
   <string name="error_import_failed_broken_file">Import failed. Please make sure %1$s is a ReadTracker export file.</string>
 </resources>

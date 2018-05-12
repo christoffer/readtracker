@@ -44,7 +44,7 @@
     <Button
       android:id="@+id/save_button"
       style="@style/default_button"
-      android:text="@string/quote_activity_add"/>
+      android:text="@string/quote_activity_save"/>
 
   </LinearLayout>
 </ScrollView>

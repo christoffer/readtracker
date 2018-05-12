@@ -17,7 +17,6 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,8 +39,8 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 
 /** Activity for adding or editing a book. */
-public class AddBookActivity extends BookBaseActivity implements GoogleBookSearchTask.BookSearchResultListener {
-  private static final String TAG = AddBookActivity.class.getName();
+public class BookSettingsActivity extends BookBaseActivity implements GoogleBookSearchTask.BookSearchResultListener {
+  private static final String TAG = BookSettingsActivity.class.getName();
 
   public static final int RESULT_ADDED_BOOK = RESULT_FIRST_USER + 1;
   public static final int RESULT_DELETED_BOOK = RESULT_FIRST_USER + 2;
@@ -51,7 +50,7 @@ public class AddBookActivity extends BookBaseActivity implements GoogleBookSearc
   @InjectView(R.id.title_edit) EditText mTitleEdit;
   @InjectView(R.id.author_edit) EditText mAuthorEdit;
   @InjectView(R.id.page_count_edit) EditText mPageCountEdit;
-  @InjectView(R.id.add_or_save_button) Button mAddOrSaveButton;
+  @InjectView(R.id.add_or_save_button) Button mSaveButton;
   @InjectView(R.id.track_using_pages) CheckBox mTrackUsingPages;
   @InjectView(R.id.book_cover_image) ImageButton mCoverImageButton;
   @InjectView(R.id.find_cover_button) TextView mFindCoverButton;
@@ -109,7 +108,7 @@ public class AddBookActivity extends BookBaseActivity implements GoogleBookSearc
 
     builder.setPositiveButton(R.string.add_book_delete, new DialogInterface.OnClickListener() {
       @Override public void onClick(DialogInterface dialogInterface, int i) {
-        new DeleteBookTask(AddBookActivity.this, getBook()).execute();
+        new DeleteBookTask(BookSettingsActivity.this, getBook()).execute();
       }
     });
 
@@ -151,7 +150,7 @@ public class AddBookActivity extends BookBaseActivity implements GoogleBookSearc
   }
 
   private void bindEvents() {
-    mAddOrSaveButton.setOnClickListener(new View.OnClickListener() {
+    mSaveButton.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
         onAddOrUpdateClicked();
@@ -172,15 +171,15 @@ public class AddBookActivity extends BookBaseActivity implements GoogleBookSearc
 
         final String searchQuery = GoogleBookSearch.buildQueryForTitleAndAuthor(title, author);
         if(searchQuery != null) {
-          getApp().showProgressDialog(AddBookActivity.this, R.string.add_book_looking_for_book);
-          GoogleBookSearchTask.search(searchQuery, AddBookActivity.this);
+          getApp().showProgressDialog(BookSettingsActivity.this, R.string.add_book_looking_for_book);
+          GoogleBookSearchTask.search(searchQuery, BookSettingsActivity.this);
         }
       }
     });
 
     mCoverImageButton.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        Toast.makeText(AddBookActivity.this, R.string.add_book_long_press_to_delete, Toast.LENGTH_SHORT).show();
+        Toast.makeText(BookSettingsActivity.this, R.string.add_book_long_press_to_delete, Toast.LENGTH_SHORT).show();
       }
     });
 
@@ -210,7 +209,6 @@ public class AddBookActivity extends BookBaseActivity implements GoogleBookSearc
   }
 
   private void initializeForAddingBook(Intent intent) {
-    mAddOrSaveButton.setText(R.string.add_book_add);
     mTitleEdit.setText(intent.getStringExtra(IntentKeys.TITLE));
     mAuthorEdit.setText(intent.getStringExtra(IntentKeys.AUTHOR));
     loadCoverFromURL(intent.getStringExtra(IntentKeys.COVER_URL));
@@ -220,8 +218,6 @@ public class AddBookActivity extends BookBaseActivity implements GoogleBookSearc
   }
 
   private void initializeForEditMode(Book book) {
-    mAddOrSaveButton.setText(R.string.add_book_save);
-
     mTitleEdit.setText(book.getTitle());
     mAuthorEdit.setText(book.getAuthor());
 
@@ -379,12 +375,12 @@ public class AddBookActivity extends BookBaseActivity implements GoogleBookSearc
     // make dupes of long titles invisible to the user
     static final Pattern DUPE_COUNT_PATTERN = Pattern.compile("^[(](\\d+)[)](.*)");
 
-    final WeakReference<AddBookActivity> mActivity;
+    final WeakReference<BookSettingsActivity> mActivity;
     final DatabaseManager mDatabaseMgr;
     final Book mBook;
     final String mUnknownTitleString;
 
-    BackgroundBookTask(AddBookActivity activity, Book book) {
+    BackgroundBookTask(BookSettingsActivity activity, Book book) {
       mBook = book;
       mActivity = new WeakReference<>(activity);
       mDatabaseMgr = activity.getApp().getDatabaseManager();
@@ -393,7 +389,7 @@ public class AddBookActivity extends BookBaseActivity implements GoogleBookSearc
 
     abstract protected boolean run();
 
-    abstract protected void onComplete(AddBookActivity activity, boolean success);
+    abstract protected void onComplete(BookSettingsActivity activity, boolean success);
 
     @Override
     protected Boolean doInBackground(Void... voids) {
@@ -401,7 +397,7 @@ public class AddBookActivity extends BookBaseActivity implements GoogleBookSearc
     }
 
     @Override protected void onPostExecute(Boolean success) {
-      AddBookActivity activity = mActivity.get();
+      BookSettingsActivity activity = mActivity.get();
       if(activity != null) {
         onComplete(activity, success);
       }
@@ -411,7 +407,7 @@ public class AddBookActivity extends BookBaseActivity implements GoogleBookSearc
   static class UpdateBookTask extends BackgroundBookTask {
     private final boolean mShouldMakeTitleUnique;
 
-    UpdateBookTask(AddBookActivity activity, Book book, boolean shouldMakeTitleUnique) {
+    UpdateBookTask(BookSettingsActivity activity, Book book, boolean shouldMakeTitleUnique) {
       super(activity, book);
       mShouldMakeTitleUnique = shouldMakeTitleUnique;
     }
@@ -423,7 +419,7 @@ public class AddBookActivity extends BookBaseActivity implements GoogleBookSearc
       return mDatabaseMgr.save(mBook);
     }
 
-    @Override protected void onComplete(AddBookActivity activity, boolean success) {
+    @Override protected void onComplete(BookSettingsActivity activity, boolean success) {
       activity.onBookUpdated(mBook.getId(), success);
     }
 
@@ -454,7 +450,7 @@ public class AddBookActivity extends BookBaseActivity implements GoogleBookSearc
   }
 
   static class DeleteBookTask extends BackgroundBookTask {
-    DeleteBookTask(AddBookActivity activity, Book book) {
+    DeleteBookTask(BookSettingsActivity activity, Book book) {
       super(activity, book);
     }
 
@@ -462,7 +458,7 @@ public class AddBookActivity extends BookBaseActivity implements GoogleBookSearc
       return mDatabaseMgr.delete(mBook);
     }
 
-    @Override protected void onComplete(AddBookActivity activity, boolean success) {
+    @Override protected void onComplete(BookSettingsActivity activity, boolean success) {
       activity.onBookDeleted(mBook.getId(), success);
     }
   }

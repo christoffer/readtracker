@@ -30,17 +30,16 @@
 
     <activity
       android:name=".android.activities.BookSearchActivity"
-      android:label="@string/activity_label_add_book"
-      android:parentActivityName=".android.activities.HomeActivity"
+      android:label="@string/activity_label_add_new_book"
+      android:parentActivityName="com.readtracker.android.activities.HomeActivity"
       android:launchMode="singleTop">
     </activity>
 
     <activity
-      android:name=".android.activities.AddBookActivity"
+      android:name=".android.activities.BookSettingsActivity"
       android:noHistory="true"
-      android:label="@string/activity_label_add_book"
-      android:windowSoftInputMode="adjustPan"
-      android:parentActivityName="com.readtracker.android.activities.HomeActivity">
+      android:label="@string/activity_label_book_settings"
+      android:windowSoftInputMode="adjustPan">
     </activity>
 
     <activity
@@ -51,13 +50,12 @@
     </activity>
 
     <activity
-      android:name=".android.activities.FinishBookActivity"
-      android:parentActivityName="com.readtracker.android.activities.BookActivity">
+      android:name=".android.activities.FinishBookActivity">
     </activity>
 
     <activity
-      android:name=".android.activities.AddQuoteActivity"
-      android:parentActivityName="com.readtracker.android.activities.BookActivity">
+      android:name=".android.activities.QuoteSettingsActivity"
+      android:label="@string/activity_label_quote_settings">
     </activity>
 
     <activity

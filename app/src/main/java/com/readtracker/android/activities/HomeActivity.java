@@ -41,6 +41,7 @@ public class HomeActivity extends BaseActivity {
   private List<Book> mBooks = new ArrayList<>();
 
   @InjectView(R.id.book_list_pager) ViewPager mViewPager;
+  @InjectView(R.id.pager_tab_strip) PagerTabStrip mPagerTabStrip;
 
   private HomeFragmentAdapter mFragmentAdapter;
   private LoadCatalogueTask mLoadCatalogueTask;
@@ -61,6 +62,7 @@ public class HomeActivity extends BaseActivity {
 
     resetFragmentAdapter();
     loadBooks();
+    mPagerTabStrip.setDrawFullUnderline(false);
     mViewPager.setCurrentItem(mFragmentAdapter.getDefaultPage());
   }
 

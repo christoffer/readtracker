@@ -87,7 +87,7 @@ public class ProgressPicker extends LinearLayout {
 
   public void setColor(int color) {
     if (mPositionPicker != null) {
-      ColorUtils.setNumberPickerDividerColorHack(mPositionPicker, color);
+      ColorUtils.setNumberPickerDividerColorUsingHack(mPositionPicker, color);
     }
   }
 

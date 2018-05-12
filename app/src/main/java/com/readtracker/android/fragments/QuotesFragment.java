@@ -17,16 +17,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.readtracker.R;
-import com.readtracker.android.activities.AddBookActivity;
-import com.readtracker.android.activities.AddQuoteActivity;
+import com.readtracker.android.activities.BookSettingsActivity;
+import com.readtracker.android.activities.QuoteSettingsActivity;
 import com.readtracker.android.activities.BookActivity;
 import com.readtracker.android.activities.BookBaseActivity;
 import com.readtracker.android.adapters.QuoteAdapter;
 import com.readtracker.android.db.Book;
 import com.readtracker.android.db.DatabaseManager;
 import com.readtracker.android.db.Quote;
-import com.readtracker.android.support.DrawableGenerator;
-import com.readtracker.android.support.Utils;
+import com.readtracker.android.support.ColorUtils;
 import com.squareup.otto.Subscribe;
 
 import java.lang.ref.WeakReference;
@@ -103,8 +102,7 @@ public class QuotesFragment extends BaseFragment {
       return;
     }
 
-    final int color = Utils.calculateBookColor(mBook);
-    mAddQuoteButton.setBackgroundDrawable(DrawableGenerator.generateButtonBackground(color));
+    final int color = ColorUtils.getColorForBook(mBook);
 
     ColorDrawable divider = new ColorDrawable(color);
     divider.setAlpha(128);
@@ -117,8 +115,8 @@ public class QuotesFragment extends BaseFragment {
       public void onItemClick(AdapterView<?> adapterView, View view, int position, long itemId) {
         Quote quote = mQuoteAdapter.getItem(position);
         Log.v(TAG, "Clicked quote: " + quote);
-        Intent editQuoteIntent = new Intent(getActivity(), AddQuoteActivity.class);
-        editQuoteIntent.putExtra(AddBookActivity.KEY_QUOTE_ID, quote.getId());
+        Intent editQuoteIntent = new Intent(getActivity(), QuoteSettingsActivity.class);
+        editQuoteIntent.putExtra(BookSettingsActivity.KEY_QUOTE_ID, quote.getId());
         editQuoteIntent.putExtra(BookActivity.KEY_BOOK_ID, mBook.getId());
         startActivityForResult(editQuoteIntent, REQ_EDIT_QUOTE);
       }
@@ -130,8 +128,8 @@ public class QuotesFragment extends BaseFragment {
     mAddQuoteButton.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
-        Intent intent = new Intent(getActivity(), AddQuoteActivity.class);
-        intent.putExtra(AddQuoteActivity.KEY_BOOK_ID, mBook.getId());
+        Intent intent = new Intent(getActivity(), QuoteSettingsActivity.class);
+        intent.putExtra(QuoteSettingsActivity.KEY_BOOK_ID, mBook.getId());
         startActivityForResult(intent, REQ_ADD_QUOTE);
       }
     });
@@ -161,10 +159,10 @@ public class QuotesFragment extends BaseFragment {
     final boolean addedQuote = requestCode == REQ_ADD_QUOTE && resultCode == Activity.RESULT_OK;
     final boolean editedQuote = requestCode == REQ_EDIT_QUOTE && resultCode != Activity.RESULT_CANCELED;
     if(addedQuote || editedQuote) {
-      if(data != null && data.hasExtra(AddQuoteActivity.KEY_QUOTE_ID)) {
-        final int quoteId = data.getIntExtra(AddQuoteActivity.KEY_QUOTE_ID, 0);
+      if(data != null && data.hasExtra(QuoteSettingsActivity.KEY_QUOTE_ID)) {
+        final int quoteId = data.getIntExtra(QuoteSettingsActivity.KEY_QUOTE_ID, 0);
         Log.d(TAG, "Quote created: " + quoteId);
-        if(resultCode == AddQuoteActivity.RESULT_DELETED) {
+        if(resultCode == QuoteSettingsActivity.RESULT_DELETED) {
           new DeleteTask(quoteId, this).execute();
         } else {
           loadQuoteAndUpdateList(quoteId);

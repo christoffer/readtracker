@@ -1,6 +1,8 @@
 package com.readtracker.android.adapters;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,7 +12,6 @@ import android.widget.TextView;
 
 import com.readtracker.R;
 import com.readtracker.android.db.Quote;
-import com.readtracker.android.support.ColorUtils;
 import com.readtracker.android.support.DrawableGenerator;
 import com.readtracker.android.support.Utils;
 
@@ -24,7 +25,10 @@ public class QuoteAdapter extends ArrayAdapter<Quote> {
   private final Comparator<Quote> mQuoteComparator = new Comparator<Quote>() {
     @Override
     public int compare(Quote a, Quote b) {
-      return a.getAddTimestampMs() > b.getAddTimestampMs() ? -1 : 1;
+      final long timestampA = a.getAddTimestampMs();
+      final long timestampB = b.getAddTimestampMs();
+      //noinspection UseCompareMethod -- Can't use this with our current min sdk target
+      return timestampA == timestampB ? 0 : timestampA > timestampB ? -1 : 1;
     }
   };
 
@@ -42,8 +46,8 @@ public class QuoteAdapter extends ArrayAdapter<Quote> {
     notifyDataSetChanged();
   }
 
-  @Override
-  public View getView(int position, View convertView, ViewGroup parent) {
+  @NonNull @Override
+  public View getView(int position, View convertView, @NonNull ViewGroup parent) {
     final Quote quote = getItem(position);
 
     if(convertView == null) {
@@ -71,7 +75,7 @@ public class QuoteAdapter extends ArrayAdapter<Quote> {
       textDate.setText(metadata);
     }
 
-    final int backgroundColor = ColorUtils.getBackgroundColor(convertView.getContext());
+    final int backgroundColor = ContextCompat.getColor(convertView.getContext(), R.color.windowBackground);
     final int itemColor = mColor;
     convertView.setBackgroundDrawable(DrawableGenerator.generateListItemBackground(itemColor, backgroundColor));
     return convertView;

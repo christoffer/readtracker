@@ -165,11 +165,10 @@ public class ReadFragment extends BaseFragment {
       return;
     }
     Log.v(TAG, "Populating fields for book: " + mBook);
-    final int bookColor = Utils.calculateBookColor(mBook);
+    final int bookColor = ColorUtils.getColorForBook(mBook);
     mTimeSpinner.setColor(bookColor);
     mTimeSpinner.setMaxSize(500);
-    ColorUtils.setNumberPickerDividerColorHack(mDurationPicker, bookColor);
-    DrawableGenerator.applyButtonBackground(bookColor, mStartButton, mPauseButton, mDoneButton);
+    ColorUtils.setNumberPickerDividerColorUsingHack(mDurationPicker, 0x00000000);
     mLastPositionText.setText(getLastPositionDescription());
     bindEvents();
   }
@@ -278,6 +277,7 @@ public class ReadFragment extends BaseFragment {
 
     // Don't show the duration wheel until the timer has started
     mDurationPicker.setVisibility(View.INVISIBLE);
+    mDurationPicker.setWrapSelectorWheel(false);
 
     mDurationPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
       @Override public void onValueChange(NumberPicker picker, int oldValue, int newValue) {

@@ -2,18 +2,17 @@ package com.readtracker.android.custom_views;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.content.res.TypedArray;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.Typeface;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
 
+import com.readtracker.R;
 import com.readtracker.android.db.Session;
-import com.readtracker.android.support.ColorUtils;
 import com.readtracker.android.support.Utils;
 
 import java.util.Arrays;
@@ -194,7 +193,7 @@ public class SessionView extends View {
     mNodePaint.setColor(mColor);
     mNodePaint.setAntiAlias(true);
 
-    int primaryColor = ColorUtils.getPrimaryTextColor(this.getContext());
+    int primaryColor = ContextCompat.getColor(getContext(), R.color.textColorPrimary);
     mPrimaryTextPaint = new Paint();
     mPrimaryTextPaint.setTypeface(Typeface.DEFAULT);
     mPrimaryTextPaint.setTextSize(convertDPtoPX(14));
@@ -202,7 +201,7 @@ public class SessionView extends View {
     mPrimaryTextPaint.setSubpixelText(true);
     mPrimaryTextPaint.setAntiAlias(true);
 
-    int secondaryColor = ColorUtils.getSecondaryTextColor(this.getContext());
+    int secondaryColor = ContextCompat.getColor(getContext(), R.color.textColorSecondary);
     mSecondaryTextPaint = new Paint();
     mSecondaryTextPaint.setTypeface(Typeface.DEFAULT);
     mSecondaryTextPaint.setTextSize(convertDPtoPX(12));
@@ -210,12 +209,9 @@ public class SessionView extends View {
     mSecondaryTextPaint.setSubpixelText(true);
     mPrimaryTextPaint.setAntiAlias(true);
 
-    TypedArray array = getContext().getTheme().obtainStyledAttributes(new int[]{
-      android.R.attr.colorBackground,
-    });
 
-    int backgroundColor = 0xff000000 | array.getColor(0, Color.BLACK);
-    array.recycle();
+    final int themeBackgroundColor = ContextCompat.getColor(getContext(), R.color.windowBackground);
+    int backgroundColor = 0xff000000 | themeBackgroundColor; // Strip transparency
 
     mBackgroundPaint = new Paint();
     mBackgroundPaint.setStyle(Paint.Style.FILL);
