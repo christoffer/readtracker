@@ -116,8 +116,13 @@
   <string name="settings_compact_finish_list_summary">Hides the closing remarks for finished books.</string>
   <string name="settings_import_json">Import</string>
   <string name="settings_import_summary">Imports a previously exported ReadTracker file.</string>
+  <string name="settings_import_confirmation">Importing data from a ReadTracker JSON file will add books, quotes, and sessions into your current device.\n\nBooks that already exist on the device will merge with imported ones, and new books will be added.\n\nThere\'s no way to undo this operation, so it's strongly recommended to first export you data as a backup.</string>
+  <string name="settings_import_positive_button">Select file</string>
   <string name="settings_export_json">Export</string>
   <string name="settings_export_summary">Exports all ReadTracker data to a file.</string>
+  <string name="settings_export_confirmation">This will export all your data to a JSON file.\n\nThe file is saved in your Downloads folder, where it can be shared, viewed, or imported back into ReadTracker.</string>
+  <string name="settings_export_positive_button">Export</string>
+  <string name="settings_export_conf">This will export all your books to a JSON file in your Download folder. This file can be read by other programs, or imported back into ReadTracker again.</string>
   <string name="settings_export_json_save_data">Save exported data</string>
   <string name="settings_export_failed">Unfortunately there was an unexpected error when exporting your data. Make sure your external media is available and try again.</string>
   <string name="settings_export_need_external_media">Please make sure that your external media is mounted before exporting your ReadTracker data.</string>

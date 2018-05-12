@@ -1,8 +1,10 @@
 package com.readtracker.android.activities;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.DownloadManager;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
@@ -90,7 +92,7 @@ public class SettingsActivity extends PreferenceActivity implements ImportReadTr
     final Preference importData = findPreference(IMPORT_JSON);
     importData.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
       @Override public boolean onPreferenceClick(Preference preference) {
-        importFileOrRequestPermission();
+        confirmImport();
         return true;
       }
     });
@@ -100,7 +102,7 @@ public class SettingsActivity extends PreferenceActivity implements ImportReadTr
     final Preference exportData = findPreference(EXPORT_JSON);
     exportData.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
       @Override public boolean onPreferenceClick(Preference preference) {
-        exportFilesOrRequestPermission();
+        confirmExport();
         return true;
       }
     });
@@ -111,14 +113,14 @@ public class SettingsActivity extends PreferenceActivity implements ImportReadTr
 
     if(requestCode == FILE_PICKER_SELECT_FILE_REQUEST_CODE && resultCode == RESULT_OK) {
       String importFilePath = data.getStringExtra(FilePickerActivity.RESULT_FILE_PATH);
-      if (importFilePath == null) {
+      if(importFilePath == null) {
         Log.d(TAG, "File picker returned with null file path");
         finish();
         return;
       }
 
       File importFile = new File(importFilePath);
-      if (!importFile.exists() || !importFile.canRead()) {
+      if(!importFile.exists() || !importFile.canRead()) {
         Log.d(TAG, String.format("File picker returned with file that exists: %b, canRead: %b - exiting", importFile.exists(), importFile.canRead()));
         finish();
         return;
@@ -149,13 +151,52 @@ public class SettingsActivity extends PreferenceActivity implements ImportReadTr
     }
   }
 
+  private void confirmImport() {
+    final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    builder
+        .setTitle(R.string.settings_import_json)
+        .setMessage(R.string.settings_import_confirmation)
+        .setIcon(android.R.drawable.ic_dialog_alert)
+        .setPositiveButton(R.string.settings_import_positive_button, new DialogInterface.OnClickListener() {
+          @Override public void onClick(DialogInterface dialogInterface, int i) {
+            importFileOrRequestPermission();
+          }
+        })
+        .setNegativeButton(R.string.general_cancel, new DialogInterface.OnClickListener() {
+          @Override public void onClick(DialogInterface dialogInterface, int i) {
+            dialogInterface.cancel();
+          }
+        })
+        .setCancelable(true).create().show();
+  }
+
+
+
+  private void confirmExport() {
+    final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    builder
+        .setTitle(R.string.settings_export_json)
+        .setMessage(R.string.settings_export_confirmation)
+        .setPositiveButton(R.string.settings_export_positive_button, new DialogInterface.OnClickListener() {
+          @Override public void onClick(DialogInterface dialogInterface, int i) {
+            exportFilesOrRequestPermission();
+          }
+        })
+        .setNegativeButton(R.string.general_cancel, new DialogInterface.OnClickListener() {
+          @Override public void onClick(DialogInterface dialogInterface, int i) {
+            dialogInterface.cancel();
+          }
+        })
+        .setCancelable(true).create().show();
+  }
+
   private void exportFilesOrRequestPermission() {
     final String requiredPermission = Manifest.permission.WRITE_EXTERNAL_STORAGE;
-    if (ContextCompat.checkSelfPermission(this, requiredPermission) == PackageManager.PERMISSION_GRANTED) {
+    if(ContextCompat.checkSelfPermission(this, requiredPermission) == PackageManager.PERMISSION_GRANTED) {
       Log.d(TAG, "Have permission for writing external storage");
 
       final boolean isExternalStorageWritable = Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState());
-      if (!isExternalStorageWritable) {
+      if(!isExternalStorageWritable) {
         Log.d(TAG, "external storage not mounted as writable");
         Toast.makeText(this, R.string.settings_export_need_external_media, Toast.LENGTH_LONG).show();
         return;
@@ -165,7 +206,7 @@ public class SettingsActivity extends PreferenceActivity implements ImportReadTr
       File exportToDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
 
       final File exportedJsonFile = jsonExporter.exportAllBooksToDir(exportToDir);
-      if (exportedJsonFile == null || !exportedJsonFile.exists()) {
+      if(exportedJsonFile == null || !exportedJsonFile.exists()) {
         Log.e(TAG, String.format("Failed to write intermediary JSON export file. File was not created. exportedJSONFile: %s, exportToDir: %s", exportedJsonFile, exportToDir));
         Toast.makeText(this, R.string.settings_export_failed, Toast.LENGTH_LONG).show();
         return;
@@ -173,8 +214,8 @@ public class SettingsActivity extends PreferenceActivity implements ImportReadTr
 
       // File written to disk. Attempt to add it to the download manager so the user can find it
       // easily.
-      DownloadManager downloadManager = (DownloadManager)getSystemService(DOWNLOAD_SERVICE);
-      if (downloadManager == null) {
+      DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+      if(downloadManager == null) {
         Log.w(TAG, "Unexpectedly got a null DownloadManager");
       } else {
         final String filename = exportedJsonFile.getName();
@@ -191,7 +232,7 @@ public class SettingsActivity extends PreferenceActivity implements ImportReadTr
 
   private void importFileOrRequestPermission() {
     final String requiredPermission = Manifest.permission.READ_EXTERNAL_STORAGE;
-    if (ContextCompat.checkSelfPermission(this, requiredPermission) == PackageManager.PERMISSION_GRANTED) {
+    if(ContextCompat.checkSelfPermission(this, requiredPermission) == PackageManager.PERMISSION_GRANTED) {
       Log.v(TAG, "Have permission for accessing external storage");
       new MaterialFilePicker()
           .withActivity(this)
@@ -204,7 +245,7 @@ public class SettingsActivity extends PreferenceActivity implements ImportReadTr
   }
 
   @Override public void onImportStart() {
-    if (this.progressDialog != null) {
+    if(this.progressDialog != null) {
       this.progressDialog.dismiss();
     }
     this.progressDialog = new ProgressDialog(this);
@@ -217,7 +258,7 @@ public class SettingsActivity extends PreferenceActivity implements ImportReadTr
   @Override public void onImportComplete(JSONImporter.ImportResultReport result) {
     this.progressDialog.dismiss();
     this.progressDialog = null;
-    if (result != null) {
+    if(result != null) {
       Log.d(TAG, result.toString());
       // NOTE(christoffer) pluralized translations seem complicated...
       final Resources res = getResources();
@@ -234,7 +275,7 @@ public class SettingsActivity extends PreferenceActivity implements ImportReadTr
 
   @Override public void onImportUpdate(int currentBook, int totalBooks) {
     Log.d(TAG, String.format("import progress: %d out of %d", currentBook, totalBooks));
-    if (this.progressDialog != null) {
+    if(this.progressDialog != null) {
       this.progressDialog.setIndeterminate(false);
       this.progressDialog.setMax(totalBooks);
       this.progressDialog.setProgress(currentBook);
