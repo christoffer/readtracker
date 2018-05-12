@@ -20,6 +20,6 @@ public class ApplicationSettingsHelper {
     mPreferences
         .edit()
         .putBoolean(KEY_COMPACT_FINISH_LIST, value)
-        .commit();
+        .apply();
   }
 }

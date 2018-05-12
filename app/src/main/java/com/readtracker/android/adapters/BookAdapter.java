@@ -67,7 +67,7 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
   }
 
   @Subscribe public void onCatalogueLoadedEvent(HomeActivity.CatalogueLoadedEvent event) {
-    Log.d(TAG, "Adapter got books: " + event.getBooks().size());
+    Log.d(TAG, String.format("Adapter with filter %s got number of books: %d", mStateFilter, event.getBooks().size()));
     setBooks(event.getBooks());
   }
 
@@ -119,7 +119,6 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
     for(Book book : updatedCatalogue) {
       int position = mBooks.indexOf(book);
       if(mStateFilter == null || book.getState() == mStateFilter) {
-        Log.v(TAG, String.format("Adding entry: %s", book));
         if(position < 0) { // Not in adapter
           mBooks.add(book);
         } else { // Already in adapter

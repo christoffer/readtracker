@@ -43,7 +43,6 @@ public class HomeActivity extends BaseActivity {
   @InjectView(R.id.book_list_pager) ViewPager mViewPager;
   @InjectView(R.id.pager_tab_strip) PagerTabStrip mPagerTabStrip;
 
-  private HomeFragmentAdapter mFragmentAdapter;
   private LoadCatalogueTask mLoadCatalogueTask;
 
   @Override
@@ -63,7 +62,7 @@ public class HomeActivity extends BaseActivity {
     resetFragmentAdapter();
     loadBooks();
     mPagerTabStrip.setDrawFullUnderline(false);
-    mViewPager.setCurrentItem(mFragmentAdapter.getDefaultPage());
+    mViewPager.setCurrentItem(HomeFragmentAdapter.DEFAULT_POSITION);
   }
 
   @Override protected void onStart() {
@@ -105,17 +104,25 @@ public class HomeActivity extends BaseActivity {
 
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    final boolean shouldReload = (
-      requestCode == REQUEST_READING_SESSION && resultCode == RESULT_OK
-    );
-    final boolean needReloadDueToAddedBook = requestCode == ActivityCodes.REQUEST_ADD_BOOK;
+    final boolean returnFromReadingSession = requestCode == REQUEST_READING_SESSION && resultCode == RESULT_OK;
+    final boolean readingSessionFinishedBook = data != null && data.getBooleanExtra(BookActivity.KEY_FINISHED, false);
+    final boolean returnFromAddBook = requestCode == ActivityCodes.REQUEST_ADD_BOOK;
 
     // Handle coming back from settings
     if(requestCode == ActivityCodes.SETTINGS) {
+      Log.d(TAG, "Returned to HomeActivity from Settings -- reapplying settings");
       // Reset the adapter to refresh views if the user toggled compact mode
       resetFragmentAdapter();
-    } else if(shouldReload || needReloadDueToAddedBook) {
-      if(data != null && data.getBooleanExtra(BookActivity.KEY_FINISHED, false)) {
+    } else if(returnFromReadingSession || returnFromAddBook) {
+      Log.d(TAG, "Returned with a trigger for reloading books");
+      if(returnFromAddBook) {
+        Log.v(TAG, "Returned from adding book, swiping to read list");
+        // Came back from adding a book, swipe to reading list to show it
+        if(mViewPager != null) {
+          mViewPager.setCurrentItem(1);
+        }
+      } else if(readingSessionFinishedBook) {
+        Log.v(TAG, "Returning from finishing book, swiping to finish list");
         // Came back with a success result for a finished book, let the view pager show it
         if(mViewPager != null) {
           mViewPager.setCurrentItem(0);
@@ -136,8 +143,9 @@ public class HomeActivity extends BaseActivity {
   }
 
   private void resetFragmentAdapter() {
-    mFragmentAdapter = new HomeFragmentAdapter(this, getAppSettings().hasCompactFinishedList());
-    mViewPager.setAdapter(mFragmentAdapter);
+    Log.d(TAG, "Resetting HomeFragmentAdapter");
+    HomeFragmentAdapter adapter = new HomeFragmentAdapter(this, getAppSettings().hasCompactFinishedList());
+    mViewPager.setAdapter(adapter);
   }
 
   /**

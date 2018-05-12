@@ -32,6 +32,7 @@ public class BookListFragment extends ListFragment {
   private Book.State mBookStateFilter;
 
   public static BookListFragment newInstance(int itemLayoutResId, Book.State bookStateFilter) {
+    Log.d(TAG, String.format("BookListFrament being created with itemLayoutResId: %d amd bookStateFilter: %s", itemLayoutResId, bookStateFilter));
     Bundle args = new Bundle();
     args.putInt(Argument.ItemResId.toString(), itemLayoutResId);
     args.putString(Argument.BookStateFilter.toString(), bookStateFilter.toString());
@@ -63,7 +64,7 @@ public class BookListFragment extends ListFragment {
     HomeActivity homeActivity = (HomeActivity) getActivity();
 
     mBookAdapter = new BookAdapter(homeActivity, mItemLayoutResId, mBookStateFilter);
-    Log.d(TAG, "Created adapter");
+    Log.d(TAG, String.format("Created adapter with filter %s", mBookStateFilter));
     mBookAdapter.setBooks(homeActivity.getBooks());
     setListAdapter(mBookAdapter);
 
