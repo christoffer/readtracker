@@ -10,7 +10,7 @@ repositories {
 }
 
 android {
-    compileSdkVersion 24
+    compileSdkVersion 26
     buildToolsVersion '27.0.3'
     testOptions {
         unitTests.returnDefaultValues = true
@@ -41,7 +41,7 @@ android {
     useLibrary 'org.apache.http.legacy'
     defaultConfig {
         minSdkVersion 16
-        targetSdkVersion 24
+        targetSdkVersion 26
         versionCode 18
         versionName "3.2"
         testApplicationId "com.readtracker.android.test"
@@ -74,8 +74,11 @@ android {
 }
 
 dependencies {
-    implementation 'com.android.support:appcompat-v7:24.2.1'
-    implementation 'com.android.support:support-v4:24.2.1'
+    implementation "com.android.support:appcompat-v7:$android_support_lib_version"
+    implementation "com.android.support:support-v4:$android_support_lib_version"
+    // Design library is not used by ReadTracker directly, but it is used by the MaterialPicker
+    // library. We include it here to have a consistent version between all the support libraries.
+    implementation "com.android.support:design:$android_support_lib_version"
     implementation 'com.j256.ormlite:ormlite-android:4.48'
     implementation 'com.j256.ormlite:ormlite-core:4.48'
     implementation 'com.squareup.picasso:picasso:2.2.0'
@@ -88,10 +91,13 @@ dependencies {
     // Material FilePicker
     implementation 'com.nbsp:library:1.8'
     // Required for instrumented tests
-    androidTestImplementation 'com.android.support:support-annotations:27.1.1'
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation "com.android.support:support-annotations:$android_support_lib_version"
+    androidTestImplementation('com.android.support.test:runner:1.0.2') {
+        // Exclude the support annotations because they force upgrade the elicit support
+        // annotation version above.
+        exclude group: 'com.android.support', module: 'support-annotations'
+    }
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
 }
 
 configurations {
