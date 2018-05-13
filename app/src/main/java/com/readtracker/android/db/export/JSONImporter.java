@@ -21,8 +21,16 @@ public class JSONImporter {
   private final DatabaseManager mDatabaseManager;
   private final ProgressListener mProgressListener;
 
+  private static ProgressListener DUMMY_LISTENER = new ProgressListener() {
+    @Override public void onProgressUpdate(int currentBook, int totalBooks) {}
+  };
+
   public interface ProgressListener {
     void onProgressUpdate(int currentBook, int totalBooks);
+  }
+
+  public JSONImporter(DatabaseManager databaseManager) {
+    this(databaseManager, DUMMY_LISTENER);
   }
 
   public JSONImporter(DatabaseManager databaseManager, ProgressListener listener) {

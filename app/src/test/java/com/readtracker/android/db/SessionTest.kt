@@ -1,6 +1,5 @@
 package com.readtracker.android.db
 
-import android.support.test.filters.SmallTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -10,7 +9,6 @@ class SessionTest {
      * Create a [Book] entity and set a random [Session] on it. Merges this
      * information onto another book entity and assert the session.
      */
-    @SmallTest
     @Test
     fun sessionTest_MergeInformationFromSessionToSession_ReturnsSessionCopy() {
         val original = Session().apply {

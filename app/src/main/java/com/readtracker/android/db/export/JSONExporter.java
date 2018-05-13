@@ -27,16 +27,17 @@ public class JSONExporter {
   private static final String TAG = JSONExporter.class.getSimpleName();
 
   private final DatabaseManager mDatabaseMgr;
-  private final Context mContext;
 
   public static JSONExporter from(Activity activity) {
-    Context appContext = activity.getApplicationContext();
     ReadTrackerApp app = (ReadTrackerApp) activity.getApplication();
-    return new JSONExporter(appContext, app.getDatabaseManager());
+    return new JSONExporter(app.getDatabaseManager());
   }
 
-  JSONExporter(Context context, DatabaseManager db) {
-    mContext = context;
+  public static JSONExporter withDatabaseManager(DatabaseManager databaseManager) {
+    return new JSONExporter(databaseManager);
+  }
+
+  private JSONExporter(DatabaseManager db) {
     mDatabaseMgr = db;
   }
 

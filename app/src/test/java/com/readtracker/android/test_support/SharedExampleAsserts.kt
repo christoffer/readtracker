@@ -1,4 +1,4 @@
-package com.readtracker.android.support
+package com.readtracker.android.test_support
 
 import com.readtracker.android.db.Book
 import org.junit.Assert.assertEquals

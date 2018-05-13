@@ -1,4 +1,4 @@
-package com.readtracker.android.support
+package com.readtracker.android.test_support
 
 import android.content.Context
 import com.readtracker.android.db.DatabaseHelper

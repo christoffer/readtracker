@@ -1,6 +1,5 @@
 package com.readtracker.android.db
 
-import android.support.test.filters.SmallTest
 import com.readtracker.android.db.Book.State.Reading
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -11,7 +10,6 @@ class BookTest {
      * Create a book entity with some set data, synchronize the data from one book onto another,
      * and assert that the data is correct.
      */
-    @SmallTest
     @Test
     fun bookTest_MergeInformationBookToBook_ReturnsBookCopy() {
         val original = Book().apply {
