@@ -4,7 +4,8 @@
   android:layout_height="wrap_content"
   android:layout_width="fill_parent"
   android:orientation="vertical"
-  android:padding="24dp">
+  android:padding="24dp"
+  android:background="?android:colorBackground">
 
   <TextView
     style="@style/default_text"

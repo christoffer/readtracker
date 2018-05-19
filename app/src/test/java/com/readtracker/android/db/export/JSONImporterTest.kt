@@ -1,12 +1,8 @@
 package com.readtracker.android.db.export
 
-import android.support.test.filters.SmallTest
 import com.readtracker.android.db.Book
 import com.readtracker.android.db.Model
-import com.readtracker.android.support.DatabaseTestCase
-import com.readtracker.android.support.SharedExampleAsserts
-import com.readtracker.android.support.TestUtils
-import com.readtracker.android.support.TestUtils.randomString
+import com.readtracker.android.test_support.*
 import org.junit.Assert.*
 import org.junit.Test
 import java.io.File
@@ -28,7 +24,6 @@ class JSONImporterTest : DatabaseTestCase() {
      * and import the file contents, then assert that database again.
      * @throws Exception
      */
-    @SmallTest
     @Test
     @Throws(Exception::class)
     fun jsonImporterTest_ImportBookVersionOne() {
@@ -44,7 +39,6 @@ class JSONImporterTest : DatabaseTestCase() {
      * Same as [jsonImporterTest_ImportBookVersionOne] but with a different file to import.
      * @throws Exception
      */
-    @SmallTest
     @Test
     @Throws(Exception::class)
     fun jsonImporterTest_ImportBookVersionTwo() {
@@ -62,13 +56,12 @@ class JSONImporterTest : DatabaseTestCase() {
      * database along the side. We assume no conflict during the save.
      * @throws Exception
      */
-    @SmallTest
     @Test
     @Throws(Exception::class)
     fun jsonImporterTest_ImportBookWithNoMergeConflict() {
-        val bookToImport = TestUtils.buildBook("постои конфликт", "авторот", 200f)
+        val bookToImport = buildBook("постои конфликт", "авторот", 200f)
         val fileToImport = createExportFileForBooks(Arrays.asList(bookToImport))
-        val preExistingBook = TestUtils.buildBook("Metamorphosis", "Franz Kafka", 400f)
+        val preExistingBook = buildBook("Metamorphosis", "Franz Kafka", 400f)
 
         databaseManager.save(preExistingBook)
 
@@ -86,15 +79,14 @@ class JSONImporterTest : DatabaseTestCase() {
      * successfully, and the book contains the previous id and updated title and contents.
      * @throws Exception
      */
-    @SmallTest
     @Test
     @Throws(Exception::class)
     fun jsonImporterTest_ImportBookWithSimpleMergeConflict() {
-        val existing = TestUtils.buildBook("Metamorphosis", "Franz Kafka", 200f)
+        val existing = buildBook("Metamorphosis", "Franz Kafka", 200f)
         databaseManager.save(existing)
         val preId = existing.id.toLong()
 
-        val importBook = TestUtils.buildBook("Metamorphosis", "Franz Kafka", 300f)
+        val importBook = buildBook("Metamorphosis", "Franz Kafka", 300f)
         val importFile = createExportFileForBooks(Arrays.asList(importBook))
 
         importer.importFile(importFile)
@@ -118,19 +110,18 @@ class JSONImporterTest : DatabaseTestCase() {
      * session and quote and assert that the save cascades these conflicting changes.
      * @throws Exception
      */
-    @SmallTest
     @Test
     @Throws(Exception::class)
     fun jsonImporterTest_ImportBookWithNestedMergeConflict() {
         // Create a book in the database that we later want to import
-        val imported = TestUtils.buildBook("Metamorphosis", "Franz Kafka", 200f)
+        val imported = buildBook("Metamorphosis", "Franz Kafka", 200f)
 
         with(imported) {
-            val noConflictSession = TestUtils.buildSession(imported, 0.3f, 0.4f, 234, 3)
-            val conflictedSession = TestUtils.buildSession(imported, 0.8f, 0.9f, 456, 2)
+            val noConflictSession = buildSession(imported, 0.3f, 0.4f, 234, 3)
+            val conflictedSession = buildSession(imported, 0.8f, 0.9f, 456, 2)
 
-            val noConflictQuote = TestUtils.buildQuote(imported, "imported with freedom", 0.5f, 3)
-            val conflictedQuote = TestUtils.buildQuote(imported, "crash!", 0.95f, 2)
+            val noConflictQuote = buildQuote(imported, "imported with freedom", 0.5f, 3)
+            val conflictedQuote = buildQuote(imported, "crash!", 0.95f, 2)
 
             databaseManager.saveAll<Model>(
                     imported, noConflictQuote, conflictedQuote, noConflictSession, conflictedSession
@@ -141,14 +132,14 @@ class JSONImporterTest : DatabaseTestCase() {
         databaseManager.delete(imported) // delete temporary book
 
         // Create a new book in the database that we want to collide with
-        val existing = TestUtils.buildBook("Metamorphosis", "Franz Kafka", 200f)
+        val existing = buildBook("Metamorphosis", "Franz Kafka", 200f)
 
         with(existing) {
-            val noConflictSession = TestUtils.buildSession(existing, 0.1f, 0.2f, 123, 1)
-            val conflictedSession = TestUtils.buildSession(existing, 0.8f, 0.9f, 456, 2)
+            val noConflictSession = buildSession(existing, 0.1f, 0.2f, 123, 1)
+            val conflictedSession = buildSession(existing, 0.8f, 0.9f, 456, 2)
 
-            val noConflictQuote = TestUtils.buildQuote(existing, "freedom", 0.5f, 1)
-            val conflictedQuote = TestUtils.buildQuote(existing, "crash!", 0.95f, 2)
+            val noConflictQuote = buildQuote(existing, "freedom", 0.5f, 1)
+            val conflictedQuote = buildQuote(existing, "crash!", 0.95f, 2)
 
             databaseManager.saveAll<Model>(
                     existing, noConflictQuote, conflictedQuote, noConflictSession, conflictedSession
@@ -189,7 +180,7 @@ class JSONImporterTest : DatabaseTestCase() {
         assertNotNull(getContext())
 
         val exportFile = File(getContext().filesDir, randomString())
-        val content = JSONExporter(databaseManager).exportAll(books).toString()
+        val content = JSONExporter.withDatabaseManager(databaseManager).exportAll(books).toString()
         FileOutputStream(exportFile).run {
             write(content.toByteArray())
             close()
@@ -223,7 +214,7 @@ class JSONImporterTest : DatabaseTestCase() {
         assertNotNull(getContext())
 
         val exportFile = File(getContext().filesDir, randomString())
-        val content = TestUtils.readFixtureFile(resourcePath)
+        val content = readFixtureFile(resourcePath)
         FileOutputStream(exportFile).run {
             write(content.toByteArray())
             close()

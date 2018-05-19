@@ -11,6 +11,7 @@ R.java
 project.properties
 /app/src/debug/res/values/config.xml
 /app/build
+/app/release
 local.properties
 .gradle/*
 proguard4.6-out

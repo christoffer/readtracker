@@ -2,19 +2,19 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 repositories {
-    mavenCentral()
+    jcenter()
     google()
-    maven { url 'https://github.com/christoffer/readmill-java-wrapper/raw/master/snapshots' }
+    jcenter {
+        url  "http://dl.bintray.com/lukaville/maven"
+    }
 }
 
 android {
-    compileSdkVersion 25
+    compileSdkVersion 27
     buildToolsVersion '27.0.3'
-
     testOptions {
         unitTests.returnDefaultValues = true
     }
-
     signingConfigs {
         release {
             /*
@@ -27,7 +27,7 @@ android {
 
             // Let the presences of READTRACKER_RELEASE_STORE_FILE serve as an indicator that
             // gradle.properties is setup properly.
-            if(project.hasProperty('READTRACKER_RELEASE_STORE_FILE')) {
+            if (project.hasProperty('READTRACKER_RELEASE_STORE_FILE')) {
                 storeFile file(READTRACKER_RELEASE_STORE_FILE)
                 storePassword READTRACKER_RELEASE_STORE_PASSWORD
                 keyAlias READTRACKER_RELEASE_KEY_ALIAS
@@ -38,19 +38,17 @@ android {
             }
         }
     }
-
     useLibrary 'org.apache.http.legacy'
-
     defaultConfig {
-        minSdkVersion 10
-        targetSdkVersion 25
+        minSdkVersion 16
+        targetSdkVersion 27
         versionCode 18
         versionName "3.2"
         testApplicationId "com.readtracker.android.test"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        javaCompileOptions.annotationProcessorOptions.includeCompileClasspath = true // FIXME: This should be thrown out together with ButterKnife (or at least update it to latest)
+        // FIXME: This should be thrown out together with ButterKnife (or at least update it to latest)
+        javaCompileOptions.annotationProcessorOptions.includeCompileClasspath = true
     }
-
     buildTypes {
         release {
             minifyEnabled true
@@ -58,15 +56,12 @@ android {
             signingConfig signingConfigs.release
         }
     }
-
     lintOptions {
         abortOnError false
     }
-
     packagingOptions {
         exclude 'META-INF/services/javax.annotation.processing.Processor'
     }
-
     sourceSets {
         test {
             resources {
@@ -74,25 +69,44 @@ android {
             }
         }
     }
+    productFlavors {
+    }
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'com.android.support:appcompat-v7:25.4.0'
-    implementation 'com.android.support:support-v4:25.4.0'
+    implementation "com.android.support:appcompat-v7:$android_support_lib_version"
+    implementation "com.android.support:support-v4:$android_support_lib_version"
+
+    // Design library is not used by ReadTracker directly, but it is used by the MaterialPicker
+    // library. We include it here to have a consistent version between all the support libraries.
+    implementation "com.android.support:design:$android_support_lib_version"
+
     implementation 'com.j256.ormlite:ormlite-android:4.48'
     implementation 'com.j256.ormlite:ormlite-core:4.48'
     implementation 'com.squareup.picasso:picasso:2.2.0'
     implementation 'com.squareup:otto:1.3.4'
     implementation 'com.jakewharton:butterknife:4.0.1'
+    implementation files('lib/annotations.jar')
 
+    // Unit test dependencies
     testImplementation 'org.skyscreamer:jsonassert:1.2.3'
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.robolectric:robolectric:3.5.1'
-    testImplementation 'com.android.support.test:runner:1.0.1'
-    testImplementation 'com.android.support.test:rules:1.0.1'
 
-    androidTestImplementation 'com.android.support:support-annotations:25.4.0'
-    androidTestImplementation 'com.android.support.test:runner:1.0.1'
-    androidTestImplementation 'com.android.support.test:rules:1.0.1'
+    // Material FilePicker
+    implementation 'com.nbsp:library:1.8'
+
+    // Required for instrumented tests
+    androidTestImplementation "com.android.support:support-annotations:$android_support_lib_version"
+    androidTestImplementation('com.android.support.test:runner:1.0.2') {
+        // Exclude the support annotations because they force upgrade the elicit support
+        // annotation version above.
+        exclude group: 'com.android.support', module: 'support-annotations'
+    }
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+}
+
+configurations {
+    compile.exclude group: 'org.jetbrains', module: 'annotations'
 }

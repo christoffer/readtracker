@@ -9,6 +9,7 @@ import android.widget.EditText;
 
 import com.readtracker.R;
 import com.readtracker.android.db.Book;
+import com.readtracker.android.support.ColorUtils;
 import com.readtracker.android.support.DrawableGenerator;
 import com.readtracker.android.support.Utils;
 
@@ -44,13 +45,21 @@ public class FinishBookActivity extends BookBaseActivity implements View.OnClick
     populateFieldsDeferred();
   }
 
+  @Override protected String getActivityTitle(Book book) {
+    return getString(R.string.finish_book_finished_reading);
+  }
+
+  @Override protected String getActivitySubTitle(Book book) {
+    return book.getTitle();
+  }
+
   private void populateFieldsDeferred() {
     if(!mDidLayout || mBook == null) {
       return;
     }
 
-    final int color = Utils.calculateBookColor(mBook);
-    Drawable drawable = DrawableGenerator.generateEditTextOutline(color, getPixels(1), getPixels(3));
+    final int color = ColorUtils.getColorForBook(mBook);
+    Drawable drawable = DrawableGenerator.generateEditTextOutline(this, color, 1, 3);
     mEditClosingRemark.setBackgroundDrawable(drawable);
 
     mButtonFinish.setBackgroundDrawable(DrawableGenerator.generateButtonBackground(color));

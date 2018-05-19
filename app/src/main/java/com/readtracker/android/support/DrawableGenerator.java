@@ -1,5 +1,6 @@
 package com.readtracker.android.support;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -37,10 +38,10 @@ public class DrawableGenerator {
     return states;
   }
 
-  public static Drawable generateEditTextOutline(int color, int pixelBorder, int pixelRadius) {
+  public static Drawable generateEditTextOutline(Context context, int color, int borderWidthInDp, int radiusInDp) {
     GradientDrawable gradientDrawable = new GradientDrawable();
-    gradientDrawable.setCornerRadius(pixelRadius);
-    gradientDrawable.setStroke(pixelBorder, color);
+    gradientDrawable.setCornerRadius(Utils.convertDPtoPixels(context, radiusInDp));
+    gradientDrawable.setStroke(Utils.convertDPtoPixels(context, borderWidthInDp), color);
     gradientDrawable.setColor(Color.BLACK);
     return gradientDrawable;
   }
@@ -89,7 +90,7 @@ public class DrawableGenerator {
   /** Applies a button background drawable to each of the buttons. */
   public static void applyButtonBackground(int color, Button... buttons) {
     for(Button button: buttons) {
-      button.setBackgroundDrawable(generateButtonBackground(color));
+      button.setBackground(generateButtonBackground(color));
     }
   }
 }

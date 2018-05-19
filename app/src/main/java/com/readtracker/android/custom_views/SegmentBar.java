@@ -7,6 +7,8 @@ import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
 
+import com.readtracker.android.support.Utils;
+
 import java.util.Arrays;
 
 public class SegmentBar extends View {
@@ -16,7 +18,8 @@ public class SegmentBar extends View {
 
   private int mColor = 0xffffffff;
   private float[] mStops;
-  private static final int DIVIDER_WIDTH = 2; // px
+  private static final int DIVIDER_WIDTH = 2; // dp
+  private static int mResolvedDividerWidth = -1;
 
   @SuppressWarnings("UnusedDeclaration")
   public SegmentBar(Context context) {
@@ -42,6 +45,13 @@ public class SegmentBar extends View {
         setStops(new float[0]);
       }
     }
+  }
+
+  private int getResolvedDividerWidth() {
+    if (mResolvedDividerWidth == -1) {
+      mResolvedDividerWidth = Utils.convertDPtoPixels(getContext(), DIVIDER_WIDTH);
+    }
+    return mResolvedDividerWidth;
   }
 
   /**
@@ -88,11 +98,12 @@ public class SegmentBar extends View {
   }
 
   private void drawSegment(Canvas canvas, float previousEnd, float segmentEnd) {
+    final int width = getResolvedDividerWidth();
     final RectF segmentRect = new RectF(0, 0, segmentEnd, getHeight());
     canvas.drawRect(segmentRect, mSegmentPaint);
     final float segmentWidth = previousEnd - segmentEnd; // Since we are going backwards through the segments
-    if(segmentWidth >= (DIVIDER_WIDTH + 1)) {
-      canvas.drawRect(segmentRect.right - DIVIDER_WIDTH, segmentRect.top, segmentRect.right, segmentRect.bottom, mBackgroundPaint);
+    if(segmentWidth >= (width + 1)) {
+      canvas.drawRect(segmentRect.right - width, segmentRect.top, segmentRect.right, segmentRect.bottom, mBackgroundPaint);
     }
   }
 

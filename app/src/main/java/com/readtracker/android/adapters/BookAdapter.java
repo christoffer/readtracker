@@ -1,6 +1,9 @@
 package com.readtracker.android.adapters;
 
 import android.content.Context;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,13 +12,14 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.readtracker.R;
 import com.readtracker.android.activities.HomeActivity;
 import com.readtracker.android.custom_views.SegmentBar;
 import com.readtracker.android.db.Book;
-import com.readtracker.android.support.DrawableGenerator;
+import com.readtracker.android.support.ColorUtils;
 import com.readtracker.android.support.Utils;
 import com.squareup.otto.Subscribe;
 import com.squareup.picasso.Picasso;
@@ -50,14 +54,15 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
 
   // Books in this list
   private final List<Book> mBooks = new ArrayList<Book>();
-
   private Book.State mStateFilter = null;
+  private final boolean mUseCompactReadingLists;
 
-  public BookAdapter(Context context, int resource, Book.State stateFilter) {
+  public BookAdapter(Context context, int resource, Book.State stateFilter, boolean useCompactReadingLists) {
     super();
     mContext = context;
     mLayoutResource = resource;
     mStateFilter = stateFilter;
+    mUseCompactReadingLists = useCompactReadingLists;
   }
 
   public void sortBooks() {
@@ -67,7 +72,7 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
   }
 
   @Subscribe public void onCatalogueLoadedEvent(HomeActivity.CatalogueLoadedEvent event) {
-    Log.d(TAG, "Adapter got books: " + event.getBooks().size());
+    Log.d(TAG, String.format("Adapter with filter %s got number of books: %d", mStateFilter, event.getBooks().size()));
     setBooks(event.getBooks());
   }
 
@@ -95,12 +100,8 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
     }
 
     Book book = getItem(position);
-    viewHolder.populate(convertView.getContext(), book);
+    viewHolder.populate(convertView, book, mUseCompactReadingLists);
 
-    int backColor = mContext.getResources().getColor(R.color.background);
-    int activeColor = mContext.getResources().getColor(R.color.default_button_color_pressed);
-
-    convertView.setBackgroundDrawable(DrawableGenerator.generateListItemBackground(activeColor, backColor));
     return convertView;
   }
 
@@ -123,7 +124,6 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
     for(Book book : updatedCatalogue) {
       int position = mBooks.indexOf(book);
       if(mStateFilter == null || book.getState() == mStateFilter) {
-        Log.v(TAG, String.format("Adding entry: %s", book));
         if(position < 0) { // Not in adapter
           mBooks.add(book);
         } else { // Already in adapter
@@ -152,7 +152,7 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
       ButterKnife.inject(this, view);
     }
 
-    void populate(Context context, Book book) {
+    void populate(View view, Book book, boolean useCompactReadingLists) {
       // Required fields
       titleText.setText(book.getTitle());
       authorText.setText(book.getAuthor());
@@ -161,34 +161,41 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
       if(segmentedProgressBar != null) {
         segmentedProgressBar.setVisibility(View.VISIBLE);
         segmentedProgressBar.setStops(Utils.getSessionStops(book.getSessions()));
-        segmentedProgressBar.setColor(Utils.calculateBookColor(book));
+        segmentedProgressBar.setColor(ColorUtils.getColorForBook(book));
       }
 
       if(coverImage != null) {
-        coverImage.setImageResource(R.drawable.bookmark);
+        coverImage.setImageResource(android.R.drawable.ic_menu_gallery);
         if(!TextUtils.isEmpty(book.getCoverImageUrl())) {
-           Picasso.with(coverImage.getContext())
-               .load(book.getCoverImageUrl())
-               .placeholder(R.drawable.bookmark)
-               .into(coverImage);
+          Picasso.with(coverImage.getContext())
+              .load(book.getCoverImageUrl())
+              .placeholder(android.R.drawable.ic_menu_gallery)
+              .into(coverImage);
         }
       }
 
       if(closingRemarkText != null) {
-        final TextView closingRemark = closingRemarkText;
-        if(!TextUtils.isEmpty(book.getClosingRemark())) {
-          closingRemark.setVisibility(View.VISIBLE);
-          closingRemark.setText(book.getClosingRemark());
+        if(!useCompactReadingLists && !TextUtils.isEmpty(book.getClosingRemark())) {
+          closingRemarkText.setVisibility(View.VISIBLE);
+          closingRemarkText.setText(book.getClosingRemark());
         } else {
-          closingRemark.setVisibility(View.GONE);
+          closingRemarkText.setVisibility(View.GONE);
         }
       }
 
       if(finishedAtText != null) {
+        // Colorize the dot icon next to the finished at label by appl
+        final int bookColor = ColorUtils.getColorForBook(book);
+        Drawable[] compoundDrawables = finishedAtText.getCompoundDrawables();
+        Drawable dot = compoundDrawables.length > 0 ? compoundDrawables[0] : null;
+        if (dot != null) {
+          dot.mutate().setColorFilter(new PorterDuffColorFilter(bookColor, PorterDuff.Mode.SRC_IN));
+        }
+
         if(book.getState() == Book.State.Finished) {
           final long now = System.currentTimeMillis();
           String finishedOn = Utils.humanPastTimeFromTimestamp(book.getCurrentPositionTimestampMs(), now);
-          String finishedOnWithPrefix = context.getString(R.string.book_list_finished_on, finishedOn);
+          String finishedOnWithPrefix = view.getContext().getString(R.string.book_list_finished_on, finishedOn);
           finishedAtText.setText(finishedOnWithPrefix);
           finishedAtText.setVisibility(View.VISIBLE);
         } else {
@@ -200,6 +207,7 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
     // Required fields
     @InjectView(R.id.textTitle) TextView titleText;
     @InjectView(R.id.textAuthor) TextView authorText;
+    @InjectView(R.id.layout) RelativeLayout layout;
 
     // Optional fields *
     @Optional @InjectView(R.id.progressReadingProgress) SegmentBar segmentedProgressBar;

@@ -1,11 +1,8 @@
 package com.readtracker.android.db.export
 
-import android.support.test.filters.SmallTest
 import com.readtracker.android.db.Book
-import com.readtracker.android.support.DatabaseTestCase
-import com.readtracker.android.support.TestUtils
-import com.readtracker.android.support.TestUtils.buildSession
 import com.readtracker.android.support.Utils
+import com.readtracker.android.test_support.*
 import org.json.JSONObject
 import org.junit.Test
 import org.skyscreamer.jsonassert.JSONAssert
@@ -21,7 +18,7 @@ class JSONExporterTest : DatabaseTestCase() {
      * @return JSONExporter
      */
     private val exporter: JSONExporter
-        get() = JSONExporter(databaseManager)
+        get() = JSONExporter.withDatabaseManager(databaseManager)
 
     /**
      * Get a list of books that we assemble, export it into
@@ -29,14 +26,13 @@ class JSONExporterTest : DatabaseTestCase() {
      * @throws Exception
      */
     @Test
-    @SmallTest
     @Throws(Exception::class)
     fun jsonExporterTest_ExportPopulatedBook_ReturnsStringOfOutputPath() {
         val books = populateBooksForExpectedOutput()
 
         // Convert to string to get type agnostic comparison
         val actual = exporter.exportAll(books).toString()
-        val expected = TestUtils.readFixtureFile("expected_output_of_populated_book_test.json")
+        val expected = readFixtureFile("expected_output_of_populated_book_test.json")
 
         JSONAssert.assertEquals(expected, actual, true)
     }
@@ -47,21 +43,19 @@ class JSONExporterTest : DatabaseTestCase() {
      * @throws Exception
      */
     @Test
-    @SmallTest
     @Throws(Exception::class)
     fun jsonExporterTest_ExportPopulatedBook_ReturnsExportedJsonFromIO() {
         val books = populateBooksForExpectedOutput()
 
-        val exportFilename = TestUtils.randomString()
+        val exportFilename = randomString()
         val exportFile = File(getContext().filesDir, exportFilename)
-
-        exporter.exportToDisk(books, exportFile)
+        exporter.exportBooksToFile(books, exportFile)
 
         val inputStream = FileInputStream(getContext().getFileStreamPath(exportFilename))
         val exportFileContent = Utils.readInputStream(inputStream)
 
         val actual = JSONObject(exportFileContent)
-        val expected = TestUtils.readFixtureFile("expected_output_of_populated_book_test.json")
+        val expected = readFixtureFile("expected_output_of_populated_book_test.json")
 
         JSONAssert.assertEquals(expected, actual, JSONCompareMode.NON_EXTENSIBLE)
     }
@@ -84,12 +78,12 @@ class JSONExporterTest : DatabaseTestCase() {
         }
         databaseManager.save(metamorphosis)
 
-        TestUtils.buildQuote(metamorphosis, "unicorn", 0.45f, 123456799L).let { unicornQuote ->
+        buildQuote(metamorphosis, "unicorn", 0.45f, 123456799L).let { unicornQuote ->
             metamorphosis.quotes.add(unicornQuote)
             databaseManager.save(unicornQuote)
         }
 
-        TestUtils.buildQuote(metamorphosis, "guppy", 0f, 4564321L).let { guppyQuote ->
+        buildQuote(metamorphosis, "guppy", 0f, 4564321L).let { guppyQuote ->
             metamorphosis.quotes.add(guppyQuote)
             databaseManager.save(guppyQuote)
         }

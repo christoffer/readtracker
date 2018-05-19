@@ -1,13 +1,11 @@
 package com.readtracker.android.fragments;
 
 import android.content.SharedPreferences;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -17,6 +15,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LinearInterpolator;
 import android.widget.Button;
+import android.widget.NumberPicker;
 import android.widget.TextView;
 
 import com.readtracker.BuildConfig;
@@ -26,15 +25,11 @@ import com.readtracker.android.activities.BookActivity;
 import com.readtracker.android.custom_views.PauseableSpinAnimation;
 import com.readtracker.android.custom_views.TimeSpinner;
 import com.readtracker.android.db.Book;
-import com.readtracker.android.db.Session;
-import com.readtracker.android.support.DrawableGenerator;
+import com.readtracker.android.support.ColorUtils;
 import com.readtracker.android.support.SessionTimer;
 import com.readtracker.android.support.SimpleAnimationListener;
 import com.readtracker.android.support.Utils;
 import com.readtracker.android.thirdparty.SafeViewFlipper;
-import com.readtracker.android.thirdparty.widget.OnWheelChangedListener;
-import com.readtracker.android.thirdparty.widget.WheelView;
-import com.readtracker.android.thirdparty.widget.adapters.ArrayWheelAdapter;
 import com.squareup.otto.Subscribe;
 
 import java.lang.ref.WeakReference;
@@ -71,7 +66,7 @@ public class ReadFragment extends BaseFragment {
 
   private final UpdateDurationWheelTimer mUpdateWheelViewTimer = new UpdateDurationWheelTimer(this);
 
-  @InjectView(R.id.duration_wheel_view)  WheelView mDurationWheelView;
+  @InjectView(R.id.duration_picker) NumberPicker mDurationPicker;
 
   // Display child index for flipper session control
   private static final int FLIPPER_PAGE_START_BUTTON = 0;
@@ -156,7 +151,7 @@ public class ReadFragment extends BaseFragment {
         displayControlsForPausedTimer();
       }
     } else {
-      mDurationWheelView.setVisibility(View.INVISIBLE);
+      mDurationPicker.setVisibility(View.INVISIBLE);
       timerAnimation.pause();
       timerAnimation.reset();
       displayControlsForUnstartedTimer();
@@ -169,10 +164,9 @@ public class ReadFragment extends BaseFragment {
       return;
     }
     Log.v(TAG, "Populating fields for book: " + mBook);
-    final int bookColor = Utils.calculateBookColor(mBook);
+    final int bookColor = ColorUtils.getColorForBook(mBook);
     mTimeSpinner.setColor(bookColor);
-    mTimeSpinner.setMaxSize(500);
-    DrawableGenerator.applyButtonBackground(bookColor, mStartButton, mPauseButton, mDoneButton);
+    ColorUtils.setNumberPickerDividerColorUsingHack(mDurationPicker, 0x00000000);
     mLastPositionText.setText(getLastPositionDescription());
     bindEvents();
   }
@@ -193,6 +187,7 @@ public class ReadFragment extends BaseFragment {
 
     mDoneButton.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View view) {
+        refreshNumberPickerIfEditing();
         endSession();
       }
     });
@@ -209,10 +204,13 @@ public class ReadFragment extends BaseFragment {
       });
     }
 
-    mTimeSpinner.setOnTouchListener(new View.OnTouchListener() {
+    // NOTE(christoffer) Casting to View to get Android linter to realize we're calling
+    // view.performClick() below.
+    //noinspection RedundantCast
+    ((View) mTimeSpinner).setOnTouchListener(new View.OnTouchListener() {
       @Override
       public boolean onTouch(View view, MotionEvent motionEvent) {
-        if(mDurationWheelView.getVisibility() == View.VISIBLE) {
+        if(mDurationPicker.getVisibility() == View.VISIBLE) {
           return false;
         }
 
@@ -221,8 +219,10 @@ public class ReadFragment extends BaseFragment {
             mTimeSpinner.setHighlighted(true);
             return true;
           case MotionEvent.ACTION_UP:
+            view.performClick();
             if(mSessionTimer.isStarted()) {
               mSessionTimer.togglePausePlay();
+
             } else {
               transitionFromStartModeToRunningMode();
             }
@@ -269,17 +269,17 @@ public class ReadFragment extends BaseFragment {
 
   private void initializeDurationWheel() {
     final int maxHours = 24;
-    ArrayWheelAdapter hoursAdapter = createDurationWheelAdapter(maxHours * 60);
-    mDurationWheelView.setVisibleItems(3);
-    mDurationWheelView.setViewAdapter(hoursAdapter);
-    mDurationWheelView.setCalliperMode(WheelView.CalliperMode.NO_CALLIPERS);
+    final int maxDurationInMinutes = maxHours * 60;
+    String[] displayValues = getDisplayedValues(maxDurationInMinutes);
+    mDurationPicker.setMaxValue(maxDurationInMinutes - 1);
+    mDurationPicker.setDisplayedValues(displayValues);
 
     // Don't show the duration wheel until the timer has started
-    mDurationWheelView.setVisibility(View.INVISIBLE);
+    mDurationPicker.setVisibility(View.INVISIBLE);
+    mDurationPicker.setWrapSelectorWheel(false);
 
-    mDurationWheelView.addChangingListener(new OnWheelChangedListener() {
-      @Override
-      public void onChanged(WheelView wheel, int oldValue, int newValue) {
+    mDurationPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+      @Override public void onValueChange(NumberPicker picker, int oldValue, int newValue) {
         final long newElapsedMs = newValue * 60 * 1000;
         mSessionTimer.reset(newElapsedMs);
       }
@@ -290,22 +290,14 @@ public class ReadFragment extends BaseFragment {
    * Creates an adapter to display the duration in a human readable form.
    *
    * @param maxMinutes the maximum time (in minutes) to show
-   * @return an ArrayWheelAdapter for showing duration
+   * @return an array of Strings for each minute
    */
-  private ArrayWheelAdapter createDurationWheelAdapter(int maxMinutes) {
+  private String[] getDisplayedValues(int maxMinutes) {
     String[] labels = new String[maxMinutes];
     for(int minute = 0; minute < maxMinutes; minute++) {
       labels[minute] = Utils.hoursAndMinutesFromMillis(minute * 60 * 1000);
     }
-
-    ArrayWheelAdapter<String> adapter = new ArrayWheelAdapter<String>(getActivity(), labels);
-    adapter.setTextColor(getResources().getColor(R.color.text_color_primary));
-    adapter.setTypeFace(Typeface.DEFAULT);
-    adapter.setTypeStyle(Typeface.NORMAL);
-    float fontSizePixels = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 12, getResources().getDisplayMetrics());
-    adapter.setTextSize((int) fontSizePixels);
-
-    return adapter;
+    return labels;
   }
 
   private String getLastPositionDescription() {
@@ -341,14 +333,22 @@ public class ReadFragment extends BaseFragment {
     getBus().post(new SessionDoneEvent(mSessionTimer.getElapsedMs()));
   }
 
+  private void refreshNumberPickerIfEditing() {
+    if (mDurationPicker.hasFocus()) {
+      // Explicitly clear the focus to trigger an update if the user hasn't closed
+      // the keyboard before clicking the done button.
+      mDurationPicker.clearFocus();
+    }
+  }
+
   private void displayDurationWheel(boolean animated) {
     if(animated) {
       final Animation appear = AnimationUtils.loadAnimation(getActivity(), R.anim.slide_up_appear);
-      mDurationWheelView.startAnimation(appear);
+      mDurationPicker.startAnimation(appear);
     }
 
     mLastPositionText.setVisibility(View.INVISIBLE);
-    mDurationWheelView.setVisibility(View.VISIBLE);
+    mDurationPicker.setVisibility(View.VISIBLE);
   }
 
   private void displayControlsForUnstartedTimer() {
@@ -373,9 +373,9 @@ public class ReadFragment extends BaseFragment {
     final long elapsedMilliseconds = mSessionTimer.getElapsedMs();
     Log.i(TAG, "Updating duration: " + elapsedMilliseconds);
     int elapsedMinutes = (int) (elapsedMilliseconds / (1000 * 60));
-    int currentItem = mDurationWheelView.getCurrentItem();
+    int currentItem = mDurationPicker.getValue();
     if(elapsedMinutes != currentItem) {
-      mDurationWheelView.setCurrentItem(elapsedMinutes, false, false);
+      mDurationPicker.setValue(elapsedMinutes);
     }
   }
 
@@ -397,8 +397,8 @@ public class ReadFragment extends BaseFragment {
       }
     };
 
-    public UpdateDurationWheelTimer(ReadFragment readFragment) {
-      mReadFragmentRef = new WeakReference<ReadFragment>(readFragment);
+    UpdateDurationWheelTimer(ReadFragment readFragment) {
+      mReadFragmentRef = new WeakReference<>(readFragment);
     }
 
     public void reschedule() {
@@ -434,42 +434,11 @@ public class ReadFragment extends BaseFragment {
     }
   }
 
-  /** Event that is emitted when a book session has finished. */
-  public static class NewSessionEvent {
-    private final Session mSession;
-    private final String mClosingRemark;
-
-    public NewSessionEvent(Session session) {
-      mSession = session;
-      mClosingRemark = null;
-    }
-
-    /** Create a final session with an optional closing remark. */
-    public NewSessionEvent(Session session, String closingRemark) {
-      mSession = session;
-      // Always set to to a string instance so we can use that to identify session as final
-      mClosingRemark = closingRemark == null ? "" : closingRemark;
-    }
-
-    public Session getSession() {
-      return mSession;
-    }
-
-    public String getClosingRemark() {
-      return mClosingRemark;
-    }
-
-    /** Returns true if this session is the final one of the book. */
-    public boolean isFinalSessionOfBook() {
-      return mClosingRemark != null;
-    }
-  }
-
   /** Event emitted when the user is done with a reading session. */
   public static class SessionDoneEvent {
     private final long mDurationMillis;
 
-    public SessionDoneEvent(long durationMillis) {
+    SessionDoneEvent(long durationMillis) {
       mDurationMillis = durationMillis;
     }
 

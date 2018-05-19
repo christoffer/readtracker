@@ -2,12 +2,11 @@ package com.readtracker.android.custom_views;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.content.res.TypedArray;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.Typeface;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
@@ -31,8 +30,11 @@ public class SessionView extends View {
   private Paint mBackgroundPaint;
 
   private Node[] mNodes;
-  private static final int SEGMENT_HEIGHT = 96; // Height between each node
-  private static final int TEXT_PADDING = 5; // Distance from text to node
+  private static final int SEGMENT_HEIGHT_DP = 48; // Height between each node
+  private static final int TEXT_PADDING_DP = 5; // Distance from text to node
+
+  private static int mResolvedSegmentHeight = -1;
+  private static int mResolvedTextPadding = -1;
 
   @SuppressWarnings("UnusedDeclaration")
   public SessionView(Context context) {
@@ -54,11 +56,12 @@ public class SessionView extends View {
   protected void onMeasure(int widthSpec, int heightSpec) {
     super.onMeasure(widthSpec, heightSpec);
     final int width = getMeasuredWidth(); // Let the super calculate the width
+    final int segmentHeight = getResolvedSegmentHeight();
 
     int specHeightSize = MeasureSpec.getSize(heightSpec);
     int specHeightMode = MeasureSpec.getMode(heightSpec);
 
-    int height = mNodes == null ? 0 : SEGMENT_HEIGHT * mNodes.length;
+    int height = mNodes == null ? 0 : segmentHeight * mNodes.length;
 
     final boolean isOverflow = specHeightMode == MeasureSpec.AT_MOST &&
       height > specHeightSize;
@@ -81,13 +84,14 @@ public class SessionView extends View {
     drawLines(canvas);
 
     final long now = System.currentTimeMillis();
+    final int segmentHeight = getResolvedSegmentHeight();
 
     for(int i = 0, mNodesLength = mNodes.length; i < mNodesLength; i++) {
       Node node = mNodes[i];
 
       final float radius = calcRadius(node);
       final float x = Math.min(1.0f, node.progress) * innerWidth + getPaddingLeft();
-      final float y = i == 0 ? SEGMENT_HEIGHT * 0.5f : i * SEGMENT_HEIGHT + getPaddingTop();
+      final float y = i == 0 ? segmentHeight * 0.5f : i * segmentHeight + getPaddingTop();
 
       String primaryText = Utils.hoursAndMinutesFromMillis(node.durationSeconds * 1000);
       String secondaryText = Utils.humanPastTimeFromTimestamp(node.sessionTimestampMs, now);
@@ -121,8 +125,22 @@ public class SessionView extends View {
     invalidate();
   }
 
+  private int getResolvedSegmentHeight() {
+    if (mResolvedSegmentHeight == -1) {
+      mResolvedSegmentHeight = Utils.convertDPtoPixels(getContext(), SEGMENT_HEIGHT_DP);
+    }
+    return mResolvedSegmentHeight;
+  }
+
+  private int getResolvedTextPadding() {
+    if(mResolvedTextPadding == -1) {
+      mResolvedTextPadding = Utils.convertDPtoPixels(getContext(), TEXT_PADDING_DP);
+    }
+    return mResolvedTextPadding;
+  }
+
   private void drawText(Canvas canvas, float x, float y, float radius, String primaryText, String secondaryText, boolean drawFlipped) {
-    final float textPadding = TEXT_PADDING; // Padding between the text and the box
+    final int textPadding = getResolvedTextPadding();
     final float primaryTextHeight = mPrimaryTextPaint.measureText("X");
     final float secondaryTextHeight = mSecondaryTextPaint.measureText("X");
     final float lineHeight = 0.8f;
@@ -164,6 +182,7 @@ public class SessionView extends View {
     float lastX = getPaddingLeft();
     float lastY = getPaddingTop();
     final float innerWidth = getWidth() - (getPaddingLeft() + getPaddingRight());
+    final int segmentHeight = getResolvedSegmentHeight();
 
     int nodeColor = mNodePaint.getColor();
     int lineColor = (0x00ffffff & nodeColor) + (0x88 << 24);
@@ -172,7 +191,7 @@ public class SessionView extends View {
       Node node = mNodes[i];
 
       final float x = Math.min(1.0f, node.progress) * innerWidth + getPaddingLeft();
-      final float y = i == 0 ? SEGMENT_HEIGHT * 0.5f : i * SEGMENT_HEIGHT + getPaddingTop();
+      final float y = i == 0 ? segmentHeight * 0.5f : i * segmentHeight + getPaddingTop();
 
       canvas.drawLine(lastX, lastY, x, y, mNodePaint);
 
@@ -194,26 +213,25 @@ public class SessionView extends View {
     mNodePaint.setColor(mColor);
     mNodePaint.setAntiAlias(true);
 
+    int primaryColor = ContextCompat.getColor(getContext(), R.color.textColorPrimary);
     mPrimaryTextPaint = new Paint();
     mPrimaryTextPaint.setTypeface(Typeface.DEFAULT);
     mPrimaryTextPaint.setTextSize(convertDPtoPX(14));
-    mPrimaryTextPaint.setColor(getResources().getColor(R.color.text_color_primary));
+    mPrimaryTextPaint.setColor(primaryColor);
     mPrimaryTextPaint.setSubpixelText(true);
     mPrimaryTextPaint.setAntiAlias(true);
 
+    int secondaryColor = ContextCompat.getColor(getContext(), R.color.textColorSecondary);
     mSecondaryTextPaint = new Paint();
     mSecondaryTextPaint.setTypeface(Typeface.DEFAULT);
     mSecondaryTextPaint.setTextSize(convertDPtoPX(12));
-    mSecondaryTextPaint.setColor(getResources().getColor(R.color.text_color_secondary));
+    mSecondaryTextPaint.setColor(secondaryColor);
     mSecondaryTextPaint.setSubpixelText(true);
     mPrimaryTextPaint.setAntiAlias(true);
 
-    TypedArray array = getContext().getTheme().obtainStyledAttributes(new int[]{
-      android.R.attr.colorBackground,
-    });
 
-    int backgroundColor = 0xff000000 | array.getColor(0, Color.BLACK);
-    array.recycle();
+    final int themeBackgroundColor = ContextCompat.getColor(getContext(), R.color.windowBackground);
+    int backgroundColor = 0xff000000 | themeBackgroundColor; // Strip transparency
 
     mBackgroundPaint = new Paint();
     mBackgroundPaint.setStyle(Paint.Style.FILL);

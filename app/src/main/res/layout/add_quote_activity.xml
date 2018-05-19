@@ -8,7 +8,6 @@
             android:padding="12dp">
 
   <LinearLayout
-    android:id="@+id/quote_entry_layout"
     android:layout_height="wrap_content"
     android:layout_width="fill_parent"
     android:orientation="vertical">
@@ -44,7 +43,7 @@
     <Button
       android:id="@+id/save_button"
       style="@style/default_button"
-      android:text="@string/quote_activity_add"/>
+      android:text="@string/quote_activity_save"/>
 
   </LinearLayout>
 </ScrollView>

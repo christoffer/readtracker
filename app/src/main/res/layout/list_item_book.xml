@@ -2,31 +2,34 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:tools="http://schemas.android.com/tools"
-  android:layout_width="fill_parent"
-  android:layout_height="wrap_content"
-  android:padding="12dp"
-  android:background="@android:color/transparent">
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:paddingBottom="@dimen/gridGutter"
+                android:paddingTop="@dimen/gridGutter">
 
   <ImageView
     android:id="@+id/imageCover"
-    style="@style/cover_image" />
+    style="@style/cover_image"
+    android:layout_marginRight="@dimen/halfGridGutter"
+    tools:src="@drawable/dot"/>
 
   <TextView
     android:id="@+id/textTitle"
     style="@style/single_line_title"
-    android:singleLine="false"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    tools:text="Metamorphosis"
-    android:layout_toRightOf="@id/imageCover" />
+    android:layout_toRightOf="@id/imageCover"
+    android:singleLine="false"
+    tools:text="Metamorphosis"/>
 
   <TextView
     android:id="@+id/tvAuthor"
     style="@style/single_line_author"
-    android:singleLine="false"
-    android:maxLines="2"
-    tools:text="By Franz KafkaBy Franz KafkaBy Franz KafkaBy Franz KafkaBy Franz KafkaBy Franz Kafka"
+    android:layout_below="@id/textTitle"
     android:layout_toRightOf="@id/imageCover"
-    android:layout_below="@id/textTitle" />
+    android:maxLines="2"
+    android:singleLine="false"
+    tools:text="By Franz KafkaBy Franz KafkaBy Franz KafkaBy Franz KafkaBy Franz KafkaBy Franz Kafka"/>
 
 </RelativeLayout>

@@ -1,9 +1,8 @@
 package com.readtracker.android.db.export
 
-import android.support.test.filters.SmallTest
 import com.readtracker.android.db.Book
-import com.readtracker.android.support.SharedExampleAsserts
-import com.readtracker.android.support.TestUtils
+import com.readtracker.android.test_support.SharedExampleAsserts
+import com.readtracker.android.test_support.readFixtureFile
 import org.json.JSONException
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -15,7 +14,6 @@ class ExportedFileParserTest {
      */
     @Test
     @Throws(Exception::class)
-    @SmallTest
     fun exportedFileParserTest_buildBookFromJson_returnListOfBooks() {
         val books = parseTestFile("export_version_2.json")
         SharedExampleAsserts.assertExampleBooksVersion2(books)
@@ -26,7 +24,6 @@ class ExportedFileParserTest {
      */
     @Test
     @Throws(Exception::class)
-    @SmallTest
     fun exportedFileParserTest_buildBookFromJsonWithNullCases_returnListOfBooks() {
         val books = parseTestFile("export_version_2_null_fields.json")
         assertEquals(1, books.size)
@@ -40,7 +37,6 @@ class ExportedFileParserTest {
      */
     @Test
     @Throws(Exception::class)
-    @SmallTest
     fun exportedFileParserTest_buildBookFromJsonWithMissingValues_returnListOfBooks() {
         val books = parseTestFile("export_version_2_missing_fields.json")
         assertEquals(1, books.size)
@@ -58,7 +54,7 @@ class ExportedFileParserTest {
     */
     @Throws(JSONException::class)
     private fun parseTestFile(filename: String): List<Book> {
-        val fileContent = TestUtils.readFixtureFile(filename)
+        val fileContent = readFixtureFile(filename)
         val parser = ExportedFileParser()
         return parser.parse(fileContent)
     }

@@ -19,6 +19,7 @@ import com.readtracker.android.db.Model;
 import com.readtracker.android.db.Session;
 import com.readtracker.android.fragments.BookFragmentAdapter;
 import com.readtracker.android.fragments.ReadFragment;
+import com.readtracker.android.support.ColorUtils;
 import com.squareup.otto.Produce;
 import com.squareup.otto.Subscribe;
 
@@ -64,6 +65,7 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialog.E
     ButterKnife.inject(this);
 
     mPagerTabStrip.setVisibility(View.INVISIBLE);
+    mPagerTabStrip.setDrawFullUnderline(false);
     mCurrentSession = new Session();
     if(in != null) {
       if(in.containsKey(STATE_VIEW_PAGER_PAGE)) {
@@ -120,7 +122,7 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialog.E
         }
         break;
       case REQUEST_EDIT_BOOK:
-        if(resultCode == AddBookActivity.RESULT_DELETED_BOOK) {
+        if(resultCode == BookSettingsActivity.RESULT_DELETED_BOOK) {
           Log.d(TAG, "Book deleted, shutting down");
           setResult(RESULT_OK); // use OK to trigger reload in HomeActivity
           finish();
@@ -159,7 +161,7 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialog.E
   public boolean onOptionsItemSelected(MenuItem item) {
     switch(item.getItemId()) {
       case R.id.book_activity_edit_book_menu_item:
-        Intent intent = new Intent(this, AddBookActivity.class);
+        Intent intent = new Intent(this, BookSettingsActivity.class);
         intent.putExtra(BookBaseActivity.KEY_BOOK_ID, getBookIdFromIntent());
         startActivityForResult(intent, REQUEST_EDIT_BOOK);
         break;
@@ -230,6 +232,8 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialog.E
     BookFragmentAdapter bookFragmentAdapter = new BookFragmentAdapter(getApplicationContext(), getSupportFragmentManager(), pages);
 
     mViewPager.setAdapter(bookFragmentAdapter);
+    final int bookColor = ColorUtils.getColorForBook(book);
+    mPagerTabStrip.setTabIndicatorColor(bookColor);
 
     final Page initialPage = mInitialFragmentPage == null ? Page.READING : mInitialFragmentPage;
     mViewPager.setCurrentItem(bookFragmentAdapter.getPageIndex(initialPage), false);

@@ -1,27 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+  xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools"
-            android:id="@+id/introduction_layout"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_centerInParent="true"
-            android:background="@color/overlay_background"
+            android:background="?android:colorBackground"
             android:fillViewport="true">
 
   <LinearLayout
-    android:id="@+id/layoutTutorial"
-    android:layout_width="fill_parent"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
+    android:orientation="vertical"
     android:paddingLeft="24dp"
-    android:paddingRight="24dp"
-    android:orientation="vertical">
+    android:paddingRight="24dp">
 
     <TextView
       style="@style/default_text"
-      android:textSize="20sp"
-      android:text="@string/welcome_welcome_to_readtracker"/>
+      android:text="@string/welcome_welcome_to_readtracker"
+      android:textSize="20sp"/>
 
     <TextView
       android:id="@+id/introduction_text"

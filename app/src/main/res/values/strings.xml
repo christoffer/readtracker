@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="app_name">ReadTracker</string>
-  <string name="activity_label_add_book">Add book</string>
+  <string name="activity_label_add_new_book">Add new book</string>
   <string name="activity_label_settings">Settings</string>
   <string name="activity_label_book_settings">Book settings</string>
-  <string name="activity_import_file">Import ReadTracker data</string>
+  <string name="activity_label_quote_settings">Quote from book</string>
 
-  <string name="textOn">ON</string>
-  <string name="textOff">OFF</string>
+  <string name="progress_picker_percent">%1$.1f%%</string>
 
   <string name="introduction_text"><![CDATA[
   ReadTracker is a tool for keeping track of what and how you read your books.<br/><br/>
@@ -22,7 +21,7 @@
 
   <string name="home_menu_settings">Settings</string>
   <string name="home_menu_add">Add</string>
-  <string name="home_menu_add_book">Add book</string>
+  <string name="home_menu_add_book">Add new book</string>
 
   <string name="home_loading_books">Loading books…</string>
   <string name="home_fragment_title_finished">Finished</string>
@@ -35,29 +34,28 @@
   <string name="book_fragment_header_read">Read</string>
   <string name="book_fragment_header_quotes">Quotes</string>
 
-  <string name="quote_fragment_menu_title_default">Quote</string>
-  <string name="quote_fragment_delete_quote">Delete quote</string>
+  <!-- 4 hours, 2 minutes / 23 sessions -->
+  <string name="summary_fragment_summary">%1$s / %2$s</string>
+
   <string name="quote_fragment_add_new_quote">Add quote from book</string>
   <string name="quote_fragment_no_quotes">No quotes</string>
-  <string name="quote_activity_position">Page in book where the quote starts</string>
-  <string name="quote_activity_add">Add</string>
-  <string name="quote_text">Quote text</string>
-  <string name="quote_error_could_not_be_saved">An error occurred. The quote could not be saved.</string>
+  <string name="quote_activity_position">Page in book where the text start</string>
+  <string name="quote_activity_save">Save quote</string>
+  <string name="quote_activity_title">Quoting</string>
+  <string name="quote_text">Text</string>
   <string name="quote_error_failed_to_delete">Failed to delete the quote</string>
 
-  <string name="add_book_add">Add</string>
   <string name="add_book_save">Save</string>
-  <string name="add_book_missing_title">Please enter the title</string>
-  <string name="add_book_missing_author">Please enter the author</string>
-  <string name="add_book_missing_page_count">Please enter the number of pages or toggle percent tracking</string>
-  <string name="add_book_saving_book">Saving book…</string>
-  <string name="add_book_pages">Pages</string>
-  <string name="add_book_delete">Delete</string>
+  <string name="add_book_title_hint">Title</string>
+  <string name="add_book_author_hint">Author</string>
+  <string name="add_book_please_fill_out_required_fields">Please fill all fields</string>
+  <string name="add_book_page_count_hint">100</string>
+  <string name="add_book_track_using_pages">Track progress using page count</string>
+  <string name="add_book_delete">Delete book</string>
   <string name="add_book_confirm_delete">Really delete %1$s?</string>
   <string name="add_book_delete_explanation">This will delete the book and the entire reading history from the device.\n\nThere is no way to undo this operation.</string>
   <string name="add_book_delete_failed">Failed to delete book</string>
-  <string name="add_book_cover">Cover</string>
-  <string name="add_book_find_info_on_google_books">Find cover on Google Books</string>
+  <string name="add_book_find_info_on_google_books">Find on Google Books</string>
   <string name="add_book_looking_for_book">Searching for book info…</string>
   <string name="add_book_no_cover_found">Couldn\'t find a cover on Google Books</string>
   <string name="add_book_long_press_to_delete">Long press to clear</string>
@@ -77,25 +75,22 @@
   <string name="reading_click_to_start">Click to start reading</string>
   <string name="reading_item_cover_content_desc">Book cover</string>
   <string name="reading_list_blank_content_desc">Blank reading list</string>
-  <string name="reading_list_blank">No books</string>
+  <string name="reading_list_blank">No books in this category yet</string>
 
   <string name="general_save">Save</string>
   <string name="general_cancel">Cancel</string>
-  <string name="general_add">Add</string>
   <string name="general_delete">Delete</string>
 
-  <string name="general_author">Author</string>
-  <string name="general_title">Title</string>
   <string name="general_unknown_title">Unknown title</string>
-  <string name="general_n_a">–</string>
 
   <string name="book_search_search">Search</string>
   <string name="book_search_search_google_books">Search Google Books…</string>
-  <string name="book_search_new_book">New book…</string>
+  <string name="book_search_new_book">… or add manually</string>
   <string name="book_search_no_results">No results</string>
 
   <string name="finish_book_hint">What did you think of the book?</string>
-  <string name="finish_book_finish">Finish</string>
+  <string name="finish_book_finished_reading">Finished reading</string>
+  <string name="finish_book_finish">Save and finish</string>
 
   <string name="book_list_finished_on">Finished %1$s</string>
 
@@ -108,25 +103,25 @@
   <string name="add_quote_delete_explanation">This will delete the quote.\n\nThere is no way to undo this operation.</string>
 
   <string name="settings_compact_finish_list">Compact finish list</string>
-  <string name="settings_compact_finish_list_summary">Hides the closing remarks for finished books</string>
-  <string name="settings_export_json">Export data</string>
-  <string name="settings_export_summary">Exports all ReadTracker data as a JSON file.</string>
-  <string name="settings_import_json">Import data</string>
-  <string name="settings_import_summary">Imports data from a ReadTracker export file.</string>
-  <string name="settings_export_json_save_data">Save exported data</string>
-  <string name="settings_export_json_failed">Export failed</string>
+  <string name="settings_compact_finish_list_summary">Hides the closing remarks for finished books.</string>
+  <string name="settings_import_json">Import</string>
+  <string name="settings_import_failed">Importing file failed. Please make sure it\'s a valid ReadTracker export file.</string>
+  <string name="settings_import_summary">Imports a previously exported ReadTracker file.</string>
+  <string name="settings_import_confirmation">Importing data from a ReadTracker JSON file will add books, quotes, and sessions into your current device.\n\nBooks that already exist on the device will merge with imported ones, and new books will be added.\n\nThere\'s no way to undo this operation, so it's strongly recommended to first export you data as a backup.</string>
+  <string name="settings_import_positive_button">Select file</string>
+  <string name="settings_export_json">Export</string>
+  <string name="settings_export_summary">Exports all ReadTracker data to a file.</string>
+  <string name="settings_export_confirmation">This will export all your data to a JSON file.\n\nThe file is saved in your Downloads folder, where it can be shared, viewed, or imported back into ReadTracker.</string>
+  <string name="settings_export_positive_button">Export</string>
+  <string name="settings_export_failed">Unfortunately there was an unexpected error when exporting your data. Make sure your external media is available and try again.</string>
+  <string name="settings_export_need_external_media">Please make sure that your external media is mounted before exporting your ReadTracker data.</string>
+  <string name="settings_export_success">Successfully exported your ReadTracker data to the Downloads folder.</string>
   <string name="settings_title_settings">Settings</string>
   <string name="settings_title_data">Data</string>
   <string name="settings_title_about">About</string>
   <string name="settings_version">Version</string>
-  <string name="settings_icons_by">Icons by <b>Icons8</b></string>
   <string name="settings_legal">Legal</string>
-  <string name="settings_read_tracker_exported_data_description">ReadTracker exported data</string>
-  <string name="settings_export_to_download_completed">ReadTracker data has been exported and added to your downloads.</string>
-  <string name="settings_export_to_sdcard_completed">ReadTracker data has been exported and added to your SD card.</string>
-
-  <string name="error_import_failed_read_file">Could not import the data. An error occurred when reading the file.</string>
-  <string name="error_import_failed_broken_file">Import failed. Please make sure %1$s is a ReadTracker export file.</string>
-  <string name="import_locate_file">Locate your previously exported ReadTracker file.</string>
-  <string name="importing_files">Importing…</string>
+  <string name="settings_import_running">Importing…</string>
+  <!-- 5 books imported (3 new, 2 merged), together with 54 sessions and 12 quotes. -->
+  <string name="settings_import_book_report">%1$s imported (%2$s, %3$s), together with %4$s and %5$s.</string>
 </resources>

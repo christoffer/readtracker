@@ -33,7 +33,7 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 
 /**
- * Screen for searching for books on Google Books
+ * Activity for adding a new book by searching for books on Google Books
  */
 public class BookSearchActivity extends BaseActivity implements GoogleBookSearchTask.BookSearchResultListener {
   private static final String TAG = BookSearchActivity.class.getSimpleName();
@@ -77,7 +77,7 @@ public class BookSearchActivity extends BaseActivity implements GoogleBookSearch
 
   @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     // Fall through when coming back from a successful book activity
-    if(requestCode == REQUEST_ADD_BOOK && resultCode == AddBookActivity.RESULT_ADDED_BOOK) {
+    if(requestCode == REQUEST_ADD_BOOK && resultCode == BookSettingsActivity.RESULT_ADDED_BOOK) {
       Intent searchResultData = new Intent();
       searchResultData.putExtra(BookBaseActivity.KEY_BOOK_ID, data.getExtras().getInt(BookBaseActivity.KEY_BOOK_ID));
       setResult(RESULT_OK, searchResultData);
@@ -204,7 +204,7 @@ public class BookSearchActivity extends BaseActivity implements GoogleBookSearch
    * @param pageCount number of pages in the book (Use -1 if not available)
    */
   private void exitToBookInit(String title, String author, String coverURL, int pageCount) {
-    Intent intent = new Intent(this, AddBookActivity.class);
+    Intent intent = new Intent(this, BookSettingsActivity.class);
     intent.putExtra(IntentKeys.TITLE, title);
     intent.putExtra(IntentKeys.AUTHOR, author);
     intent.putExtra(IntentKeys.COVER_URL, coverURL);
@@ -217,7 +217,7 @@ public class BookSearchActivity extends BaseActivity implements GoogleBookSearch
    * new book
    */
   public void exitToBookInitForNewBook() {
-    Intent intent = new Intent(this, AddBookActivity.class);
+    Intent intent = new Intent(this, BookSettingsActivity.class);
     startActivityForResult(intent, REQUEST_ADD_BOOK);
   }
 }

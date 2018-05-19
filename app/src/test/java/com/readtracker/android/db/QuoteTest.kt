@@ -1,6 +1,5 @@
 package com.readtracker.android.db
 
-import android.support.test.filters.SmallTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertSame
 import org.junit.Test
@@ -11,7 +10,6 @@ class QuoteTest {
      * Create a [Book] entity and set a [Quote] on it. Merge this information
      * into another book entity and assert the information.
      */
-    @SmallTest
     @Test
     fun quoteTest_MergeInformationFromBookToBook_ReturnsBookCopy() {
         val book = Book()

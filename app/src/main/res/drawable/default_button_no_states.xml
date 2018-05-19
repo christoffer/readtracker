@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-
-<!--
-button without states, mainly used for when the disabled state of a button
-should be manually handled (like on the reading page for the done button on pause)
--->
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-  <item android:drawable="@drawable/background_3dp" />
-</selector>

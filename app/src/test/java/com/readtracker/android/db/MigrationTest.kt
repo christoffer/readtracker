@@ -1,8 +1,7 @@
 package com.readtracker.android.db
 
-import android.support.test.filters.SmallTest
-import com.readtracker.android.support.DatabaseTestCase
-import com.readtracker.android.support.TestUtils
+import com.readtracker.android.test_support.DatabaseTestCase
+import com.readtracker.android.test_support.buildRandomBook
 import org.junit.Assert.*
 
 import org.junit.Test
@@ -29,10 +28,9 @@ class MigrationTest : DatabaseTestCase() {
      * session that we expect to be perfectly fine. We fix the broken data if we find any
      * using the migrateVersion31Sessions function. Then we assert the results.
      */
-    @SmallTest
     @Test
     fun migrationTest_MigrateFrom11to12_BugFix() {
-        val book = TestUtils.buildRandomBook()
+        val book = buildRandomBook()
         databaseManager.save(book)
 
         val brokenSession = Session().apply {

@@ -8,12 +8,12 @@
     android:icon="@android:drawable/ic_menu_add"
     android:title="@string/home_menu_add_book"
     android:titleCondensed="@string/home_menu_add"
-    app:showAsAction="always" />
+    app:showAsAction="ifRoom" />
 
   <item
     android:id="@+id/settings_menu"
     android:icon="@android:drawable/ic_menu_preferences"
     android:title="@string/home_menu_settings"
-    app:showAsAction="ifRoom" />
+    app:showAsAction="never" />
 
 </menu>

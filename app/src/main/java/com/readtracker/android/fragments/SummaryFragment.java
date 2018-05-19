@@ -4,6 +4,7 @@ import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,7 @@ import com.readtracker.android.custom_views.SegmentBar;
 import com.readtracker.android.custom_views.SessionView;
 import com.readtracker.android.db.Book;
 import com.readtracker.android.db.Session;
+import com.readtracker.android.support.ColorUtils;
 import com.readtracker.android.support.Utils;
 import com.squareup.otto.Subscribe;
 
@@ -36,7 +38,7 @@ public class SummaryFragment extends BaseFragment {
   @InjectView(R.id.segmentBar) SegmentBar mSegmentBar;
   @InjectView(R.id.textSummary) TextView mTextSummary;
   @InjectView(R.id.textReadingState) TextView mTextReadingState;
-  @InjectView(R.id.textClosingRemark) TextView mTextClosingRemark;
+  @InjectView(R.id.textClosingRemarkContent) TextView mTextClosingRemark;
   @InjectView(R.id.textTimeLeft) TextView mTextTimeLeft;
 
   public static Fragment newInstance() {
@@ -67,7 +69,7 @@ public class SummaryFragment extends BaseFragment {
       return;
     }
 
-    final int color = Utils.calculateBookColor(mBook);
+    final int color = ColorUtils.getColorForBook(mBook);
     final List<Session> sessions = mBook.getSessions();
 
     mSegmentBar.setColor(color);
@@ -123,11 +125,15 @@ public class SummaryFragment extends BaseFragment {
     final int sessionCount = mBook.getSessions().size();
 
     if(mBook.getState() == Book.State.Reading) {
-      final String summary = String.format("%s / %d sessions", Utils.longCoarseHumanTimeFromSeconds(secondsSpent), sessionCount);
+      final String sessionDesc = getResources().getQuantityString(R.plurals.plural_session, sessionCount, sessionCount);
+      final String timeSpentDesc = Utils.longCoarseHumanTimeFromSeconds(secondsSpent);
+      final String summary = getString(R.string.summary_fragment_summary, timeSpentDesc, sessionDesc);
       mTextSummary.setText(summary);
       mSegmentBar.setVisibility(View.GONE);
     } else {
-      mTextSummary.setTextColor(getResources().getColor(R.color.text_color_primary));
+      final int primaryTextColor = ContextCompat.getColor(getContext(), R.color.textColorPrimary);
+      mTextSummary.setTextColor(primaryTextColor);
+      // TODO(christoffer, translations) Proper translation string
       final String summary = String.format("Reading for %s over %d sessions.", Utils.longCoarseHumanTimeFromSeconds(secondsSpent), sessionCount);
       mTextSummary.setText(summary);
     }

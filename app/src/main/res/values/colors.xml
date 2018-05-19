@@ -1,45 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <!--
+    NOTE(christoffer) These colors have to be defined for Material File Picker, or it'll throw
+    a mysterious error when trying to show the file picker UI.
+  -->
+  <color name="colorPrimary">#ff212121</color>
+  <color name="colorPrimaryDark">#ff000000</color>
+  <color name="colorAccent">#ff999999</color>
 
-  <!-- base colors -->
-  <color name="base_color">#ff457698</color>
-  <color name="background">#ff000000</color>
-  <color name="background_pressed">#ff171A1F</color>
+  <color name="defaultBookColor">#ff80cbc4</color>
 
-  <color name="midnight_light">#ff171c1d</color>
+  <color name="windowBackground">#ff303030</color>
 
-  <color name="midnight_ultralight">#ff2d3538</color>
-
-  <color name="slate">#ff445d68</color>
-
-  <!-- base text colors -->
-  <color name="text_color_primary">#fffffded</color>
-  <color name="text_color_secondary">#aafffded</color>
-
-  <!-- color variations -->
-  <color name="midnight_dark_tint">#ff101414</color>
-  <color name="midnight_medium_disabled">#88181e20</color>
-
-  <color name="text_color_primary_slightly_transparent">#ddfffded</color>
-  <color name="text_color_secondary_slightly_transparent">#88fffded</color>
-  <color name="text_color_hint">#44fffded</color>
-
-  <color name="text_color_primary_disabled">#44fffded</color>
-  <color name="text_color_secondary_disabled">#44fffded</color>
-
-  <!-- button color -->
-  <color name="default_button_color_default">#ff253e4d</color>
-  <color name="default_button_color_pressed">#ff2e5873</color>
-  <color name="default_button_color_disabled">#ff14181a</color>
-
-  <color name="default_button_color_outline_default">#442e5873</color>
-  <color name="default_button_color_outline_pressed">#ff375e73</color>
-  <color name="default_button_color_outline_disabled">#223d4e57</color>
-
-  <color name="default_button_color_outline_focused">#ff2e5873</color>
-
-  <color name="actionbar_text">#ffffffff</color>
-  <color name="activity_background">#ff000000</color>
-
-  <color name="overlay_background">#dd000000</color>
+  <color name="textColorPrimary">#ffffff</color>
+  <color name="textColorSecondary">#88ffffff</color>
+  <color name="textColorTertiary">#66ffffff</color>
 </resources>

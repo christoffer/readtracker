@@ -11,8 +11,8 @@ import android.widget.Button;
 import com.readtracker.R;
 import com.readtracker.android.custom_views.ProgressPicker;
 import com.readtracker.android.db.Book;
+import com.readtracker.android.support.ColorUtils;
 import com.readtracker.android.support.DrawableGenerator;
-import com.readtracker.android.support.Utils;
 import com.readtracker.android.thirdparty.SafeViewFlipper;
 
 import butterknife.ButterKnife;
@@ -44,12 +44,12 @@ public class EndSessionDialog extends DialogFragment implements View.OnClickList
     EndSessionDialog dialog = new EndSessionDialog();
     Bundle arguments = new Bundle();
 
-    int color = Utils.calculateBookColor(book);
+    int color = ColorUtils.getColorForBook(book);
     Float currentPosition = book.getCurrentPosition();
     Float pageCount = book.getPageCount();
 
     arguments.putInt(ARG_COLOR, color);
-    arguments.putFloat(EndSessionDialog.ARG_CURRENT_POSITION, currentPosition == null ? 0f : currentPosition);
+    arguments.putFloat(EndSessionDialog.ARG_CURRENT_POSITION, currentPosition);
     if(pageCount != null) {
       arguments.putFloat(EndSessionDialog.ARG_PAGE_COUNT, pageCount);
     }
@@ -60,7 +60,7 @@ public class EndSessionDialog extends DialogFragment implements View.OnClickList
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
-    setStyle(STYLE_NO_TITLE, R.style.ReadTrackerDialog);
+    setStyle(STYLE_NO_TITLE, R.style.ReadTrackerDialogTheme);
 
     mColor = getArguments().getInt(ARG_COLOR);
 
@@ -85,6 +85,7 @@ public class EndSessionDialog extends DialogFragment implements View.OnClickList
 
     mProgressPicker.setPositionAndPageCount(mSelectedPosition, mPageCount);
     mProgressPicker.setOnPositionChangeListener(this);
+    mProgressPicker.setColor(mColor);
 
     toggleFinishButton(mSelectedPosition == 1f);
 
@@ -122,6 +123,6 @@ public class EndSessionDialog extends DialogFragment implements View.OnClickList
 
   /** Defines an interface for activities that host the EndSessionDialog in order to receive results. */
   public interface EndSessionDialogListener {
-    public void onConfirmedSessionEndPosition(float position);
+    void onConfirmedSessionEndPosition(float position);
   }
 }

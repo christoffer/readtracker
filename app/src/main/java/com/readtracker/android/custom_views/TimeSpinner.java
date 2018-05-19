@@ -7,6 +7,8 @@ import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.View;
 
+import com.readtracker.R;
+
 public class TimeSpinner extends View {
   private static final int DEFAULT_COLOR = 0xff457698;
 
@@ -16,8 +18,6 @@ public class TimeSpinner extends View {
   private int mFillColorHighlighted;
 
   private boolean mIsHighlighted = false;
-
-  private int mMaxSize = 0;
 
   private Paint mTickPaint;
   private Paint mHighlightPaint;
@@ -47,16 +47,19 @@ public class TimeSpinner extends View {
   @Override
   protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
     int measuredWidth = MeasureSpec.getSize(widthMeasureSpec);
-    if(mMaxSize > 0 && mMaxSize < measuredWidth) {
+    final int maxWidth = (int) getResources().getDimension(R.dimen.readingViewsMaxWidth);
+
+    if(maxWidth > 0 && maxWidth < measuredWidth) {
       int measureMode = MeasureSpec.getMode(widthMeasureSpec);
-      widthMeasureSpec = MeasureSpec.makeMeasureSpec(mMaxSize, measureMode);
+      widthMeasureSpec = MeasureSpec.makeMeasureSpec(maxWidth, measureMode);
     }
-    int measuredHeight = MeasureSpec.getSize(heightMeasureSpec);
-    if(mMaxSize > 0 && mMaxSize < measuredHeight) {
-      int measureMode = MeasureSpec.getMode(heightMeasureSpec);
-      heightMeasureSpec = MeasureSpec.makeMeasureSpec(mMaxSize, measureMode);
-    }
-    super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+
+    // NOTE(christoffer) Only respect the width to keep the spinner centered when the
+    // keyboard is visible. Otherwise it'll adjust the size to the height and become smaller
+    // and the centering logic in the layout seems to mess that up.
+
+    //noinspection SuspiciousNameCombination
+    super.onMeasure(widthMeasureSpec, widthMeasureSpec);
   }
 
   public void setColor(int primaryColor) {
@@ -71,15 +74,6 @@ public class TimeSpinner extends View {
     mFillColor = Color.HSVToColor(30, hsv);
     mFillColorHighlighted = Color.HSVToColor(50, hsv);
     invalidate();
-  }
-
-  /**
-   * Adjust the maximum size the timeSpinner can be
-   *
-   * @param maxSize the maximum size in pixels
-   */
-  public void setMaxSize(int maxSize) {
-    mMaxSize = maxSize;
   }
 
   private void initialize() {

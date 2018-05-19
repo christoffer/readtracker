@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <dimen name="gridGutter">16dp</dimen>
+  <dimen name="gridMargins">16dp</dimen>
+  <dimen name="halfGridMargins">8dp</dimen>
+  <dimen name="halfGridGutter">8dp</dimen>
+
+  <dimen name="readingViewsMaxWidth">300dp</dimen>
+</resources>
