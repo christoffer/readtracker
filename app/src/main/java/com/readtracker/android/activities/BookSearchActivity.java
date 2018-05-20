@@ -44,11 +44,11 @@ public class BookSearchActivity extends BaseActivity implements GoogleBookSearch
   private static final int FLIPPER_INDEX_ADD = 0;
   private static final int FLIPPER_INDEX_SEARCH = 1;
 
-  @InjectView(R.id.listSearchResult) ListView mListSearchResults;
-  @InjectView(R.id.textSearch) EditText mEditTextSearch;
-  @InjectView(R.id.flipperBookSearchActions) SafeViewFlipper mFlipperBookSearchActions;
-  @InjectView(R.id.buttonNew) Button mButtonNew;
-  @InjectView(R.id.buttonSearch) Button mButtonSearch;
+  @InjectView(R.id.search_result_list) ListView mSearchResultList;
+  @InjectView(R.id.search_edit_text) EditText mSearchEditText;
+  @InjectView(R.id.book_add_action_flipper) SafeViewFlipper mAddActionFlipper;
+  @InjectView(R.id.manually_add_book_btn) Button mManualAddButton;
+  @InjectView(R.id.search_button) Button mSearchButton;
 
   private SearchResultAdapter mBookSearchAdapter;
   private InputMethodManager mInputMethodManager;
@@ -60,18 +60,18 @@ public class BookSearchActivity extends BaseActivity implements GoogleBookSearch
     ButterKnife.inject(this);
 
     mBookSearchAdapter = new SearchResultAdapter(this, new ArrayList<BookItem>());
-    mListSearchResults.setAdapter(mBookSearchAdapter);
+    mSearchResultList.setAdapter(mBookSearchAdapter);
 
     // Suggest that the soft input keyboard is visible at once
     mInputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-    mInputMethodManager.showSoftInput(mEditTextSearch, InputMethodManager.SHOW_IMPLICIT);
+    mInputMethodManager.showSoftInput(mSearchEditText, InputMethodManager.SHOW_IMPLICIT);
 
     bindEvents();
   }
 
   @Override
   public boolean onSearchRequested() {
-    mEditTextSearch.requestFocus();
+    mSearchEditText.requestFocus();
     return true;
   }
 
@@ -87,7 +87,7 @@ public class BookSearchActivity extends BaseActivity implements GoogleBookSearch
 
   @Override public void onSearchResultsRetrieved(ArrayList<GoogleBook> result) {
     getApp().clearProgressDialog();
-    mEditTextSearch.setEnabled(true);
+    mSearchEditText.setEnabled(true);
     mBookSearchAdapter.clear();
 
     if(result == null || result.size() == 0) {
@@ -100,7 +100,7 @@ public class BookSearchActivity extends BaseActivity implements GoogleBookSearch
     for(GoogleBook book : result) {
       mBookSearchAdapter.add(new GoogleBookItem(book));
     }
-    mInputMethodManager.hideSoftInputFromWindow(mEditTextSearch.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+    mInputMethodManager.hideSoftInputFromWindow(mSearchEditText.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
   }
 
   /**
@@ -108,12 +108,12 @@ public class BookSearchActivity extends BaseActivity implements GoogleBookSearch
    */
   public void bindEvents() {
     // Handle enter key press in the search bar
-    mEditTextSearch.setOnEditorActionListener(new OnEditorActionListener() {
+    mSearchEditText.setOnEditorActionListener(new OnEditorActionListener() {
       @Override
       public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
         if(actionId == EditorInfo.IME_ACTION_SEARCH || isDoneAction(actionId, keyEvent)) {
-          mEditTextSearch.setEnabled(false);
-          search(mEditTextSearch.getText().toString());
+          mSearchEditText.setEnabled(false);
+          search(mSearchEditText.getText().toString());
           return true;
         }
         return false;
@@ -122,16 +122,16 @@ public class BookSearchActivity extends BaseActivity implements GoogleBookSearch
 
     // Switch between the "Add" and "Search" button whenever the text goes from
     // empty to filled or vice versa
-    mEditTextSearch.addTextChangedListener(new TextWatcher() {
+    mSearchEditText.addTextChangedListener(new TextWatcher() {
       @Override public void afterTextChanged(Editable editable) {
-        final boolean hasText = mEditTextSearch.getText().length() > 0;
-        final int displayedChild = mFlipperBookSearchActions.getDisplayedChild();
+        final boolean hasText = mSearchEditText.getText().length() > 0;
+        final int displayedChild = mAddActionFlipper.getDisplayedChild();
 
         // Ensure the correct page is set for the
         if(hasText && displayedChild != FLIPPER_INDEX_SEARCH) {
-          mFlipperBookSearchActions.setDisplayedChild(FLIPPER_INDEX_SEARCH);
+          mAddActionFlipper.setDisplayedChild(FLIPPER_INDEX_SEARCH);
         } else if(!hasText && displayedChild != FLIPPER_INDEX_ADD) {
-          mFlipperBookSearchActions.setDisplayedChild(FLIPPER_INDEX_ADD);
+          mAddActionFlipper.setDisplayedChild(FLIPPER_INDEX_ADD);
         }
       }
 
@@ -143,7 +143,7 @@ public class BookSearchActivity extends BaseActivity implements GoogleBookSearch
     });
 
     // Handle clicking a search result
-    mListSearchResults.setOnItemClickListener(new OnItemClickListener() {
+    mSearchResultList.setOnItemClickListener(new OnItemClickListener() {
       @Override
       public void onItemClick(AdapterView parent, View view, int position, long id) {
         BookItem clickedBook = mBookSearchAdapter.getItem(position);
@@ -153,11 +153,11 @@ public class BookSearchActivity extends BaseActivity implements GoogleBookSearch
       }
     });
 
-    mButtonNew.setOnClickListener(new View.OnClickListener() {
+    mManualAddButton.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View view) { onNewClicked(); }
     });
 
-    mButtonSearch.setOnClickListener(new View.OnClickListener() {
+    mSearchButton.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View view) { onSearchClicked(); }
     });
   }
@@ -180,7 +180,7 @@ public class BookSearchActivity extends BaseActivity implements GoogleBookSearch
    * Called when the search button is being clicked
    */
   public void onSearchClicked() {
-    String query = mEditTextSearch.getText().toString();
+    String query = mSearchEditText.getText().toString();
     search(query);
   }
 

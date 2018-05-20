@@ -59,7 +59,10 @@ public class BookListFragment extends ListFragment {
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     // TODO(christoffer) Add button and blurb about importing data from previous install
-    return inflater.inflate(R.layout.fragment_reading_list, container, false);
+    View view = inflater.inflate(R.layout.fragment_reading_list, container, false);
+    view.setTag(getTagNameForItemResourceId(mItemLayoutResId));
+
+    return view;
   }
 
   @Override
@@ -90,6 +93,10 @@ public class BookListFragment extends ListFragment {
   public void onListItemClick(ListView listView, View clickedView, int position, long id) {
     Book book = (Book) listView.getItemAtPosition(position);
     mBus.post(new BookClickedEvent(book));
+  }
+
+  public static String getTagNameForItemResourceId(int resourceId) {
+    return String.format("book_list:resid:%d", resourceId);
   }
 
   /** Emitted when a book is clicked. */
