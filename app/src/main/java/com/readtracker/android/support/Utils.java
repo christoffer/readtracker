@@ -2,12 +2,9 @@ package com.readtracker.android.support;
 
 
 import android.content.Context;
-import android.graphics.Color;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 
-import com.readtracker.android.activities.FinishBookActivity;
-import com.readtracker.android.db.Book;
 import com.readtracker.android.db.Session;
 
 import java.io.BufferedReader;
@@ -16,18 +13,14 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
-import java.util.Locale;
 
 /**
  * Generic utility functions
  */
 public class Utils {
-  private static final long DAYS = 60 * 60 * 24 * 1000;
 
   /**
    * Returns a string representation like "3 hours, 12 minutes"
@@ -67,7 +60,7 @@ public class Utils {
     int minutes = hms[1];
     int seconds = hms[2];
 
-    ArrayList<String> parts = new ArrayList<String>(3);
+    ArrayList<String> parts = new ArrayList<>(3);
 
     if(hours > 0) parts.add(pluralizeWithCount(hours, "hour"));
     if(minutes > 0) parts.add(pluralizeWithCount(minutes, "minute"));
@@ -114,15 +107,6 @@ public class Utils {
    */
   public static String pluralizeWithCount(int num, String noun) {
     return String.format("%d %s", num, pluralizeWord(num, noun));
-  }
-
-  /**
-   * Returns a time difference in a human format.
-   * e.g. "about two weeks ago".
-   * TODO(christoffer, translation) Replace with Android translations or the builtin Android helpers
-   */
-  public static String humanPastTimeFromTimestamp(long unixEpochMs, long now) {
-    return humanPastTime(new Date(unixEpochMs), new Date(now));
   }
 
   /** Returns the sessions a sorted stops list for the segmented progress bar. */
@@ -176,73 +160,12 @@ public class Utils {
       return String.format("%s and %s", items[0], items[1]);
     }
 
-    String joined = "";
+    StringBuilder joined = new StringBuilder();
     for(int i = 0; i < items.length - 1; i++) {
-      joined += items[i] + ", ";
+      joined.append(items[i]).append(", ");
     }
 
     return String.format("%s and %s", joined.substring(0, joined.length() - 2), items[items.length - 1]);
-  }
-
-  /**
-   * Return a human readable form of a time in the past.
-   *
-   * TODO(christoffer, translation) There's probably some helper for this as well in the Android
-   * framework.
-   */
-  @SuppressWarnings("deprecation")
-  private static String humanPastTime(Date then, Date now) {
-    if(then.after(now)) {
-      return "";
-    }
-
-    Date todayMidnight = (Date) now.clone();
-    todayMidnight.setHours(0);
-    todayMidnight.setMinutes(0);
-    todayMidnight.setSeconds(0);
-
-    if(then.after(todayMidnight)) {
-      return "earlier today";
-    }
-
-    Date dateRunner = new Date(todayMidnight.getTime() - 1 * DAYS);
-    if(then.after(dateRunner)) {
-      return "yesterday";
-    }
-
-    dateRunner = new Date(todayMidnight.getTime() - 2 * DAYS);
-    if(then.after(dateRunner)) {
-      return "two days ago";
-    }
-
-    dateRunner = new Date(todayMidnight.getTime() - 3 * DAYS);
-    if(then.after(dateRunner)) {
-      return "three days ago";
-    }
-
-    dateRunner = new Date(todayMidnight.getTime() - 9 * DAYS);
-    if(then.after(dateRunner)) {
-      return "about a week ago";
-    }
-
-    dateRunner = new Date(todayMidnight.getTime() - 18 * DAYS);
-    if(then.after(dateRunner)) {
-      return "about two weeks ago";
-    }
-
-    dateRunner = new Date(todayMidnight.getTime() - 24 * DAYS);
-    if(then.after(dateRunner)) {
-      return "about three weeks ago";
-    }
-
-    dateRunner = new Date(todayMidnight.getTime() - 45 * DAYS);
-    if(then.after(dateRunner)) {
-      return "about a month ago";
-    }
-
-    final SimpleDateFormat dateFormat = new SimpleDateFormat("'on 'MMM d, yyyy", Locale.ENGLISH);
-
-    return dateFormat.format(then);
   }
 
   /** Returns the string content of a file. */

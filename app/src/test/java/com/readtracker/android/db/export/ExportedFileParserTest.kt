@@ -1,11 +1,11 @@
 package com.readtracker.android.db.export
 
 import com.readtracker.android.db.Book
-import com.readtracker.android.test_support.SharedExampleAsserts
-import com.readtracker.android.test_support.readFixtureFile
+import src.JSONFixtureAssertions
 import org.json.JSONException
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import src.readFixtureFile
 
 class ExportedFileParserTest {
 
@@ -16,7 +16,7 @@ class ExportedFileParserTest {
     @Throws(Exception::class)
     fun exportedFileParserTest_buildBookFromJson_returnListOfBooks() {
         val books = parseTestFile("export_version_2.json")
-        SharedExampleAsserts.assertExampleBooksVersion2(books)
+        JSONFixtureAssertions.assertBookListMatchesExpectedResultFromFixtureImport(books)
     }
 
     /**
@@ -29,7 +29,7 @@ class ExportedFileParserTest {
         assertEquals(1, books.size)
 
         val book = books[0]
-        SharedExampleAsserts.assertNullBookVersion2(book)
+        JSONFixtureAssertions.assertBookMatchesExpectedResultFromNullFieldsFixture(book)
     }
 
     /**
@@ -42,7 +42,7 @@ class ExportedFileParserTest {
         assertEquals(1, books.size)
 
         val book = books[0]
-        SharedExampleAsserts.assertNullBookVersion2(book)
+        JSONFixtureAssertions.assertBookMatchesExpectedResultFromNullFieldsFixture(book)
     }
 
     /**

@@ -1,23 +1,32 @@
-package com.readtracker.android.db.export
+package com.readtracker.android.db
 
-import com.readtracker.android.db.Book
-import com.readtracker.android.db.Model
-import com.readtracker.android.test_support.*
+import android.support.test.InstrumentationRegistry.getTargetContext
+import src.buildBook
+import src.buildQuote
+import src.buildSession
+import com.readtracker.android.db.export.JSONExporter
+import com.readtracker.android.db.export.JSONImporter
+import src.JSONFixtureAssertions.assertBookListMatchesExpectedResultFromFixtureImport
 import org.junit.Assert.*
+import org.junit.Before
 import org.junit.Test
+import src.randomString
+import src.readFixtureFile
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.util.*
 
-class JSONImporterTest : DatabaseTestCase() {
+class JSONImporterTest : DatabaseTestBase() {
 
-    /**
-     * Helper method to return the JSON de-serializer
-     * @return JSONImporter
-     */
-    private val importer: JSONImporter
-        get() = JSONImporter(databaseManager)
+    private lateinit var databaseManager: DatabaseManager
+    private lateinit var importer: JSONImporter
+
+    @Before
+    fun initializeImporter() {
+        databaseManager = getManagerOfCleanTestDatabase()
+        importer = JSONImporter(databaseManager)
+    }
 
     /**
      * Get a file to import, make sure that the database contains no (0) [Book] entities,
@@ -25,14 +34,12 @@ class JSONImporterTest : DatabaseTestCase() {
      * @throws Exception
      */
     @Test
-    @Throws(Exception::class)
     fun jsonImporterTest_ImportBookVersionOne() {
         val fileToImport = copyResourceFile("export_version_1.json")
 
         assertEquals(0, databaseManager.getAll(Book::class.java).size)
         importer.importFile(fileToImport)
-
-        assertImportedBooks()
+        assertImportedBooks(databaseManager)
     }
 
     /**
@@ -40,14 +47,12 @@ class JSONImporterTest : DatabaseTestCase() {
      * @throws Exception
      */
     @Test
-    @Throws(Exception::class)
     fun jsonImporterTest_ImportBookVersionTwo() {
         val fileToImport = copyResourceFile("export_version_2.json")
 
         assertEquals(0, databaseManager.getAll(Book::class.java).size)
         importer.importFile(fileToImport)
-
-        assertImportedBooks()
+        assertImportedBooks(databaseManager)
     }
 
     /**
@@ -57,7 +62,6 @@ class JSONImporterTest : DatabaseTestCase() {
      * @throws Exception
      */
     @Test
-    @Throws(Exception::class)
     fun jsonImporterTest_ImportBookWithNoMergeConflict() {
         val bookToImport = buildBook("постои конфликт", "авторот", 200f)
         val fileToImport = createExportFileForBooks(Arrays.asList(bookToImport))
@@ -80,7 +84,6 @@ class JSONImporterTest : DatabaseTestCase() {
      * @throws Exception
      */
     @Test
-    @Throws(Exception::class)
     fun jsonImporterTest_ImportBookWithSimpleMergeConflict() {
         val existing = buildBook("Metamorphosis", "Franz Kafka", 200f)
         databaseManager.save(existing)
@@ -111,7 +114,6 @@ class JSONImporterTest : DatabaseTestCase() {
      * @throws Exception
      */
     @Test
-    @Throws(Exception::class)
     fun jsonImporterTest_ImportBookWithNestedMergeConflict() {
         // Create a book in the database that we later want to import
         val imported = buildBook("Metamorphosis", "Franz Kafka", 200f)
@@ -175,11 +177,10 @@ class JSONImporterTest : DatabaseTestCase() {
      * @return File with JSON output
      * @throws Exception
      */
-    @Throws(Exception::class)
     private fun createExportFileForBooks(books: List<Book>): File {
-        assertNotNull(getContext())
+        assertNotNull(getTargetContext())
 
-        val exportFile = File(getContext().filesDir, randomString())
+        val exportFile = File(getTargetContext().filesDir, randomString())
         val content = JSONExporter.withDatabaseManager(databaseManager).exportAll(books).toString()
         FileOutputStream(exportFile).run {
             write(content.toByteArray())
@@ -189,18 +190,14 @@ class JSONImporterTest : DatabaseTestCase() {
         return exportFile
     }
 
-    /**
-     * Helper method to assert imported [Book]s from database
-     * against our [SharedExampleAsserts] class.
-     */
-    private fun assertImportedBooks() {
+    private fun assertImportedBooks(databaseManager: DatabaseManager) {
         val booksInDatabase = databaseManager.getAll(Book::class.java)
         for (book in booksInDatabase) {
             book.loadSessions(databaseManager)
             book.loadQuotes(databaseManager)
         }
 
-        SharedExampleAsserts.assertExampleBooksVersion2(booksInDatabase)
+        assertBookListMatchesExpectedResultFromFixtureImport(booksInDatabase)
     }
 
     /**
@@ -209,11 +206,10 @@ class JSONImporterTest : DatabaseTestCase() {
      * @return File
      * @throws IOException
      */
-    @Throws(IOException::class)
     private fun copyResourceFile(resourcePath: String): File {
-        assertNotNull(getContext())
+        assertNotNull(getTargetContext())
 
-        val exportFile = File(getContext().filesDir, randomString())
+        val exportFile = File(getTargetContext().filesDir, randomString())
         val content = readFixtureFile(resourcePath)
         FileOutputStream(exportFile).run {
             write(content.toByteArray())

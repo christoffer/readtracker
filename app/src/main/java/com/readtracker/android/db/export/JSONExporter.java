@@ -79,7 +79,7 @@ public class JSONExporter {
   }
 
   /** Exports all books as a JSON object. */
-  JSONObject exportAll(List<Book> books) throws JSONException {
+  public JSONObject exportAll(List<Book> books) throws JSONException {
     JSONObject export = new JSONObject();
 
     JSONArray exportedBooks = new JSONArray();
