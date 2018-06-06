@@ -20,6 +20,7 @@ import com.readtracker.android.activities.HomeActivity;
 import com.readtracker.android.custom_views.SegmentBar;
 import com.readtracker.android.db.Book;
 import com.readtracker.android.support.ColorUtils;
+import com.readtracker.android.support.StringUtils;
 import com.readtracker.android.support.Utils;
 import com.squareup.otto.Subscribe;
 import com.squareup.picasso.Picasso;
@@ -53,19 +54,21 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
   };
 
   // Books in this list
-  private final List<Book> mBooks = new ArrayList<Book>();
-  private Book.State mStateFilter = null;
+  private final List<Book> mBooks = new ArrayList<>();
+  private Book.State mStateFilter;
   private final boolean mUseCompactReadingLists;
+  private final boolean mUseFullDates;
 
-  public BookAdapter(Context context, int resource, Book.State stateFilter, boolean useCompactReadingLists) {
+  public BookAdapter(Context context, int resource, Book.State stateFilter, boolean useCompactReadingLists, boolean useFullDates) {
     super();
     mContext = context;
     mLayoutResource = resource;
     mStateFilter = stateFilter;
     mUseCompactReadingLists = useCompactReadingLists;
+    mUseFullDates = useFullDates;
   }
 
-  public void sortBooks() {
+  private void sortBooks() {
     Collections.sort(mBooks, sBookComparator);
 
     notifyDataSetChanged();
@@ -100,7 +103,7 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
     }
 
     Book book = getItem(position);
-    viewHolder.populate(convertView, book, mUseCompactReadingLists);
+    viewHolder.populate(convertView, book, mUseCompactReadingLists, mUseFullDates);
 
     return convertView;
   }
@@ -152,7 +155,7 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
       ButterKnife.inject(this, view);
     }
 
-    void populate(View view, Book book, boolean useCompactReadingLists) {
+    void populate(View view, Book book, boolean useCompactReadingLists, boolean useFullDates) {
       // Required fields
       titleText.setText(book.getTitle());
       authorText.setText(book.getAuthor());
@@ -194,7 +197,13 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
 
         if(book.getState() == Book.State.Finished) {
           final long now = System.currentTimeMillis();
-          String finishedOn = Utils.humanPastTimeFromTimestamp(book.getCurrentPositionTimestampMs(), now);
+          String finishedOn;
+          if (useFullDates) {
+            finishedOn = StringUtils.getDateString(book.getCurrentPositionTimestampMs(), view.getContext());
+          } else {
+            finishedOn = StringUtils.humanPastTimeFromTimestamp(book.getCurrentPositionTimestampMs(), now, view.getContext());
+          }
+
           String finishedOnWithPrefix = view.getContext().getString(R.string.book_list_finished_on, finishedOn);
           finishedAtText.setText(finishedOnWithPrefix);
           finishedAtText.setVisibility(View.VISIBLE);

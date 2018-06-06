@@ -35,6 +35,7 @@ public class SettingsActivity extends PreferenceActivity implements ImportReadTr
   private static final String TAG = SettingsActivity.class.getName();
 
   private static final String SETTINGS_COMPACT_FINISH_LIST = "settings.compact_finish_list";
+  private static final String SETTINGS_FULL_DATES = "settings.full_dates";
   private static final String IMPORT_JSON = "data.import_json";
   private static final String EXPORT_JSON = "data.export_json";
   private static final String ABOUT_VERSION = "about.version";
@@ -82,7 +83,20 @@ public class SettingsActivity extends PreferenceActivity implements ImportReadTr
       public boolean onPreferenceChange(Preference preference, Object value) {
         boolean isCompactMode = (Boolean) value;
         Log.i(TAG, "Changing compact mode to: " + isCompactMode);
-        ReadTrackerApp.from(SettingsActivity.this).getAppSettings().setCompactFinishList(isCompactMode);
+        ReadTrackerApp.from(SettingsActivity.this).getAppSettings().setUseCompactFinishedList(isCompactMode);
+        return true;
+      }
+    });
+
+    // TODO Fix deprecation
+    //noinspection deprecation
+    final CheckBoxPreference useFullDatesCheckbox = (CheckBoxPreference) findPreference(SETTINGS_FULL_DATES);
+    useFullDatesCheckbox.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+      @Override
+      public boolean onPreferenceChange(Preference preference, Object value) {
+        boolean shouldUseFullDates = (Boolean) value;
+        Log.i(TAG, "Changing full dates value to: " + shouldUseFullDates);
+        ReadTrackerApp.from(SettingsActivity.this).getAppSettings().setUseFullDates(shouldUseFullDates);
         return true;
       }
     });
