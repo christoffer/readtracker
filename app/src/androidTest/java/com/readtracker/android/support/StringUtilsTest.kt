@@ -1,6 +1,7 @@
 package com.readtracker.android.support
 
 import android.content.Context
+import android.os.Build
 import android.support.test.InstrumentationRegistry.getTargetContext
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -58,6 +59,14 @@ class StringUtilsTest {
         setLocale(context, "en", "EN")
         assertEquals("on Nov 22, 1981", StringUtils.getDateString(nov22nd1981, context))
         setLocale(context, "sv", "SE")
-        assertEquals("on 22 nov. 1981", StringUtils.getDateString(nov22nd1981, context))
+
+        val expectedResult = if (Build.VERSION.SDK_INT <= 22) {
+            // NOTE(christoffer) The formatting seems to have changed around this time, not sure
+            // exactly when but at least it's different between 22 and 25
+            "on 22 nov 1981"
+        } else {
+            "on 22 nov. 1981"
+        }
+        assertEquals(expectedResult, StringUtils.getDateString(nov22nd1981, context))
     }
 }
