@@ -1,59 +1,12 @@
 package com.readtracker.android.utils
 
-import android.content.Context
 import com.readtracker.android.db.Session
-import com.readtracker.android.support.StringUtils
 import com.readtracker.android.support.Utils
 import org.junit.Assert.*
 import org.junit.Test
 import java.util.*
 
-const val SECONDS: Long = 1000
-const val MINUTES: Long = 60 * SECONDS
-const val HOURS: Long = 60 * MINUTES
-
 class UtilsTest {
-    /**
-     * Assert the conversion of millisecond values to String representation in hours and minutes.
-     */
-    @Test
-    fun utilsTest_HoursAndMinutesFromMillis_ReturnsString() {
-        assertEquals("0 minutes", Utils.hoursAndMinutesFromMillis(0))
-        assertEquals("0 minutes", Utils.hoursAndMinutesFromMillis(36 * SECONDS))
-        assertEquals("1 minute", Utils.hoursAndMinutesFromMillis(87 * SECONDS))
-        assertEquals("5 minutes", Utils.hoursAndMinutesFromMillis(5 * MINUTES))
-        assertEquals("47 minutes", Utils.hoursAndMinutesFromMillis(47 * MINUTES + 12 * SECONDS))
-
-        assertEquals("1 hour, 47 minutes", Utils.hoursAndMinutesFromMillis(1 * HOURS + 47 * MINUTES + 12 * SECONDS))
-        assertEquals("2 hours, 47 minutes", Utils.hoursAndMinutesFromMillis(2 * HOURS + 47 * MINUTES + 12 * SECONDS))
-    }
-
-    /**
-     * Assert the conversion of millisecond values to String representation of the following format:
-     * x hours, y minutes and z seconds
-     */
-    @Test
-    fun utilsTest_LongHumanTimeFromMillis_ReturnsString() {
-        assertEquals("1 minute", Utils.longHumanTimeFromMillis(MINUTES))
-        assertEquals("1 hour", Utils.longHumanTimeFromMillis(HOURS))
-        assertEquals("1 second", Utils.longHumanTimeFromMillis(SECONDS))
-
-        assertEquals("2 hours and 2 minutes", Utils.longHumanTimeFromMillis(2 * HOURS + 2 * MINUTES))
-        assertEquals("2 hours and 2 seconds", Utils.longHumanTimeFromMillis(2 * HOURS + 2 * SECONDS))
-        assertEquals("2 minutes and 2 seconds", Utils.longHumanTimeFromMillis(2 * MINUTES + 2 * SECONDS))
-
-        assertEquals("2 hours, 2 minutes and 2 seconds", Utils.longHumanTimeFromMillis(2 * HOURS + 2 * MINUTES + 2 * SECONDS))
-    }
-
-    /**
-     * @see [utilsTest_LongHumanTimeFromMillis_ReturnsString]
-     */
-    @Test
-    fun utilsTest_LongCoarseHumanTimeFromMillis_ReturnsString() {
-        assertEquals("13 seconds", Utils.longCoarseHumanTimeFromMillis(13 * SECONDS))
-        assertEquals("3 minutes", Utils.longCoarseHumanTimeFromMillis(3 * MINUTES + 13 * SECONDS))
-        assertEquals("3 hours and 47 minutes", Utils.longCoarseHumanTimeFromMillis(3 * HOURS + 47 * MINUTES + 13 * SECONDS))
-    }
 
     /**
      * Assert the pluralization of words by giving an integer value and the singular form of a word.
@@ -63,6 +16,10 @@ class UtilsTest {
         assertEquals("dogs", Utils.pluralizeWord(0, "dog"))
         assertEquals("dogs", Utils.pluralizeWord(4, "dog"))
         assertEquals("dog", Utils.pluralizeWord(1, "dog"))
+
+        assertEquals("kisses", Utils.pluralizeWord(0, "kiss"))
+        assertEquals("kisses", Utils.pluralizeWord(4, "kiss"))
+        assertEquals("kiss", Utils.pluralizeWord(1, "kiss"))
     }
 
     /**

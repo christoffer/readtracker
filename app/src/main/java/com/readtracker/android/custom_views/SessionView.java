@@ -21,6 +21,8 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
+import static com.readtracker.android.support.StringUtils.hoursAndMinutesFromMillis;
+
 /**
  * Draws a history of reading sessions on a time line.
  */
@@ -97,7 +99,7 @@ public class SessionView extends View {
       final float x = Math.min(1.0f, node.progress) * innerWidth + getPaddingLeft();
       final float y = i == 0 ? segmentHeight * 0.5f : i * segmentHeight + getPaddingTop();
 
-      String primaryText = Utils.hoursAndMinutesFromMillis(node.durationSeconds * 1000);
+      String primaryText = hoursAndMinutesFromMillis(node.durationSeconds * 1000, getContext());
       String secondaryText;
       if (mUseFullDates) {
         secondaryText = StringUtils.getDateString(node.sessionTimestampMs, getContext());

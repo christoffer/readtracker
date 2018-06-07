@@ -39,6 +39,8 @@ import java.util.TimerTask;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
+import static com.readtracker.android.support.StringUtils.hoursAndMinutesFromMillis;
+
 /** Displays a timer and controls for the user to start, pause and stop a reading session. */
 public class ReadFragment extends BaseFragment {
   private static final String TAG = ReadFragment.class.getSimpleName();
@@ -295,7 +297,7 @@ public class ReadFragment extends BaseFragment {
   private String[] getDisplayedValues(int maxMinutes) {
     String[] labels = new String[maxMinutes];
     for(int minute = 0; minute < maxMinutes; minute++) {
-      labels[minute] = Utils.hoursAndMinutesFromMillis(minute * 60 * 1000);
+      labels[minute] = hoursAndMinutesFromMillis(minute * 60 * 1000, getContext());
     }
     return labels;
   }

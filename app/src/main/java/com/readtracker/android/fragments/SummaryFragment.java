@@ -26,6 +26,9 @@ import java.util.List;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
+import static com.readtracker.android.support.StringUtils.longCoarseHumanTimeFromMillis;
+import static com.readtracker.android.support.StringUtils.longCoarseHumanTimeFromSeconds;
+
 /**
  * Fragment for showing summary of a book
  */
@@ -126,7 +129,7 @@ public class SummaryFragment extends BaseFragment {
 
     if(mBook.getState() == Book.State.Reading) {
       final String sessionDesc = getResources().getQuantityString(R.plurals.plural_session, sessionCount, sessionCount);
-      final String timeSpentDesc = Utils.longCoarseHumanTimeFromSeconds(secondsSpent);
+      final String timeSpentDesc = longCoarseHumanTimeFromSeconds(secondsSpent, getContext());
       final String summary = getString(R.string.summary_fragment_summary, timeSpentDesc, sessionDesc);
       mTextSummary.setText(summary);
       mSegmentBar.setVisibility(View.GONE);
@@ -134,7 +137,7 @@ public class SummaryFragment extends BaseFragment {
       final int primaryTextColor = ContextCompat.getColor(getContext(), R.color.textColorPrimary);
       mTextSummary.setTextColor(primaryTextColor);
       // TODO(christoffer, translations) Proper translation string
-      final String summary = String.format("Reading for %s over %d sessions.", Utils.longCoarseHumanTimeFromSeconds(secondsSpent), sessionCount);
+      final String summary = String.format("Reading for %s over %d sessions.", longCoarseHumanTimeFromSeconds(secondsSpent, getContext()), sessionCount);
       mTextSummary.setText(summary);
     }
   }
@@ -148,7 +151,7 @@ public class SummaryFragment extends BaseFragment {
       final int estimatedSecondsLeft = mBook.calculateEstimatedSecondsLeft();
       if(estimatedSecondsLeft > 0) {
         visibility = View.VISIBLE;
-        timeLeft = String.format("You have about %s left of reading, given you keep the same pace", Utils.longCoarseHumanTimeFromSeconds(estimatedSecondsLeft));
+        timeLeft = String.format("You have about %s left of reading, given you keep the same pace", longCoarseHumanTimeFromSeconds(estimatedSecondsLeft, getContext()));
         final String pepTalk = getPepTalk(estimatedSecondsLeft);
         if(pepTalk != null) {
           timeLeft += ".\n\n" + pepTalk;
@@ -161,8 +164,10 @@ public class SummaryFragment extends BaseFragment {
 
   /**
    * Generate a short, encouraging, phrase on how long the user has to read.
+   *
+   * TODO(christoffer) Translate
    */
-  private static String getPepTalk(float estimatedSecondsLeft) {
+  private String getPepTalk(float estimatedSecondsLeft) {
     String pepTalk = null;
     float hoursLeft = estimatedSecondsLeft / (60.0f * 60.0f);
     if(hoursLeft == 0){
@@ -173,17 +178,17 @@ public class SummaryFragment extends BaseFragment {
       // hours per day to finish in 3 days
       final int secondsPerDayForGoal = (int) ((hoursLeft / 3.0f) * 3600);
       pepTalk = String.format("That's about %s per day to finish it in three days.",
-        Utils.longCoarseHumanTimeFromMillis(secondsPerDayForGoal * 1000));
+        longCoarseHumanTimeFromMillis(secondsPerDayForGoal * 1000, getContext()));
     } else if(hoursLeft < 10) {
       // hours per day to finish in a week
       final int secondsPerDayForGoal = (int) ((hoursLeft / 7.0f) * 3600);
       pepTalk = String.format("That's about %s per day to finish it in a week.",
-        Utils.longCoarseHumanTimeFromMillis(secondsPerDayForGoal * 1000));
+        longCoarseHumanTimeFromMillis(secondsPerDayForGoal * 1000, getContext()));
     } else if(hoursLeft < 20) {
       // hours per day to finish in two weeks
       final int secondsPerDayForGoal = (int) ((hoursLeft / 14.0f) * 3600);
       pepTalk = String.format("That's about %s per day to finish it in two weeks.",
-        Utils.longCoarseHumanTimeFromMillis(secondsPerDayForGoal * 1000));
+        longCoarseHumanTimeFromMillis(secondsPerDayForGoal * 1000, getContext()));
     }
     return pepTalk;
   }
