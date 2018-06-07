@@ -9,30 +9,6 @@ import java.util.*
 class UtilsTest {
 
     /**
-     * Assert the pluralization of words by giving an integer value and the singular form of a word.
-     */
-    @Test
-    fun utilsTest_PluralizeWord_ReturnsString() {
-        assertEquals("dogs", Utils.pluralizeWord(0, "dog"))
-        assertEquals("dogs", Utils.pluralizeWord(4, "dog"))
-        assertEquals("dog", Utils.pluralizeWord(1, "dog"))
-
-        assertEquals("kisses", Utils.pluralizeWord(0, "kiss"))
-        assertEquals("kisses", Utils.pluralizeWord(4, "kiss"))
-        assertEquals("kiss", Utils.pluralizeWord(1, "kiss"))
-    }
-
-    /**
-     * @see .utilsTest_PluralizeWord_ReturnsString
-     */
-    @Test
-    fun utilsTest_PluralizeWithCount_ReturnsString() {
-        assertEquals("0 dogs", Utils.pluralizeWithCount(0, "dog"))
-        assertEquals("4 dogs", Utils.pluralizeWithCount(4, "dog"))
-        assertEquals("1 dog", Utils.pluralizeWithCount(1, "dog"))
-    }
-
-    /**
      * Assert that the session stop times are ordered and stored correctly.
      */
     @Test
@@ -49,6 +25,7 @@ class UtilsTest {
             endPosition = 0.4f
         }
 
+        // Insert in non-sequential order
         val sessions = Arrays.asList(third, first, second)
 
         val stops = Utils.getSessionStops(sessions)

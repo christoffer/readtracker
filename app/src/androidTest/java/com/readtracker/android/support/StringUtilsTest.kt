@@ -83,8 +83,8 @@ class StringUtilsTest {
      * Assert the conversion of millisecond values to String representation in hours and minutes.
      */
     @Test
-    fun utilsTest_HoursAndMinutesFromMillis_ReturnsString() {
-        val context = getTargetContext()
+    fun hoursAndMinutesFromMillis_returnsExpectedStrings() {
+        val context = getContextWithLocale(getTargetContext(), "en", "EN")
         assertEquals("0 minutes", hoursAndMinutesFromMillis(0, context))
         assertEquals("0 minutes", hoursAndMinutesFromMillis(36 * SECONDS, context))
         assertEquals("1 minute", hoursAndMinutesFromMillis(87 * SECONDS, context))
@@ -100,8 +100,8 @@ class StringUtilsTest {
      * x hours, y minutes and z seconds
      */
     @Test
-    fun utilsTest_LongHumanTimeFromMillis_ReturnsString() {
-        val context = getTargetContext()
+    fun longHumanTimeFromMillis_returnsExpectedString() {
+        val context = getContextWithLocale(getTargetContext(), "en", "EN")
         assertEquals("1 minute", longHumanTimeFromMillis(MINUTES, context))
         assertEquals("1 hour", longHumanTimeFromMillis(HOURS, context))
         assertEquals("1 second", longHumanTimeFromMillis(SECONDS, context))
