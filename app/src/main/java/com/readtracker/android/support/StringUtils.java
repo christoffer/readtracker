@@ -5,6 +5,7 @@ import android.content.Context;
 import com.readtracker.R;
 
 import java.text.DateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 public class StringUtils {
@@ -22,68 +23,60 @@ public class StringUtils {
   /**
    * Returns a time difference in a human format.
    * e.g. "about two weeks ago".
-   * TODO(christoffer, translation) Replace with Android translations or the builtin Android helpers
    */
   public static String humanPastTimeFromTimestamp(long unixEpochMs, long now, Context context) {
     return humanPastTime(new Date(unixEpochMs), new Date(now), context);
   }
 
   /**
-   * Return a human readable form of a time in the past.
-   *
-   * TODO(christoffer, translation) There's probably some helper for this as well in the Android
-   * framework.
+   * Return a human readable form of a time in the past
    */
-  @SuppressWarnings("deprecation")
-  private static String humanPastTime(Date then, Date now, Context context) {
-    if(then.after(now)) {
+  private static String humanPastTime(Date date, Date now, Context context) {
+    if (date.after(now)) {
       return "";
     }
 
-    Date todayMidnight = (Date) now.clone();
-    todayMidnight.setHours(0);
-    todayMidnight.setMinutes(0);
-    todayMidnight.setSeconds(0);
+    final Calendar calendarInstance = Calendar.getInstance();
+    calendarInstance.setTime(now);
+    calendarInstance.set(Calendar.HOUR_OF_DAY, 0);
+    calendarInstance.set(Calendar.MINUTE, 0);
+    calendarInstance.set(Calendar.SECOND, 0);
+    final Date todayMidnight = calendarInstance.getTime();
 
-    if(then.after(todayMidnight)) {
-      return "earlier today";
+    if (date.after(todayMidnight)) {
+      return context.getString(R.string.date_earlier_today);
     }
 
-    Date dateRunner = new Date(todayMidnight.getTime() - MILLISECONDS_IN_A_DAY);
-    if(then.after(dateRunner)) {
-      return "yesterday";
+    long numberOfDaysInThePast = 1 + (todayMidnight.getTime() - date.getTime()) / MILLISECONDS_IN_A_DAY;
+
+    if (numberOfDaysInThePast <= 1) {
+      return context.getString(R.string.date_yesterday);
     }
 
-    dateRunner = new Date(todayMidnight.getTime() - 2 * MILLISECONDS_IN_A_DAY);
-    if(then.after(dateRunner)) {
-      return "two days ago";
+    if (numberOfDaysInThePast <= 2) {
+      return context.getString(R.string.date_two_days_ago);
     }
 
-    dateRunner = new Date(todayMidnight.getTime() - 3 * MILLISECONDS_IN_A_DAY);
-    if(then.after(dateRunner)) {
-      return "three days ago";
+    if (numberOfDaysInThePast <= 3) {
+      return context.getString(R.string.date_three_days_ago);
     }
 
-    dateRunner = new Date(todayMidnight.getTime() - 9 * MILLISECONDS_IN_A_DAY);
-    if(then.after(dateRunner)) {
-      return "about a week ago";
+    if (numberOfDaysInThePast <= 9) {
+      return context.getString(R.string.date_about_a_week_ago);
     }
 
-    dateRunner = new Date(todayMidnight.getTime() - 18 * MILLISECONDS_IN_A_DAY);
-    if(then.after(dateRunner)) {
-      return "about two weeks ago";
+    if (numberOfDaysInThePast <= 18) {
+      return context.getString(R.string.date_about_two_weeks_ago);
     }
 
-    dateRunner = new Date(todayMidnight.getTime() - 24 * MILLISECONDS_IN_A_DAY);
-    if(then.after(dateRunner)) {
-      return "about three weeks ago";
+    if (numberOfDaysInThePast <= 24) {
+      return context.getString(R.string.date_about_three_weeks_ago);
     }
 
-    dateRunner = new Date(todayMidnight.getTime() - 45 * MILLISECONDS_IN_A_DAY);
-    if(then.after(dateRunner)) {
-      return "about a month ago";
+    if (numberOfDaysInThePast <= 45) {
+      return context.getString(R.string.date_about_a_month_ago);
     }
 
-    return getDateString(then.getTime(), context);
+    return getDateString(date.getTime(), context);
   }
 }

@@ -15,13 +15,11 @@ class StringUtilsTest {
     @Suppress("DEPRECATION")
     private fun setLocale(context: Context, language: String, country: String) {
         val locale = Locale(language, country)
-        // here we update locale for date formatters
         Locale.setDefault(locale)
-        // here we update locale for app resources
         val res = context.resources
         val config = res.configuration
         config.locale = locale
-        res.updateConfiguration(config, res.getDisplayMetrics())
+        res.updateConfiguration(config, res.displayMetrics)
     }
 
     /**

@@ -77,6 +77,15 @@
   <string name="reading_list_blank_content_desc">Blank reading list</string>
   <string name="reading_list_blank">No books in this category yet</string>
 
+  <string name="date_earlier_today">earlier today</string>
+  <string name="date_yesterday">yesterday</string>
+  <string name="date_two_days_ago">two days ago</string>
+  <string name="date_three_days_ago">three days ago</string>
+  <string name="date_about_a_week_ago">about a week ago</string>
+  <string name="date_about_two_weeks_ago">about two weeks ago</string>
+  <string name="date_about_three_weeks_ago">about three weeks ago</string>
+  <string name="date_about_a_month_ago">about a month ago</string>
+
   <string name="general_save">Save</string>
   <string name="general_cancel">Cancel</string>
   <string name="general_delete">Delete</string>
