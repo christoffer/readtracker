@@ -63,9 +63,18 @@ android {
         exclude 'META-INF/services/javax.annotation.processing.Processor'
     }
     sourceSets {
+        String sharedTestHelpers = 'src/sharedTest/src'
+        String sharedTestResources = 'src/sharedTest/resources'
         test {
+            java.srcDir sharedTestHelpers
             resources {
-                srcDirs = ['src/test/assets']
+                srcDirs = [sharedTestResources]
+            }
+        }
+        androidTest {
+            java.srcDir sharedTestHelpers
+            resources {
+                srcDirs = [sharedTestResources]
             }
         }
     }
@@ -91,15 +100,15 @@ dependencies {
     // Unit test dependencies
     testImplementation 'org.skyscreamer:jsonassert:1.2.3'
     testImplementation 'junit:junit:4.12'
-    testImplementation 'org.robolectric:robolectric:3.5.1'
 
     // Material FilePicker
     implementation 'com.nbsp:library:1.8'
 
     // Required for instrumented tests
+    androidTestImplementation 'org.skyscreamer:jsonassert:1.2.3'
     androidTestImplementation "com.android.support:support-annotations:$android_support_lib_version"
     androidTestImplementation('com.android.support.test:runner:1.0.2') {
-        // Exclude the support annotations because they force upgrade the elicit support
+        // Exclude the support annotations because they force upgrade the explicit support
         // annotation version above.
         exclude group: 'com.android.support', module: 'support-annotations'
     }

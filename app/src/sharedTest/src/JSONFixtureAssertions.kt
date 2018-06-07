@@ -1,8 +1,9 @@
-package com.readtracker.android.test_support
+package src
 
-import com.readtracker.android.db.Book
+import com.readtracker.android.db.*
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
+import java.util.*
 
 /**
  * To keep the amount of data sane, and to enable cross test-comparisons, all the rich
@@ -12,12 +13,12 @@ import org.junit.Assert.assertNull
  * This class is a way to assert that the data is consistent with how the book object should
  * look after being imported.
  */
-object SharedExampleAsserts {
+object JSONFixtureAssertions {
 
     /**
      * Asserts that all data in the example used for version 2 import/export is consistent
      */
-    fun assertExampleBooksVersion2(books: List<Book>) {
+    fun assertBookListMatchesExpectedResultFromFixtureImport(books: List<Book>) {
         assertEquals(2, books.size)
         books[0].let { metamorphosis ->
             assertEquals("Metamorphosis", metamorphosis.title)
@@ -74,7 +75,7 @@ object SharedExampleAsserts {
      * Asserts that a version 2 imported book is consistent with what's expected when fields
      * are null or missing.
      */
-    fun assertNullBookVersion2(book: Book) {
+    fun assertBookMatchesExpectedResultFromNullFieldsFixture(book: Book) {
         assertEquals("", book.title)
         assertEquals("", book.author)
         assertEquals(Book.State.Unknown, book.state)
@@ -98,5 +99,71 @@ object SharedExampleAsserts {
             assertEquals(0f, session.endPosition)
             assertEquals(0, session.timestampMs)
         }
+    }
+
+    /**
+     * Helper method to assemble a list of [Book]s with known data.
+     * @return [List] of [Book] entities with data, [Quote]s and [Session]s.
+     */
+    fun populateBooksForExpectedOutput(databaseManager: DatabaseManager): List<Book> {
+        val metamorphosis = Book().apply {
+            title = "Metamorphosis"
+            author = "Franz Kafka"
+            closingRemark = "Dude, poor guy!"
+            coverImageUrl = "https://images-of-books/metamorphosis.png"
+            currentPosition = 0.5f
+            currentPositionTimestampMs = 213456789L
+            firstPositionTimestampMs = 123456789L
+            pageCount = 123.45f
+            state = Book.State.Finished
+        }
+        databaseManager.save(metamorphosis)
+
+        buildQuote(metamorphosis, "unicorn", 0.45f, 123456799L).let { unicornQuote ->
+            metamorphosis.quotes.add(unicornQuote)
+            databaseManager.save(unicornQuote)
+        }
+
+        buildQuote(metamorphosis, "guppy", 0f, 4564321L).let { guppyQuote ->
+            metamorphosis.quotes.add(guppyQuote)
+            databaseManager.save(guppyQuote)
+        }
+
+        buildSession(metamorphosis, 0.45f, 0.75f, 1234, 4000000L).let { firstSession ->
+            metamorphosis.sessions.add(firstSession)
+            databaseManager.save(firstSession)
+        }
+
+        buildSession(metamorphosis, 0.75f, 1.0f, 600, 5000000L).let { secondSession ->
+            metamorphosis.sessions.add(secondSession)
+            databaseManager.save(secondSession)
+        }
+
+        val androidFurDummies = Book().apply {
+            title = "Android Apps Entwicklung für Dummies"
+            author = "Donn Felker"
+            state = Book.State.Finished
+            currentPosition = 0.00872093066573143f
+            currentPositionTimestampMs = 1400856553800L
+            pageCount = 344f
+            coverImageUrl = "http://bks8.books.google.de/books?id=KPjmuog"
+        }
+
+        databaseManager.save(androidFurDummies)
+
+        buildSession(androidFurDummies, 0f, 0.00872093066573143f, 3, 1399535743000L).let { session ->
+            androidFurDummies.sessions.add(session)
+            databaseManager.save(session)
+        }
+
+        buildSession(androidFurDummies, 0.008720931f, 0.9800000190734863f, 1146, 1400856553800L).let { session ->
+            androidFurDummies.sessions.add(session)
+            databaseManager.save(session)
+        }
+
+        val emptyBook = Book()
+        databaseManager.save(emptyBook)
+
+        return Arrays.asList(metamorphosis, androidFurDummies, emptyBook)
     }
 }

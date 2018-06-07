@@ -81,6 +81,8 @@
   <string name="general_cancel">Cancel</string>
   <string name="general_delete">Delete</string>
 
+  <string name="general_on_date">on %1$s</string>
+
   <string name="general_unknown_title">Unknown title</string>
 
   <string name="book_search_search">Search</string>
@@ -104,6 +106,8 @@
 
   <string name="settings_compact_finish_list">Compact finish list</string>
   <string name="settings_compact_finish_list_summary">Hides the closing remarks for finished books.</string>
+  <string name="settings_full_dates">Always show full dates</string>
+  <string name="settings_full_dates_summary">Always show the full date in the app instead of "human" dates such as "yesterday".</string>
   <string name="settings_import_json">Import</string>
   <string name="settings_import_failed">Importing file failed. Please make sure it\'s a valid ReadTracker export file.</string>
   <string name="settings_import_summary">Imports a previously exported ReadTracker file.</string>

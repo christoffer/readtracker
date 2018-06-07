@@ -1,13 +1,18 @@
 package com.readtracker.android.utils
 
+import android.content.Context
 import com.readtracker.android.db.Session
+import com.readtracker.android.support.StringUtils
 import com.readtracker.android.support.Utils
 import org.junit.Assert.*
 import org.junit.Test
 import java.util.*
 
-class UtilsTest {
+const val SECONDS: Long = 1000
+const val MINUTES: Long = 60 * SECONDS
+const val HOURS: Long = 60 * MINUTES
 
+class UtilsTest {
     /**
      * Assert the conversion of millisecond values to String representation in hours and minutes.
      */
@@ -71,28 +76,6 @@ class UtilsTest {
     }
 
     /**
-     * Assert the string representation of the past time from the current time,
-     * using different millisecond values to call the helper class.
-     */
-    @Test
-    fun utilsTest_HumanPastTimeFromTimestamp_ReturnsString() {
-        val now = 1009886564000L /* some date at around noon */
-        val millisPast22November1981 = now - 375254055000L
-
-        HumanPastTimeHelper(now).let { humanPastTimeHelper ->
-            assertEquals("earlier today", humanPastTimeHelper.call(2 * HOURS))
-            assertEquals("yesterday", humanPastTimeHelper.call(28 * HOURS))
-            assertEquals("two days ago", humanPastTimeHelper.call(50 * HOURS))
-            assertEquals("three days ago", humanPastTimeHelper.call(68 * HOURS))
-            assertEquals("about a week ago", humanPastTimeHelper.call(5 * DAYS))
-            assertEquals("about two weeks ago", humanPastTimeHelper.call(11 * DAYS))
-            assertEquals("about three weeks ago", humanPastTimeHelper.call(19 * DAYS))
-            assertEquals("about a month ago", humanPastTimeHelper.call(29 * DAYS))
-            assertEquals("on Nov 22, 1981", humanPastTimeHelper.call(millisPast22November1981))
-        }
-    }
-
-    /**
      * Assert that the session stop times are ordered and stored correctly.
      */
     @Test
@@ -134,23 +117,5 @@ class UtilsTest {
         assertFalse(Utils.equal(a, c))
         assertFalse(Utils.equal(null, b))
         assertFalse(Utils.equal(a, null))
-    }
-
-    /** Small helper class for calling humanPastTimeFromTimestamp succinctly. **/
-    private data class HumanPastTimeHelper(private val now: Long) {
-
-        /**
-         * Returns Utils.humanPastTimeFromTimestamp(now - millisecondsAgo, now);
-         */
-        fun call(millisecondsAgo: Long): String {
-            return Utils.humanPastTimeFromTimestamp(now - millisecondsAgo, now)
-        }
-    }
-
-    companion object {
-        private const val SECONDS: Long = 1000 /* buildAll ms to seconds */
-        private const val MINUTES = 60 * SECONDS /* buildAll ms to minutes */
-        private const val HOURS = 60 * MINUTES /* buildAll ms to minutes */
-        private const val DAYS = 24 * HOURS /* buildAll ms to days*/
     }
 }

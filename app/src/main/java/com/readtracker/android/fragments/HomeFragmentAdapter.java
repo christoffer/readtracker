@@ -29,11 +29,14 @@ public class HomeFragmentAdapter extends FragmentStatePagerAdapter {
 
   // Flag to use compact mode for the finished reading list
   private final boolean mUseCompactFinishList;
+  // Flag to use full dates instead of human-friendly ones
+  private final boolean mUseFullDates;
 
-  public HomeFragmentAdapter(BaseActivity activity, boolean useCompactFinishList) {
+  public HomeFragmentAdapter(BaseActivity activity, boolean useCompactFinishList, boolean useFullDates) {
     super(activity.getSupportFragmentManager());
     mResources = activity.getResources();
     mUseCompactFinishList = useCompactFinishList;
+    mUseFullDates = useFullDates;
   }
 
   @Override public int getCount() { return NUM_PAGES; }
@@ -51,10 +54,10 @@ public class HomeFragmentAdapter extends FragmentStatePagerAdapter {
 
   @Override public Fragment getItem(int position) {
     if(position == FRAGMENT_FINISHED_POSITION) {
-        return BookListFragment.newInstance(R.layout.book_list_item_finished, Book.State.Finished, mUseCompactFinishList);
+        return BookListFragment.newInstance(R.layout.book_list_item_finished, Book.State.Finished, mUseCompactFinishList, mUseFullDates);
     } else if(position == FRAGMENT_ACTIVE_POSITION) {
       Log.d(TAG, "Creating book list fragment with reading views");
-      return BookListFragment.newInstance(R.layout.book_list_item_reading, Book.State.Reading, mUseCompactFinishList);
+      return BookListFragment.newInstance(R.layout.book_list_item_reading, Book.State.Reading, mUseCompactFinishList, mUseFullDates);
     }
 
     Log.w(TAG, "Could not figure out what fragment to return. Returning null.");

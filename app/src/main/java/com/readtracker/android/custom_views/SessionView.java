@@ -12,7 +12,9 @@ import android.util.TypedValue;
 import android.view.View;
 
 import com.readtracker.R;
+import com.readtracker.android.ReadTrackerApp;
 import com.readtracker.android.db.Session;
+import com.readtracker.android.support.StringUtils;
 import com.readtracker.android.support.Utils;
 
 import java.util.Arrays;
@@ -23,6 +25,7 @@ import java.util.List;
  * Draws a history of reading sessions on a time line.
  */
 public class SessionView extends View {
+  private final boolean mUseFullDates;
   private int mColor = 0xff449966;
   private Paint mNodePaint;
   private Paint mPrimaryTextPaint;
@@ -48,6 +51,7 @@ public class SessionView extends View {
 
   public SessionView(Context context, AttributeSet attrs, int defStyle) {
     super(context, attrs, defStyle);
+    mUseFullDates = ReadTrackerApp.from(context).getAppSettings().getUseFullDates();
     initializePaints();
     setDrawingCacheEnabled(true);
   }
@@ -94,7 +98,12 @@ public class SessionView extends View {
       final float y = i == 0 ? segmentHeight * 0.5f : i * segmentHeight + getPaddingTop();
 
       String primaryText = Utils.hoursAndMinutesFromMillis(node.durationSeconds * 1000);
-      String secondaryText = Utils.humanPastTimeFromTimestamp(node.sessionTimestampMs, now);
+      String secondaryText;
+      if (mUseFullDates) {
+        secondaryText = StringUtils.getDateString(node.sessionTimestampMs, getContext());
+      } else {
+        secondaryText = StringUtils.humanPastTimeFromTimestamp(node.sessionTimestampMs, now, getContext());
+      }
 
       boolean drawFlipped = node.progress > 0.5;
       drawText(canvas, x, y, radius, primaryText, secondaryText, drawFlipped);

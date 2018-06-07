@@ -13,13 +13,14 @@ import android.widget.TextView;
 import com.readtracker.R;
 import com.readtracker.android.db.Quote;
 import com.readtracker.android.support.DrawableGenerator;
-import com.readtracker.android.support.Utils;
+import com.readtracker.android.support.StringUtils;
 
 import java.util.Comparator;
 import java.util.List;
 
 /** Shows a list of quotes */
 public class QuoteAdapter extends ArrayAdapter<Quote> {
+  private final boolean mUseFullDates;
   private int mColor;
 
   private final Comparator<Quote> mQuoteComparator = new Comparator<Quote>() {
@@ -32,8 +33,9 @@ public class QuoteAdapter extends ArrayAdapter<Quote> {
     }
   };
 
-  public QuoteAdapter(Context context, List<Quote> quotes) {
+  public QuoteAdapter(Context context, List<Quote> quotes, boolean useFullDates) {
     super(context, R.layout.quote_list_item, quotes);
+    mUseFullDates = useFullDates;
     sortQuotes();
   }
 
@@ -54,8 +56,8 @@ public class QuoteAdapter extends ArrayAdapter<Quote> {
       convertView = LayoutInflater.from(getContext()).inflate(R.layout.quote_list_item, parent, false);
     }
 
-    final TextView textContent = (TextView) convertView.findViewById(R.id.textContent);
-    final TextView textDate = (TextView) convertView.findViewById(R.id.textDate);
+    final TextView textContent = convertView.findViewById(R.id.textContent);
+    final TextView textDate = convertView.findViewById(R.id.textDate);
 
     if (quote == null) {
       textContent.setText("N/A");
@@ -71,7 +73,12 @@ public class QuoteAdapter extends ArrayAdapter<Quote> {
         textContent.setText(content);
       }
       final long now = System.currentTimeMillis();
-      final String metadata = Utils.humanPastTimeFromTimestamp(quote.getAddTimestampMs(), now);
+      final String metadata;
+      if (mUseFullDates) {
+        metadata = StringUtils.getDateString(quote.getAddTimestampMs(), convertView.getContext());
+      } else {
+        metadata = StringUtils.humanPastTimeFromTimestamp(quote.getAddTimestampMs(), now, getContext());
+      }
       textDate.setText(metadata);
     }
 

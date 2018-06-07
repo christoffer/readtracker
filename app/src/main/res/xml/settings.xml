@@ -5,6 +5,12 @@
       android:title="@string/settings_compact_finish_list"
       android:summary="@string/settings_compact_finish_list_summary"
       android:key="settings.compact_finish_list"/>
+
+    <CheckBoxPreference
+      android:title="@string/settings_full_dates"
+      android:summary="@string/settings_full_dates_summary"
+      android:key="settings.full_dates"/>
+
   </PreferenceCategory>
 
   <PreferenceCategory android:title="@string/settings_title_data">

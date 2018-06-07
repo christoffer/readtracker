@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
@@ -23,6 +24,7 @@ import com.readtracker.android.db.Book;
 import com.readtracker.android.db.DatabaseManager;
 import com.readtracker.android.fragments.BookListFragment;
 import com.readtracker.android.fragments.HomeFragmentAdapter;
+import com.readtracker.android.support.ApplicationSettingsHelper;
 import com.squareup.otto.Subscribe;
 
 import java.lang.ref.WeakReference;
@@ -144,7 +146,10 @@ public class HomeActivity extends BaseActivity {
 
   private void resetFragmentAdapter() {
     Log.d(TAG, "Resetting HomeFragmentAdapter");
-    HomeFragmentAdapter adapter = new HomeFragmentAdapter(this, getAppSettings().hasCompactFinishedList());
+    final ApplicationSettingsHelper settings = getAppSettings();
+    final boolean useCompactFinishedList = settings.getUseCompactFinishedList();
+    final boolean useFullDates = settings.getUseFullDates();
+    HomeFragmentAdapter adapter = new HomeFragmentAdapter(this, useCompactFinishedList, useFullDates);
     mViewPager.setAdapter(adapter);
   }
 
@@ -152,13 +157,13 @@ public class HomeActivity extends BaseActivity {
    * Show introduction for new users.
    */
   private void showIntroduction() {
-    ViewStub stub = (ViewStub) findViewById(R.id.introduction_stub);
+    ViewStub stub = findViewById(R.id.introduction_stub);
     final View root = stub.inflate();
-    TextView introText = (TextView) root.findViewById(R.id.introduction_text);
+    TextView introText = root.findViewById(R.id.introduction_text);
     introText.setText(Html.fromHtml(getString(R.string.introduction_text)));
     introText.setMovementMethod(LinkMovementMethod.getInstance());
 
-    Button dismissButton = (Button) root.findViewById(R.id.start_using_button);
+    Button dismissButton = root.findViewById(R.id.start_using_button);
     dismissButton.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
@@ -189,8 +194,10 @@ public class HomeActivity extends BaseActivity {
       Log.d(TAG, "Task already running, ignoring");
       return;
     }
-
-    getSupportActionBar().setSubtitle(R.string.home_loading_books);
+    final ActionBar actionBar = getSupportActionBar();
+    if (actionBar != null) {
+      getSupportActionBar().setSubtitle(R.string.home_loading_books);
+    }
     setProgressBarIndeterminateVisibility(Boolean.TRUE);
 
     mLoadCatalogueTask = new LoadCatalogueTask(this);
@@ -202,7 +209,10 @@ public class HomeActivity extends BaseActivity {
     mBooks = books;
     postEvent(new CatalogueLoadedEvent(books));
 
-    getSupportActionBar().setSubtitle(null);
+    final ActionBar actionBar = getSupportActionBar();
+    if (actionBar != null) {
+      actionBar.setSubtitle(null);
+    }
     setProgressBarIndeterminateVisibility(Boolean.FALSE);
   }
 
@@ -213,7 +223,7 @@ public class HomeActivity extends BaseActivity {
     private final WeakReference<HomeActivity> mActivity;
     private final DatabaseManager mDatabaseManager;
 
-    public LoadCatalogueTask(HomeActivity activity) {
+    LoadCatalogueTask(HomeActivity activity) {
       mActivity = new WeakReference<>(activity);
       mDatabaseManager = ReadTrackerApp.from(activity).getDatabaseManager();
     }
@@ -244,6 +254,7 @@ public class HomeActivity extends BaseActivity {
   public static class CatalogueLoadedEvent {
     private final List<Book> mBooks;
 
+    @SuppressWarnings("WeakerAccess")
     public CatalogueLoadedEvent(List<Book> books) {
       mBooks = books;
     }

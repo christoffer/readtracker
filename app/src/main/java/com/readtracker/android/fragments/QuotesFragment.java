@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.readtracker.R;
+import com.readtracker.android.ReadTrackerApp;
 import com.readtracker.android.activities.BookSettingsActivity;
 import com.readtracker.android.activities.QuoteSettingsActivity;
 import com.readtracker.android.activities.BookActivity;
@@ -58,7 +59,8 @@ public class QuotesFragment extends BaseFragment {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    mQuoteAdapter = new QuoteAdapter(getActivity(), new ArrayList<Quote>());
+    final boolean useFullDates = ReadTrackerApp.from(getContext()).getAppSettings().getUseFullDates();
+    mQuoteAdapter = new QuoteAdapter(getActivity(), new ArrayList<Quote>(), useFullDates);
   }
 
   // Called when the parent activity has completed loading the book
