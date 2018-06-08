@@ -4,6 +4,7 @@ buildscript{
     ext.android_support_lib_version = '27.1.1'
 
     repositories {
+        maven { url 'https://maven.google.com' }
         jcenter()
         google()
     }
