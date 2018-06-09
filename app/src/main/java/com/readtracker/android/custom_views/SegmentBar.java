@@ -1,9 +1,11 @@
 package com.readtracker.android.custom_views;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -93,7 +95,12 @@ public class SegmentBar extends View {
     mBoundaryPaint.setStrokeWidth(1);
 
     mBackgroundPaint = new Paint();
-    mBackgroundPaint.setColor(0xff000000);
+
+    TypedArray array = getContext().getTheme().obtainStyledAttributes(new int[] {android.R.attr.colorBackground});
+    int backgroundColor = array.getColor(0, 0xff000000);
+    array.recycle();
+
+    mBackgroundPaint.setColor(backgroundColor);
     mBackgroundPaint.setStyle(Paint.Style.FILL);
   }
 
