@@ -2,8 +2,8 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 repositories {
-    jcenter()
     google()
+    jcenter()
     jcenter {
         url  "http://dl.bintray.com/lukaville/maven"
     }
