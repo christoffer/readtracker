@@ -1,8 +1,10 @@
 package com.readtracker.android.fragments;
 
+import android.content.Context;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -26,6 +28,9 @@ import java.util.List;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
+import static com.readtracker.android.support.StringUtils.longCoarseHumanTimeFromMillis;
+import static com.readtracker.android.support.StringUtils.longCoarseHumanTimeFromSeconds;
+
 /**
  * Fragment for showing summary of a book
  */
@@ -46,14 +51,14 @@ public class SummaryFragment extends BaseFragment {
   }
 
   @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+  public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     Log.d(TAG, "onCreateView()");
     View rootView = inflater.inflate(R.layout.fragment_sessions, container, false);
     ButterKnife.inject(this, rootView);
     return rootView;
   }
 
-  @Override public void onViewCreated(View view, Bundle savedInstanceState) {
+  @Override public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     populateFieldsDeferred();
   }
@@ -98,7 +103,7 @@ public class SummaryFragment extends BaseFragment {
     String readingState = "";
 
     if(state == Book.State.Finished) {
-      readingState = "Finished";
+      readingState = mTextReadingState.getContext().getString(R.string.general_finished);
     }
 
     final float radius[] = new float[8];
@@ -108,7 +113,8 @@ public class SummaryFragment extends BaseFragment {
     RoundRectShape roundedRect = new RoundRectShape(radius, null, null);
     ShapeDrawable background = new ShapeDrawable(roundedRect);
     background.getPaint().setColor(color);
-    mTextReadingState.setBackgroundDrawable(background);
+
+    mTextReadingState.setBackground(background);
     mTextReadingState.setText(readingState);
   }
 
@@ -123,18 +129,20 @@ public class SummaryFragment extends BaseFragment {
   private void populateSummary() {
     final long secondsSpent = mBook.calculateSecondsSpent();
     final int sessionCount = mBook.getSessions().size();
+    final Context context = mTextSummary.getContext();
 
     if(mBook.getState() == Book.State.Reading) {
       final String sessionDesc = getResources().getQuantityString(R.plurals.plural_session, sessionCount, sessionCount);
-      final String timeSpentDesc = Utils.longCoarseHumanTimeFromSeconds(secondsSpent);
+      final String timeSpentDesc = longCoarseHumanTimeFromSeconds(secondsSpent, getContext());
       final String summary = getString(R.string.summary_fragment_summary, timeSpentDesc, sessionDesc);
       mTextSummary.setText(summary);
       mSegmentBar.setVisibility(View.GONE);
     } else {
-      final int primaryTextColor = ContextCompat.getColor(getContext(), R.color.textColorPrimary);
+      final int primaryTextColor = ContextCompat.getColor(context, R.color.textColorPrimary);
       mTextSummary.setTextColor(primaryTextColor);
-      // TODO(christoffer, translations) Proper translation string
-      final String summary = String.format("Reading for %s over %d sessions.", Utils.longCoarseHumanTimeFromSeconds(secondsSpent), sessionCount);
+      final String readingTimeString = longCoarseHumanTimeFromSeconds(secondsSpent, getContext());
+      final String sessionCountString = getResources().getQuantityString(R.plurals.plural_session, sessionCount, sessionCount);
+      final String summary = context.getString(R.string.summary_fragment_summary, readingTimeString, sessionCountString);
       mTextSummary.setText(summary);
     }
   }
@@ -143,15 +151,20 @@ public class SummaryFragment extends BaseFragment {
     // Hide the time left field when no relevant content
     String timeLeft = null;
     int visibility = View.GONE;
+    final Context context = mTextTimeLeft.getContext();
 
     if(!mBook.getState().equals(Book.State.Finished)) {
       final int estimatedSecondsLeft = mBook.calculateEstimatedSecondsLeft();
       if(estimatedSecondsLeft > 0) {
         visibility = View.VISIBLE;
-        timeLeft = String.format("You have about %s left of reading, given you keep the same pace", Utils.longCoarseHumanTimeFromSeconds(estimatedSecondsLeft));
-        final String pepTalk = getPepTalk(estimatedSecondsLeft);
-        if(pepTalk != null) {
-          timeLeft += ".\n\n" + pepTalk;
+        final String etaTime = longCoarseHumanTimeFromSeconds(estimatedSecondsLeft, context);
+        final String pepTalk = getPepTalkString(context, estimatedSecondsLeft);
+        final String sessionsEtaSentence = context.getString(R.string.sessions_eta, etaTime);
+        if (pepTalk == null) {
+          timeLeft = sessionsEtaSentence;
+        } else {
+          // NOTE(christoffer) I assume that inserting two newlines will be the same in all languages
+          timeLeft = sessionsEtaSentence + "\n\n" + pepTalk;
         }
       }
     }
@@ -159,32 +172,38 @@ public class SummaryFragment extends BaseFragment {
     mTextTimeLeft.setText(timeLeft);
   }
 
-  /**
-   * Generate a short, encouraging, phrase on how long the user has to read.
-   */
-  private static String getPepTalk(float estimatedSecondsLeft) {
-    String pepTalk = null;
+  /** Generate a short, encouraging, phrase on how long the user has to read. */
+  public static String getPepTalkString(Context context, float estimatedSecondsLeft) {
     float hoursLeft = estimatedSecondsLeft / (60.0f * 60.0f);
     if(hoursLeft == 0){
       return null;
-    } else if(hoursLeft < 1) {
-      pepTalk = "Why not finish it today?";
-    } else if(hoursLeft < 4) {
+    }
+
+    if(hoursLeft < 1) {
+      return context.getString(R.string.summary_finish_today);
+    }
+
+    if(hoursLeft < 4) {
       // hours per day to finish in 3 days
       final int secondsPerDayForGoal = (int) ((hoursLeft / 3.0f) * 3600);
-      pepTalk = String.format("That's about %s per day to finish it in three days.",
-        Utils.longCoarseHumanTimeFromMillis(secondsPerDayForGoal * 1000));
-    } else if(hoursLeft < 10) {
+      final String etaThreeDays = longCoarseHumanTimeFromMillis(secondsPerDayForGoal * 1000, context);
+      return context.getString(R.string.summary_eta_for_three_days, etaThreeDays);
+    }
+
+    if(hoursLeft < 10) {
       // hours per day to finish in a week
       final int secondsPerDayForGoal = (int) ((hoursLeft / 7.0f) * 3600);
-      pepTalk = String.format("That's about %s per day to finish it in a week.",
-        Utils.longCoarseHumanTimeFromMillis(secondsPerDayForGoal * 1000));
-    } else if(hoursLeft < 20) {
+      final String etaOneWeek = longCoarseHumanTimeFromMillis(secondsPerDayForGoal * 1000, context);
+      return(context.getString(R.string.summary_eta_for_one_week, etaOneWeek));
+    }
+
+    if(hoursLeft < 20) {
       // hours per day to finish in two weeks
       final int secondsPerDayForGoal = (int) ((hoursLeft / 14.0f) * 3600);
-      pepTalk = String.format("That's about %s per day to finish it in two weeks.",
-        Utils.longCoarseHumanTimeFromMillis(secondsPerDayForGoal * 1000));
+      final String etaTwoWeeks = longCoarseHumanTimeFromMillis(secondsPerDayForGoal * 1000, context);
+      return context.getString(R.string.summary_eta_for_two_weeks, etaTwoWeeks);
     }
-    return pepTalk;
+
+    return null;
   }
 }

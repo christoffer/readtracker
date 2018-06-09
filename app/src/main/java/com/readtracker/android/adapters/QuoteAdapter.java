@@ -58,16 +58,17 @@ public class QuoteAdapter extends ArrayAdapter<Quote> {
 
     final TextView textContent = convertView.findViewById(R.id.textContent);
     final TextView textDate = convertView.findViewById(R.id.textDate);
+    final String NA = getContext().getString(R.string.general_not_available_short);
 
     if (quote == null) {
-      textContent.setText("N/A");
+      textContent.setText(NA);
       applyTextSizeForContentLength(textContent, 0);
-      textDate.setText("N/A");
+      textDate.setText(NA);
     } else {
       final String content = quote.getContent();
       if (content == null) {
         applyTextSizeForContentLength(textContent, 0);
-        textContent.setText("N/A");
+        textContent.setText(NA);
       } else {
         applyTextSizeForContentLength(textContent, content.length());
         textContent.setText(content);
