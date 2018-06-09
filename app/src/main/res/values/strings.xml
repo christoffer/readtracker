@@ -34,13 +34,12 @@
     <string name="book_fragment_header_read">Read</string>
     <string name="book_fragment_header_quotes">Quotes</string>
 
-    <!-- 4 hours, 2 minutes / 23 sessions -->
-    <string name="summary_fragment_summary">%1$s / %2$s</string>
+    <!-- You've read a total of 4 hours, 2 minutes over 23 sessions -->
+    <string name="summary_fragment_summary">You\'ve read a total of %1$s over %2$s.</string>
     <string name="summary_finish_today">Why not finish it today?</string>
     <string name="summary_eta_for_three_days">That\'s about %1$s per day to finish it in three days.</string>
     <string name="summary_eta_for_one_week">That\'s about %1$s per day to finish it in a week.</string>
     <string name="summary_eta_for_two_weeks">That\'s about %1$s per day to finish it in two weeks.</string>
-
 
     <string name="quote_fragment_add_new_quote">Add quote from book</string>
     <string name="quote_fragment_no_quotes">No quotes</string>
@@ -58,9 +57,7 @@
     <string name="add_book_track_using_pages">Track progress using page count</string>
     <string name="add_book_delete">Delete book</string>
     <string name="add_book_confirm_delete">Really delete %1$s?</string>
-    <string name="add_book_delete_explanation">This will delete the book and the entire reading history from the
-        device.\n\nThere is no way to undo this operation.
-    </string>
+    <string name="add_book_delete_explanation">This will delete the book and the entire reading history from the device.\n\nThere is no way to undo this operation.</string>
     <string name="add_book_delete_failed">Failed to delete book</string>
     <string name="add_book_find_info_on_google_books">Find on Google Books</string>
     <string name="add_book_looking_for_book">Searching for book info…</string>
@@ -121,45 +118,31 @@
 
     <string name="sessions_blank_text">No reading history to display</string>
     <string name="sessions_summary">Reading for %1$s over %2$d sessions.</string>
-    <string name="sessions_eta">"You have about %1$s left of reading, given you keep the same pace"</string>
+    <string name="sessions_eta">Given your current reading pace, it\'ll take roughly %1$s to finish the book.</string>
 
     <string name="end_session_where_did_you_stop_reading">Where did you stop reading?</string>
     <string name="end_session_scroll_to_end_to_finish">Scroll to the very end if you finished the book</string>
     <string name="end_session_finish_book">Finish book</string>
 
     <string name="add_quote_delete_quote">Delete Quote</string>
-    <string name="add_quote_delete_explanation">This will delete the quote.\n\nThere is no way to undo this operation.
-    </string>
+    <string name="add_quote_delete_explanation">This will delete the quote.\n\nThere is no way to undo this operation.</string>
 
     <string name="settings_compact_finish_list">Compact finish list</string>
     <string name="settings_compact_finish_list_summary">Hides the closing remarks for finished books.</string>
     <string name="settings_full_dates">Always show full dates</string>
-    <string name="settings_full_dates_summary">Always show the full date in the app instead of "human" dates such as
-        "yesterday".
-    </string>
+    <string name="settings_full_dates_summary">Always show the full date in the app instead of "human" dates such as "yesterday".</string>
     <string name="settings_import_json">Import</string>
-    <string name="settings_import_failed">Importing file failed. Please make sure it\'s a valid ReadTracker export
-        file.
-    </string>
+    <string name="settings_import_failed">Importing file failed. Please make sure it\'s a valid ReadTracker export file.</string>
     <string name="settings_import_summary">Imports a previously exported ReadTracker file.</string>
-    <string name="settings_import_confirmation">Importing data from a ReadTracker JSON file will add books, quotes, and
-        sessions into your current device.\n\nBooks that already exist on the device will merge with imported ones, and
-        new books will be added.\n\nThere\'s no way to undo this operation, so it's strongly recommended to first export
-        you data as a backup.
-    </string>
+    <string name="settings_import_confirmation">Importing data from a ReadTracker JSON file will add books, quotes, and sessions into your current device.\n\nBooks that already exist on the device will merge with imported ones, and new books will be added.\n\nThere\'s no way to undo this operation, so it's strongly recommended to first export you data as a backup.</string>
     <string name="settings_import_positive_button">Select file</string>
     <string name="settings_export_json">Export</string>
     <string name="settings_export_summary">Exports all ReadTracker data to a file.</string>
-    <string name="settings_export_confirmation">This will export all your data to a JSON file.\n\nThe file is saved in
-        your Downloads folder, where it can be shared, viewed, or imported back into ReadTracker.
-    </string>
+    <string name="settings_export_confirmation">This will export all your data to a JSON file.\n\nThe file is saved in your Downloads folder, where it can be shared, viewed, or imported back into ReadTracker.</string>
     <string name="settings_export_positive_button">Export</string>
-    <string name="settings_export_failed">Unfortunately there was an unexpected error when exporting your data. Make
-        sure your external media is available and try again.
-    </string>
-    <string name="settings_export_need_external_media">Please make sure that your external media is mounted before
-        exporting your ReadTracker data.
-    </string>
+    <string name="settings_export_failed">Unfortunately there was an unexpected error when exporting your data. Make sure your external media is available and try again.</string>
+    <string name="settings_export_share_file">Do you want to share the file to an app or person?</string>
+    <string name="settings_export_need_external_media">Please make sure that your external media is mounted before exporting your ReadTracker data.</string>
     <string name="settings_export_success">Successfully exported your ReadTracker data to the Downloads folder.</string>
     <string name="settings_title_settings">Settings</string>
     <string name="settings_title_data">Data</string>

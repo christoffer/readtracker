@@ -157,11 +157,14 @@ public class SummaryFragment extends BaseFragment {
       final int estimatedSecondsLeft = mBook.calculateEstimatedSecondsLeft();
       if(estimatedSecondsLeft > 0) {
         visibility = View.VISIBLE;
-        final String timeLeftString = longCoarseHumanTimeFromSeconds(estimatedSecondsLeft, context);
-        timeLeft = context.getString(R.string.sessions_eta, timeLeftString);
+        final String etaTime = longCoarseHumanTimeFromSeconds(estimatedSecondsLeft, context);
         final String pepTalk = getPepTalkString(context, estimatedSecondsLeft);
-        if(pepTalk != null) {
-          timeLeft += ".\n\n" + pepTalk;
+        final String sessionsEtaSentence = context.getString(R.string.sessions_eta, etaTime);
+        if (pepTalk == null) {
+          timeLeft = sessionsEtaSentence;
+        } else {
+          // NOTE(christoffer) I assume that inserting two newlines will be the same in all languages
+          timeLeft = sessionsEtaSentence + "\n\n" + pepTalk;
         }
       }
     }
@@ -169,11 +172,7 @@ public class SummaryFragment extends BaseFragment {
     mTextTimeLeft.setText(timeLeft);
   }
 
-  /**
-   * Generate a short, encouraging, phrase on how long the user has to read.
-   *
-   * TODO(christoffer) translation
-   */
+  /** Generate a short, encouraging, phrase on how long the user has to read. */
   public static String getPepTalkString(Context context, float estimatedSecondsLeft) {
     float hoursLeft = estimatedSecondsLeft / (60.0f * 60.0f);
     if(hoursLeft == 0){
