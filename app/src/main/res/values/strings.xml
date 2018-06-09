@@ -141,9 +141,10 @@
     <string name="settings_export_confirmation">This will export all your data to a JSON file.\n\nThe file is saved in your Downloads folder, where it can be shared, viewed, or imported back into ReadTracker.</string>
     <string name="settings_export_positive_button">Export</string>
     <string name="settings_export_failed">Unfortunately there was an unexpected error when exporting your data. Make sure your external media is available and try again.</string>
-    <string name="settings_export_share_file">Do you want to share the file to an app or person?</string>
+    <string name="settings_export_share_file">The export completed successfully and the file is now in your Downloads folder.\n\nDo you want to share the file directly to an app or person?\n\nThe file will remain in your Downloads folder.</string>
     <string name="settings_export_need_external_media">Please make sure that your external media is mounted before exporting your ReadTracker data.</string>
-    <string name="settings_export_success">Successfully exported your ReadTracker data to the Downloads folder.</string>
+    <string name="settings_export_success">Successfully exported ReadTracker data</string>
+    <string name="settings_share_export">Share exported file</string>
     <string name="settings_title_settings">Settings</string>
     <string name="settings_title_data">Data</string>
     <string name="settings_title_about">About</string>

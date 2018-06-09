@@ -2,12 +2,12 @@ package com.readtracker.android.activities;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.app.DownloadManager;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.CheckBoxPreference;
@@ -225,23 +225,34 @@ public class SettingsActivity extends PreferenceActivity implements ImportReadTr
         Toast.makeText(this, R.string.settings_export_failed, Toast.LENGTH_LONG).show();
         return;
       }
-
-      // File written to disk. Attempt to add it to the download manager so the user can find it
-      // easily.
-      DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
-      if(downloadManager == null) {
-        Log.w(TAG, "Unexpectedly got a null DownloadManager");
-      } else {
-        final String filename = exportedJsonFile.getName();
-        final String filepath = exportedJsonFile.getAbsolutePath();
-        final long fileLength = exportedJsonFile.length();
-        downloadManager.addCompletedDownload(filename, filename, true, "application/json", filepath, fileLength, true);
-      }
-      Toast.makeText(SettingsActivity.this, R.string.settings_export_success, Toast.LENGTH_SHORT).show();
+      notifySuccessAndOfferSharingIntent(exportedJsonFile.getAbsolutePath());
     } else {
       Log.d(TAG, "Doesn't have permission for writing external storage");
       ActivityCompat.requestPermissions(this, new String[]{requiredPermission}, EXPORT_PERMISSION_REQUEST_CODE);
     }
+  }
+
+  private void notifySuccessAndOfferSharingIntent(final String absoluteFilepath) {
+    final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    builder
+        .setTitle(R.string.settings_export_success)
+        .setMessage(R.string.settings_export_share_file)
+        .setIcon(android.R.drawable.ic_dialog_email)
+        .setPositiveButton(R.string.settings_share_export, new DialogInterface.OnClickListener() {
+          @Override public void onClick(DialogInterface dialogInterface, int i) {
+            final Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+            sendIntent.setType("text/*"); // NOTE(christoffer) Use text to offer more intent action handlers
+            sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file//" + absoluteFilepath));
+            startActivity(Intent.createChooser(sendIntent, getString(R.string.settings_share_export)));
+          }
+        })
+        .setNegativeButton(R.string.general_cancel, new DialogInterface.OnClickListener() {
+          @Override public void onClick(DialogInterface dialogInterface, int i) {
+            dialogInterface.cancel();
+          }
+        })
+        .setCancelable(true).create().show();
   }
 
   private void importFileOrRequestPermission() {
