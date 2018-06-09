@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.os.Build
 import android.support.test.InstrumentationRegistry.getTargetContext
+import com.readtracker.android.integration_test_utils.getContextWithLocale
 import com.readtracker.android.support.StringUtils.*
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -15,26 +16,6 @@ const val HOURS = 60 * MINUTES
 const val DAYS = 24 * HOURS
 
 class StringUtilsTest {
-
-    private fun getContextWithLocale(context: Context, language: String, country: String): ContextWrapper {
-        val locale = Locale(language, country)
-        Locale.setDefault(locale)
-        val res = context.resources
-        val config = res.configuration
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            config.setLocale(locale)
-        } else {
-            @Suppress("DEPRECATION")
-            config.locale = locale
-        }
-
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            @Suppress("DEPRECATION")
-            res.updateConfiguration(config, res.displayMetrics)
-            return ContextWrapper(context)
-        }
-        return ContextWrapper(context.createConfigurationContext(config))
-    }
 
     /**
      * Assert the string representation of the past time from the current time,
@@ -113,9 +94,6 @@ class StringUtilsTest {
         assertEquals("2 hours, 2 minutes and 2 seconds", longHumanTimeFromMillis(2 * HOURS + 2 * MINUTES + 2 * SECONDS, context))
     }
 
-    /**
-     * @see [utilsTest_LongHumanTimeFromMillis_ReturnsString]
-     */
     @Test
     fun utilsTest_LongCoarseHumanTimeFromMillis_ReturnsString() {
         val context = getTargetContext()

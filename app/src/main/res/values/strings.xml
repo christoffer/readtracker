@@ -36,6 +36,11 @@
 
     <!-- 4 hours, 2 minutes / 23 sessions -->
     <string name="summary_fragment_summary">%1$s / %2$s</string>
+    <string name="summary_finish_today">Why not finish it today?</string>
+    <string name="summary_eta_for_three_days">That\'s about %1$s per day to finish it in three days.</string>
+    <string name="summary_eta_for_one_week">That\'s about %1$s per day to finish it in a week.</string>
+    <string name="summary_eta_for_two_weeks">That\'s about %1$s per day to finish it in two weeks.</string>
+
 
     <string name="quote_fragment_add_new_quote">Add quote from book</string>
     <string name="quote_fragment_no_quotes">No quotes</string>
@@ -94,12 +99,14 @@
     <string name="general_save">Save</string>
     <string name="general_cancel">Cancel</string>
     <string name="general_delete">Delete</string>
+    <string name="general_finished">Finished</string>
 
     <string name="general_on_date">on %1$s</string>
     <string name="general_two_item_sentence">%1$s and %2$s</string>
     <string name="general_three_item_sentence">%1$s, %2$s and %3$s</string>
 
     <string name="general_unknown_title">Unknown title</string>
+    <string name="general_not_available_short">N/A</string>
 
     <string name="book_search_search">Search</string>
     <string name="book_search_search_google_books">Search Google Books…</string>
@@ -113,6 +120,9 @@
     <string name="book_list_finished_on">Finished %1$s</string>
 
     <string name="sessions_blank_text">No reading history to display</string>
+    <string name="sessions_summary">Reading for %1$s over %2$d sessions.</string>
+    <string name="sessions_eta">"You have about %1$s left of reading, given you keep the same pace"</string>
+
     <string name="end_session_where_did_you_stop_reading">Where did you stop reading?</string>
     <string name="end_session_scroll_to_end_to_finish">Scroll to the very end if you finished the book</string>
     <string name="end_session_finish_book">Finish book</string>
