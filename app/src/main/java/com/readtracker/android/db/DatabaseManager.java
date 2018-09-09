@@ -1,11 +1,10 @@
 package com.readtracker.android.db;
 
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.SelectArg;
-
-import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -25,7 +24,8 @@ public class DatabaseManager {
   /**
    * Returns the single model of a class with the id, or null if id did not exist.
    */
-  @Nullable public <T extends Model> T get(Class<T> modelClass, int id) {
+  @Nullable
+  public <T extends Model> T get(Class<T> modelClass, int id) {
     Dao<T, Integer> dao = db.getDaoByClass(modelClass);
     try {
       return dao.queryForId(id);
@@ -86,7 +86,8 @@ public class DatabaseManager {
   /**
    * Saves all instances to the database.
    */
-  public <T extends Model> void saveAll(T... items) {
+  @SafeVarargs
+  public final <T extends Model> void saveAll(T... items) {
     for(T item : items) {
       save(item);
     }

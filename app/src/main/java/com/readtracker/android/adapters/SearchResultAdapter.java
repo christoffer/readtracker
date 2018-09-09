@@ -1,6 +1,7 @@
 package com.readtracker.android.adapters;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,7 +23,7 @@ public class SearchResultAdapter extends ArrayAdapter<BookItem> {
 
   /** Cache item to avoid repeated view look-ups */
   static class ViewHolder {
-    public ViewHolder(View view) {
+    ViewHolder(View view) {
       ButterKnife.inject(this, view);
     }
     @InjectView(R.id.textTitle) TextView textTitle;
@@ -34,8 +35,9 @@ public class SearchResultAdapter extends ArrayAdapter<BookItem> {
     super(context, R.layout.list_item_book, R.id.textTitle, books);
   }
 
+  @NonNull
   @Override
-  public View getView(int position, View convertView, ViewGroup parent) {
+  public View getView(int position, View convertView, @NonNull ViewGroup parent) {
     final BookItem item = getItem(position);
     final ViewHolder viewHolder;
 
@@ -53,19 +55,12 @@ public class SearchResultAdapter extends ArrayAdapter<BookItem> {
     }
 
     // Assign values from the item to the view
-    viewHolder.textTitle.setText(item.title);
-    viewHolder.textAuthor.setText(item.author);
+    viewHolder.textTitle.setText(item.getTitle());
+    viewHolder.textAuthor.setText(item.getAuthor());
     viewHolder.imageCover.setImageResource(android.R.drawable.ic_menu_gallery);
-
-    if(item.coverURL != null) {
-      viewHolder.imageCover.setImageResource(android.R.drawable.ic_menu_gallery);
-      viewHolder.imageCover.setVisibility(View.VISIBLE);
-      if(!TextUtils.isEmpty(item.coverURL)) {
-        Picasso.with(getContext()).load(item.coverURL).into(viewHolder.imageCover);
-      }
-    } else {
-      viewHolder.imageCover.setImageResource(0);
-      viewHolder.imageCover.setVisibility(View.GONE);
+    viewHolder.imageCover.setVisibility(View.VISIBLE);
+    if (!item.getCoverUrl().isEmpty()) {
+      Picasso.with(getContext()).load(item.getCoverUrl()).into(viewHolder.imageCover);
     }
 
     return convertView;

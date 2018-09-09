@@ -237,7 +237,7 @@ public class QuotesFragment extends BaseFragment {
     private final WeakReference<QuotesFragment> mFragment;
     private final DatabaseManager mDatabaseManager;
 
-    public DeleteTask(int quoteId, QuotesFragment fragment) {
+    DeleteTask(int quoteId, QuotesFragment fragment) {
       mQuoteId = quoteId;
       mFragment = new WeakReference<QuotesFragment>(fragment);
       mDatabaseManager = fragment.getDatabaseManager();

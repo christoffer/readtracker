@@ -29,8 +29,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     super(context, databaseName, factory, databaseVersion);
   }
 
-  public static final String DATABASE_NAME = "readtracker.db";
-  public static final int DATABASE_VERSION = 12;
+  private static final String DATABASE_NAME = "readtracker.db";
+  static final int DATABASE_VERSION = 12;
   private static final String TAG = DatabaseHelper.class.getName();
 
   private Dao<LocalReading, Integer> readingDao = null;
@@ -56,21 +56,21 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     }
   }
 
-  public Dao<LocalReading, Integer> getReadingDao() throws SQLException {
+  private Dao<LocalReading, Integer> getReadingDao() throws SQLException {
     if(readingDao == null) {
       readingDao = getDao(LocalReading.class);
     }
     return readingDao;
   }
 
-  public Dao<LocalSession, Integer> getLocalSessionDao() throws SQLException {
+  private Dao<LocalSession, Integer> getLocalSessionDao() throws SQLException {
     if(sessionDao == null) {
       sessionDao = getDao(LocalSession.class);
     }
     return sessionDao;
   }
 
-  public Dao<LocalHighlight, Integer> getHighlightDao() throws SQLException {
+  private Dao<LocalHighlight, Integer> getHighlightDao() throws SQLException {
     if(highlightDao == null) {
       highlightDao = getDao(LocalHighlight.class);
     }
