@@ -11,7 +11,6 @@ repositories {
 
 android {
     compileSdkVersion 27
-    buildToolsVersion '27.0.3'
     testOptions {
         unitTests.returnDefaultValues = true
     }
@@ -113,7 +112,7 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 }
 
 configurations {
