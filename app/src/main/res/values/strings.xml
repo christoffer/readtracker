@@ -134,7 +134,7 @@
     <string name="settings_import_json">Import</string>
     <string name="settings_import_failed">Importing file failed. Please make sure it\'s a valid ReadTracker export file.</string>
     <string name="settings_import_summary">Imports a previously exported ReadTracker file.</string>
-    <string name="settings_import_confirmation">Importing data from a ReadTracker JSON file will add books, quotes, and sessions into your current device.\n\nBooks that already exist on the device will merge with imported ones, and new books will be added.\n\nThere\'s no way to undo this operation, so it's strongly recommended to first export you data as a backup.</string>
+    <string name="settings_import_confirmation">Importing data from a ReadTracker JSON file will add books, quotes, and sessions into your current device.\n\nBooks that already exist on the device will merge with imported ones, and new books will be added.\n\nThere is no way to undo this operation, so it\'s strongly recommended to first export you data as a backup.</string>
     <string name="settings_import_positive_button">Select file</string>
     <string name="settings_export_json">Export</string>
     <string name="settings_export_summary">Exports all ReadTracker data to a file.</string>
