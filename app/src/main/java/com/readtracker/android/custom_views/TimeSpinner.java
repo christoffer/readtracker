@@ -5,6 +5,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.View;
 
 import com.readtracker.R;
@@ -21,6 +23,8 @@ public class TimeSpinner extends View {
 
   private Paint mTickPaint;
   private Paint mHighlightPaint;
+
+  private float mPixelsPerDP = 1.0f;
 
   @SuppressWarnings("UnusedDeclaration")
   public TimeSpinner(Context context) {
@@ -40,8 +44,8 @@ public class TimeSpinner extends View {
     float midX = getWidth() / 2.0f;
     float midY = getHeight() / 2.0f;
     canvas.drawCircle(midX, midY, Math.min(midX, midY) - 35.0f, mHighlightPaint);
-    drawTicks(canvas, 60, 15, 2, 10, mSecondaryColor);
-    drawTicks(canvas, 12, 25, 4, 0, mPrimaryColor);
+
+    drawTicks(canvas, mSecondaryColor);
   }
 
   @Override
@@ -85,6 +89,8 @@ public class TimeSpinner extends View {
     mHighlightPaint = new Paint();
     mHighlightPaint.setStyle(Paint.Style.FILL);
 
+    mPixelsPerDP = getResources().getDisplayMetrics().densityDpi / DisplayMetrics.DENSITY_DEFAULT;
+
     setDrawingCacheEnabled(true);
   }
 
@@ -93,13 +99,18 @@ public class TimeSpinner extends View {
     invalidate();
   }
 
-  private void drawTicks(Canvas canvas, int tickCount, int tickHeight, int tickWidth, int tickOffset, int color) {
+  private void drawTicks(Canvas canvas, int color) {
     final int width = getWidth();
     final int height = getHeight();
     final int prevColor = mTickPaint.getColor();
-    final float halfTickWidth = tickWidth / 2.0f;
 
-    final int radius = Math.min(width, height) / 2 - 20;
+    final float radius = Math.min(width, height) / 2.0f - 20.0f;
+
+    final float tickCount = 45;
+    final float tickHeightPx = mPixelsPerDP * 5;
+    final float tickWidthPx = mPixelsPerDP * 7;
+    final float halfTickWidthPx = tickWidthPx / 2.0f;
+    final float tickOffset = mPixelsPerDP * 10;
 
     canvas.save();
 
@@ -110,7 +121,13 @@ public class TimeSpinner extends View {
 
     for(int i = 0; i < tickCount; i++) {
       canvas.rotate(rotation);
-      canvas.drawRect(0 - halfTickWidth, radius - tickHeight - tickOffset, halfTickWidth, radius - tickOffset, mTickPaint);
+      canvas.drawRect(
+          0.0f - halfTickWidthPx,
+          radius - tickHeightPx - tickOffset,
+          tickWidthPx,
+          radius - tickOffset,
+          mTickPaint
+      );
     }
 
     mTickPaint.setColor(prevColor);
