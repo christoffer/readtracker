@@ -155,16 +155,17 @@ public class BookSettingsActivity extends BookBaseActivity implements GoogleBook
   }
 
   @Override public void onSearchResultsRetrieved(ArrayList<GoogleBook> result) {
-    // NOTE(christoffer) Ideally we'd like to give the user an option of picking the cover here,
-    // but for now we just pick the first result.
+    // NOTE(christoffer) Ideally we'd like to give the user an option of picking the book here,
+    // but for now we just pick the first result that has a cover.
     getApp().clearProgressDialog();
     boolean didFindCover = false;
 
     if(result != null && result.size() > 0) {
       for(int i = 0; i < result.size(); i++) {
-        String coverURL = result.get(i).getCoverURL();
+        GoogleBook googleBook = result.get(i);
+        String coverURL = googleBook.getCoverURL();
         if(coverURL != null && coverURL.length() > 0) {
-          loadCoverFromURL(coverURL);
+          populateFieldsfromGoogleBook(googleBook);
           didFindCover = true;
           break;
         }
@@ -173,6 +174,24 @@ public class BookSettingsActivity extends BookBaseActivity implements GoogleBook
 
     if(!didFindCover) {
       Toast.makeText(this, R.string.add_book_no_cover_found, Toast.LENGTH_SHORT).show();
+    }
+  }
+
+  private void populateFieldsfromGoogleBook(GoogleBook googleBook) {
+    loadCoverFromURL(googleBook.getCoverURL());
+
+    // Populate fields that haven't been filled out by the user from the book search result
+    // as well.
+    if (mTitleEdit.getText().length() == 0) {
+      mTitleEdit.setText(googleBook.getTitle());
+    }
+
+    if (mAuthorEdit.getText().length() == 0) {
+      mAuthorEdit.setText(googleBook.getAuthor());
+    }
+
+    if (mTrackUsingPages.isChecked() && mPageCountEdit.getText().length() == 0) {
+      mPageCountEdit.setText(Long.toString(googleBook.getPageCount()));
     }
   }
 
