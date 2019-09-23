@@ -78,8 +78,12 @@
     <string name="reading_last_on_page">Last on page %1$s</string>
     <string name="reading_click_to_start">Click to start reading</string>
     <string name="reading_item_cover_content_desc">Book cover</string>
+
     <string name="reading_list_blank_content_desc">Blank reading list</string>
-    <string name="reading_list_blank">No books in this category yet</string>
+    <string name="reading_list_add_first_book">Add your first book</string>
+    <string name="reading_list_blank_text_currently_reading">Books you are currently reading will show up here</string>
+    <string name="reading_list_blank_text_finished_books">Books you are have finished will show up here.</string>
+    <string name="reading_list_blank_import_data">Import ReadTracker backup</string>
 
     <string name="date_earlier_today">earlier today</string>
     <string name="date_yesterday">yesterday</string>
@@ -134,7 +138,7 @@
     <string name="settings_import_json">Import</string>
     <string name="settings_import_failed">Importing file failed. Please make sure it\'s a valid ReadTracker export file.</string>
     <string name="settings_import_summary">Imports a previously exported ReadTracker file.</string>
-    <string name="settings_import_confirmation">Importing data from a ReadTracker JSON file will add books, quotes, and sessions into your current device.\n\nBooks that already exist on the device will merge with imported ones, and new books will be added.\n\nThere\'s no way to undo this operation, so it's strongly recommended to first export you data as a backup.</string>
+    <string name="settings_import_confirmation">Importing data from a ReadTracker JSON file will add books, quotes, and sessions into your current device.\n\nBooks that already exist on the device will merge with imported ones, and new books will be added.\n\nThere\'s no way to undo this operation.</string>
     <string name="settings_import_positive_button">Select file</string>
     <string name="settings_export_json">Export</string>
     <string name="settings_export_summary">Exports all ReadTracker data to a file.</string>

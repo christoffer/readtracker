@@ -1,5 +1,6 @@
 package com.readtracker.android.tasks;
 
+import android.app.Activity;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -92,5 +93,6 @@ public class ImportReadTrackerFileTask extends AsyncTask<File, Integer, JSONImpo
     void onImportStart();
     void onImportUpdate(int currentBook, int totalBooks);
     void onImportComplete(JSONImporter.ImportResultReport importReport);
+    Activity getResultActivity();
   }
 }

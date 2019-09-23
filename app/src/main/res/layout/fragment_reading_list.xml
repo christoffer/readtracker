@@ -1,42 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="fill_parent"
-  android:layout_height="fill_parent">
+  android:layout_height="fill_parent"
+  android:orientation="vertical">
 
   <ListView
-  android:id="@android:id/list"
-  android:layout_height="fill_parent"
-  android:layout_width="fill_parent"
-  android:layout_gravity="bottom"
-  android:divider="@android:color/transparent"
-  android:cacheColorHint="#ff000000" />
-
-  <!--suppress AndroidLintUseCompoundDrawables -->
-  <LinearLayout
-    android:id="@android:id/empty"
+    android:id="@android:id/list"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical"
-    android:gravity="center_vertical"
-    android:padding="12dp">
+    android:layout_gravity="bottom"
+    android:cacheColorHint="#ff000000"
+    android:divider="@android:color/transparent" />
 
-    <ImageView
-      android:src="@drawable/blank_reading_list"
+  <RelativeLayout
+    android:id="@android:id/empty"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_centerInParent="true"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <Button
+      android:id="@+id/button_add_first_book"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
+      android:layout_centerInParent="true"
+      android:layout_marginTop="16dp"
+      android:drawableLeft="@drawable/icon_add_16dp_text_primary"
+      android:drawablePadding="6dp"
+      android:drawableStart="@drawable/icon_add_16dp_text_primary"
+      android:text="@string/reading_list_add_first_book" />
+
+    <Button
+      android:id="@+id/button_import_data"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignParentBottom="true"
+      android:layout_centerHorizontal="true"
       android:layout_gravity="center_horizontal"
-      android:contentDescription="@string/reading_list_blank_content_desc" />
+      android:layout_marginTop="16dp"
+      android:background="@drawable/bg_button_transparent"
+      android:textColor="@drawable/fg_button_transparent"
+      android:drawableLeft="@android:drawable/stat_sys_download"
+      android:drawableStart="@android:drawable/stat_sys_download"
+      android:text="@string/reading_list_blank_import_data" />
 
     <TextView
+      android:id="@+id/text_blank_reading_list"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_gravity="center_horizontal"
-      android:text="@string/reading_list_blank"
-      android:gravity="center"
-      android:layout_marginTop="12dp"
-      style="@style/default_text" />
+      android:layout_above="@id/button_add_first_book"
+      android:layout_alignWithParentIfMissing="true"
+      android:layout_centerHorizontal="true"
+      android:text="@string/reading_list_blank_text_currently_reading" />
 
-  </LinearLayout>
+  </RelativeLayout>
 
-</LinearLayout>
+</RelativeLayout>

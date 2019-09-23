@@ -1,8 +1,10 @@
 package com.readtracker.android.activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
@@ -22,19 +24,23 @@ import com.readtracker.R;
 import com.readtracker.android.ReadTrackerApp;
 import com.readtracker.android.db.Book;
 import com.readtracker.android.db.DatabaseManager;
+import com.readtracker.android.db.export.JSONImporter;
 import com.readtracker.android.fragments.BookListFragment;
 import com.readtracker.android.fragments.HomeFragmentAdapter;
 import com.readtracker.android.support.ApplicationSettingsHelper;
+import com.readtracker.android.support.ReadTrackerDataImportHandler;
+import com.readtracker.android.tasks.ImportReadTrackerFileTask;
 import com.squareup.otto.Subscribe;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
-public class HomeActivity extends BaseActivity {
+public class HomeActivity extends BaseActivity implements ImportReadTrackerFileTask.ResultListener {
   private static final String TAG = HomeActivity.class.getSimpleName();
 
   private static final int REQUEST_READING_SESSION = 1;
@@ -110,6 +116,11 @@ public class HomeActivity extends BaseActivity {
     final boolean readingSessionFinishedBook = data != null && data.getBooleanExtra(BookActivity.KEY_FINISHED, false);
     final boolean returnFromAddBook = requestCode == ActivityCodes.REQUEST_ADD_BOOK;
 
+    if (ReadTrackerDataImportHandler.handleActivityResult(this, requestCode, resultCode, data)) {
+      // Result was for an import request which was handled, so bail out
+      return;
+    }
+
     // Handle coming back from settings
     if(requestCode == ActivityCodes.SETTINGS) {
       Log.d(TAG, "Returned to HomeActivity from Settings -- reapplying settings");
@@ -134,10 +145,33 @@ public class HomeActivity extends BaseActivity {
   }
 
   @Override
+  public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    Log.v(TAG, String.format("onRequestPermissionsResult: permissions %s, grantedResults %s", Arrays.toString(permissions), Arrays.toString(grantResults)));
+    ReadTrackerDataImportHandler.handleRequestPermissionResult(this, requestCode, permissions, grantResults);
+  }
+
+  @Override
   public boolean onSearchRequested() {
     exitToBookSearch();
     return true;
   }
+
+  @Override public void onImportStart() {
+    ReadTrackerDataImportHandler.openProgressDialog(this);
+  }
+
+  @Override public void onImportComplete(JSONImporter.ImportResultReport result) {
+    ReadTrackerDataImportHandler.closeProgressDialog(this, result);
+  }
+
+  @Override public void onImportUpdate(int currentBook, int totalBooks) {
+    ReadTrackerDataImportHandler.showProgressUpdate(currentBook, totalBooks);
+  }
+
+  @Override public Activity getResultActivity() {
+    return this;
+  }
+
 
   /** Returns a list of all books currently loaded. */
   public List<Book> getBooks() {
