@@ -20,7 +20,7 @@
     android:layout_marginLeft="12dp"
     android:contentDescription="@string/reading_item_cover_content_desc"
     android:scaleType="centerCrop"
-    android:src="@android:drawable/ic_menu_gallery"/>
+    android:src="@drawable/icon_book"/>
 
   <!--
     note that textTitle and textAuthor will have their text size set dynamically

@@ -168,11 +168,11 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
       }
 
       if(coverImage != null) {
-        coverImage.setImageResource(android.R.drawable.ic_menu_gallery);
+        coverImage.setImageResource(R.drawable.icon_book);
         if(!TextUtils.isEmpty(book.getCoverImageUrl())) {
           Picasso.with(coverImage.getContext())
               .load(book.getCoverImageUrl())
-              .placeholder(android.R.drawable.ic_menu_gallery)
+              .placeholder(R.drawable.icon_book)
               .into(coverImage);
         }
       }

@@ -46,6 +46,9 @@ public class Book extends Model {
   @DatabaseField(columnName = Columns.CLOSING_REMARK)
   private String mClosingRemark;
 
+  @DatabaseField(columnName = Columns.COLOR)
+  private Integer mColor;
+
   /* End database fields */
 
   // Use manual handling of foreign keys here as we want to have complete
@@ -132,7 +135,11 @@ public class Book extends Model {
 
   public void setClosingRemark(String closingRemark) { mClosingRemark = closingRemark; }
 
+  public Integer getColor() { return mColor; }
+  public void setColor(int color) { mColor = color; }
+
   public static abstract class Columns extends Model.Columns {
+
     public static final String TITLE = "title";
     public static final String AUTHOR = "author";
     public static final String COVER_IMAGE_URL = "cover_image_url";
@@ -142,6 +149,7 @@ public class Book extends Model {
     public static final String CURRENT_POSITION_TIMESTAMP = "current_position_timestamp";
     public static final String FIRST_POSITION_TIMESTAMP = "first_position_timestamp";
     public static final String CLOSING_REMARK = "closing_remark";
+    public static final String COLOR = "book_color";
   }
 
   /** Returns true if this book has page numbers set. */

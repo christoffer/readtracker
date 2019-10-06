@@ -59,11 +59,12 @@
     <string name="add_book_confirm_delete">Really delete %1$s?</string>
     <string name="add_book_delete_explanation">This will delete the book and the entire reading history from the device.\n\nThere is no way to undo this operation.</string>
     <string name="add_book_delete_failed">Failed to delete book</string>
-    <string name="add_book_find_info_on_google_books">Find on Google Books</string>
+    <string name="add_book_find_info_on_google_books">Autofill using Google Books</string>
     <string name="add_book_looking_for_book">Searching for book info…</string>
     <string name="add_book_no_cover_found">Couldn\'t find a cover on Google Books</string>
     <string name="add_book_long_press_to_delete">Long press to clear</string>
-    <string name="add_book_cover_button_content">Book cover image. Long press to clear.</string>
+    <string name="add_book_book_cover">Book cover image.</string>
+    <string name="add_book_refresh_book_cover">Press to attempt to refresh the book cover image from Google Images.</string>
 
     <!-- BookActivity -->
     <string name="book_activity_edit_book_settings">Edit book settings</string>
@@ -157,4 +158,5 @@
     <string name="settings_import_running">Importing…</string>
     <!-- 5 books imported (3 new, 2 merged), together with 54 sessions and 12 quotes. -->
     <string name="settings_import_book_report">%1$s imported (%2$s, %3$s), together with %4$s and %5$s.</string>
+  <string name="string_dialog_color_picker_ok">Apply</string>
 </resources>

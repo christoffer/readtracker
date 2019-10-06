@@ -12,38 +12,57 @@
     android:orientation="vertical"
     android:padding="12dp">
 
-    <ImageButton
-      android:id="@+id/book_cover_image"
-      style="@style/non_primary_button"
-      android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="96dp"
+        android:layout_height="96dp"
+        android:layout_gravity="center">
+
+      <ImageView
+        android:id="@+id/book_cover_image"
+        style="@style/non_primary_button"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerInside"
+        android:contentDescription="@string/add_book_book_cover"
+        android:longClickable="true"
+        android:padding="16dp"
+        android:src="@drawable/icon_book"
+        android:layout_centerInParent="true" />
+
+      <ImageButton
+        android:id="@+id/refresh_cover_button"
+        android:contentDescription="@string/add_book_refresh_book_cover"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg_button_transparent"
+        android:src="@android:drawable/stat_notify_sync"
+        android:layout_centerInParent="true" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+      android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:layout_gravity="center"
-      android:contentDescription="@string/add_book_cover_button_content"
-      android:longClickable="true"
-      android:padding="16dp"
-      android:visibility="gone"
-      android:src="@android:drawable/ic_menu_gallery"
-      />
+      android:id="@+id/layout_color_buttons"
+      android:padding="8dp"
+      android:gravity="center_horizontal"
+      android:orientation="horizontal" />
 
     <EditText
       android:id="@+id/title_edit"
       style="@style/default_input_field"
       android:layout_marginBottom="12dp"
       android:layout_marginTop="8dp"
-      tools:drawableRight="@android:drawable/ic_dialog_alert"
-      android:hint="@string/add_book_title_hint"/>
+      tools:drawableRight="@android:drawable/stat_notify_error"
+      android:hint="@string/add_book_title_hint"
+      android:importantForAutofill="no" />
 
     <EditText
       android:id="@+id/author_edit"
       style="@style/default_input_field"
-      tools:drawableRight="@android:drawable/ic_dialog_alert"
-      android:hint="@string/add_book_author_hint"/>
-
-    <Button
-      android:id="@+id/find_cover_button"
-      style="@style/non_primary_button"
-      android:layout_marginTop="8dp"
-      android:text="@string/add_book_find_info_on_google_books"/>
+      tools:drawableRight="@android:drawable/stat_notify_error"
+      android:hint="@string/add_book_author_hint"
+      android:importantForAutofill="no" />
 
     <CheckBox
       android:id="@+id/track_using_pages"
@@ -62,7 +81,7 @@
       android:gravity="center_horizontal"
       android:hint="@string/add_book_page_count_hint"
       android:inputType="number"
-      tools:drawableRight="@android:drawable/ic_dialog_alert"
+      tools:drawableRight="@android:drawable/stat_notify_error"
       />
 
     <Button

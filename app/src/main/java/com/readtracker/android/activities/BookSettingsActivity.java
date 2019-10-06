@@ -2,11 +2,17 @@ package com.readtracker.android.activities;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.graphics.Palette;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -15,28 +21,38 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.TextView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.Toast;
 
 import com.readtracker.R;
 import com.readtracker.android.IntentKeys;
+import com.readtracker.android.custom_views.ColorPickerButton;
 import com.readtracker.android.db.Book;
 import com.readtracker.android.db.DatabaseManager;
+import com.readtracker.android.support.ColorPickerDialog;
 import com.readtracker.android.support.ColorUtils;
 import com.readtracker.android.support.DrawableGenerator;
 import com.readtracker.android.support.GoogleBook;
 import com.readtracker.android.support.GoogleBookSearch;
+import com.readtracker.android.support.Utils;
 import com.readtracker.android.tasks.GoogleBookSearchTask;
-import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -51,18 +67,32 @@ public class BookSettingsActivity extends BookBaseActivity implements GoogleBook
   public static final int RESULT_DELETED_BOOK = RESULT_FIRST_USER + 2;
 
   public static final String KEY_QUOTE_ID = "QUOTE_ID";
+  private static final int BUTTON_SIZE_DP = 32;
 
   @InjectView(R.id.title_edit) EditText mTitleEdit;
   @InjectView(R.id.author_edit) EditText mAuthorEdit;
   @InjectView(R.id.page_count_edit) EditText mPageCountEdit;
   @InjectView(R.id.add_or_save_button) Button mSaveButton;
   @InjectView(R.id.track_using_pages) CheckBox mTrackUsingPages;
-  @InjectView(R.id.book_cover_image) ImageButton mCoverImageButton;
-  @InjectView(R.id.find_cover_button) TextView mFindCoverButton;
+  @InjectView(R.id.book_cover_image) ImageView mCoverImage;
+  @InjectView(R.id.refresh_cover_button) ImageButton mRefreshCoverButton;
+  @InjectView(R.id.layout_color_buttons) LinearLayout mColorButtonContainer;
 
   // Store the cover url from the intent that starts the activity
   private String mCoverURL;
   private boolean mEditMode;
+  private int mCurrentBookColor = -1;
+
+  private HashSet<Integer> mSuggestedColors = new HashSet<>();
+  private int mButtonSizePx;
+  private int mInitialBookColor;
+  private int mColorButtonDistance;
+  private View.OnClickListener mColorButtonClickListener = new View.OnClickListener() {
+    @Override public void onClick(View view) {
+      ColorPickerButton button = (ColorPickerButton) view;
+      onColorPickerButtonClick(button);
+    }
+  };
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -89,7 +119,9 @@ public class BookSettingsActivity extends BookBaseActivity implements GoogleBook
 
     final TextWatcher textWatcher = new TextWatcher() {
       @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
       @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
       @Override public void afterTextChanged(Editable s) {
         validateFieldsAndUpdateState();
       }
@@ -99,8 +131,11 @@ public class BookSettingsActivity extends BookBaseActivity implements GoogleBook
     mAuthorEdit.addTextChangedListener(textWatcher);
     mPageCountEdit.addTextChangedListener(textWatcher);
 
-    final int color = ContextCompat.getColor(this, R.color.defaultBookColor);
-    mSaveButton.setBackground(DrawableGenerator.generateButtonBackground(color));
+    mButtonSizePx = Utils.convertDPtoPixels(this, BUTTON_SIZE_DP);
+    mInitialBookColor = ContextCompat.getColor(this, R.color.defaultBookColor);
+    setActiveColorPick(mInitialBookColor);
+
+    mColorButtonDistance = Utils.convertDPtoPixels(this, 16);
 
     validateFieldsAndUpdateState();
   }
@@ -125,6 +160,21 @@ public class BookSettingsActivity extends BookBaseActivity implements GoogleBook
       return true;
     }
     return super.onOptionsItemSelected(item);
+  }
+
+  /** Update the UI to reflect the current color choice */
+  private void setActiveColorPick(int color) {
+    mCurrentBookColor = color;
+    mSaveButton.setBackground(DrawableGenerator.generateButtonBackground(mCurrentBookColor));
+
+    for(int i = 0; i < mColorButtonContainer.getChildCount(); i++) {
+      View view = mColorButtonContainer.getChildAt(i);
+      if(view instanceof ColorPickerButton) {
+        ColorPickerButton colorPickerButton = (ColorPickerButton) view;
+        Integer buttonColor = colorPickerButton.getColor();
+        colorPickerButton.setIsCurrentColor(buttonColor != null && (buttonColor == color));
+      }
+    }
   }
 
   private void confirmDeleteBook() {
@@ -182,16 +232,16 @@ public class BookSettingsActivity extends BookBaseActivity implements GoogleBook
 
     // Populate fields that haven't been filled out by the user from the book search result
     // as well.
-    if (mTitleEdit.getText().length() == 0) {
+    if(mTitleEdit.getText().length() == 0) {
       mTitleEdit.setText(googleBook.getTitle());
     }
 
-    if (mAuthorEdit.getText().length() == 0) {
+    if(mAuthorEdit.getText().length() == 0) {
       mAuthorEdit.setText(googleBook.getAuthor());
     }
 
-    if (mTrackUsingPages.isChecked() && mPageCountEdit.getText().length() == 0) {
-      mPageCountEdit.setText(Long.toString(googleBook.getPageCount()));
+    if(mTrackUsingPages.isChecked() && mPageCountEdit.getText().length() == 0) {
+      mPageCountEdit.setText(String.format(Locale.getDefault(), "%d", googleBook.getPageCount()));
     }
   }
 
@@ -210,10 +260,11 @@ public class BookSettingsActivity extends BookBaseActivity implements GoogleBook
       }
     });
 
-    mFindCoverButton.setOnClickListener(new View.OnClickListener() {
+    mRefreshCoverButton.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View view) {
         final String title = mTitleEdit.getText().toString();
         final String author = mAuthorEdit.getText().toString();
+        mRefreshCoverButton.setEnabled(false);
 
         final String searchQuery = GoogleBookSearch.buildQueryForTitleAndAuthor(title, author);
         if(searchQuery != null) {
@@ -223,28 +274,45 @@ public class BookSettingsActivity extends BookBaseActivity implements GoogleBook
       }
     });
 
-    mCoverImageButton.setOnClickListener(new View.OnClickListener() {
+    mCoverImage.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
         Toast.makeText(BookSettingsActivity.this, R.string.add_book_long_press_to_delete, Toast.LENGTH_SHORT).show();
       }
     });
 
-    mCoverImageButton.setOnLongClickListener(new View.OnLongClickListener() {
+    mCoverImage.setOnLongClickListener(new View.OnLongClickListener() {
       @Override public boolean onLongClick(View v) {
-        setCurrentCoverURL(null);
+        mCoverURL = null;
+        mCoverImage.setImageResource(R.drawable.icon_book);
+        mRefreshCoverButton.setVisibility(View.VISIBLE);
         return true;
       }
     });
   }
 
+  private void onColorPickerButtonClick(ColorPickerButton button) {
+    Integer pickedColor = button.getColor();
+    if(pickedColor == null) {
+      final ColorPickerDialog colorDialog = new ColorPickerDialog(this, mCurrentBookColor, new ColorPickerDialog.Listener() {
+        @Override public void onColorSelected(int color) {
+          setActiveColorPick(color);
+          resetColorButtons();
+        }
+      });
+      colorDialog.show();
+    } else {
+      setActiveColorPick(pickedColor);
+    }
+  }
+
   private void setTrackUsingPages(boolean shouldTrackUsingPages) {
     boolean stateDidChange = false;
 
-    if (mTrackUsingPages != null) {
+    if(mTrackUsingPages != null) {
       stateDidChange = mTrackUsingPages.isChecked() != shouldTrackUsingPages;
       mTrackUsingPages.setChecked(shouldTrackUsingPages);
     }
-    if (mPageCountEdit != null) {
+    if(mPageCountEdit != null) {
       mPageCountEdit.setEnabled(shouldTrackUsingPages);
       mPageCountEdit.setVisibility(shouldTrackUsingPages ? View.VISIBLE : View.INVISIBLE);
 
@@ -271,8 +339,9 @@ public class BookSettingsActivity extends BookBaseActivity implements GoogleBook
     mTitleEdit.setText(book.getTitle());
     mAuthorEdit.setText(book.getAuthor());
 
-    final int bookColor = ColorUtils.getColorForBook(book);
-    mSaveButton.setBackground(DrawableGenerator.generateButtonBackground(bookColor));
+    mInitialBookColor = ColorUtils.getColorForBook(book);
+    setActiveColorPick(mInitialBookColor);
+    resetColorButtons();
 
     if(book.hasPageNumbers()) {
       int pageCount = (int) ((float) book.getPageCount());
@@ -289,36 +358,60 @@ public class BookSettingsActivity extends BookBaseActivity implements GoogleBook
     supportInvalidateOptionsMenu();
   }
 
-  private void loadCoverFromURL(final String coverURL) {
-    final boolean hasCover = !TextUtils.isEmpty(coverURL);
-    if(hasCover) {
-      // The book might have a cover url that's outdated. Make sure that the cover loads before
-      // deciding on whether or not to show the find cover button.
-      Picasso.with(this)
-          .load(coverURL)
-          .into(mCoverImageButton, new Callback() {
-        @Override public void onSuccess() {
-          setCurrentCoverURL(coverURL);
-        }
+  private void resetColorButtons() {
+    mColorButtonContainer.removeAllViews();
 
-        @Override public void onError() {
-          setCurrentCoverURL(null);
-        }
-      });
-    } else {
-      setCurrentCoverURL(null);
+    boolean hasActiveCurrentColor = false;
+
+    // Add color options, if any
+    for(Integer suggestedColor : mSuggestedColors) {
+      if(suggestedColor != mInitialBookColor) {
+        ColorPickerButton button = addColorButton(suggestedColor);
+        final boolean isActiveColor = suggestedColor == mCurrentBookColor;
+        button.setIsCurrentColor(isActiveColor);
+        hasActiveCurrentColor = hasActiveCurrentColor || isActiveColor;
+      }
     }
+
+    // Add initial color button
+    ColorPickerButton initialColorButton = addColorButton(mInitialBookColor);
+    initialColorButton.setIsCurrentColor(mInitialBookColor == mCurrentBookColor);
+    hasActiveCurrentColor = hasActiveCurrentColor || mInitialBookColor == mCurrentBookColor;
+
+    // Add current color unless it's already represented. This can happen if the user uses
+    // the color wheel to pick a new color.
+    if (!hasActiveCurrentColor) {
+      ColorPickerButton activeColorButton = addColorButton(mCurrentBookColor);
+      activeColorButton.setIsCurrentColor(true);
+    }
+
+    // Add color wheel button
+    ColorPickerButton pickColorButton = addColorButton(0);
+    pickColorButton.setColor(null);
   }
 
-  private void setCurrentCoverURL(String coverURL) {
-    if(coverURL == null) {
-      mCoverURL = null;
-      mCoverImageButton.setVisibility(View.GONE);
-      mFindCoverButton.setVisibility(View.VISIBLE);
-    } else {
-      mCoverURL = coverURL;
-      mCoverImageButton.setVisibility(View.VISIBLE);
-      mFindCoverButton.setVisibility(View.GONE);
+  private ColorPickerButton addColorButton(int color) {
+    ColorPickerButton button = new ColorPickerButton(this);
+    button.setColor(color);
+    LayoutParams layoutParams = new LayoutParams(
+        ViewGroup.LayoutParams.WRAP_CONTENT,
+        ViewGroup.LayoutParams.WRAP_CONTENT
+    );
+    if(mColorButtonContainer.getChildCount() > 0) {
+      layoutParams.setMargins(mColorButtonDistance, 0, 0, 0);
+    }
+    button.setLayoutParams(layoutParams);
+    button.setOnClickListener(mColorButtonClickListener);
+    mColorButtonContainer.addView(button);
+    return button;
+  }
+
+  private void loadCoverFromURL(final String coverUrl) {
+    Log.d(TAG, "picasso: load");
+    final boolean hasCoverUrl = !TextUtils.isEmpty(coverUrl);
+    if(hasCoverUrl) {
+      final CoverLoadPicassoTarget target = new CoverLoadPicassoTarget(coverUrl);
+      Picasso.with(this).load(coverUrl).into(target);
     }
   }
 
@@ -338,7 +431,6 @@ public class BookSettingsActivity extends BookBaseActivity implements GoogleBook
 
     final String newTitle = mTitleEdit.getText().toString();
     final String newAuthor = mAuthorEdit.getText().toString();
-
 
     Book book = getBook();
     if(book == null) {
@@ -360,6 +452,10 @@ public class BookSettingsActivity extends BookBaseActivity implements GoogleBook
       book.setPageCount(null);
     }
 
+    if(mCurrentBookColor != 1) {
+      book.setColor(mCurrentBookColor);
+    }
+
     new UpdateBookTask(this, book, didChangeTitle).execute();
   }
 
@@ -376,12 +472,12 @@ public class BookSettingsActivity extends BookBaseActivity implements GoogleBook
     boolean fieldsAreValid = true;
 
     if(mTitleEdit.getText().length() < 1) {
-      mTitleEdit.setCompoundDrawablesWithIntrinsicBounds(0, 0, android.R.drawable.ic_dialog_alert, 0);
+      mTitleEdit.setCompoundDrawablesWithIntrinsicBounds(0, 0, android.R.drawable.stat_notify_error, 0);
       fieldsAreValid = false;
     }
 
     if(mAuthorEdit.getText().length() < 1) {
-      mAuthorEdit.setCompoundDrawablesWithIntrinsicBounds(0, 0, android.R.drawable.ic_dialog_alert, 0);
+      mAuthorEdit.setCompoundDrawablesWithIntrinsicBounds(0, 0, android.R.drawable.stat_notify_error, 0);
       fieldsAreValid = false;
     }
 
@@ -395,7 +491,7 @@ public class BookSettingsActivity extends BookBaseActivity implements GoogleBook
       }
 
       if(pageCount < 1) {
-        mPageCountEdit.setCompoundDrawablesWithIntrinsicBounds(0, 0, android.R.drawable.ic_dialog_alert, 0);
+        mPageCountEdit.setCompoundDrawablesWithIntrinsicBounds(0, 0, android.R.drawable.stat_notify_error, 0);
         fieldsAreValid = false;
       }
     }
@@ -523,6 +619,53 @@ public class BookSettingsActivity extends BookBaseActivity implements GoogleBook
 
     @Override protected void onComplete(BookSettingsActivity activity, boolean success) {
       activity.onBookDeleted(mBook.getId(), success);
+    }
+  }
+
+  private class CoverLoadPicassoTarget implements Target {
+    final String attemptedCoverUrl;
+
+    public CoverLoadPicassoTarget(String coverUrl) {
+      this.attemptedCoverUrl = coverUrl;
+    }
+
+    @Override public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+      // Set the cover url field, so that the it's saved when the book is updated
+      Log.d(TAG, "picasso: onSuccess");
+      // Write the cover url in case the image was set using the refresh cover button. By setting
+      // the value we ensure that it's written into the book when saved.
+      mCoverURL = attemptedCoverUrl;
+      mCoverImage.setImageBitmap(bitmap);
+      new Palette.Builder(bitmap).maximumColorCount(32).generate(new Palette.PaletteAsyncListener() {
+        @Override public void onGenerated(@NonNull Palette palette) {
+          mRefreshCoverButton.setVisibility(View.GONE);
+          mSuggestedColors.clear();
+          final Palette.Swatch vibrant = palette.getVibrantSwatch();
+          if(vibrant != null) {
+            mSuggestedColors.add(vibrant.getRgb());
+          }
+
+          final Palette.Swatch dominantSwatch = palette.getDominantSwatch();
+          if(dominantSwatch != null) {
+            mSuggestedColors.add(dominantSwatch.getRgb());
+          }
+
+          final Palette.Swatch muteSwatch = palette.getMutedSwatch();
+          if(muteSwatch != null) {
+            mSuggestedColors.add(muteSwatch.getRgb());
+          }
+
+          resetColorButtons();
+        }
+      });
+    }
+
+    @Override public void onBitmapFailed(Drawable errorDrawable) {
+      Log.d(TAG, "Loading cover %s failed");
+    }
+
+    @Override public void onPrepareLoad(Drawable placeHolderDrawable) {
+      // NOOP
     }
   }
 }

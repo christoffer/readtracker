@@ -85,6 +85,7 @@ android {
 dependencies {
     implementation "com.android.support:appcompat-v7:$android_support_lib_version"
     implementation "com.android.support:support-v4:$android_support_lib_version"
+    implementation "com.android.support:palette-v7:$android_support_lib_version"
 
     // Design library is not used by ReadTracker directly, but it is used by the MaterialPicker
     // library. We include it here to have a consistent version between all the support libraries.

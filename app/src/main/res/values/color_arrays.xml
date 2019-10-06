@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <array name="color_wheel_colors">
+    <item>#ffef33</item>
+    <item>#33ff81</item>
+    <item>#d333ff</item>
+    <item>#33a0ff</item>
+    <item>#ff336a</item>
+  </array>
+</resources>

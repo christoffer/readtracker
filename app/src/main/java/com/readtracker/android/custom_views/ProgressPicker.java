@@ -10,8 +10,6 @@ import android.widget.NumberPicker;
 import com.readtracker.R;
 import com.readtracker.android.support.ColorUtils;
 
-import java.util.Locale;
-
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
