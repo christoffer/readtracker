@@ -32,4 +32,9 @@
         <item quantity="one">%d second</item>
         <item quantity="other">%d seconds</item>
     </plurals>
+
+    <plurals name="plural_minute_html">
+        <item quantity="one"><![CDATA[<b>%d</b> minute]]></item>
+        <item quantity="other"><![CDATA[<b>%d</b> minutes]]></item>
+    </plurals>
 </resources>

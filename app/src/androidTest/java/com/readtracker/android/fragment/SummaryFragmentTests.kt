@@ -1,9 +1,8 @@
 package com.readtracker.android.fragment
 
 import android.support.test.InstrumentationRegistry.getTargetContext
-import com.readtracker.android.fragments.SummaryFragment.getPepTalkString
+import com.readtracker.android.custom_views.SessionHeaderView.getPepTalkString
 import com.readtracker.android.integration_test_utils.getContextWithLocale
-import junit.framework.Assert
 import junit.framework.TestCase.*
 import org.junit.Test
 

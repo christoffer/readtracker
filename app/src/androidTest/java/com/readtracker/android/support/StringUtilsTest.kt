@@ -1,14 +1,13 @@
 package com.readtracker.android.support
 
-import android.content.Context
-import android.content.ContextWrapper
 import android.os.Build
 import android.support.test.InstrumentationRegistry.getTargetContext
+import com.readtracker.android.db.Book
+import com.readtracker.android.db.Session
 import com.readtracker.android.integration_test_utils.getContextWithLocale
 import com.readtracker.android.support.StringUtils.*
 import org.junit.Assert.assertEquals
 import org.junit.Test
-import java.util.*
 
 const val SECONDS = 1000L
 const val MINUTES = 60 * SECONDS
@@ -60,6 +59,7 @@ class StringUtilsTest {
         }
         assertEquals(expectedResult, StringUtils.getDateString(nov22nd1981, swedishLocale))
     }
+
     /**
      * Assert the conversion of millisecond values to String representation in hours and minutes.
      */
@@ -100,5 +100,68 @@ class StringUtilsTest {
         assertEquals("13 seconds", longCoarseHumanTimeFromMillis(13 * SECONDS, context))
         assertEquals("3 minutes", longCoarseHumanTimeFromMillis(3 * MINUTES + 13 * SECONDS, context))
         assertEquals("3 hours and 47 minutes", longCoarseHumanTimeFromMillis(3 * HOURS + 47 * MINUTES + 13 * SECONDS, context))
+    }
+
+
+    @Test
+    fun StringUtils_test_formatSessionReadAmountHtml() {
+        val context = getContextWithLocale(getTargetContext(), "en", "EN")
+
+        val noBookNoPages = Session().apply { startPosition = 0.381f; endPosition = 0.422f }
+        assertEquals("<b>4.1%</b>", formatSessionReadAmountHtml(context, noBookNoPages))
+
+        val noPageBook = Book().apply { pageCount = null }
+        val sessionNoPageBook = Session().apply {
+            book = noPageBook
+            startPosition = 0.381f
+            endPosition = 0.422f
+        }
+        assertEquals("<b>4.1%</b>", formatSessionReadAmountHtml(context, sessionNoPageBook))
+
+        val pageBook = Book().apply { pageCount = 100f }
+        val sessionPageBook = Session().apply {
+            book = pageBook
+            startPosition = 0.381f
+            endPosition = 0.422f
+        }
+        assertEquals("<b>4</b> pages", formatSessionReadAmountHtml(context, sessionPageBook))
+    }
+
+
+    @Test
+    fun StringUtils_test_formatSessionDurationHtml() {
+        val context = getContextWithLocale(getTargetContext(), "en", "EN")
+
+        val hoursAndMinutes = Session().apply { durationSeconds = (2 * HOURS + 43 * MINUTES + 15 * SECONDS) / 1000 }
+        assertEquals("<b>2</b>h, <b>43</b>min", formatSessionDurationHtml(context, hoursAndMinutes))
+
+        val onlyMinutes = Session().apply { durationSeconds = (14 * MINUTES + 35 * SECONDS) / 1000 }
+        assertEquals("<b>14</b> minutes", formatSessionDurationHtml(context, onlyMinutes))
+
+        val onlyMinute = Session().apply { durationSeconds = (1 * MINUTES + 35 * SECONDS) / 1000 }
+        assertEquals("<b>1</b> minute", formatSessionDurationHtml(context, onlyMinute))
+    }
+
+
+    @Test
+    fun StringUtils_test_formatSessionFromTo() {
+        val context = getContextWithLocale(getTargetContext(), "en", "EN")
+
+        val pctSession = Session().apply { startPosition = 0.113f; endPosition = 0.156f }
+        assertEquals("11.3 - 15.6%", formatSessionFromTo(context, pctSession))
+
+        val pagesBook = Book().apply { pageCount = 200f }
+        val pageSession = Session().apply {
+            startPosition = 0.113f
+            endPosition = 0.156f
+            book = pagesBook
+        }
+        assertEquals("p. 22 - 31", formatSessionFromTo(context, pageSession))
+
+//        val onlyMinutes = Session().apply { durationSeconds = (14 * MINUTES + 35 * SECONDS) / 1000 }
+//        assertEquals("<b>14</b> minutes", formatSessionDurationHtml(context, onlyMinutes))
+//
+//        val onlyMinute = Session().apply { durationSeconds = (1 * MINUTES + 35 * SECONDS) / 1000 }
+//        assertEquals("<b>1</b> minute", formatSessionDurationHtml(context, onlyMinute))
     }
 }

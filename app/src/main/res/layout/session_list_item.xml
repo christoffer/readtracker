@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:paddingTop="2dp"
+  android:paddingBottom="2dp">
+
+  <com.readtracker.android.custom_views.SessionItemBackground
+    android:id="@+id/progressBackgroundView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_centerInParent="true" />
+
+  <TextView
+    android:id="@+id/primaryInfoText"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentStart="true"
+    android:layout_alignParentLeft="true"
+    android:layout_centerVertical="true"
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="8dp"
+    android:layout_marginLeft="12dp"
+    android:layout_marginStart="12dp"
+    android:textSize="18sp"
+    tools:text="12 pages\n32 minutes" />
+
+  <TextView
+    android:id="@+id/secondaryInfoText"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentEnd="true"
+    android:layout_alignParentRight="true"
+    android:layout_centerVertical="true"
+    android:layout_marginRight="12dp"
+    android:layout_marginEnd="12dp"
+    android:gravity="end"
+    android:textAlignment="gravity"
+    android:textSize="14sp"
+    tools:text="p. 34 - 20\n9pm, Oct 12, 2019" />
+
+</RelativeLayout>

@@ -46,13 +46,20 @@ public class Session extends Model {
     mTimestampMs = other.mTimestampMs;
   }
 
-  public Float getStartPosition() { return mStartPosition; }
+  public float getStartPosition() { return mStartPosition; }
 
   public void setStartPosition(float startPosition) { mStartPosition = startPosition; }
 
   public float getEndPosition() { return mEndPosition; }
 
   public void setEndPosition(float endPosition) { mEndPosition = endPosition; }
+
+  public float getLength() {
+    if (mEndPosition > mStartPosition) {
+      return mEndPosition - mStartPosition;
+    }
+    return 0f;
+  }
 
   public long getDurationSeconds() { return mDurationSeconds; }
 

@@ -49,7 +49,8 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
       final long keyA = a.getCurrentPositionTimestampMs() == null ? 0 : a.getCurrentPositionTimestampMs();
       final long keyB = b.getCurrentPositionTimestampMs() == null ? 0 : b.getCurrentPositionTimestampMs();
 
-      return keyB < keyA ? -1 : (keyA > keyB ? 1 : 0);
+      //noinspection UseCompareMethod
+      return keyB < keyA ? -1 : (keyB > keyA ? 1 : 0);
     }
   };
 

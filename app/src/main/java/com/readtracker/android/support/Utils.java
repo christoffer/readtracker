@@ -1,14 +1,19 @@
 package com.readtracker.android.support;
 
 
+import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.res.Configuration;
+import android.os.Build;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
+
 import com.readtracker.android.db.Session;
 
 import java.io.*;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Locale;
 
 /**
  * Generic utility functions
@@ -55,5 +60,23 @@ public class Utils {
   public static int convertDPtoPixels(Context context, int dpValue) {
     final DisplayMetrics metrics = context.getResources().getDisplayMetrics();
     return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dpValue, metrics);
+  }
+
+  public static Locale getLocale(Context context) {
+    final Configuration config = context.getResources().getConfiguration();
+    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+      return getLocale(config);
+    } else {
+      return getLocaleLegacy(config);
+    }
+  }
+
+  @TargetApi(Build.VERSION_CODES.N)
+  private static Locale getLocale(Configuration config) {
+    return config.getLocales().get(0);
+  }
+
+  private static Locale getLocaleLegacy(Configuration config) {
+    return config.locale;
   }
 }

@@ -1,8 +1,12 @@
 package com.readtracker.android.support;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
+
 import com.readtracker.R;
+import com.readtracker.android.db.Book;
+import com.readtracker.android.db.Session;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -33,7 +37,7 @@ public class StringUtils {
    * Return a human readable form of a time in the past
    */
   private static String humanPastTime(Date date, Date now, Context context) {
-    if (date.after(now)) {
+    if(date.after(now)) {
       return "";
     }
 
@@ -44,37 +48,37 @@ public class StringUtils {
     calendarInstance.set(Calendar.SECOND, 0);
     final Date todayMidnight = calendarInstance.getTime();
 
-    if (date.after(todayMidnight)) {
+    if(date.after(todayMidnight)) {
       return context.getString(R.string.date_earlier_today);
     }
 
     long numberOfDaysInThePast = 1 + (todayMidnight.getTime() - date.getTime()) / MILLISECONDS_IN_A_DAY;
 
-    if (numberOfDaysInThePast <= 1) {
+    if(numberOfDaysInThePast <= 1) {
       return context.getString(R.string.date_yesterday);
     }
 
-    if (numberOfDaysInThePast <= 2) {
+    if(numberOfDaysInThePast <= 2) {
       return context.getString(R.string.date_two_days_ago);
     }
 
-    if (numberOfDaysInThePast <= 3) {
+    if(numberOfDaysInThePast <= 3) {
       return context.getString(R.string.date_three_days_ago);
     }
 
-    if (numberOfDaysInThePast <= 9) {
+    if(numberOfDaysInThePast <= 9) {
       return context.getString(R.string.date_about_a_week_ago);
     }
 
-    if (numberOfDaysInThePast <= 18) {
+    if(numberOfDaysInThePast <= 18) {
       return context.getString(R.string.date_about_two_weeks_ago);
     }
 
-    if (numberOfDaysInThePast <= 24) {
+    if(numberOfDaysInThePast <= 24) {
       return context.getString(R.string.date_about_three_weeks_ago);
     }
 
-    if (numberOfDaysInThePast <= 45) {
+    if(numberOfDaysInThePast <= 45) {
       return context.getString(R.string.date_about_a_month_ago);
     }
 
@@ -92,7 +96,7 @@ public class StringUtils {
     int minutes = hms[1];
     final Resources res = context.getResources();
 
-    if (hours == 0) {
+    if(hours == 0) {
       return res.getQuantityString(R.plurals.plural_minute, minutes, minutes);
     }
 
@@ -116,9 +120,9 @@ public class StringUtils {
 
     ArrayList<String> parts = new ArrayList<>(3);
 
-    if (hours > 0) parts.add(res.getQuantityString(R.plurals.plural_hour, hours, hours));
-    if (minutes > 0) parts.add(res.getQuantityString(R.plurals.plural_minute, minutes, minutes));
-    if (seconds > 0 || parts.size() == 0)
+    if(hours > 0) parts.add(res.getQuantityString(R.plurals.plural_hour, hours, hours));
+    if(minutes > 0) parts.add(res.getQuantityString(R.plurals.plural_minute, minutes, minutes));
+    if(seconds > 0 || parts.size() == 0)
       parts.add(res.getQuantityString(R.plurals.plural_second, seconds, seconds));
 
     if(parts.size() == 1) {
@@ -144,7 +148,7 @@ public class StringUtils {
    */
   public static String longCoarseHumanTimeFromMillis(long durationMillis, Context context) {
     long durationSeconds = durationMillis / 1000;
-    if (durationSeconds < 60) {
+    if(durationSeconds < 60) {
       return longHumanTimeFromMillis(durationMillis, context);
     }
     durationSeconds = (durationSeconds / 60) * 60;
@@ -165,5 +169,58 @@ public class StringUtils {
     minutes = minutes - hours * 60;
 
     return new int[]{hours, minutes, seconds};
+  }
+
+  /**
+   * Returns a formatted string like "13 pages" or "0.4%" based on how long the reading was in the
+   * provided Session.
+   */
+  public static String formatSessionReadAmountHtml(Context context, Session session) {
+    Book sessionBook = session.getBook();
+
+    if(sessionBook == null || !sessionBook.hasPageNumbers()) {
+      final float length = 100 * session.getLength();
+      return context.getString(R.string.StringUtils_format_pages_length_pct_html, length); // => "0.4%"
+    }
+
+    final float pages = sessionBook.getPageCount();
+    final int pageCount = Math.round(pages * session.getLength());
+    return context.getString(R.string.StringUtils_format_pages_length_pages_html, pageCount);
+  }
+
+
+  /**
+   * Returns a formatted string like "<b>2</b>h, <b>13</b>min or <b>45</b> minutes based on the
+   * session duration
+   */
+  public static String formatSessionDurationHtml(Context context, Session session) {
+    final Resources res = context.getResources();
+
+    int[] hms = convertMillisecondsToHMS(session.getDurationSeconds() * 1000);
+    if(hms[0] > 0) {
+      // has hours, use short format
+      return res.getString(R.string.StringUtils_format_duration_short_html, hms[0], hms[1]); // => "2h, 13min"
+    }
+    // use long format
+    return res.getQuantityString(R.plurals.plural_minute_html, hms[1], hms[1]); // => "13 minutes"
+  }
+
+  /**
+   * Returns a formatted string like "p. 12 - 15" or "14.5 - 16.6%" based on the start and end page
+   * of the session.
+   */
+  public static String formatSessionFromTo(Context context, Session session) {
+    Book sessionBook = session.getBook();
+
+    if(sessionBook == null || !sessionBook.hasPageNumbers()) {
+      final float startPct = session.getStartPosition() * 100f;
+      final float endPct = session.getEndPosition() * 100f;
+      return context.getString(R.string.StringUtils_format_session_from_to_pct, startPct, endPct);
+    }
+
+    final float pageCount = sessionBook.getPageCount();
+    final int startPage = (int) (session.getStartPosition() * pageCount);
+    final int endPage = (int) (session.getEndPosition() * pageCount);
+    return context.getString(R.string.StringUtils_format_session_from_to_pages, startPage, endPage);
   }
 }

@@ -159,4 +159,17 @@
     <!-- 5 books imported (3 new, 2 merged), together with 54 sessions and 12 quotes. -->
     <string name="settings_import_book_report">%1$s imported (%2$s, %3$s), together with %4$s and %5$s.</string>
   <string name="string_dialog_color_picker_ok">Apply</string>
+
+    <!-- StringUtils -->
+    <string name="StringUtils_format_pages_length_pct_html"><![CDATA[<b>%.1f%%</b>]]></string>
+    <string name="StringUtils_format_pages_length_pages_html"><![CDATA[<b>%1$d</b> pages]]></string>
+
+    <string name="StringUtils_format_duration_short_html"><![CDATA[<b>%1$d</b>h, <b>%2$d</b>min]]></string>
+    <string name="StringUtils_format_duration_long"><![CDATA[<b>%1$d</b> minutes]]></string>
+
+    <string name="StringUtils_format_session_from_to_pct">%.1f - %.1f%%</string>
+    <string name="StringUtils_format_session_from_to_pages">p. %1$d - %2$d</string>
+
+    <!-- ReadingSessionAdapter -->
+    <string name="ReadingSessionAdapter_date_format">ha, MMM d, yyyy</string>
 </resources>
