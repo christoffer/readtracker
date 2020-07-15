@@ -5,6 +5,8 @@ import android.util.Log;
 
 import com.readtracker.android.db.Session;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * A timer for reading sessions.
  * Can be started and stopped and keeps track of total elapsed time.
@@ -101,7 +103,7 @@ public class SessionTimer {
   }
 
   /** Loads the timer state from preferences. If no stored timer was found, the timer is reset. */
-  public void initializeFromPreferences(SharedPreferences prefs) {
+  public void initializeFromPreferences(@NotNull SharedPreferences prefs) {
     Log.d(TAG, "Loading from preferences");
     if(prefs.contains(PREF_ELAPSED) && prefs.contains(PREF_TIMESTAMP)) {
       final boolean wasRunning = isRunning();
@@ -120,21 +122,21 @@ public class SessionTimer {
   }
 
   /** Saves the timer state to preferences. */
-  public void saveToPreferences(SharedPreferences prefs) {
+  public void saveToPreferences(@NotNull SharedPreferences prefs) {
     Log.d(TAG, "Saving to preferences");
     prefs.edit()
-      .putLong(PREF_ELAPSED, mElapsedMs)
-      .putLong(PREF_TIMESTAMP, mStartTimestampMs)
-      .commit();
+        .putLong(PREF_ELAPSED, mElapsedMs)
+        .putLong(PREF_TIMESTAMP, mStartTimestampMs)
+        .apply();
   }
 
   /** Removes any timer state from the preferences. */
-  public void clearFromPreferences(SharedPreferences prefs) {
+  public void clearFromPreferences(@NotNull SharedPreferences prefs) {
     Log.d(TAG, "Clearing from preferences");
     prefs.edit()
-      .remove(PREF_ELAPSED)
-      .remove(PREF_TIMESTAMP)
-      .commit();
+        .remove(PREF_ELAPSED)
+        .remove(PREF_TIMESTAMP)
+        .apply();
   }
 
   /** Resets the elapsed time to zero. */
@@ -154,17 +156,17 @@ public class SessionTimer {
   }
 
   /** Callback interface for getting notified as the timer is started and stopped. */
-  public static interface SessionTimerListener {
+  public interface SessionTimerListener {
     /** Called when the timer start. */
-    public void onSessionTimerStarted();
+    void onSessionTimerStarted();
 
     /** Called when the timer stops. */
-    public void onSessionTimerStopped();
+    void onSessionTimerStopped();
   }
 
   /** Interface for a provider of time. */
-  public static interface TimeProvider {
-    public abstract long getMilliseconds();
+  public interface TimeProvider {
+    long getMilliseconds();
   }
 
   /** Simple TimeProvider that returns the system time. */

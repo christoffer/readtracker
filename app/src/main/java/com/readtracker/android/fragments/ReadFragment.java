@@ -1,5 +1,7 @@
 package com.readtracker.android.fragments;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -28,9 +30,10 @@ import com.readtracker.android.db.Book;
 import com.readtracker.android.support.ColorUtils;
 import com.readtracker.android.support.SessionTimer;
 import com.readtracker.android.support.SimpleAnimationListener;
-import com.readtracker.android.support.Utils;
 import com.readtracker.android.thirdparty.SafeViewFlipper;
 import com.squareup.otto.Subscribe;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.WeakReference;
 import java.util.Timer;
@@ -105,25 +108,40 @@ public class ReadFragment extends BaseFragment {
     return rootView;
   }
 
-  @Override public void onViewCreated(View view, Bundle savedInstanceState) {
+  @Override public void onViewCreated(@NotNull View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     populateFieldsDeferred();
   }
 
   @Override public void onStart() {
     super.onStart();
-    mSessionTimer.initializeFromPreferences(getPreferences());
+    final SharedPreferences prefs = getPreferences();
+    if(prefs != null) {
+      mSessionTimer.initializeFromPreferences(getPreferences());
+    } else {
+      Log.d(TAG, "Started ReadFragment without access to preferences");
+    }
+
     refreshDurationWheel();
   }
 
   @Override public void onStop() {
     super.onStop();
-    if(getActivity().isFinishing()) {
+
+    mUpdateWheelViewTimer.stop();
+
+    final Activity attachedActivity = getActivity();
+    final SharedPreferences prefs = getPreferences();
+    if(attachedActivity == null || prefs == null) {
+      Log.d(TAG, "onStop() with detached activity and/or without access to preferences");
+      return;
+    }
+
+    if(attachedActivity.isFinishing()) {
       mSessionTimer.clearFromPreferences(getPreferences());
     } else {
       mSessionTimer.saveToPreferences(getPreferences());
     }
-    mUpdateWheelViewTimer.stop();
   }
 
   @Subscribe public void onBookLoadedEvent(BookActivity.BookLoadedEvent event) {
@@ -270,11 +288,20 @@ public class ReadFragment extends BaseFragment {
   }
 
   private void initializeDurationWheel() {
+    final Context context = getContext();
+    if(context == null) {
+      return;
+    }
+
     final int maxHours = 24;
-    final int maxDurationInMinutes = maxHours * 60;
-    String[] displayValues = getDisplayedValues(maxDurationInMinutes);
-    mDurationPicker.setMaxValue(maxDurationInMinutes - 1);
-    mDurationPicker.setDisplayedValues(displayValues);
+    final int numMinutesInWheel = maxHours * 60;
+    String[] wheelLabels = new String[numMinutesInWheel];
+    for(int minute = 0; minute < numMinutesInWheel; minute++) {
+      wheelLabels[minute] = hoursAndMinutesFromMillis(minute * 60 * 1000, context);
+    }
+
+    mDurationPicker.setMaxValue(numMinutesInWheel - 1);
+    mDurationPicker.setDisplayedValues(wheelLabels);
 
     // Don't show the duration wheel until the timer has started
     mDurationPicker.setVisibility(View.INVISIBLE);
@@ -286,20 +313,6 @@ public class ReadFragment extends BaseFragment {
         mSessionTimer.reset(newElapsedMs);
       }
     });
-  }
-
-  /**
-   * Creates an adapter to display the duration in a human readable form.
-   *
-   * @param maxMinutes the maximum time (in minutes) to show
-   * @return an array of Strings for each minute
-   */
-  private String[] getDisplayedValues(int maxMinutes) {
-    String[] labels = new String[maxMinutes];
-    for(int minute = 0; minute < maxMinutes; minute++) {
-      labels[minute] = hoursAndMinutesFromMillis(minute * 60 * 1000, getContext());
-    }
-    return labels;
   }
 
   private String getLastPositionDescription() {
@@ -314,9 +327,13 @@ public class ReadFragment extends BaseFragment {
 
   /** Starts the timer with a UI transition into a running mode. */
   private void transitionFromStartModeToRunningMode() {
-    final Animation disappear = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_out);
+    final Context context = getContext();
+    if(context == null) {
+      return; // detached
+    }
 
-    //noinspection ConstantConditions
+    final Animation disappear = AnimationUtils.loadAnimation(context, R.anim.fade_out);
+
     disappear.setAnimationListener(new SimpleAnimationListener() {
       @Override public void onAnimationEnd(Animation animation) {
         mSessionTimer.start();
@@ -373,7 +390,7 @@ public class ReadFragment extends BaseFragment {
 
   private void refreshDurationWheel() {
     final long elapsedMilliseconds = mSessionTimer.getElapsedMs();
-    Log.i(TAG, "Updating duration: " + elapsedMilliseconds);
+    Log.v(TAG, "Updating duration: " + elapsedMilliseconds);
     int elapsedMinutes = (int) (elapsedMilliseconds / (1000 * 60));
     int currentItem = mDurationPicker.getValue();
     if(elapsedMinutes != currentItem) {
@@ -382,7 +399,11 @@ public class ReadFragment extends BaseFragment {
   }
 
   private SharedPreferences getPreferences() {
-    return ((BaseActivity) getActivity()).getPreferences();
+    final BaseActivity activity = (BaseActivity) getActivity();
+    if(activity != null) {
+      return activity.getPreferences();
+    }
+    return null;
   }
 
   /** Updates the duration wheel at suitable times. */

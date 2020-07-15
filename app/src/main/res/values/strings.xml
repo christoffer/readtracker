@@ -77,7 +77,7 @@
     <string name="reading_done">Done</string>
     <string name="reading_last_at">Last at %1$s</string>
     <string name="reading_last_on_page">Last on page %1$s</string>
-    <string name="reading_click_to_start">Click to start reading</string>
+    <string name="reading_click_to_start">Touch here to start</string>
     <string name="reading_item_cover_content_desc">Book cover</string>
 
     <string name="reading_list_blank_content_desc">Blank reading list</string>
@@ -121,7 +121,7 @@
 
     <string name="book_list_finished_on">Finished %1$s</string>
 
-    <string name="sessions_blank_text">No reading history to display</string>
+    <string name="sessions_blank_text">More information will show up here once you start reading</string>
     <string name="sessions_summary">Reading for %1$s over %2$d sessions.</string>
     <string name="sessions_eta">Given your current reading pace, it\'ll take roughly %1$s to finish the book.</string>
 
