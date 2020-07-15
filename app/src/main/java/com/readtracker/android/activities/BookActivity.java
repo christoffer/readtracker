@@ -159,16 +159,11 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialog.E
 
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
-    switch(item.getItemId()) {
-      case R.id.book_activity_edit_book_menu_item:
-        Intent intent = new Intent(this, BookSettingsActivity.class);
-        intent.putExtra(BookBaseActivity.KEY_BOOK_ID, getBookIdFromIntent());
-        startActivityForResult(intent, REQUEST_EDIT_BOOK);
-        break;
-      default:
-        return false;
+    if(item.getItemId() == R.id.book_activity_edit_book_menu_item) {
+      openSettingsForCurrentBook();
     }
-    return true;
+
+    return false;
   }
 
   @Produce public BookLoadedEvent produceBookLoadedEvent() {
@@ -186,6 +181,10 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialog.E
     });
   }
 
+  @Subscribe public void onBookEditRequestedEvent(final BookActivity.BookEditRequestedEvent event) {
+    openSettingsForCurrentBook();
+  }
+
   @Override public void onConfirmedSessionEndPosition(float position) {
     mCurrentSession.setEndPosition(position);
     if(position == 1f) {
@@ -197,6 +196,12 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialog.E
       // Updated session, finish up
       saveSessionAndExit();
     }
+  }
+
+  private void openSettingsForCurrentBook() {
+    Intent intent = new Intent(this, BookSettingsActivity.class);
+    intent.putExtra(BookBaseActivity.KEY_BOOK_ID, getBookIdFromIntent());
+    startActivityForResult(intent, REQUEST_EDIT_BOOK);
   }
 
   private void saveSessionAndExit() {
@@ -249,7 +254,7 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialog.E
 
     SaveAndExitTask(BookActivity activity, Intent resultData) {
       mResultData = resultData;
-      mActivityRef = new WeakReference<BookActivity>(activity);
+      mActivityRef = new WeakReference<>(activity);
     }
 
     @Override protected Boolean doInBackground(Model... modelsToSave) {
@@ -282,5 +287,9 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialog.E
         activity.finish();
       }
     }
+  }
+
+  public static class BookEditRequestedEvent {
+
   }
 }

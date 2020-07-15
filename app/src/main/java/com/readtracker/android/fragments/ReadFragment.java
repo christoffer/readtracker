@@ -34,6 +34,7 @@ import com.readtracker.android.support.SessionTimer;
 import com.readtracker.android.support.SimpleAnimationListener;
 import com.readtracker.android.thirdparty.SafeViewFlipper;
 import com.squareup.otto.Subscribe;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import org.jetbrains.annotations.NotNull;
@@ -53,6 +54,7 @@ public class ReadFragment extends BaseFragment {
 
   // Session controls
   @InjectView(R.id.start_button) Button mStartButton;
+  @InjectView(R.id.edit_button) Button mEditButton;
   @InjectView(R.id.pause_button) Button mPauseButton;
   @InjectView(R.id.done_button) Button mDoneButton;
 
@@ -198,13 +200,26 @@ public class ReadFragment extends BaseFragment {
     final int bookColor = ColorUtils.getColorForBook(mBook);
     mTimeSpinner.setColor(bookColor);
 
-    Picasso
-        .with(context)
+    Picasso.with(context)
         .load(mBook.getCoverImageUrl())
         .transform(new CircleImageTransformation())
-        .into(coverImage);
+        .into(coverImage, new Callback() {
+          @Override public void onSuccess() {}
+
+          @Override public void onError() {
+            mEditButton.setText(R.string.refresh_cover);
+            mEditButton.setVisibility(View.VISIBLE);
+          }
+        });
     ColorUtils.setNumberPickerDividerColorUsingHack(mDurationPicker, 0x00000000);
     mLastPositionText.setText(getLastPositionDescription());
+
+    // Don't bother users that has already customized the book with a large button in the UI.
+    final boolean hasPersonalization = mBook.getCoverImageUrl() != null;
+    Log.d(TAG, String.format("Book cover url: %s", mBook.getCoverImageUrl()));
+    mEditButton.setText(R.string.personalize);
+    mEditButton.setVisibility(hasPersonalization ? View.GONE : View.VISIBLE);
+
     bindEvents();
   }
 
@@ -219,6 +234,12 @@ public class ReadFragment extends BaseFragment {
       @Override
       public void onClick(View view) {
         transitionFromStartModeToRunningMode();
+      }
+    });
+
+    mEditButton.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View view) {
+        getBus().post(new BookActivity.BookEditRequestedEvent());
       }
     });
 

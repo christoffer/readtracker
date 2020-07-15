@@ -72,6 +72,8 @@
     <string name="book_error_updating">An error occurred, the book could not be saved.</string>
 
     <string name="reading_start">Start</string>
+    <string name="personalize">Personalize</string>
+    <string name="refresh_cover">Refresh cover</string>
     <string name="reading_resume">Resume</string>
     <string name="reading_pause">Pause</string>
     <string name="reading_done">Done</string>
