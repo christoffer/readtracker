@@ -35,7 +35,7 @@ public class SessionHeaderView extends LinearLayout {
   public SessionHeaderView(Context context) {
     super(context);
     Log.d(TAG, "SessionHeaderView()");
-    View rootView = inflate(getContext(), R.layout.fragment_session_list_header, this);
+    View rootView = inflate(getContext(), R.layout.session_list_header, this);
     ButterKnife.inject(this, rootView);
   }
 

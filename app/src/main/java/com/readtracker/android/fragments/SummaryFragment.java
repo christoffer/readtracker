@@ -43,7 +43,6 @@ public class SummaryFragment extends BaseFragment {
 
   @Override
   public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    Log.d(TAG, "onCreateView()");
     View rootView = inflater.inflate(R.layout.fragment_sessions, container, false);
     ButterKnife.inject(this, rootView);
 
@@ -76,8 +75,6 @@ public class SummaryFragment extends BaseFragment {
 
     mSessionListHeader.populateForBook(mBook);
     final List<Session> sessions = mBook.getSessions();
-
-    Log.d(TAG, String.format("sumamry text: %s", mSessionListHeader.mTextSummary.getText().toString()));
 
     if(sessions.size() > 0) {
       mBlankText.setVisibility(View.GONE);

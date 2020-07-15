@@ -1,48 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout android:id="@+id/layout"
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:paddingBottom="@dimen/gridGutter"
-                android:paddingLeft="@dimen/halfGridMargins"
-                android:paddingRight="@dimen/halfGridMargins"
-                android:paddingTop="@dimen/gridGutter">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:id="@+id/layout"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:paddingLeft="@dimen/halfGridMargins"
+  android:paddingTop="@dimen/gridMargins"
+  android:paddingRight="@dimen/halfGridMargins"
+  android:paddingBottom="@dimen/halfGridMargins">
 
   <ImageView
     android:id="@+id/imageCover"
-    android:layout_width="36dp"
-    android:layout_height="36dp"
+    android:layout_width="48sp"
+    android:layout_height="48sp"
+    android:layout_alignParentEnd="true"
     android:layout_alignParentRight="true"
     android:contentDescription="@string/reading_item_cover_content_desc"
-    android:scaleType="centerCrop"/>
+    android:scaleType="centerCrop"
+    tools:src="@drawable/icon_book" />
 
   <TextView
     android:id="@+id/textTitle"
     style="@style/default_text"
-    android:layout_width="fill_parent"
-    android:layout_marginBottom="1dp"
+    android:layout_width="match_parent"
+    android:layout_marginEnd="@dimen/gridGutter"
     android:layout_marginRight="@dimen/gridGutter"
+    android:layout_marginBottom="1dp"
+    android:layout_toStartOf="@id/imageCover"
     android:layout_toLeftOf="@id/imageCover"
     android:singleLine="true"
-    tools:text="Metamorphosis"/>
+    tools:text="Metamorphosis" />
 
   <TextView
     android:id="@+id/textAuthor"
     style="@style/default_text"
-    android:layout_width="fill_parent"
+    android:layout_width="match_parent"
     android:layout_below="@id/textTitle"
+    android:layout_marginEnd="@dimen/gridGutter"
     android:layout_marginRight="@dimen/gridGutter"
+    android:layout_toStartOf="@id/imageCover"
     android:layout_toLeftOf="@id/imageCover"
     android:singleLine="true"
     android:textColor="@color/textColorSecondary"
-    tools:text="Franz Kafka"/>
+    tools:text="Franz Kafka" />
 
   <com.readtracker.android.custom_views.SegmentBar
     android:id="@+id/progressReadingProgress"
     style="@style/progress_bar"
     android:layout_below="@id/imageCover"
-    android:layout_marginTop="12dp"/>
+    android:layout_marginTop="22dp" />
 
 </RelativeLayout>

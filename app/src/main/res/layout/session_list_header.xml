@@ -19,7 +19,7 @@
     android:paddingRight="6dp"
     android:paddingBottom="3dp"
     android:textColor="@color/windowBackground"
-    android:textSize="14sp"
+    android:textSize="@dimen/textSizeSmall"
     tools:text="Finished" />
 
   <TextView
@@ -27,15 +27,14 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="12dp"
-    android:text="asdfasdf"
-    android:textSize="14sp" />
+    android:textSize="@dimen/textSizeMedium" />
 
   <TextView
     android:id="@+id/textSummary"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="12dp"
-    android:textSize="12sp" />
+    android:textSize="@dimen/textSizeMedium" />
 
   <com.readtracker.android.custom_views.SegmentBar
     android:id="@+id/segmentBar"
@@ -50,6 +49,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="12dp"
-    android:textSize="12sp" />
+    android:textSize="@dimen/textSizeMedium" />
 
 </LinearLayout>
