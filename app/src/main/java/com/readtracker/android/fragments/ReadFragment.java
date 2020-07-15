@@ -17,6 +17,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LinearInterpolator;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 
@@ -27,11 +28,13 @@ import com.readtracker.android.activities.BookActivity;
 import com.readtracker.android.custom_views.PauseableSpinAnimation;
 import com.readtracker.android.custom_views.TimeSpinner;
 import com.readtracker.android.db.Book;
+import com.readtracker.android.support.CircleImageTransformation;
 import com.readtracker.android.support.ColorUtils;
 import com.readtracker.android.support.SessionTimer;
 import com.readtracker.android.support.SimpleAnimationListener;
 import com.readtracker.android.thirdparty.SafeViewFlipper;
 import com.squareup.otto.Subscribe;
+import com.squareup.picasso.Picasso;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -63,6 +66,8 @@ public class ReadFragment extends BaseFragment {
 
   // Flipper for showing start vs. stop/done
   @InjectView(R.id.time_spinner_controls_flipper) SafeViewFlipper mTimeSpinnerControlsFlipper;
+
+  @InjectView(R.id.coverImage) ImageView coverImage;
 
   // Book to track
   private Book mBook;
@@ -183,9 +188,21 @@ public class ReadFragment extends BaseFragment {
     if(mBook == null || getView() == null) {
       return;
     }
+
+    final Context context = getContext();
+    if(context == null) {
+      return; // detached?
+    }
+
     Log.v(TAG, "Populating fields for book: " + mBook);
     final int bookColor = ColorUtils.getColorForBook(mBook);
     mTimeSpinner.setColor(bookColor);
+
+    Picasso
+        .with(context)
+        .load(mBook.getCoverImageUrl())
+        .transform(new CircleImageTransformation())
+        .into(coverImage);
     ColorUtils.setNumberPickerDividerColorUsingHack(mDurationPicker, 0x00000000);
     mLastPositionText.setText(getLastPositionDescription());
     bindEvents();
@@ -353,7 +370,7 @@ public class ReadFragment extends BaseFragment {
   }
 
   private void refreshNumberPickerIfEditing() {
-    if (mDurationPicker.hasFocus()) {
+    if(mDurationPicker.hasFocus()) {
       // Explicitly clear the focus to trigger an update if the user hasn't closed
       // the keyboard before clicking the done button.
       mDurationPicker.clearFocus();

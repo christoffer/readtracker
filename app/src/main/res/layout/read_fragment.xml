@@ -1,16 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="12dp">
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:padding="12dp">
 
   <RelativeLayout
     android:id="@+id/time_spinner_wrapper"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="@dimen/gridMargins"
-    android:layout_above="@+id/time_spinner_controls_flipper">
+    android:layout_above="@+id/time_spinner_controls_flipper"
+    android:padding="@dimen/gridMargins">
+
+    <ImageView
+      android:id="@+id/coverImage"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:layout_centerInParent="true"
+      android:alpha="0.1"
+      android:contentDescription="@string/add_book_book_cover"
+      android:maxWidth="@dimen/readingViewsMaxWidth"
+      android:maxHeight="@dimen/readingViewsMaxWidth"
+      android:padding="24dp"
+      android:scaleType="fitCenter" />
 
     <TextView
       android:id="@+id/last_position_text"
@@ -18,9 +30,9 @@
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_centerInParent="true"
-      android:maxWidth="@dimen/readingViewsMaxWidth"
       android:gravity="center"
-      android:textSize="20sp"/>
+      android:maxWidth="@dimen/readingViewsMaxWidth"
+      android:textSize="20sp" />
 
     <NumberPicker
       android:id="@+id/duration_picker"
@@ -29,16 +41,15 @@
       android:layout_centerInParent="true"
       android:layout_marginBottom="24dp"
       android:maxWidth="@dimen/readingViewsMaxWidth"
-      android:minHeight="80dp"
       android:minWidth="220dp"
-      />
+      android:minHeight="80dp" />
 
     <com.readtracker.android.custom_views.TimeSpinner
       android:id="@+id/timespinner"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       android:layout_centerInParent="true"
-      android:layout_marginBottom="48dp"/>
+      android:layout_marginBottom="48dp" />
 
   </RelativeLayout>
 
@@ -53,7 +64,7 @@
       android:id="@+id/start_button"
       style="@style/default_button"
       android:layout_gravity="center"
-      android:text="@string/reading_start"/>
+      android:text="@string/reading_start" />
 
     <!-- group of pause/resume and done button -->
 
@@ -68,17 +79,15 @@
         android:layout_marginEnd="6dp"
         android:layout_marginRight="6dp"
         android:layout_weight="1"
-        android:text="@string/reading_pause"
-        />
+        android:text="@string/reading_pause" />
 
       <Button
         android:id="@+id/done_button"
         style="@style/default_button"
-        android:layout_marginLeft="6dp"
         android:layout_marginStart="6dp"
+        android:layout_marginLeft="6dp"
         android:layout_weight="1"
-        android:text="@string/reading_done"
-        />
+        android:text="@string/reading_done" />
 
     </LinearLayout>
 
