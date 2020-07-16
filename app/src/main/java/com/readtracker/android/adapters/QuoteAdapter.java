@@ -2,7 +2,6 @@ package com.readtracker.android.adapters;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +11,6 @@ import android.widget.TextView;
 
 import com.readtracker.R;
 import com.readtracker.android.db.Quote;
-import com.readtracker.android.support.DrawableGenerator;
 import com.readtracker.android.support.StringUtils;
 
 import java.util.Comparator;
@@ -83,9 +81,6 @@ public class QuoteAdapter extends ArrayAdapter<Quote> {
       textDate.setText(metadata);
     }
 
-    final int backgroundColor = ContextCompat.getColor(convertView.getContext(), R.color.windowBackground);
-    final int itemColor = mColor;
-    convertView.setBackground(DrawableGenerator.generateListItemBackground(itemColor, backgroundColor));
     return convertView;
   }
 

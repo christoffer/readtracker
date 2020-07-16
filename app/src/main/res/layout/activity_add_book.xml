@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:fillViewport="true">
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="fill_parent"
+  android:layout_height="fill_parent"
+  android:fillViewport="true">
 
   <LinearLayout
     android:layout_width="fill_parent"
@@ -13,56 +13,56 @@
     android:padding="12dp">
 
     <RelativeLayout
-        android:layout_width="96dp"
-        android:layout_height="96dp"
-        android:layout_gravity="center">
+      android:layout_width="96dp"
+      android:layout_height="96dp"
+      android:layout_gravity="center">
 
       <ImageView
         android:id="@+id/book_cover_image"
         style="@style/non_primary_button"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="centerInside"
+        android:layout_centerInParent="true"
         android:contentDescription="@string/add_book_book_cover"
         android:longClickable="true"
         android:padding="16dp"
-        android:src="@drawable/icon_book"
-        android:layout_centerInParent="true" />
+        android:scaleType="centerInside"
+        android:src="@drawable/icon_book" />
 
       <ImageButton
         android:id="@+id/refresh_cover_button"
-        android:contentDescription="@string/add_book_refresh_book_cover"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_centerInParent="true"
         android:background="@drawable/bg_button_transparent"
-        android:src="@android:drawable/stat_notify_sync"
-        android:layout_centerInParent="true" />
+        android:contentDescription="@string/add_book_refresh_book_cover"
+        android:src="@android:drawable/stat_notify_sync" />
 
     </RelativeLayout>
 
     <LinearLayout
+      android:id="@+id/layout_color_buttons"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:id="@+id/layout_color_buttons"
-      android:padding="8dp"
       android:gravity="center_horizontal"
-      android:orientation="horizontal" />
+      android:orientation="horizontal"
+      android:padding="8dp" />
 
     <EditText
       android:id="@+id/title_edit"
       style="@style/default_input_field"
-      android:layout_marginBottom="12dp"
       android:layout_marginTop="8dp"
-      tools:drawableRight="@android:drawable/stat_notify_error"
+      android:layout_marginBottom="12dp"
       android:hint="@string/add_book_title_hint"
-      android:importantForAutofill="no" />
+      android:importantForAutofill="no"
+      tools:drawableRight="@android:drawable/stat_notify_error" />
 
     <EditText
       android:id="@+id/author_edit"
       style="@style/default_input_field"
-      tools:drawableRight="@android:drawable/stat_notify_error"
       android:hint="@string/add_book_author_hint"
-      android:importantForAutofill="no" />
+      android:importantForAutofill="no"
+      tools:drawableRight="@android:drawable/stat_notify_error" />
 
     <CheckBox
       android:id="@+id/track_using_pages"
@@ -70,7 +70,7 @@
       android:layout_height="wrap_content"
       android:layout_marginTop="18dp"
       android:checked="true"
-      android:text="@string/add_book_track_using_pages"/>
+      android:text="@string/add_book_track_using_pages" />
 
     <EditText
       android:id="@+id/page_count_edit"
@@ -80,15 +80,15 @@
       android:ellipsize="end"
       android:gravity="center_horizontal"
       android:hint="@string/add_book_page_count_hint"
+      android:importantForAutofill="no"
       android:inputType="number"
-      tools:drawableRight="@android:drawable/stat_notify_error"
-      />
+      tools:drawableRight="@android:drawable/stat_notify_error" />
 
-    <Button
+    <android.support.v7.widget.AppCompatButton
       android:id="@+id/add_or_save_button"
       style="@style/default_button"
       android:layout_marginTop="24dp"
-      android:text="@string/add_book_save"/>
+      android:text="@string/add_book_save" />
 
   </LinearLayout>
 </ScrollView>

@@ -58,6 +58,7 @@ android {
     }
     lintOptions {
         abortOnError false
+        disable 'DefaultLocale'
     }
     packagingOptions {
         exclude 'META-INF/services/javax.annotation.processing.Processor'

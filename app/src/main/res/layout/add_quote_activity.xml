@@ -1,49 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_height="fill_parent"
-            android:layout_width="fill_parent"
-            android:layout_marginTop="6dp"
-            android:layout_marginBottom="6dp"
-            android:padding="12dp">
+  android:layout_width="fill_parent"
+  android:layout_height="fill_parent"
+  android:layout_marginTop="6dp"
+  android:layout_marginBottom="6dp"
+  android:padding="12dp">
 
   <LinearLayout
-    android:layout_height="wrap_content"
     android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <TextView
+      android:id="@+id/quoteTextLabel"
       style="@style/default_text"
       android:layout_marginTop="6dp"
       android:layout_marginBottom="6dp"
-      android:text="@string/quote_text"/>
+      android:text="@string/quote_text" />
 
     <EditText
       android:id="@+id/quote_text_edit"
       style="@style/free_text_input"
-      android:minHeight="128dp"
       android:layout_marginBottom="12dp"
-      android:hint=""/>
+      android:hint="@string/quote_text"
+      android:importantForAutofill="no"
+      android:minHeight="128dp" />
 
     <TextView
       android:id="@+id/textLabelEnterPosition"
       style="@style/default_text"
       android:layout_marginTop="12dp"
       android:layout_marginBottom="6dp"
-      android:text="@string/quote_activity_position"/>
+      android:text="@string/quote_activity_position" />
 
     <com.readtracker.android.custom_views.ProgressPicker
       android:id="@+id/progress_picker"
       android:layout_width="wrap_content"
-      android:layout_gravity="center_horizontal"
       android:layout_height="wrap_content"
+      android:layout_gravity="center_horizontal"
       android:layout_marginTop="12dp"
-      android:layout_marginBottom="12dp"/>
+      android:layout_marginBottom="12dp" />
 
-    <Button
+    <android.support.v7.widget.AppCompatButton
       android:id="@+id/save_button"
       style="@style/default_button"
-      android:text="@string/quote_activity_save"/>
+      android:text="@string/quote_activity_save" />
 
   </LinearLayout>
 </ScrollView>

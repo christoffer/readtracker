@@ -1,17 +1,14 @@
 package com.readtracker.android.activities;
 
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v7.widget.AppCompatButton;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 
 import com.readtracker.R;
 import com.readtracker.android.db.Book;
 import com.readtracker.android.support.ColorUtils;
-import com.readtracker.android.support.DrawableGenerator;
-import com.readtracker.android.support.Utils;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -20,7 +17,7 @@ public class FinishBookActivity extends BookBaseActivity implements View.OnClick
   public static final String KEY_CLOSING_REMARK = "CLOSING_REMARK";
 
   @InjectView(R.id.editClosingRemark) EditText mEditClosingRemark;
-  @InjectView(R.id.finish_button) Button mButtonFinish;
+  @InjectView(R.id.finish_button) AppCompatButton mButtonFinish;
 
   private Book mBook;
   private boolean mDidLayout;
@@ -59,10 +56,7 @@ public class FinishBookActivity extends BookBaseActivity implements View.OnClick
     }
 
     final int color = ColorUtils.getColorForBook(mBook);
-    Drawable drawable = DrawableGenerator.generateEditTextOutline(this, color, 1, 3);
-    mEditClosingRemark.setBackgroundDrawable(drawable);
-
-    mButtonFinish.setBackgroundDrawable(DrawableGenerator.generateButtonBackground(color));
+    ColorUtils.applyButtonColor(color, mButtonFinish);
   }
 
   @Override public void onClick(View view) {

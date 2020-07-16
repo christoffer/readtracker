@@ -2,17 +2,16 @@ package com.readtracker.android.activities;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.graphics.Palette;
+import android.support.v7.widget.AppCompatButton;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -22,8 +21,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -40,7 +37,6 @@ import com.readtracker.android.db.Book;
 import com.readtracker.android.db.DatabaseManager;
 import com.readtracker.android.support.ColorPickerDialog;
 import com.readtracker.android.support.ColorUtils;
-import com.readtracker.android.support.DrawableGenerator;
 import com.readtracker.android.support.GoogleBook;
 import com.readtracker.android.support.GoogleBookSearch;
 import com.readtracker.android.support.Utils;
@@ -51,7 +47,6 @@ import com.squareup.picasso.Target;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -67,12 +62,11 @@ public class BookSettingsActivity extends BookBaseActivity implements GoogleBook
   public static final int RESULT_DELETED_BOOK = RESULT_FIRST_USER + 2;
 
   public static final String KEY_QUOTE_ID = "QUOTE_ID";
-  private static final int BUTTON_SIZE_DP = 32;
 
   @InjectView(R.id.title_edit) EditText mTitleEdit;
   @InjectView(R.id.author_edit) EditText mAuthorEdit;
   @InjectView(R.id.page_count_edit) EditText mPageCountEdit;
-  @InjectView(R.id.add_or_save_button) Button mSaveButton;
+  @InjectView(R.id.add_or_save_button) AppCompatButton mSaveButton;
   @InjectView(R.id.track_using_pages) CheckBox mTrackUsingPages;
   @InjectView(R.id.book_cover_image) ImageView mCoverImage;
   @InjectView(R.id.refresh_cover_button) ImageButton mRefreshCoverButton;
@@ -84,7 +78,6 @@ public class BookSettingsActivity extends BookBaseActivity implements GoogleBook
   private int mCurrentBookColor = -1;
 
   private HashSet<Integer> mSuggestedColors = new HashSet<>();
-  private int mButtonSizePx;
   private int mInitialBookColor;
   private int mColorButtonDistance;
   private View.OnClickListener mColorButtonClickListener = new View.OnClickListener() {
@@ -131,7 +124,6 @@ public class BookSettingsActivity extends BookBaseActivity implements GoogleBook
     mAuthorEdit.addTextChangedListener(textWatcher);
     mPageCountEdit.addTextChangedListener(textWatcher);
 
-    mButtonSizePx = Utils.convertDPtoPixels(this, BUTTON_SIZE_DP);
     mInitialBookColor = ContextCompat.getColor(this, R.color.defaultBookColor);
     setActiveColorPick(mInitialBookColor);
 
@@ -165,7 +157,7 @@ public class BookSettingsActivity extends BookBaseActivity implements GoogleBook
   /** Update the UI to reflect the current color choice */
   private void setActiveColorPick(int color) {
     mCurrentBookColor = color;
-    mSaveButton.setBackground(DrawableGenerator.generateButtonBackground(mCurrentBookColor));
+    ColorUtils.applyButtonColor(mCurrentBookColor, mSaveButton);
 
     for(int i = 0; i < mColorButtonContainer.getChildCount(); i++) {
       View view = mColorButtonContainer.getChildAt(i);

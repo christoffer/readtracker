@@ -3,16 +3,15 @@ package com.readtracker.android.activities;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.widget.AppCompatButton;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 
 import com.readtracker.R;
@@ -21,8 +20,6 @@ import com.readtracker.android.db.Book;
 import com.readtracker.android.db.DatabaseManager;
 import com.readtracker.android.db.Quote;
 import com.readtracker.android.support.ColorUtils;
-import com.readtracker.android.support.DrawableGenerator;
-import com.readtracker.android.support.Utils;
 
 import java.lang.ref.WeakReference;
 
@@ -39,7 +36,7 @@ public class QuoteSettingsActivity extends BookBaseActivity {
   private static final String TAG = QuoteSettingsActivity.class.getSimpleName();
 
   @InjectView(R.id.quote_text_edit) EditText mQuoteTextEdit;
-  @InjectView(R.id.save_button) Button mSaveButton;
+  @InjectView(R.id.save_button) AppCompatButton mSaveButton;
   @InjectView(R.id.progress_picker) ProgressPicker mProgressPicker;
 
   private Book mBook;
@@ -54,6 +51,7 @@ public class QuoteSettingsActivity extends BookBaseActivity {
     mSaveButton.setEnabled(false); // hold until book is loaded
 
     if(getIntent().hasExtra(KEY_QUOTE_ID)) {
+      //noinspection ConstantConditions -- running hasExtra above
       int quoteId = getIntent().getExtras().getInt(KEY_QUOTE_ID);
       Log.v(TAG, "Loading in edit mode: " + quoteId);
       mEditQuote = loadQuote(quoteId);
@@ -127,10 +125,7 @@ public class QuoteSettingsActivity extends BookBaseActivity {
     mBook = book;
 
     final int color = ColorUtils.getColorForBook(book);
-    final Drawable backgroundDrawable = DrawableGenerator.generateEditTextOutline(this, color, 1, 3);
-    mQuoteTextEdit.setBackgroundDrawable(backgroundDrawable);
-
-    DrawableGenerator.applyButtonBackground(color, mSaveButton);
+    ColorUtils.applyButtonColor(color, mSaveButton);
     mSaveButton.setEnabled(true);
 
     Float quotePosition = book.getCurrentPosition();
@@ -217,7 +212,7 @@ public class QuoteSettingsActivity extends BookBaseActivity {
       mQuote.setContent(quoteText);
       mQuote.setPosition(position);
 
-      mActivity = new WeakReference<QuoteSettingsActivity>(activity);
+      mActivity = new WeakReference<>(activity);
       mDatabaseManager = activity.getApp().getDatabaseManager();
     }
 

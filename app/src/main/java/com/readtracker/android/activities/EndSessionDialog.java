@@ -2,17 +2,16 @@ package com.readtracker.android.activities;
 
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.widget.AppCompatButton;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import com.readtracker.R;
 import com.readtracker.android.custom_views.ProgressPicker;
 import com.readtracker.android.db.Book;
 import com.readtracker.android.support.ColorUtils;
-import com.readtracker.android.support.DrawableGenerator;
 import com.readtracker.android.thirdparty.SafeViewFlipper;
 
 import butterknife.ButterKnife;
@@ -30,8 +29,8 @@ public class EndSessionDialog extends DialogFragment implements View.OnClickList
   public static final String ARG_PAGE_COUNT = "PAGE_COUNT";
   private static final String ARG_COLOR = "COLOR";
 
-  @InjectView(R.id.save_button) Button mButtonSaveProgress;
-  @InjectView(R.id.finish_button) Button mButtonFinishBook;
+  @InjectView(R.id.save_button) AppCompatButton mButtonSaveProgress;
+  @InjectView(R.id.finish_button) AppCompatButton mButtonFinishBook;
   @InjectView(R.id.progress_picker) ProgressPicker mProgressPicker;
   @InjectView(R.id.action_button_flipper) SafeViewFlipper mFlipperActionButtons;
 
@@ -45,7 +44,7 @@ public class EndSessionDialog extends DialogFragment implements View.OnClickList
     Bundle arguments = new Bundle();
 
     int color = ColorUtils.getColorForBook(book);
-    Float currentPosition = book.getCurrentPosition();
+    float currentPosition = book.getCurrentPosition();
     Float pageCount = book.getPageCount();
 
     arguments.putInt(ARG_COLOR, color);
@@ -60,18 +59,24 @@ public class EndSessionDialog extends DialogFragment implements View.OnClickList
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
+    final Bundle arguments = getArguments();
+    if(arguments == null) {
+      Log.d(TAG, "Got null arguments");
+      return;
+    }
+
     setStyle(STYLE_NO_TITLE, R.style.ReadTrackerDialogTheme);
 
-    mColor = getArguments().getInt(ARG_COLOR);
+    mColor = arguments.getInt(ARG_COLOR);
 
     if(savedInstanceState == null) {
-      mSelectedPosition = getArguments().getFloat(ARG_CURRENT_POSITION);
+      mSelectedPosition = arguments.getFloat(ARG_CURRENT_POSITION);
     } else {
       mSelectedPosition = savedInstanceState.getFloat(ARG_CURRENT_POSITION);
     }
 
-    if(getArguments().containsKey(ARG_PAGE_COUNT)) {
-      mPageCount = getArguments().getFloat(ARG_PAGE_COUNT);
+    if(arguments.containsKey(ARG_PAGE_COUNT)) {
+      mPageCount = arguments.getFloat(ARG_PAGE_COUNT);
     } else {
       mPageCount = null;
     }
@@ -89,7 +94,7 @@ public class EndSessionDialog extends DialogFragment implements View.OnClickList
 
     toggleFinishButton(mSelectedPosition == 1f);
 
-    DrawableGenerator.applyButtonBackground(mColor, mButtonSaveProgress, mButtonFinishBook);
+    ColorUtils.applyButtonColor(mColor, mButtonSaveProgress);
 
     mButtonSaveProgress.setOnClickListener(this);
     mButtonFinishBook.setOnClickListener(this);
@@ -99,11 +104,16 @@ public class EndSessionDialog extends DialogFragment implements View.OnClickList
 
   @Override
   public void onClick(View view) {
+    final EndSessionDialogListener listener = (EndSessionDialogListener) getActivity();
+    if(listener == null) {
+      return;
+    }
+
     if(view == mButtonSaveProgress) {
-      ((EndSessionDialogListener) getActivity()).onConfirmedSessionEndPosition(mProgressPicker.getPosition());
+      listener.onConfirmedSessionEndPosition(mProgressPicker.getPosition());
       dismissAllowingStateLoss();
     } else if(view == mButtonFinishBook) {
-      ((EndSessionDialogListener) getActivity()).onConfirmedSessionEndPosition(1f);
+      listener.onConfirmedSessionEndPosition(1f);
       dismissAllowingStateLoss();
     }
   }

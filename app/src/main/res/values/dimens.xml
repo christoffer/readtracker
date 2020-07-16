@@ -2,4 +2,12 @@
 <resources>
   <dimen name="textSizeSmall">14sp</dimen>
   <dimen name="textSizeMedium">18sp</dimen>
+  <dimen name="textSizeLarge">24sp</dimen>
+
+  <dimen name="gridGutter">16dp</dimen>
+  <dimen name="gridMargins">16dp</dimen>
+  <dimen name="halfGridMargins">8dp</dimen>
+  <dimen name="halfGridGutter">8dp</dimen>
+  <dimen name="readingViewsMaxWidth">300dp</dimen>
+  <dimen name="colorPickerButton_ImageSize">32dp</dimen>
 </resources>

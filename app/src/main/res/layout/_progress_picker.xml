@@ -5,6 +5,7 @@
   <NumberPicker
     android:id="@+id/position_picker"
     android:minWidth="150dp"
+    android:theme="@style/number_picker_style"
     android:layout_width="fill_parent"
     style="@style/generic_number_wheel" />
 
