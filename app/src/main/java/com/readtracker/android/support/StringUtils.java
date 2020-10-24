@@ -160,7 +160,7 @@ public class StringUtils {
    * <p>
    * Returns the result as an int array with three items: [H, M, S]
    */
-  private static int[] convertMillisecondsToHMS(long milliseconds) {
+  public static int[] convertMillisecondsToHMS(long milliseconds) {
     int seconds = (int) (milliseconds / 1000.d);
     int minutes = (int) (seconds / 60.d);
     int hours = (int) (minutes / 60.0d);
@@ -219,8 +219,8 @@ public class StringUtils {
     }
 
     final float pageCount = sessionBook.getPageCount();
-    final int startPage = (int) (session.getStartPosition() * pageCount);
-    final int endPage = (int) (session.getEndPosition() * pageCount);
+    final int startPage = Math.round(session.getStartPosition() * pageCount);
+    final int endPage = Math.round(session.getEndPosition() * pageCount);
     return context.getString(R.string.StringUtils_format_session_from_to_pages, startPage, endPage);
   }
 }

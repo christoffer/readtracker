@@ -232,8 +232,10 @@ public class BookSettingsActivity extends BookBaseActivity implements GoogleBook
       mAuthorEdit.setText(googleBook.getAuthor());
     }
 
-    if(mTrackUsingPages.isChecked() && mPageCountEdit.getText().length() == 0) {
-      mPageCountEdit.setText(String.format(Locale.getDefault(), "%d", googleBook.getPageCount()));
+    final long pageCount = googleBook.getPageCount();
+    if (pageCount > 0) {
+      mTrackUsingPages.setChecked(true);
+      mPageCountEdit.setText(String.format("%d", pageCount));
     }
   }
 

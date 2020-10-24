@@ -3,15 +3,19 @@ package com.readtracker.android.fragments;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.readtracker.R;
+import com.readtracker.android.activities.BookActivity;
 import com.readtracker.android.activities.BookBaseActivity;
+import com.readtracker.android.activities.SessionEditFragment;
 import com.readtracker.android.adapters.ReadingSessionAdapter;
 import com.readtracker.android.custom_views.SessionHeaderView;
 import com.readtracker.android.db.Book;
@@ -26,7 +30,7 @@ import butterknife.InjectView;
 /**
  * Fragment for showing summary of a book
  */
-public class SummaryFragment extends BaseFragment {
+public class SummaryFragment extends BaseFragment implements SessionEditFragment.OnSessionEditListener {
   private static final String TAG = SummaryFragment.class.getName();
 
   private Book mBook;
@@ -53,6 +57,17 @@ public class SummaryFragment extends BaseFragment {
 
     mSessionList.setDividerHeight(0);
     mSessionList.setAdapter(mSessionAdapter);
+    mSessionList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+      @Override
+      public void onItemClick(AdapterView<?> adapterView, View view, int pos, long itemId) {
+        final FragmentManager fragMgr = getFragmentManager();
+        if(fragMgr != null) {
+          int sessionId = (int) itemId;
+          SessionEditFragment sessionEditFragment = SessionEditFragment.create(SummaryFragment.this, sessionId);
+          sessionEditFragment.show(fragMgr, "edit-session");
+        }
+      }
+    });
 
     return rootView;
   }
@@ -80,7 +95,6 @@ public class SummaryFragment extends BaseFragment {
       mBlankText.setVisibility(View.GONE);
       mSessionList.setVisibility(View.VISIBLE);
 
-      Log.d(TAG, String.format("num Sessions: %d", sessions.size()));
       mSessionAdapter.setSessions(sessions);
 
     } else {
@@ -89,4 +103,15 @@ public class SummaryFragment extends BaseFragment {
     }
   }
 
+  @Override public void onSessionUpdated(Session session) {
+    Log.d(TAG, "Got update in summary fragment (finally?)");
+    BookActivity activity = (BookActivity) getActivity();
+    if(activity != null) {
+      activity.loadBookFromIntent();
+    }
+  }
+
+  @Override public void onSessionDeleted(long sessionId) {
+    Log.d(TAG, "Got delete in summary fragment (finally?)");
+  }
 }

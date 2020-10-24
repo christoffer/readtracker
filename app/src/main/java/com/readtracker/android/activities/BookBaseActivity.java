@@ -48,7 +48,7 @@ public abstract class BookBaseActivity extends BaseActivity {
    * Convenience method for loading the book with id provided as
    * extra with key: {@code BaseBookActivity.KEY_BOOK_ID}
    */
-  protected void loadBookFromIntent() {
+  public void loadBookFromIntent() {
     if(!getIntent().hasExtra(KEY_BOOK_ID)) {
       throw new IllegalArgumentException("Must provide key: " + KEY_BOOK_ID + " with the book id");
     }

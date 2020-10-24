@@ -49,7 +49,6 @@ public class SessionHeaderView extends LinearLayout {
     mSegmentBar.setStops(Utils.getSessionStops(sessions));
 
     if(sessions.size() > 0) {
-      Log.d(TAG, String.format("num Sessions: %d", sessions.size()));
       populateReadingState(book.getState(), color);
       populateClosingRemark(book.getClosingRemark());
       populateSummary(book);

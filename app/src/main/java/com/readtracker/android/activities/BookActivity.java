@@ -42,6 +42,7 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialog.E
   public static final int REQUEST_ADD_QUOTE = 1;
   public static final int REQUEST_EDIT_BOOK = 2;
   public static final int REQUEST_FINISH_BOOK = 3;
+  public static final int REQUEST_EDIT_SESSION = 4;
 
   private static final String END_SESSION_FRAGMENT_TAG = "end-session-tag";
 
@@ -129,6 +130,14 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialog.E
         } else if(resultCode == ActivityCodes.RESULT_OK) {
           Log.d(TAG, "Came back from changing the book settings");
           loadBookFromIntent(); // reload book
+        }
+        break;
+      case REQUEST_EDIT_SESSION:
+        if (resultCode == RESULT_OK) {
+          mInitialFragmentPage = Page.SUMMARY;
+          Log.d(TAG, "Session modified (or deleted)");
+          loadBookFromIntent();
+          setResult(RESULT_OK);
         }
         break;
     }
