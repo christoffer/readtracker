@@ -13,7 +13,7 @@ import android.util.AttributeSet;
 import com.readtracker.R;
 import com.readtracker.android.support.Utils;
 
-public class ColorPickerButton extends android.support.v7.widget.AppCompatImageButton {
+public class ColorPickerButton extends androidx.appcompat.widget.AppCompatImageButton {
   private static int[] COLOR_WHEEL_COLORS;
   private static int OUTLINE_WIDTH_DP = 4;
   private static final Paint mOutlinePaint = new Paint();

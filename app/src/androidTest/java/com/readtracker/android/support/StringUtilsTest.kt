@@ -1,7 +1,7 @@
 package com.readtracker.android.support
 
 import android.os.Build
-import android.support.test.InstrumentationRegistry.getTargetContext
+import androidx.test.platform.app.InstrumentationRegistry.getTargetContext
 import com.readtracker.android.db.Book
 import com.readtracker.android.db.Session
 import com.readtracker.android.integration_test_utils.getContextWithLocale

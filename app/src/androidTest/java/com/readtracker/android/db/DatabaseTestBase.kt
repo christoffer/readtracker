@@ -1,6 +1,6 @@
 package com.readtracker.android.db
 
-import android.support.test.InstrumentationRegistry
+import androidx.test.platform.app.InstrumentationRegistry
 import org.junit.After
 
 const val TEST_DATABASE_NAME = "readtracker-test.db"

@@ -2,7 +2,7 @@ package com.readtracker.android.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatButton;
 import android.view.View;
 import android.widget.EditText;
 

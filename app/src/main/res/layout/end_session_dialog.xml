@@ -34,12 +34,12 @@
     android:inAnimation="@anim/slide_up_appear"
     android:outAnimation="@anim/slide_down_disappear">
 
-    <android.support.v7.widget.AppCompatButton
+    <androidx.appcompat.widget.AppCompatButton
       android:id="@+id/save_button"
       style="@style/default_button"
       android:text="@string/general_save" />
 
-    <android.support.v7.widget.AppCompatButton
+    <androidx.appcompat.widget.AppCompatButton
       android:id="@+id/finish_button"
       style="@style/default_button"
       android:text="@string/end_session_finish_book" />

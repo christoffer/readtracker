@@ -1,6 +1,6 @@
 package com.readtracker.android.db
 
-import android.support.test.InstrumentationRegistry.getTargetContext
+import androidx.test.platform.app.InstrumentationRegistry.getTargetContext
 import com.readtracker.android.db.export.JSONExporter
 import com.readtracker.android.support.Utils
 import src.JSONFixtureAssertions.populateBooksForExpectedOutput

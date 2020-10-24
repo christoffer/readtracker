@@ -4,8 +4,8 @@ import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.support.v4.view.ViewCompat;
-import android.support.v7.widget.AppCompatButton;
+import androidx.core.view.ViewCompat;
+import androidx.appcompat.widget.AppCompatButton;
 import android.util.Log;
 import android.widget.NumberPicker;
 
@@ -72,13 +72,13 @@ public class ColorUtils {
   };
 
   public static void applyButtonColor(int color, AppCompatButton button) {
-    final int disabledColor = android.support.v4.graphics.ColorUtils.setAlphaComponent(color, 64);
-    final double luminance = android.support.v4.graphics.ColorUtils.calculateLuminance(color);
+    final int disabledColor = androidx.core.graphics.ColorUtils.setAlphaComponent(color, 64);
+    final double luminance = androidx.core.graphics.ColorUtils.calculateLuminance(color);
     int[] backgroundColors = new int[]{color, disabledColor};
     final ColorStateList backgroundColorStateList = new ColorStateList(ENABLED_DISABLED_STATE_DESCRIPTOR, backgroundColors);
 
     final int textColor = luminance < 0.4 ? Color.WHITE : Color.BLACK;
-    final int disabledTextColor = android.support.v4.graphics.ColorUtils.setAlphaComponent(textColor, 128);
+    final int disabledTextColor = androidx.core.graphics.ColorUtils.setAlphaComponent(textColor, 128);
     int[] textColors = new int[]{textColor, disabledTextColor};
     final ColorStateList textColorStateList = new ColorStateList(ENABLED_DISABLED_STATE_DESCRIPTOR, textColors);
 

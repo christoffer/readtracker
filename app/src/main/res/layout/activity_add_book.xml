@@ -84,7 +84,7 @@
       android:inputType="number"
       tools:drawableRight="@android:drawable/stat_notify_error" />
 
-    <android.support.v7.widget.AppCompatButton
+    <androidx.appcompat.widget.AppCompatButton
       android:id="@+id/add_or_save_button"
       style="@style/default_button"
       android:layout_marginTop="24dp"

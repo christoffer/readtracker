@@ -2,18 +2,15 @@ package com.readtracker.android.activities;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
-import android.support.v7.app.ActionBar;
-import android.text.TextUtils;
+import androidx.core.app.NavUtils;
+import androidx.appcompat.app.ActionBar;
+
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.MenuItem;
-import android.widget.ImageView;
 
 import com.readtracker.BuildConfig;
 import com.readtracker.android.db.Book;
 import com.readtracker.android.db.DatabaseManager;
-import com.squareup.picasso.Picasso;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;

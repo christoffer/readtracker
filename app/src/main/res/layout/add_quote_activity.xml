@@ -42,7 +42,7 @@
       android:layout_marginTop="12dp"
       android:layout_marginBottom="12dp" />
 
-    <android.support.v7.widget.AppCompatButton
+    <androidx.appcompat.widget.AppCompatButton
       android:id="@+id/save_button"
       style="@style/default_button"
       android:text="@string/quote_activity_save" />

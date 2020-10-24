@@ -1,6 +1,6 @@
 package com.readtracker.android.db
 
-import android.support.test.InstrumentationRegistry.getTargetContext
+import androidx.test.platform.app.InstrumentationRegistry.getTargetContext
 import src.buildBook
 import src.buildQuote
 import src.buildSession

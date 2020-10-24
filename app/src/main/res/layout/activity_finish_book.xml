@@ -13,7 +13,7 @@
     android:importantForAutofill="no"
     android:maxLength="999" />
 
-  <android.support.v7.widget.AppCompatButton
+  <androidx.appcompat.widget.AppCompatButton
     android:id="@+id/finish_button"
     style="@style/default_button"
     android:layout_alignParentBottom="true"
