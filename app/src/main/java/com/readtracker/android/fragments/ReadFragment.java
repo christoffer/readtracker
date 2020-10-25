@@ -33,6 +33,7 @@ import com.readtracker.android.support.ColorUtils;
 import com.readtracker.android.support.SessionTimer;
 import com.readtracker.android.support.SimpleAnimationListener;
 import com.readtracker.android.thirdparty.SafeViewFlipper;
+import com.readtracker.databinding.ReadFragmentBinding;
 import com.squareup.otto.Subscribe;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
@@ -43,33 +44,23 @@ import java.lang.ref.WeakReference;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import butterknife.ButterKnife;
-import butterknife.InjectView;
-
 import static com.readtracker.android.support.StringUtils.hoursAndMinutesFromMillis;
 
 /** Displays a timer and controls for the user to start, pause and stop a reading session. */
 public class ReadFragment extends BaseFragment {
   private static final String TAG = ReadFragment.class.getSimpleName();
 
-  // Session controls
-  @InjectView(R.id.start_button) Button mStartButton;
-  @InjectView(R.id.edit_button) Button mEditButton;
-  @InjectView(R.id.pause_button) Button mPauseButton;
-  @InjectView(R.id.done_button) Button mDoneButton;
-
-  // Time tracking
-  @InjectView(R.id.last_position_text) TextView mLastPositionText;
-  @InjectView(R.id.timespinner) TimeSpinner mTimeSpinner;
-
-  // Wrap the spinner to apply the pulse animation on pause without
-  // disrupting the time spinner animation
-  @InjectView(R.id.time_spinner_wrapper) ViewGroup mTimeSpinnerWrapper;
-
-  // Flipper for showing start vs. stop/done
-  @InjectView(R.id.time_spinner_controls_flipper) SafeViewFlipper mTimeSpinnerControlsFlipper;
-
-  @InjectView(R.id.coverImage) ImageView coverImage;
+  /** Views */
+  private Button mStartButton;
+  private Button mEditButton;
+  private Button mPauseButton;
+  private Button mDoneButton;
+  private TextView mLastPositionText;
+  private TimeSpinner mTimeSpinner;
+  private ViewGroup mTimeSpinnerWrapper;
+  private SafeViewFlipper mTimeSpinnerControlsFlipper;
+  private ImageView coverImage;
+  private NumberPicker mDurationPicker;
 
   // Book to track
   private Book mBook;
@@ -78,11 +69,12 @@ public class ReadFragment extends BaseFragment {
 
   private final UpdateDurationWheelTimer mUpdateWheelViewTimer = new UpdateDurationWheelTimer(this);
 
-  @InjectView(R.id.duration_picker) NumberPicker mDurationPicker;
 
   // Display child index for flipper session control
   private static final int FLIPPER_PAGE_START_BUTTON = 0;
   private static final int FLIPPER_PAGE_READING_BUTTONS = 1;
+
+  private ReadFragmentBinding binding;
 
   public ReadFragment() {
     mSessionTimer.setOnTimerListener(new SessionTimer.SessionTimerListener() {
@@ -108,11 +100,28 @@ public class ReadFragment extends BaseFragment {
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     Log.d(TAG, "onCreateView()");
-    View rootView = inflater.inflate(R.layout.read_fragment, container, false);
-    ButterKnife.inject(this, rootView);
+    binding = ReadFragmentBinding.inflate(inflater, container, false);
+
+    mStartButton = binding.startButton;
+    mEditButton = binding.editButton;
+    mPauseButton = binding.pauseButton;
+    mDoneButton = binding.doneButton;
+    mLastPositionText = binding.lastPositionText;
+    mTimeSpinner = binding.timespinner;
+    mTimeSpinnerWrapper = binding.timeSpinnerWrapper;
+    mTimeSpinnerControlsFlipper = binding.timeSpinnerControlsFlipper;
+    coverImage = binding.coverImage;
+    mDurationPicker = binding.durationPicker;
+
     initializeTimerUI();
     mTimeSpinnerControlsFlipper.setDisplayedChild(FLIPPER_PAGE_START_BUTTON);
-    return rootView;
+
+    return binding.getRoot();
+  }
+
+  @Override public void onDestroyView() {
+    super.onDestroyView();
+    binding = null;
   }
 
   @Override public void onViewCreated(@NotNull View view, Bundle savedInstanceState) {

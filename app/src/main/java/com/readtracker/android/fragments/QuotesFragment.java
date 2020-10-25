@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,14 +29,12 @@ import com.readtracker.android.db.Book;
 import com.readtracker.android.db.DatabaseManager;
 import com.readtracker.android.db.Quote;
 import com.readtracker.android.support.ColorUtils;
+import com.readtracker.databinding.QuotesFragmentBinding;
 import com.squareup.otto.Subscribe;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
-
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 public class QuotesFragment extends BaseFragment {
   private static final String TAG = QuotesFragment.class.getName();
@@ -42,9 +42,9 @@ public class QuotesFragment extends BaseFragment {
   private static final int REQ_ADD_QUOTE = 1;
   private static final int REQ_EDIT_QUOTE = 2;
 
-  @InjectView(R.id.quote_list) ListView mQuoteList;
-  @InjectView(R.id.blank_text) TextView mTextBlankState;
-  @InjectView(R.id.add_quote_button) Button mAddQuoteButton;
+  private ListView mQuoteList;
+  private TextView mTextBlankState;
+  private Button mAddQuoteButton;
 
   private Book mBook;
   private QuoteAdapter mQuoteAdapter;
@@ -86,9 +86,18 @@ public class QuotesFragment extends BaseFragment {
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    View rootView = inflater.inflate(R.layout.quotes_fragment, container, false);
-    ButterKnife.inject(this, rootView);
-    return rootView;
+    @NonNull QuotesFragmentBinding binding = QuotesFragmentBinding.inflate(inflater, container, false);
+    mQuoteList = binding.quoteList;
+    mTextBlankState = binding.blankText;
+    mAddQuoteButton = binding.addQuoteButton;
+    return binding.getRoot();
+  }
+
+  @Override public void onDestroyView() {
+    super.onDestroyView();
+    mQuoteList = null;
+    mTextBlankState = null;
+    mAddQuoteButton = null;
   }
 
   @Override

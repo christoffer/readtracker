@@ -14,6 +14,7 @@ import com.readtracker.android.custom_views.SessionItemBackground;
 import com.readtracker.android.db.Session;
 import com.readtracker.android.support.StringUtils;
 import com.readtracker.android.support.Utils;
+import com.readtracker.databinding.SessionListItemBinding;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -23,22 +24,17 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import butterknife.ButterKnife;
-import butterknife.InjectView;
+import androidx.annotation.NonNull;
 
 /** Adapter for displaying a filtered list of books. */
 public class ReadingSessionAdapter extends BaseAdapter implements ListAdapter {
-  private static final String TAG = ReadingSessionAdapter.class.getName();
-
   private final Context mContext;
-  private final int mLayoutResource;
   private final List<Session> mSessions = new ArrayList<>();
-  private Comparator<Session> mSessionComparator = new ComparatorSessionByStartDate();
+  private final Comparator<Session> mSessionComparator = new ComparatorSessionByStartDate();
 
-  public ReadingSessionAdapter(Context context, int resource) {
+  public ReadingSessionAdapter(Context context) {
     super();
     mContext = context;
-    mLayoutResource = resource;
   }
 
   @Override public int getCount() {
@@ -57,7 +53,8 @@ public class ReadingSessionAdapter extends BaseAdapter implements ListAdapter {
   public View getView(int position, View convertView, ViewGroup parent) {
     final ViewHolder viewHolder;
     if(convertView == null) {
-      convertView = LayoutInflater.from(mContext).inflate(mLayoutResource, null);
+      @NonNull SessionListItemBinding binding = SessionListItemBinding.inflate(LayoutInflater.from(mContext));
+      convertView = binding.getRoot();
       viewHolder = new ViewHolder(convertView);
       convertView.setTag(viewHolder);
     } else {
@@ -88,12 +85,16 @@ public class ReadingSessionAdapter extends BaseAdapter implements ListAdapter {
   static class ViewHolder {
     private final SimpleDateFormat mDateFormatter;
 
-    @InjectView(R.id.primaryInfoText) TextView primaryInfoText;
-    @InjectView(R.id.secondaryInfoText) TextView secondaryInfoText;
-    @InjectView(R.id.progressBackgroundView) SessionItemBackground progressBackgroundView;
+    private final TextView primaryInfoText;
+    private final TextView secondaryInfoText;
+    private final SessionItemBackground progressBackgroundView;
 
     ViewHolder(View view) {
-      ButterKnife.inject(this, view);
+      @NonNull SessionListItemBinding binding = SessionListItemBinding.bind(view);
+      primaryInfoText = binding.primaryInfoText;
+      secondaryInfoText = binding.secondaryInfoText;
+      progressBackgroundView = binding.progressBackgroundView;
+
       final Context context = view.getContext();
       final String dateFormat = context.getString(R.string.ReadingSessionAdapter_date_format);
       final Locale locale = Utils.getLocale(context);

@@ -1,9 +1,6 @@
 package com.readtracker.android.fragments;
 
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +9,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.readtracker.R;
 import com.readtracker.android.activities.BookActivity;
 import com.readtracker.android.activities.BookBaseActivity;
 import com.readtracker.android.activities.SessionEditFragment;
@@ -20,12 +16,14 @@ import com.readtracker.android.adapters.ReadingSessionAdapter;
 import com.readtracker.android.custom_views.SessionHeaderView;
 import com.readtracker.android.db.Book;
 import com.readtracker.android.db.Session;
+import com.readtracker.databinding.FragmentSessionsBinding;
 import com.squareup.otto.Subscribe;
 
 import java.util.List;
 
-import butterknife.ButterKnife;
-import butterknife.InjectView;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 /**
  * Fragment for showing summary of a book
@@ -35,8 +33,8 @@ public class SummaryFragment extends BaseFragment implements SessionEditFragment
 
   private Book mBook;
 
-  @InjectView(R.id.sessionList) ListView mSessionList;
-  @InjectView(R.id.blank_text) TextView mBlankText;
+  private ListView mSessionList;
+  private TextView mBlankText;
 
   private ReadingSessionAdapter mSessionAdapter;
   private SessionHeaderView mSessionListHeader;
@@ -47,11 +45,12 @@ public class SummaryFragment extends BaseFragment implements SessionEditFragment
 
   @Override
   public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    View rootView = inflater.inflate(R.layout.fragment_sessions, container, false);
-    ButterKnife.inject(this, rootView);
+    @NonNull FragmentSessionsBinding binding = FragmentSessionsBinding.inflate(inflater, container, false);
+    mSessionList = binding.sessionList;
+    mBlankText = binding.blankText;
 
     mSessionListHeader = new SessionHeaderView(getContext());
-    mSessionAdapter = new ReadingSessionAdapter(getContext(), R.layout.session_list_item);
+    mSessionAdapter = new ReadingSessionAdapter(getContext());
 
     mSessionList.addHeaderView(mSessionListHeader, null, false);
 
@@ -69,7 +68,7 @@ public class SummaryFragment extends BaseFragment implements SessionEditFragment
       }
     });
 
-    return rootView;
+    return binding.getRoot();
   }
 
   @Override public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {

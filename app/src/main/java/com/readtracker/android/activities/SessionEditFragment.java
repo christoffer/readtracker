@@ -4,11 +4,6 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,6 +23,7 @@ import com.readtracker.android.support.SessionPresenter;
 import com.readtracker.android.support.SessionPresenter.PositionPresenter;
 import com.readtracker.android.support.StringUtils;
 import com.readtracker.android.support.Utils;
+import com.readtracker.databinding.SessionEditFragmentBinding;
 
 import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
@@ -35,8 +31,11 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import butterknife.ButterKnife;
-import butterknife.InjectView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 public class SessionEditFragment extends DialogFragment {
   private static final String TAG = SessionEditFragment.class.getName();
@@ -44,23 +43,20 @@ public class SessionEditFragment extends DialogFragment {
 
   public interface OnSessionEditListener {
     public void onSessionUpdated(Session session);
-
     public void onSessionDeleted(long sessionId);
   }
 
-  @InjectView(R.id.startPosText) TextView mStartPosText;
-  @InjectView(R.id.startPosEdit) EditText mStartPosEdit;
-  @InjectView(R.id.endPosText) TextView mEndPosText;
-  @InjectView(R.id.endPosEdit) EditText mEndPosEdit;
-  @InjectView(R.id.setDateButton) Button mSetDateButton;
-  @InjectView(R.id.hoursTextEdit) EditText mHoursTextEdit;
-  @InjectView(R.id.minutesTextEdit) EditText mMinutesTextEdit;
-  @InjectView(R.id.secondsTextEdit) EditText mSecondsTextEdit;
-
-  @InjectView(R.id.startPositionSuffix) TextView mStartPositionSuffix;
-  @InjectView(R.id.endPositionSuffix) TextView mEndPositionSuffix;
-
-  @InjectView(R.id.saveButton) Button mSaveButton;
+  private TextView mStartPosText;
+  private EditText mStartPosEdit;
+  private TextView mEndPosText;
+  private EditText mEndPosEdit;
+  private Button mSetDateButton;
+  private EditText mHoursTextEdit;
+  private EditText mMinutesTextEdit;
+  private EditText mSecondsTextEdit;
+  private TextView mStartPositionSuffix;
+  private TextView mEndPositionSuffix;
+  private Button mSaveButton;
 
   private Session mSession;
   private SimpleDateFormat mDateFormat;
@@ -90,8 +86,18 @@ public class SessionEditFragment extends DialogFragment {
       @Nullable ViewGroup container,
       @Nullable Bundle savedInstanceState
   ) {
-    View rootView = inflater.inflate(R.layout.session_edit_fragment, container);
-    ButterKnife.inject(this, rootView);
+    @NonNull SessionEditFragmentBinding binding = SessionEditFragmentBinding.inflate(inflater, container, false);
+    mStartPosText = binding.startPosText;
+    mStartPosEdit = binding.startPosEdit;
+    mEndPosText = binding.endPosText;
+    mEndPosEdit = binding.endPosEdit;
+    mSetDateButton = binding.setDateButton;
+    mHoursTextEdit = binding.hoursTextEdit;
+    mMinutesTextEdit = binding.minutesTextEdit;
+    mSecondsTextEdit = binding.secondsTextEdit;
+    mStartPositionSuffix = binding.startPositionSuffix;
+    mEndPositionSuffix = binding.endPositionSuffix;
+    mSaveButton = binding.saveButton;
 
     String dateFormat = getString(R.string.session_edit_date_format);
     //noinspection ConstantConditions
@@ -128,7 +134,22 @@ public class SessionEditFragment extends DialogFragment {
 
     BackgroundTasks.loadSession(this, getSessionId());
 
-    return rootView;
+    return binding.getRoot();
+  }
+
+  @Override public void onDestroyView() {
+    super.onDestroyView();
+    mStartPosText = null;
+    mStartPosEdit = null;
+    mEndPosText = null;
+    mEndPosEdit = null;
+    mSetDateButton = null;
+    mHoursTextEdit = null;
+    mMinutesTextEdit = null;
+    mSecondsTextEdit = null;
+    mStartPositionSuffix = null;
+    mEndPositionSuffix = null;
+    mSaveButton = null;
   }
 
   private Session getSessionFromFields() {

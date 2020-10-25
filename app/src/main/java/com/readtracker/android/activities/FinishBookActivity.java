@@ -2,6 +2,8 @@ package com.readtracker.android.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatButton;
 import android.view.View;
 import android.widget.EditText;
@@ -9,15 +11,13 @@ import android.widget.EditText;
 import com.readtracker.R;
 import com.readtracker.android.db.Book;
 import com.readtracker.android.support.ColorUtils;
-
-import butterknife.ButterKnife;
-import butterknife.InjectView;
+import com.readtracker.databinding.ActivityFinishBookBinding;
 
 public class FinishBookActivity extends BookBaseActivity implements View.OnClickListener {
   public static final String KEY_CLOSING_REMARK = "CLOSING_REMARK";
 
-  @InjectView(R.id.editClosingRemark) EditText mEditClosingRemark;
-  @InjectView(R.id.finish_button) AppCompatButton mButtonFinish;
+  private EditText mEditClosingRemark;
+  private AppCompatButton mButtonFinish;
 
   private Book mBook;
   private boolean mDidLayout;
@@ -28,8 +28,11 @@ public class FinishBookActivity extends BookBaseActivity implements View.OnClick
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
-    setContentView(R.layout.activity_finish_book);
-    ButterKnife.inject(this);
+    @NonNull ActivityFinishBookBinding binding = ActivityFinishBookBinding.inflate(getLayoutInflater());
+    mEditClosingRemark = binding.editClosingRemark;
+    mButtonFinish = binding.finishButton;
+    setContentView(binding.getRoot());
+
     mDidLayout = true;
     populateFieldsDeferred();
     mButtonFinish.setOnClickListener(this);

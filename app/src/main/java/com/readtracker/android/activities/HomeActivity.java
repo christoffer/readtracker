@@ -4,10 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.viewpager.widget.PagerTabStrip;
-import androidx.viewpager.widget.ViewPager;
-import androidx.appcompat.app.ActionBar;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
@@ -30,6 +26,7 @@ import com.readtracker.android.fragments.HomeFragmentAdapter;
 import com.readtracker.android.support.ApplicationSettingsHelper;
 import com.readtracker.android.support.ReadTrackerDataImportHandler;
 import com.readtracker.android.tasks.ImportReadTrackerFileTask;
+import com.readtracker.databinding.ActivityHomeBinding;
 import com.squareup.otto.Subscribe;
 
 import java.lang.ref.WeakReference;
@@ -37,8 +34,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import butterknife.ButterKnife;
-import butterknife.InjectView;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.viewpager.widget.ViewPager;
 
 public class HomeActivity extends BaseActivity implements ImportReadTrackerFileTask.ResultListener {
   private static final String TAG = HomeActivity.class.getSimpleName();
@@ -48,8 +46,7 @@ public class HomeActivity extends BaseActivity implements ImportReadTrackerFileT
   // List of books loaded from the database
   private List<Book> mBooks = new ArrayList<>();
 
-  @InjectView(R.id.book_list_pager) ViewPager mViewPager;
-  @InjectView(R.id.pager_tab_strip) PagerTabStrip mPagerTabStrip;
+  private ViewPager mViewPager;
 
   private LoadCatalogueTask mLoadCatalogueTask;
 
@@ -57,9 +54,12 @@ public class HomeActivity extends BaseActivity implements ImportReadTrackerFileT
   public void onCreate(Bundle savedInstanceState) {
     supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
     super.onCreate(savedInstanceState);
+
     Log.d(TAG, "onCreate");
-    setContentView(R.layout.activity_home);
-    ButterKnife.inject(this);
+
+    @NonNull ActivityHomeBinding binding = ActivityHomeBinding.inflate(getLayoutInflater());
+    mViewPager = binding.bookListPager;
+    setContentView(binding.getRoot());
 
     // Show welcome screen for first time users
     if(getApp().getFirstTimeFlag()) {
@@ -69,7 +69,7 @@ public class HomeActivity extends BaseActivity implements ImportReadTrackerFileT
 
     resetFragmentAdapter();
     loadBooks();
-    mPagerTabStrip.setDrawFullUnderline(false);
+    binding.pagerTabStrip.setDrawFullUnderline(false);
     mViewPager.setCurrentItem(HomeFragmentAdapter.DEFAULT_POSITION);
   }
 

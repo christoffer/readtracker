@@ -3,15 +3,14 @@ package com.readtracker.android.custom_views;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 
 import com.readtracker.R;
 import com.readtracker.android.support.ColorUtils;
+import com.readtracker.databinding.ProgressPickerBinding;
 
-import butterknife.ButterKnife;
-import butterknife.InjectView;
+import androidx.annotation.NonNull;
 
 /**
  * ProgressPicker is a view that lest the user select a page or percent indicating how much progress
@@ -19,7 +18,7 @@ import butterknife.InjectView;
  */
 public class ProgressPicker extends LinearLayout {
 
-  @InjectView(R.id.position_picker) NumberPicker mPositionPicker;
+  private NumberPicker mPositionPicker;
   private OnPositionChangeListener mListener;
 
   @SuppressWarnings("UnusedDeclaration")
@@ -70,7 +69,7 @@ public class ProgressPicker extends LinearLayout {
    * and a page count (may be null, in which case percentage mode is used).
    */
   public void setPositionAndPageCount(Float position, Float pageCount) {
-    if (pageCount == null) {
+    if(pageCount == null) {
       // Make the more than questionable assumption that passing `null` for pageCount
       // means we're tracking progress in percent.
       // TODO(christoffer) Refactor this to avoid hacks like this
@@ -89,14 +88,14 @@ public class ProgressPicker extends LinearLayout {
   }
 
   public void setColor(int color) {
-    if (mPositionPicker != null) {
+    if(mPositionPicker != null) {
       ColorUtils.setNumberPickerDividerColorUsingHack(mPositionPicker, color);
     }
   }
 
   private void initializeView() {
-    final View root = LayoutInflater.from(getContext()).inflate(R.layout._progress_picker, this);
-    ButterKnife.inject(this, root);
+    @NonNull ProgressPickerBinding binding = ProgressPickerBinding.inflate(LayoutInflater.from(getContext()), this);
+    mPositionPicker = binding.positionPicker;
     mPositionPicker.setWrapSelectorWheel(false);
   }
 
@@ -109,8 +108,8 @@ public class ProgressPicker extends LinearLayout {
     // Use percent mode, let the user select progress based on 0.1% increments
     String[] values = new String[1001]; // +1 to generate inclusive range
     final Context context = getContext();
-    for (int i  = 0; i < 1001; i++) {
-      values[i] = context.getString(R.string.progress_picker_percent, (float)i / 10.0f);
+    for(int i = 0; i < 1001; i++) {
+      values[i] = context.getString(R.string.progress_picker_percent, (float) i / 10.0f);
     }
     mPositionPicker.setMinValue(0);
     mPositionPicker.setMaxValue(1000);

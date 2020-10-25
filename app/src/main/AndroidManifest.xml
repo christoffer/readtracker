@@ -19,6 +19,8 @@
     android:name=".android.ReadTrackerApp"
     android:theme="@style/ReadTrackerTheme">
 
+    <uses-library android:name="org.apache.http.legacy" android:required="false" />
+
     <activity
       android:name=".android.activities.HomeActivity"
       android:launchMode="singleTop">

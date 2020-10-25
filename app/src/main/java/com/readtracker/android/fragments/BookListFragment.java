@@ -31,9 +31,6 @@ public class BookListFragment extends ListFragment {
 
   private BookAdapter mBookAdapter;
 
-  // Which resources to render list items with
-  private int mItemLayoutResId;
-
   // What filter to apply to the local reading list
   private Book.State mBookStateFilter;
 
@@ -43,10 +40,9 @@ public class BookListFragment extends ListFragment {
   // Whether or not to use only full dates or human-friendly relative dates
   private boolean mUseFullDates;
 
-  public static BookListFragment newInstance(int itemLayoutResId, Book.State bookStateFilter, boolean useCompactReadingLists, boolean useFullDates) {
-    Log.d(TAG, String.format("BookListFragment being created with itemLayoutResId: %d amd bookStateFilter: %s", itemLayoutResId, bookStateFilter));
+  public static BookListFragment newInstance(Book.State bookStateFilter, boolean useCompactReadingLists, boolean useFullDates) {
+    Log.d(TAG, String.format("BookListFragment being created with bookStateFilter: %s", bookStateFilter));
     Bundle args = new Bundle();
-    args.putInt(Argument.ItemResId.toString(), itemLayoutResId);
     args.putString(Argument.BookStateFilter.toString(), bookStateFilter.toString());
     args.putBoolean(Argument.CompactReadingLists.toString(), useCompactReadingLists);
     args.putBoolean(Argument.UseFullDates.toString(), useFullDates);
@@ -62,7 +58,6 @@ public class BookListFragment extends ListFragment {
 
     Bundle args = getArguments();
     if (args != null) {
-      mItemLayoutResId = args.getInt(Argument.ItemResId.toString());
       mBookStateFilter = Book.State.valueOf(args.getString(Argument.BookStateFilter.toString()));
       mUseCompactReadingLists = args.getBoolean(Argument.CompactReadingLists.toString());
       mUseFullDates = args.getBoolean(Argument.UseFullDates.toString());
@@ -120,7 +115,7 @@ public class BookListFragment extends ListFragment {
     HomeActivity homeActivity = (HomeActivity) getActivity();
 
     if(homeActivity != null) {
-      mBookAdapter = new BookAdapter(homeActivity, mItemLayoutResId, mBookStateFilter, mUseCompactReadingLists, mUseFullDates);
+      mBookAdapter = new BookAdapter(homeActivity, mBookStateFilter, mUseCompactReadingLists, mUseFullDates);
       Log.d(TAG, String.format("Created adapter with filter %s", mBookStateFilter));
       mBookAdapter.setBooks(homeActivity.getBooks());
       setListAdapter(mBookAdapter);

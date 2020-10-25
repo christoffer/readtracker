@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
@@ -41,6 +42,7 @@ import com.readtracker.android.support.GoogleBook;
 import com.readtracker.android.support.GoogleBookSearch;
 import com.readtracker.android.support.Utils;
 import com.readtracker.android.tasks.GoogleBookSearchTask;
+import com.readtracker.databinding.ActivityAddBookBinding;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -49,9 +51,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 /** Activity for adding or editing a book. */
 public class BookSettingsActivity extends BookBaseActivity implements GoogleBookSearchTask.BookSearchResultListener {
@@ -62,14 +61,15 @@ public class BookSettingsActivity extends BookBaseActivity implements GoogleBook
 
   public static final String KEY_QUOTE_ID = "QUOTE_ID";
 
-  @InjectView(R.id.title_edit) EditText mTitleEdit;
-  @InjectView(R.id.author_edit) EditText mAuthorEdit;
-  @InjectView(R.id.page_count_edit) EditText mPageCountEdit;
-  @InjectView(R.id.add_or_save_button) AppCompatButton mSaveButton;
-  @InjectView(R.id.track_using_pages) CheckBox mTrackUsingPages;
-  @InjectView(R.id.book_cover_image) ImageView mCoverImage;
-  @InjectView(R.id.refresh_cover_button) ImageButton mRefreshCoverButton;
-  @InjectView(R.id.layout_color_buttons) LinearLayout mColorButtonContainer;
+  /** Views */
+  private EditText mTitleEdit;
+  private EditText mAuthorEdit;
+  private EditText mPageCountEdit;
+  private AppCompatButton mSaveButton;
+  private CheckBox mTrackUsingPages;
+  private ImageView mCoverImage;
+  private ImageButton mRefreshCoverButton;
+  private LinearLayout mColorButtonContainer;
 
   // Store the cover url from the intent that starts the activity
   private String mCoverURL;
@@ -89,8 +89,18 @@ public class BookSettingsActivity extends BookBaseActivity implements GoogleBook
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_add_book);
-    ButterKnife.inject(this);
+    @NonNull ActivityAddBookBinding binding = ActivityAddBookBinding.inflate(getLayoutInflater());
+
+    mTitleEdit = binding.titleEdit;
+    mAuthorEdit = binding.authorEdit;
+    mPageCountEdit = binding.pageCountEdit;
+    mSaveButton = binding.addOrSaveButton;
+    mTrackUsingPages = binding.trackUsingPages;
+    mCoverImage = binding.bookCoverImage;
+    mRefreshCoverButton = binding.refreshCoverButton;
+    mColorButtonContainer = binding.layoutColorButtons;
+
+    setContentView(binding.getRoot());
 
     Intent intent = getIntent();
     if(intent.hasExtra(KEY_BOOK_ID)) {
@@ -400,11 +410,23 @@ public class BookSettingsActivity extends BookBaseActivity implements GoogleBook
   }
 
   private void loadCoverFromURL(final String coverUrl) {
-    Log.d(TAG, "picasso: load");
+    Log.d(TAG, String.format("picasso: loading %s", coverUrl));
     final boolean hasCoverUrl = !TextUtils.isEmpty(coverUrl);
     if(hasCoverUrl) {
+
       final CoverLoadPicassoTarget target = new CoverLoadPicassoTarget(coverUrl);
-      Picasso.with(this).load(coverUrl).into(target);
+
+      Picasso.Builder builder = new Picasso.Builder(this);
+      builder.listener(new Picasso.Listener() {
+        @Override
+        public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception)
+        {
+          exception.printStackTrace();
+        }
+      });
+
+      builder.build().load(coverUrl).into(target);
+//      Picasso.with(this).load(coverUrl).into(target);
     }
   }
 
@@ -654,7 +676,7 @@ public class BookSettingsActivity extends BookBaseActivity implements GoogleBook
     }
 
     @Override public void onBitmapFailed(Drawable errorDrawable) {
-      Log.d(TAG, "Loading cover %s failed");
+      Log.d(TAG, String.format("Loading cover: %s failed", attemptedCoverUrl));
     }
 
     @Override public void onPrepareLoad(Drawable placeHolderDrawable) {

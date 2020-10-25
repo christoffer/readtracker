@@ -3,8 +3,11 @@ package com.readtracker.android.custom_views;
 import android.content.Context;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
+
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -14,11 +17,9 @@ import com.readtracker.android.db.Book;
 import com.readtracker.android.db.Session;
 import com.readtracker.android.support.ColorUtils;
 import com.readtracker.android.support.Utils;
+import com.readtracker.databinding.SessionListHeaderBinding;
 
 import java.util.List;
-
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 import static com.readtracker.android.support.StringUtils.longCoarseHumanTimeFromMillis;
 import static com.readtracker.android.support.StringUtils.longCoarseHumanTimeFromSeconds;
@@ -26,17 +27,21 @@ import static com.readtracker.android.support.StringUtils.longCoarseHumanTimeFro
 public class SessionHeaderView extends LinearLayout {
   private static final String TAG = SessionHeaderView.class.getSimpleName();
 
-  @InjectView(R.id.segmentBar) SegmentBar mSegmentBar;
-  @InjectView(R.id.textSummary) public TextView mTextSummary;
-  @InjectView(R.id.textReadingState) TextView mTextReadingState;
-  @InjectView(R.id.textClosingRemarkContent) TextView mTextClosingRemark;
-  @InjectView(R.id.textTimeLeft) TextView mTextTimeLeft;
+  private final SegmentBar mSegmentBar;
+  private final TextView mTextSummary;
+  private final TextView mTextReadingState;
+  private final TextView mTextClosingRemark;
+  private final TextView mTextTimeLeft;
 
   public SessionHeaderView(Context context) {
     super(context);
     Log.d(TAG, "SessionHeaderView()");
-    View rootView = inflate(getContext(), R.layout.session_list_header, this);
-    ButterKnife.inject(this, rootView);
+    @NonNull SessionListHeaderBinding binding = SessionListHeaderBinding.inflate(LayoutInflater.from(context));
+    mSegmentBar = binding.segmentBar;
+    mTextSummary = binding.textSummary;
+    mTextReadingState = binding.textReadingState;
+    mTextClosingRemark = binding.textClosingRemarkContent;
+    mTextTimeLeft = binding.textTimeLeft;
   }
 
   /** Defer populating the fields until both the UI and the data is available. */

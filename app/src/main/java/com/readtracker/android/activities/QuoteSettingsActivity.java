@@ -5,6 +5,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatButton;
 import android.text.TextUtils;
 import android.util.Log;
@@ -20,11 +22,9 @@ import com.readtracker.android.db.Book;
 import com.readtracker.android.db.DatabaseManager;
 import com.readtracker.android.db.Quote;
 import com.readtracker.android.support.ColorUtils;
+import com.readtracker.databinding.AddQuoteActivityBinding;
 
 import java.lang.ref.WeakReference;
-
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 /**
  * Screen for adding a quote
@@ -35,9 +35,9 @@ public class QuoteSettingsActivity extends BookBaseActivity {
 
   private static final String TAG = QuoteSettingsActivity.class.getSimpleName();
 
-  @InjectView(R.id.quote_text_edit) EditText mQuoteTextEdit;
-  @InjectView(R.id.save_button) AppCompatButton mSaveButton;
-  @InjectView(R.id.progress_picker) ProgressPicker mProgressPicker;
+  private EditText mQuoteTextEdit;
+  private AppCompatButton mSaveButton;
+  private ProgressPicker mProgressPicker;
 
   private Book mBook;
   private Quote mEditQuote;
@@ -45,13 +45,16 @@ public class QuoteSettingsActivity extends BookBaseActivity {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.add_quote_activity);
-    ButterKnife.inject(this);
+
+    @NonNull AddQuoteActivityBinding binding = AddQuoteActivityBinding.inflate(getLayoutInflater());
+    mQuoteTextEdit = binding.quoteTextEdit;
+    mSaveButton = binding.saveButton;
+    mProgressPicker = binding.progressPicker;
+    setContentView(binding.getRoot());
 
     mSaveButton.setEnabled(false); // hold until book is loaded
 
     if(getIntent().hasExtra(KEY_QUOTE_ID)) {
-      //noinspection ConstantConditions -- running hasExtra above
       int quoteId = getIntent().getExtras().getInt(KEY_QUOTE_ID);
       Log.v(TAG, "Loading in edit mode: " + quoteId);
       mEditQuote = loadQuote(quoteId);

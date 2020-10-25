@@ -1,8 +1,10 @@
 package com.readtracker.android.activities;
 
 import android.os.Bundle;
+
 import androidx.fragment.app.DialogFragment;
 import androidx.appcompat.widget.AppCompatButton;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,9 +15,9 @@ import com.readtracker.android.custom_views.ProgressPicker;
 import com.readtracker.android.db.Book;
 import com.readtracker.android.support.ColorUtils;
 import com.readtracker.android.thirdparty.SafeViewFlipper;
+import com.readtracker.databinding.EndSessionDialogBinding;
 
-import butterknife.ButterKnife;
-import butterknife.InjectView;
+import org.jetbrains.annotations.NotNull;
 
 /** Screen for input the ending page of a reading session */
 public class EndSessionDialog extends DialogFragment implements View.OnClickListener, ProgressPicker.OnPositionChangeListener {
@@ -29,14 +31,17 @@ public class EndSessionDialog extends DialogFragment implements View.OnClickList
   public static final String ARG_PAGE_COUNT = "PAGE_COUNT";
   private static final String ARG_COLOR = "COLOR";
 
-  @InjectView(R.id.save_button) AppCompatButton mButtonSaveProgress;
-  @InjectView(R.id.finish_button) AppCompatButton mButtonFinishBook;
-  @InjectView(R.id.progress_picker) ProgressPicker mProgressPicker;
-  @InjectView(R.id.action_button_flipper) SafeViewFlipper mFlipperActionButtons;
+  /** Views */
+  private AppCompatButton mButtonSaveProgress;
+  private AppCompatButton mButtonFinishBook;
+  private ProgressPicker mProgressPicker;
+  private SafeViewFlipper mFlipperActionButtons;
 
   private Float mSelectedPosition;
   private Float mPageCount;
   private int mColor;
+
+  private EndSessionDialogBinding binding;
 
   public static EndSessionDialog newInstance(Book book) {
     assert (book != null);
@@ -83,10 +88,14 @@ public class EndSessionDialog extends DialogFragment implements View.OnClickList
   }
 
   @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+  public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     Log.v(TAG, "onCreateView()");
-    View root = inflater.inflate(R.layout.end_session_dialog, container, false);
-    ButterKnife.inject(this,root);
+    binding = EndSessionDialogBinding.inflate(inflater, container, false);
+
+    mButtonSaveProgress = binding.saveButton;
+    mButtonFinishBook = binding.finishButton;
+    mProgressPicker = binding.progressPicker;
+    mFlipperActionButtons = binding.actionButtonFlipper;
 
     mProgressPicker.setPositionAndPageCount(mSelectedPosition, mPageCount);
     mProgressPicker.setOnPositionChangeListener(this);
@@ -99,7 +108,12 @@ public class EndSessionDialog extends DialogFragment implements View.OnClickList
     mButtonSaveProgress.setOnClickListener(this);
     mButtonFinishBook.setOnClickListener(this);
 
-    return root;
+    return binding.getRoot();
+  }
+
+  @Override public void onDestroyView() {
+    super.onDestroyView();
+    binding = null;
   }
 
   @Override

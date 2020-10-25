@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.readtracker.R;
@@ -22,6 +21,8 @@ import com.readtracker.android.db.Book;
 import com.readtracker.android.support.ColorUtils;
 import com.readtracker.android.support.StringUtils;
 import com.readtracker.android.support.Utils;
+import com.readtracker.databinding.BookListItemFinishedBinding;
+import com.readtracker.databinding.BookListItemReadingBinding;
 import com.squareup.otto.Subscribe;
 import com.squareup.picasso.Picasso;
 
@@ -31,18 +32,13 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-import butterknife.ButterKnife;
-import butterknife.InjectView;
-import butterknife.Optional;
+import androidx.viewbinding.ViewBinding;
 
 /** Adapter for displaying a filtered list of books. */
 public class BookAdapter extends BaseAdapter implements ListAdapter {
   private static final String TAG = BookAdapter.class.getName();
 
   private final Context mContext;
-
-  // Layout to inflate when rendering items
-  private final int mLayoutResource;
 
   private static final Comparator<Book> sBookComparator = new Comparator<Book>() {
     @Override public int compare(Book a, Book b) {
@@ -56,14 +52,13 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
 
   // Books in this list
   private final List<Book> mBooks = new ArrayList<>();
-  private Book.State mStateFilter;
+  private final Book.State mStateFilter;
   private final boolean mUseCompactReadingLists;
   private final boolean mUseFullDates;
 
-  public BookAdapter(Context context, int resource, Book.State stateFilter, boolean useCompactReadingLists, boolean useFullDates) {
+  public BookAdapter(Context context, Book.State stateFilter, boolean useCompactReadingLists, boolean useFullDates) {
     super();
     mContext = context;
-    mLayoutResource = resource;
     mStateFilter = stateFilter;
     mUseCompactReadingLists = useCompactReadingLists;
     mUseFullDates = useFullDates;
@@ -96,8 +91,15 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
   public View getView(int position, View convertView, ViewGroup parent) {
     final ViewHolder viewHolder;
     if(convertView == null) {
-      convertView = LayoutInflater.from(mContext).inflate(mLayoutResource, null);
-      viewHolder = new ViewHolder(convertView);
+      LayoutInflater inflater = LayoutInflater.from(mContext);
+      ViewBinding binding;
+      if (mStateFilter == Book.State.Finished) {
+        binding = BookListItemFinishedBinding.inflate(inflater);
+      } else {
+        binding = BookListItemReadingBinding.inflate(inflater);
+      }
+      convertView = binding.getRoot();
+      viewHolder = new ViewHolder(convertView, mStateFilter);
       convertView.setTag(viewHolder);
     } else {
       viewHolder = (ViewHolder) convertView.getTag();
@@ -152,8 +154,35 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
   }
 
   static class ViewHolder {
-    ViewHolder(View view) {
-      ButterKnife.inject(this, view);
+    // Required fields
+    private final TextView titleText;
+    private final TextView authorText;
+    private final ImageView coverImage;
+
+    // Only for "reading"
+    private SegmentBar segmentedProgressBar;
+
+    // Only for "finished"
+    private TextView closingRemarkText;
+    private TextView finishedAtText;
+
+    ViewHolder(View view, Book.State stateFilter) {
+      if (stateFilter == Book.State.Finished) {
+        BookListItemFinishedBinding binding;
+        binding = BookListItemFinishedBinding.bind(view);
+        titleText = binding.textTitle;
+        authorText = binding.textAuthor;
+        coverImage = binding.imageCover;
+        closingRemarkText = binding.textClosingRemark;
+        finishedAtText = binding.textFinishedAt;
+      } else {
+        BookListItemReadingBinding binding;
+        binding = BookListItemReadingBinding.bind(view);
+        titleText = binding.textTitle;
+        authorText = binding.textAuthor;
+        segmentedProgressBar = binding.progressReadingProgress;
+        coverImage = binding.imageCover;
+      }
     }
 
     void populate(View view, Book book, boolean useCompactReadingLists, boolean useFullDates) {
@@ -213,16 +242,5 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
         }
       }
     }
-
-    // Required fields
-    @InjectView(R.id.textTitle) TextView titleText;
-    @InjectView(R.id.textAuthor) TextView authorText;
-    @InjectView(R.id.layout) RelativeLayout layout;
-
-    // Optional fields *
-    @Optional @InjectView(R.id.progressReadingProgress) SegmentBar segmentedProgressBar;
-    @Optional @InjectView(R.id.imageCover) ImageView coverImage;
-    @Optional @InjectView(R.id.textClosingRemark) TextView closingRemarkText;
-    @Optional @InjectView(R.id.textFinishedAt) TextView finishedAtText;
   }
 }

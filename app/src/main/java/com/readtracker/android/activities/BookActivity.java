@@ -3,6 +3,7 @@ package com.readtracker.android.activities;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+
 import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.PagerTabStrip;
 import androidx.viewpager.widget.ViewPager;
@@ -20,13 +21,11 @@ import com.readtracker.android.db.Session;
 import com.readtracker.android.fragments.BookFragmentAdapter;
 import com.readtracker.android.fragments.ReadFragment;
 import com.readtracker.android.support.ColorUtils;
+import com.readtracker.databinding.BookActivityBinding;
 import com.squareup.otto.Produce;
 import com.squareup.otto.Subscribe;
 
 import java.lang.ref.WeakReference;
-
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 import static com.readtracker.android.fragments.BookFragmentAdapter.Page;
 
@@ -35,9 +34,6 @@ import static com.readtracker.android.fragments.BookFragmentAdapter.Page;
  */
 public class BookActivity extends BookBaseActivity implements EndSessionDialog.EndSessionDialogListener {
   protected static final String TAG = BookActivity.class.getSimpleName();
-
-  private static final int NO_GROUP = 0;
-  private static final int MENU_EDIT_BOOK = 1;
 
   public static final int REQUEST_ADD_QUOTE = 1;
   public static final int REQUEST_EDIT_BOOK = 2;
@@ -53,20 +49,24 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialog.E
 
   private Session mCurrentSession;
 
-  @InjectView(R.id.fragment_view_pager) ViewPager mViewPager;
-  @InjectView(R.id.pager_tab_strip) PagerTabStrip mPagerTabStrip;
-
   private Page mInitialFragmentPage;
+  private BookActivityBinding binding;
+
+  private ViewPager mViewPager;
+  private PagerTabStrip mPagerTabStrip;
 
   @Override
   public void onCreate(Bundle in) {
     super.onCreate(in);
 
-    setContentView(R.layout.book_activity);
-    ButterKnife.inject(this);
+    binding = BookActivityBinding.inflate(getLayoutInflater());
+    mViewPager = binding.fragmentViewPager;
+    mPagerTabStrip = binding.pagerTabStrip;
+    setContentView(binding.getRoot());
 
     mPagerTabStrip.setVisibility(View.INVISIBLE);
     mPagerTabStrip.setDrawFullUnderline(false);
+
     mCurrentSession = new Session();
     if(in != null) {
       if(in.containsKey(STATE_VIEW_PAGER_PAGE)) {

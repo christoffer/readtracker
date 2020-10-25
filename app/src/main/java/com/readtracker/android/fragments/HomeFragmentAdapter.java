@@ -54,10 +54,10 @@ public class HomeFragmentAdapter extends FragmentStatePagerAdapter {
 
   @Override public Fragment getItem(int position) {
     if(position == FRAGMENT_FINISHED_POSITION) {
-        return BookListFragment.newInstance(R.layout.book_list_item_finished, Book.State.Finished, mUseCompactFinishList, mUseFullDates);
+        return BookListFragment.newInstance(Book.State.Finished, mUseCompactFinishList, mUseFullDates);
     } else if(position == FRAGMENT_ACTIVE_POSITION) {
       Log.d(TAG, "Creating book list fragment with reading views");
-      return BookListFragment.newInstance(R.layout.book_list_item_reading, Book.State.Reading, mUseCompactFinishList, mUseFullDates);
+      return BookListFragment.newInstance(Book.State.Reading, mUseCompactFinishList, mUseFullDates);
     }
 
     Log.w(TAG, "Could not figure out what fragment to return. Returning null.");

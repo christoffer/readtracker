@@ -26,11 +26,11 @@ import com.readtracker.android.adapters.SearchResultAdapter;
 import com.readtracker.android.support.GoogleBook;
 import com.readtracker.android.tasks.GoogleBookSearchTask;
 import com.readtracker.android.thirdparty.SafeViewFlipper;
+import com.readtracker.databinding.ActivityBookSearchBinding;
 
 import java.util.ArrayList;
 
-import butterknife.ButterKnife;
-import butterknife.InjectView;
+import androidx.annotation.NonNull;
 
 /**
  * Activity for adding a new book by searching for books on Google Books
@@ -44,11 +44,11 @@ public class BookSearchActivity extends BaseActivity implements GoogleBookSearch
   private static final int FLIPPER_INDEX_ADD = 0;
   private static final int FLIPPER_INDEX_SEARCH = 1;
 
-  @InjectView(R.id.listSearchResult) ListView mListSearchResults;
-  @InjectView(R.id.textSearch) EditText mEditTextSearch;
-  @InjectView(R.id.flipperBookSearchActions) SafeViewFlipper mFlipperBookSearchActions;
-  @InjectView(R.id.buttonNew) Button mButtonNew;
-  @InjectView(R.id.buttonSearch) Button mButtonSearch;
+  private ListView mListSearchResults;
+  private EditText mEditTextSearch;
+  private SafeViewFlipper mFlipperBookSearchActions;
+  private Button mButtonNew;
+  private Button mButtonSearch;
 
   private SearchResultAdapter mBookSearchAdapter;
   private InputMethodManager mInputMethodManager;
@@ -56,8 +56,15 @@ public class BookSearchActivity extends BaseActivity implements GoogleBookSearch
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_book_search);
-    ButterKnife.inject(this);
+    @NonNull ActivityBookSearchBinding binding = ActivityBookSearchBinding.inflate(getLayoutInflater());
+
+    setContentView(binding.getRoot());
+
+    mListSearchResults = binding.listSearchResult;
+    mEditTextSearch = binding.textSearch;
+    mFlipperBookSearchActions = binding.flipperBookSearchActions;
+    mButtonNew = binding.buttonNew;
+    mButtonSearch = binding.buttonSearch;
 
     mBookSearchAdapter = new SearchResultAdapter(this, new ArrayList<BookItem>());
     mListSearchResults.setAdapter(mBookSearchAdapter);
