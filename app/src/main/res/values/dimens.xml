@@ -10,4 +10,5 @@
   <dimen name="halfGridGutter">8dp</dimen>
   <dimen name="readingViewsMaxWidth">300dp</dimen>
   <dimen name="colorPickerButton_ImageSize">32dp</dimen>
+  <dimen name="floatingViewPadding">24dp</dimen>
 </resources>

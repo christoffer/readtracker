@@ -103,7 +103,7 @@ public class SummaryFragment extends BaseFragment implements SessionEditFragment
   }
 
   @Override public void onSessionUpdated(Session session) {
-    Log.d(TAG, "Got update in summary fragment (finally?)");
+    Log.d(TAG, "Got update in summary fragment, reloading book");
     BookActivity activity = (BookActivity) getActivity();
     if(activity != null) {
       activity.loadBookFromIntent();
@@ -111,6 +111,10 @@ public class SummaryFragment extends BaseFragment implements SessionEditFragment
   }
 
   @Override public void onSessionDeleted(long sessionId) {
-    Log.d(TAG, "Got delete in summary fragment (finally?)");
+    Log.d(TAG, "Got delete in summary fragment, reloading book");
+    BookActivity activity = (BookActivity) getActivity();
+    if(activity != null) {
+      activity.loadBookFromIntent();
+    }
   }
 }

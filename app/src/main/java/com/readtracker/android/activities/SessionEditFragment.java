@@ -86,7 +86,7 @@ public class SessionEditFragment extends DialogFragment {
       @Nullable ViewGroup container,
       @Nullable Bundle savedInstanceState
   ) {
-    @NonNull SessionEditFragmentBinding binding = SessionEditFragmentBinding.inflate(inflater, container, false);
+    @NonNull final SessionEditFragmentBinding binding = SessionEditFragmentBinding.inflate(inflater, container, false);
     mStartPosText = binding.startPosText;
     mStartPosEdit = binding.startPosEdit;
     mEndPosText = binding.endPosText;
@@ -118,6 +118,26 @@ public class SessionEditFragment extends DialogFragment {
         } else {
           Log.w(TAG, "Unexpectedly was able to click save button with no session set");
         }
+      }
+    });
+
+    binding.deleteButton.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        Toast.makeText(getContext(), R.string.session_edit_long_press_to_delete, Toast.LENGTH_LONG).show();
+      }
+    });
+
+    binding.deleteButton.setOnLongClickListener(new View.OnLongClickListener() {
+      @Override public boolean onLongClick(View v) {
+        binding.deleteForRealButton.setVisibility(View.VISIBLE);
+        binding.deleteButton.setVisibility(View.GONE);
+        return true;
+      }
+    });
+
+    binding.deleteForRealButton.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        BackgroundTasks.deleteSession(SessionEditFragment.this, mSession);
       }
     });
 
@@ -268,6 +288,12 @@ public class SessionEditFragment extends DialogFragment {
   }
 
   private void onSessionDeleted(long sessionId) {
+    OnSessionEditListener listener = getListener();
+    if(listener != null) {
+      listener.onSessionDeleted(sessionId);
+    }
+    Toast.makeText(getContext(), R.string.session_edit_deleted_session, Toast.LENGTH_SHORT).show();
+    dismiss();
   }
 
   private void onSessionSaved(Session session) {

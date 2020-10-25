@@ -16,4 +16,6 @@
   <color name="textColorSecondary">#88ffffff</color>
   <color name="textColorTertiary">#66ffffff</color>
 
+  <color name="textColorDanger">#fff</color>
+
 </resources>

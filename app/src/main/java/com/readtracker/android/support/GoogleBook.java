@@ -9,6 +9,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.UUID;
 
+import okhttp3.HttpUrl;
+
 public class GoogleBook {
   private String id = "";
   private String title = "";
@@ -67,6 +69,17 @@ public class GoogleBook {
         coverURL = getString(jsonImageLinks, "small");
       } else if(jsonImageLinks.has("thumbnail")) {
         coverURL = getString(jsonImageLinks, "thumbnail");
+      }
+
+      if(coverURL != null) {
+        // For some reason the Google Books API returns http urls for some images.
+        // These urls can't be used with Picasso since Google blocks non-https requests
+        // for images. Fix this by forcing https scheme, regardless of what the response
+        // is.
+        final HttpUrl url = HttpUrl.parse(coverURL);
+        if(url != null) {
+          coverURL = url.newBuilder().scheme("https").build().toString();
+        }
       }
     }
 

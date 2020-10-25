@@ -9,10 +9,6 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
-import androidx.palette.graphics.Palette;
-import androidx.appcompat.widget.AppCompatButton;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -51,6 +47,11 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.core.content.ContextCompat;
+import androidx.palette.graphics.Palette;
 
 /** Activity for adding or editing a book. */
 public class BookSettingsActivity extends BookBaseActivity implements GoogleBookSearchTask.BookSearchResultListener {
@@ -216,7 +217,7 @@ public class BookSettingsActivity extends BookBaseActivity implements GoogleBook
         GoogleBook googleBook = result.get(i);
         String coverURL = googleBook.getCoverURL();
         if(coverURL != null && coverURL.length() > 0) {
-          populateFieldsfromGoogleBook(googleBook);
+          populateFieldsFromGoogleBook(googleBook);
           didFindCover = true;
           break;
         }
@@ -228,7 +229,7 @@ public class BookSettingsActivity extends BookBaseActivity implements GoogleBook
     }
   }
 
-  private void populateFieldsfromGoogleBook(GoogleBook googleBook) {
+  private void populateFieldsFromGoogleBook(GoogleBook googleBook) {
     loadCoverFromURL(googleBook.getCoverURL());
 
     // Populate fields that haven't been filled out by the user from the book search result
