@@ -11,6 +11,8 @@ import com.readtracker.android.db.DatabaseManager;
 import com.readtracker.android.support.ApplicationSettingsHelper;
 import com.squareup.otto.Bus;
 
+import androidx.appcompat.app.AppCompatDelegate;
+
 public class ReadTrackerApp extends Application {
   private static final String TAG = ReadTrackerApp.class.getName();
 
@@ -78,6 +80,9 @@ public class ReadTrackerApp extends Application {
 
     // Assign singleton
     mInstance = this;
+
+    // Enable SVG asset drawables for older devices
+    AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
   }
 
   public DatabaseManager getDatabaseManager() {

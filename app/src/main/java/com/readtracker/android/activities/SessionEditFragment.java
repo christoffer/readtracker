@@ -9,10 +9,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.view.Window;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.readtracker.R;
@@ -24,6 +23,8 @@ import com.readtracker.android.support.SessionPresenter.PositionPresenter;
 import com.readtracker.android.support.StringUtils;
 import com.readtracker.android.support.Utils;
 import com.readtracker.databinding.SessionEditFragmentBinding;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
@@ -39,24 +40,14 @@ import androidx.fragment.app.FragmentManager;
 
 public class SessionEditFragment extends DialogFragment {
   private static final String TAG = SessionEditFragment.class.getName();
-  private Float mPageCount;
 
   public interface OnSessionEditListener {
-    public void onSessionUpdated(Session session);
-    public void onSessionDeleted(long sessionId);
+    void onSessionUpdated(Session session);
+
+    void onSessionDeleted(long sessionId);
   }
 
-  private TextView mStartPosText;
-  private EditText mStartPosEdit;
-  private TextView mEndPosText;
-  private EditText mEndPosEdit;
-  private Button mSetDateButton;
-  private EditText mHoursTextEdit;
-  private EditText mMinutesTextEdit;
-  private EditText mSecondsTextEdit;
-  private TextView mStartPositionSuffix;
-  private TextView mEndPositionSuffix;
-  private Button mSaveButton;
+  private SessionEditFragmentBinding binding;
 
   private Session mSession;
   private SimpleDateFormat mDateFormat;
@@ -80,40 +71,34 @@ public class SessionEditFragment extends DialogFragment {
     throw new RuntimeException("Created SessionEditFragment without setting sessionId");
   }
 
+  @NonNull @Override public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
+    Dialog dialog = super.onCreateDialog(savedInstanceState);
+    dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+    return dialog;
+  }
+
   @Nullable @Override
   public View onCreateView(
       @NonNull LayoutInflater inflater,
       @Nullable ViewGroup container,
       @Nullable Bundle savedInstanceState
   ) {
-    @NonNull final SessionEditFragmentBinding binding = SessionEditFragmentBinding.inflate(inflater, container, false);
-    mStartPosText = binding.startPosText;
-    mStartPosEdit = binding.startPosEdit;
-    mEndPosText = binding.endPosText;
-    mEndPosEdit = binding.endPosEdit;
-    mSetDateButton = binding.setDateButton;
-    mHoursTextEdit = binding.hoursTextEdit;
-    mMinutesTextEdit = binding.minutesTextEdit;
-    mSecondsTextEdit = binding.secondsTextEdit;
-    mStartPositionSuffix = binding.startPositionSuffix;
-    mEndPositionSuffix = binding.endPositionSuffix;
-    mSaveButton = binding.saveButton;
+    binding = SessionEditFragmentBinding.inflate(inflater, container, false);
 
     String dateFormat = getString(R.string.session_edit_date_format);
-    //noinspection ConstantConditions
     Locale locale = Utils.getLocale(getContext());
     mDateFormat = new SimpleDateFormat(dateFormat, locale);
 
-    mSaveButton.setOnClickListener(new View.OnClickListener() {
+    binding.saveButton.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View view) {
         if(mSession != null) {
-          mSaveButton.setEnabled(false); // prevent double tapping
+          binding.saveButton.setEnabled(false); // prevent double tapping
           final Session serializedSession = getSessionFromFields();
           if(serializedSession != null) {
             mSession.merge(serializedSession);
             BackgroundTasks.saveSession(SessionEditFragment.this, mSession);
           } else {
-            mSaveButton.setEnabled(true);
+            binding.saveButton.setEnabled(true);
           }
         } else {
           Log.w(TAG, "Unexpectedly was able to click save button with no session set");
@@ -129,23 +114,16 @@ public class SessionEditFragment extends DialogFragment {
 
     binding.deleteButton.setOnLongClickListener(new View.OnLongClickListener() {
       @Override public boolean onLongClick(View v) {
-        binding.deleteForRealButton.setVisibility(View.VISIBLE);
-        binding.deleteButton.setVisibility(View.GONE);
+        BackgroundTasks.deleteSession(SessionEditFragment.this, mSession);
         return true;
       }
     });
 
-    binding.deleteForRealButton.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View v) {
-        BackgroundTasks.deleteSession(SessionEditFragment.this, mSession);
-      }
-    });
-
-    mSetDateButton.setOnClickListener(new View.OnClickListener() {
+    binding.setDateButton.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View view) {
         final FragmentManager fragMgr = getFragmentManager();
         if(fragMgr != null) {
-          long timestampMs = (Long) mSetDateButton.getTag();
+          long timestampMs = (Long) binding.setDateButton.getTag();
           DatePickerFragment datePickerFragment = DatePickerFragment.create(SessionEditFragment.this, timestampMs);
           datePickerFragment.show(fragMgr, "pick-session-time");
         }
@@ -159,33 +137,23 @@ public class SessionEditFragment extends DialogFragment {
 
   @Override public void onDestroyView() {
     super.onDestroyView();
-    mStartPosText = null;
-    mStartPosEdit = null;
-    mEndPosText = null;
-    mEndPosEdit = null;
-    mSetDateButton = null;
-    mHoursTextEdit = null;
-    mMinutesTextEdit = null;
-    mSecondsTextEdit = null;
-    mStartPositionSuffix = null;
-    mEndPositionSuffix = null;
-    mSaveButton = null;
+    binding = null;
   }
 
   private Session getSessionFromFields() {
     try {
-      final float startPos = getBoundaryAdjustedPositionOrFocus(mSession, mStartPosEdit);
-      float endPos = getBoundaryAdjustedPositionOrFocus(mSession, mEndPosEdit);
+      final float startPos = getBoundaryAdjustedPositionOrFocus(mSession, binding.startPosEdit);
+      float endPos = getBoundaryAdjustedPositionOrFocus(mSession, binding.endPosEdit);
 
-      if (endPos < startPos) {
+      if(endPos < startPos) {
         endPos = startPos;
       }
 
-      final long timestampMs = (long) mSetDateButton.getTag();
+      final long timestampMs = (long) binding.setDateButton.getTag();
 
-      final long hours = (long) getFloatValueFromFieldOrFocus(mHoursTextEdit);
-      final long minutes = (long) getFloatValueFromFieldOrFocus(mMinutesTextEdit);
-      final long seconds = (long) getFloatValueFromFieldOrFocus(mSecondsTextEdit);
+      final long hours = (long) getFloatValueFromFieldOrFocus(binding.hoursTextEdit);
+      final long minutes = (long) getFloatValueFromFieldOrFocus(binding.minutesTextEdit);
+      final long seconds = (long) getFloatValueFromFieldOrFocus(binding.secondsTextEdit);
       final long durationSeconds = seconds + minutes * 60 + hours * 60 * 60;
 
       Session serializedSession = new Session();
@@ -241,36 +209,28 @@ public class SessionEditFragment extends DialogFragment {
     final PositionPresenter presenter = SessionPresenter.getPresenterForSession(session);
 
     if(presenter.getMode() == SessionPresenter.PositionMode.PAGES) {
-      mStartPosText.setText(R.string.session_edit_started_on_page);
-      mStartPosEdit.setInputType(InputType.TYPE_CLASS_NUMBER);
-      mEndPosText.setText(R.string.session_edit_ended_on_page);
-      mEndPosEdit.setInputType(InputType.TYPE_CLASS_NUMBER);
-
-      mStartPositionSuffix.setVisibility(View.GONE);
-      mEndPositionSuffix.setVisibility(View.GONE);
+      binding.startPosEdit.setInputType(InputType.TYPE_CLASS_NUMBER);
+      binding.endPosEdit.setInputType(InputType.TYPE_CLASS_NUMBER);
+      binding.endPositionSuffix.setVisibility(View.GONE);
     } else {
-      mStartPosText.setText(R.string.session_edit_started_at);
-      mStartPosEdit.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL);
-      mEndPosText.setText(R.string.session_edit_ended_at);
-      mEndPosEdit.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL);
-
-      mStartPositionSuffix.setVisibility(View.VISIBLE);
-      mEndPositionSuffix.setVisibility(View.VISIBLE);
+      binding.startPosEdit.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL);
+      binding.endPosEdit.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL);
+      binding.endPositionSuffix.setVisibility(View.VISIBLE);
     }
 
-    mStartPosEdit.setText(presenter.format(session.getStartPosition()));
-    mEndPosEdit.setText(presenter.format(session.getEndPosition()));
+    binding.startPosEdit.setText(presenter.format(session.getStartPosition()));
+    binding.endPosEdit.setText(presenter.format(session.getEndPosition()));
 
     final long timestampMs = session.getTimestampMs();
     onSessionTimestampSet(timestampMs);
 
     final long durationSeconds = session.getDurationSeconds();
     int[] hms = StringUtils.convertMillisecondsToHMS(durationSeconds * 1000L);
-    mHoursTextEdit.setText(String.format("%d", hms[0]));
-    mMinutesTextEdit.setText(String.format("%d", hms[1]));
-    mSecondsTextEdit.setText(String.format("%d", hms[2]));
+    binding.hoursTextEdit.setText(String.format("%d", hms[0]));
+    binding.minutesTextEdit.setText(String.format("%d", hms[1]));
+    binding.secondsTextEdit.setText(String.format("%d", hms[2]));
 
-    mSaveButton.setEnabled(true);
+    binding.saveButton.setEnabled(true);
   }
 
   private OnSessionEditListener getListener() {
@@ -323,7 +283,6 @@ public class SessionEditFragment extends DialogFragment {
       mSession = session;
       mSessionId = sessionId;
       mActivityRef = new WeakReference<>(listener);
-      //noinspection ConstantConditions
       mDatabaseMgr = ((BaseActivity) listener.getActivity()).getApp().getDatabaseManager();
       mAction = action;
     }
@@ -396,14 +355,14 @@ public class SessionEditFragment extends DialogFragment {
     Log.d(TAG, String.format("onSessionTimestampSet(%d)", timestampMs));
     final Date sessionDate = new Date(timestampMs);
     String formattedDate = mDateFormat.format(sessionDate);
-    mSetDateButton.setText(formattedDate);
-    mSetDateButton.setTag(timestampMs);
-    mSetDateButton.setEnabled(true);
+    binding.setDateButton.setText(formattedDate);
+    binding.setDateButton.setTag(timestampMs);
+    binding.setDateButton.setEnabled(true);
   }
 
   public static class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
     private static final String ARG_TIMESTAMP = "arg_timestamp";
-    private Calendar mCalendar = Calendar.getInstance();
+    private final Calendar mCalendar = Calendar.getInstance();
 
     public static DatePickerFragment create(SessionEditFragment targetFragment, long timestampMs) {
       Bundle args = new Bundle();
@@ -414,8 +373,7 @@ public class SessionEditFragment extends DialogFragment {
       return frag;
     }
 
-    @SuppressWarnings("ConstantConditions")
-    @Override
+    @NotNull @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
       long timestampMs = getArguments().getLong(ARG_TIMESTAMP);
       mCalendar.setTimeInMillis(timestampMs);

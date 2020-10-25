@@ -1,212 +1,172 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.gridlayout.widget.GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:grid="http://schemas.android.com/apk/res-auto"
   xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="wrap_content"
   android:layout_height="wrap_content"
   android:minWidth="500dp"
-  android:padding="@dimen/floatingViewPadding">
+  android:padding="16dp"
+  grid:columnCount="2"
+  grid:useDefaultMargins="true">
 
-  <androidx.gridlayout.widget.GridLayout xmlns:grid="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/grid"
-    android:layout_width="match_parent"
+  <ImageView
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    grid:columnCount="2">
+    app:srcCompat="@drawable/ic_calendar_white"
+    grid:layout_column="0"
+    grid:layout_gravity="center_vertical" />
 
-    <TextView
-      android:id="@+id/startPosText"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_marginEnd="12dp"
-      android:text="@string/session_edit_started_on_page"
-      android:textSize="@dimen/textSizeMedium"
-      grid:layout_column="0"
-      grid:layout_gravity="center_vertical"
-      grid:layout_row="0" />
-
-    <LinearLayout
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      grid:layout_column="1"
-      grid:layout_row="0">
-
-      <EditText
-        android:id="@+id/startPosEdit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="number"
-        android:textSize="@dimen/textSizeLarge"
-        tools:text="23"
-        android:importantForAutofill="no" />
-
-      <TextView
-        android:id="@+id/startPositionSuffix"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="%"
-        android:textSize="@dimen/textSizeMedium"
-        tools:ignore="HardcodedText" />
-
-    </LinearLayout>
-
-    <TextView
-      android:id="@+id/endPosText"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_marginRight="12dp"
-      android:text="@string/session_edit_ended_on_page"
-      android:textSize="@dimen/textSizeMedium"
-      grid:layout_column="0"
-      grid:layout_gravity="center_vertical"
-      grid:layout_row="1" />
-
-    <LinearLayout
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      grid:layout_column="1"
-      grid:layout_row="1">
-
-      <EditText
-        android:id="@+id/endPosEdit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="number"
-        android:textSize="@dimen/textSizeLarge"
-        tools:text="27"
-        android:importantForAutofill="no" />
-
-      <TextView
-        android:id="@+id/endPositionSuffix"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="%"
-        android:textSize="@dimen/textSizeMedium"
-        tools:ignore="HardcodedText" />
-
-    </LinearLayout>
-
-    <TextView
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_marginRight="12dp"
-      android:text="@string/session_edit_day_of_reading"
-      android:textSize="@dimen/textSizeMedium"
-      grid:layout_column="0"
-      grid:layout_row="2" />
+  <LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    grid:layout_column="1"
+    grid:layout_gravity="fill">
 
     <Button
       android:id="@+id/setDateButton"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:textSize="@dimen/textSizeMedium"
-      grid:layout_column="1"
-      grid:layout_row="2"
       tools:text="Oct 7, 2018" />
 
-  </androidx.gridlayout.widget.GridLayout>
+    <Space
+      android:layout_width="0dp"
+      android:layout_height="0dp"
+      android:layout_weight="1" />
+
+    <Button
+      android:id="@+id/deleteButton"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="@string/general_delete"
+      android:textSize="@dimen/textSizeSmall"
+      android:background="?android:selectableItemBackground"
+      android:textColor="@color/textColorDanger"
+      android:visibility="visible" />
+
+  </LinearLayout>
+
+  <ImageView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    app:srcCompat="@drawable/ic_code_white"
+    grid:layout_column="0"
+    grid:layout_gravity="center_vertical" />
 
   <LinearLayout
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_below="@id/grid"
-    android:layout_marginTop="16dp"
-    android:orientation="vertical">
+    grid:layout_column="1">
+
+    <EditText
+      android:id="@+id/startPosEdit"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:importantForAutofill="no"
+      android:inputType="number"
+      android:textSize="@dimen/textSizeLarge"
+      tools:text="23" />
 
     <TextView
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:text="@string/session_edit_reading_time"
-      android:textSize="@dimen/textSizeMedium" />
+      android:layout_marginHorizontal="12dp"
+      android:text="@string/session_edit_from_to"
+      android:textSize="@dimen/textSizeMedium"
+      tools:text="to" />
 
-    <LinearLayout
+    <EditText
+      android:id="@+id/endPosEdit"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_gravity="center_horizontal"
-      android:layout_marginTop="8dp">
+      android:importantForAutofill="no"
+      android:inputType="number"
+      android:textSize="@dimen/textSizeLarge"
+      tools:text="27" />
 
-      <EditText
-        android:id="@+id/hoursTextEdit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="number"
-        tools:text="3"
-        android:importantForAutofill="no" />
-
-      <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/general_hours" />
-
-      <EditText
-        android:id="@+id/minutesTextEdit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="number"
-        tools:text="12"
-        android:importantForAutofill="no" />
-
-      <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/general_minutes" />
-
-      <EditText
-        android:id="@+id/secondsTextEdit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="number"
-        tools:text="49"
-        android:importantForAutofill="no" />
-
-      <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/general_seconds" />
-
-    </LinearLayout>
-
-    <RelativeLayout
-      android:layout_width="match_parent"
+    <TextView
+      android:id="@+id/endPositionSuffix"
+      android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_gravity="center_horizontal"
-      android:layout_marginTop="24dp">
-
-      <ImageButton
-        android:id="@+id/deleteButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_centerVertical="true"
-        android:layout_marginTop="@dimen/gridGutter"
-        android:contentDescription="@string/general_delete"
-        android:src="@android:drawable/ic_menu_delete"
-        android:text="@string/general_delete" />
-
-      <Button
-        android:id="@+id/deleteForRealButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/gridGutter"
-        android:visibility="gone"
-        android:layout_alignParentLeft="true"
-        android:layout_centerVertical="true"
-        android:contentDescription="@string/general_delete"
-        android:textColor="@color/textColorDanger"
-        android:text="@string/general_delete" />
-
-      <Button
-        android:id="@+id/saveButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:layout_marginTop="@dimen/gridGutter"
-        android:enabled="false"
-        android:text="@string/general_save" />
-
-
-    </RelativeLayout>
-
+      android:text="%"
+      android:textSize="@dimen/textSizeMedium"
+      tools:ignore="HardcodedText" />
   </LinearLayout>
 
 
-</RelativeLayout>
+  <ImageView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    app:srcCompat="@drawable/ic_time_white"
+    grid:layout_column="0"
+    grid:layout_gravity="center_vertical" />
+
+  <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    grid:layout_column="1">
+
+    <EditText
+      android:id="@+id/hoursTextEdit"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:importantForAutofill="no"
+      android:inputType="number"
+      tools:text="3" />
+
+    <TextView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="@string/general_hours" />
+
+    <EditText
+      android:id="@+id/minutesTextEdit"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:importantForAutofill="no"
+      android:inputType="number"
+      tools:text="12" />
+
+    <TextView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="@string/general_minutes" />
+
+    <EditText
+      android:id="@+id/secondsTextEdit"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:importantForAutofill="no"
+      android:inputType="number"
+      tools:text="49" />
+
+    <TextView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="@string/general_seconds" />
+
+  </LinearLayout>
+
+  <FrameLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="16dp"
+    grid:layout_column="0"
+    grid:layout_columnSpan="2"
+    grid:layout_gravity="fill_horizontal">
+
+    <androidx.appcompat.widget.AppCompatButton
+      android:id="@+id/saveButton"
+      style="@style/default_button"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:enabled="false"
+      android:text="@string/general_save" />
+
+  </FrameLayout>
+
+
+</androidx.gridlayout.widget.GridLayout>
 

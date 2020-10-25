@@ -194,4 +194,5 @@
     <string name="session_edit_enter_value_between_pages">Please enter a page between 0 and %1$d</string>
     <string name="session_edit_long_press_to_delete">Long press to delete</string>
     <string name="session_edit_deleted_session">Session deleted</string>
+    <string name="session_edit_from_to">to</string>
 </resources>
