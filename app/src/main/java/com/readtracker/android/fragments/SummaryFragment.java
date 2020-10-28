@@ -13,10 +13,11 @@ import com.readtracker.android.activities.BookActivity;
 import com.readtracker.android.activities.BookBaseActivity;
 import com.readtracker.android.activities.SessionEditFragment;
 import com.readtracker.android.adapters.ReadingSessionAdapter;
-import com.readtracker.android.custom_views.SessionHeaderView;
+import com.readtracker.android.custom_views.SessionHeaderViewHandler;
 import com.readtracker.android.db.Book;
 import com.readtracker.android.db.Session;
 import com.readtracker.databinding.FragmentSessionsBinding;
+import com.readtracker.databinding.SessionListHeaderBinding;
 import com.squareup.otto.Subscribe;
 
 import java.util.List;
@@ -37,7 +38,7 @@ public class SummaryFragment extends BaseFragment implements SessionEditFragment
   private TextView mBlankText;
 
   private ReadingSessionAdapter mSessionAdapter;
-  private SessionHeaderView mSessionListHeader;
+  private SessionHeaderViewHandler mSessionHeaderViewHandler;
 
   public static Fragment newInstance() {
     return new SummaryFragment();
@@ -49,10 +50,11 @@ public class SummaryFragment extends BaseFragment implements SessionEditFragment
     mSessionList = binding.sessionList;
     mBlankText = binding.blankText;
 
-    mSessionListHeader = new SessionHeaderView(getContext());
-    mSessionAdapter = new ReadingSessionAdapter(getContext());
+    @NonNull SessionListHeaderBinding headerBinding = SessionListHeaderBinding.inflate(inflater, container, false);
+    mSessionHeaderViewHandler = new SessionHeaderViewHandler(headerBinding);
+    mSessionList.addHeaderView(headerBinding.getRoot(), null, false);
 
-    mSessionList.addHeaderView(mSessionListHeader, null, false);
+    mSessionAdapter = new ReadingSessionAdapter(getContext());
 
     mSessionList.setDividerHeight(0);
     mSessionList.setAdapter(mSessionAdapter);
@@ -87,7 +89,7 @@ public class SummaryFragment extends BaseFragment implements SessionEditFragment
       return;
     }
 
-    mSessionListHeader.populateForBook(mBook);
+    mSessionHeaderViewHandler.populateForBook(mBook);
     final List<Session> sessions = mBook.getSessions();
 
     if(sessions.size() > 0) {

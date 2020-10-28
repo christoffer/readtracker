@@ -1,15 +1,11 @@
 package com.readtracker.android.custom_views;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
-
-import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.readtracker.R;
@@ -21,27 +17,30 @@ import com.readtracker.databinding.SessionListHeaderBinding;
 
 import java.util.List;
 
+import androidx.core.content.ContextCompat;
+
 import static com.readtracker.android.support.StringUtils.longCoarseHumanTimeFromMillis;
 import static com.readtracker.android.support.StringUtils.longCoarseHumanTimeFromSeconds;
 
-public class SessionHeaderView extends LinearLayout {
-  private static final String TAG = SessionHeaderView.class.getSimpleName();
+public class SessionHeaderViewHandler {
+  private static final String TAG = SessionHeaderViewHandler.class.getSimpleName();
 
   private final SegmentBar mSegmentBar;
   private final TextView mTextSummary;
   private final TextView mTextReadingState;
   private final TextView mTextClosingRemark;
   private final TextView mTextTimeLeft;
+  private final Context mContext;
 
-  public SessionHeaderView(Context context) {
-    super(context);
+  public SessionHeaderViewHandler(SessionListHeaderBinding binding) {
     Log.d(TAG, "SessionHeaderView()");
-    @NonNull SessionListHeaderBinding binding = SessionListHeaderBinding.inflate(LayoutInflater.from(context));
     mSegmentBar = binding.segmentBar;
     mTextSummary = binding.textSummary;
     mTextReadingState = binding.textReadingState;
     mTextClosingRemark = binding.textClosingRemarkContent;
     mTextTimeLeft = binding.textTimeLeft;
+
+    mContext = binding.getRoot().getContext();
   }
 
   /** Defer populating the fields until both the UI and the data is available. */
@@ -95,20 +94,21 @@ public class SessionHeaderView extends LinearLayout {
   private void populateSummary(Book book) {
     final long secondsSpent = book.calculateSecondsSpent();
     final int sessionCount = book.getSessions().size();
-    final Context context = mTextSummary.getContext();
+
+    final Resources resources = mContext.getResources();
 
     if(book.getState() == Book.State.Reading) {
-      final String sessionDesc = getResources().getQuantityString(R.plurals.plural_session, sessionCount, sessionCount);
-      final String timeSpentDesc = longCoarseHumanTimeFromSeconds(secondsSpent, getContext());
-      final String summary = context.getString(R.string.summary_fragment_summary, timeSpentDesc, sessionDesc);
+      final String sessionDesc = resources.getQuantityString(R.plurals.plural_session, sessionCount, sessionCount);
+      final String timeSpentDesc = longCoarseHumanTimeFromSeconds(secondsSpent, mContext);
+      final String summary = mContext.getString(R.string.summary_fragment_summary, timeSpentDesc, sessionDesc);
       mTextSummary.setText(summary);
       mSegmentBar.setVisibility(View.GONE);
     } else {
-      final int primaryTextColor = ContextCompat.getColor(context, R.color.textColorPrimary);
+      final int primaryTextColor = ContextCompat.getColor(mContext, R.color.textColorPrimary);
       mTextSummary.setTextColor(primaryTextColor);
-      final String readingTimeString = longCoarseHumanTimeFromSeconds(secondsSpent, getContext());
-      final String sessionCountString = getResources().getQuantityString(R.plurals.plural_session, sessionCount, sessionCount);
-      final String summary = context.getString(R.string.summary_fragment_summary, readingTimeString, sessionCountString);
+      final String readingTimeString = longCoarseHumanTimeFromSeconds(secondsSpent, mContext);
+      final String sessionCountString = resources.getQuantityString(R.plurals.plural_session, sessionCount, sessionCount);
+      final String summary = mContext.getString(R.string.summary_fragment_summary, readingTimeString, sessionCountString);
       mTextSummary.setText(summary);
     }
   }
