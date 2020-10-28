@@ -119,16 +119,19 @@ public class SessionEditFragment extends DialogFragment {
       }
     });
 
-    binding.setDateButton.setOnClickListener(new View.OnClickListener() {
+    binding.dateEdit.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View view) {
         final FragmentManager fragMgr = getFragmentManager();
         if(fragMgr != null) {
-          long timestampMs = (Long) binding.setDateButton.getTag();
+          long timestampMs = (Long) binding.dateEdit.getTag();
           DatePickerFragment datePickerFragment = DatePickerFragment.create(SessionEditFragment.this, timestampMs);
           datePickerFragment.show(fragMgr, "pick-session-time");
         }
       }
     });
+
+    // NOTE(christoffer) Kind of weird that this can't be set in XML, no?
+    // binding.setDateButton.setPaintFlags(binding.setDateButton.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
 
     BackgroundTasks.loadSession(this, getSessionId());
 
@@ -149,7 +152,7 @@ public class SessionEditFragment extends DialogFragment {
         endPos = startPos;
       }
 
-      final long timestampMs = (long) binding.setDateButton.getTag();
+      final long timestampMs = (long) binding.dateEdit.getTag();
 
       final long hours = (long) getFloatValueFromFieldOrFocus(binding.hoursTextEdit);
       final long minutes = (long) getFloatValueFromFieldOrFocus(binding.minutesTextEdit);
@@ -355,9 +358,9 @@ public class SessionEditFragment extends DialogFragment {
     Log.d(TAG, String.format("onSessionTimestampSet(%d)", timestampMs));
     final Date sessionDate = new Date(timestampMs);
     String formattedDate = mDateFormat.format(sessionDate);
-    binding.setDateButton.setText(formattedDate);
-    binding.setDateButton.setTag(timestampMs);
-    binding.setDateButton.setEnabled(true);
+    binding.dateEdit.setText(formattedDate);
+    binding.dateEdit.setTag(timestampMs);
+    binding.dateEdit.setEnabled(true);
   }
 
   public static class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {

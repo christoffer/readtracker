@@ -14,43 +14,26 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     app:srcCompat="@drawable/ic_calendar_white"
+    app:tint="@color/textColorSecondary"
     grid:layout_column="0"
     grid:layout_gravity="center_vertical" />
 
-  <LinearLayout
+  <EditText
+    android:id="@+id/dateEdit"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:inputType="date"
+    android:focusable="false"
+    android:textColor="@color/textColorPrimary"
+    android:textSize="@dimen/textSizeLarge"
     grid:layout_column="1"
-    grid:layout_gravity="fill">
-
-    <Button
-      android:id="@+id/setDateButton"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:textSize="@dimen/textSizeMedium"
-      tools:text="Oct 7, 2018" />
-
-    <Space
-      android:layout_width="0dp"
-      android:layout_height="0dp"
-      android:layout_weight="1" />
-
-    <Button
-      android:id="@+id/deleteButton"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:text="@string/general_delete"
-      android:textSize="@dimen/textSizeSmall"
-      android:background="?android:selectableItemBackground"
-      android:textColor="@color/textColorDanger"
-      android:visibility="visible" />
-
-  </LinearLayout>
+    tools:text="Oct 7, 2018" />
 
   <ImageView
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     app:srcCompat="@drawable/ic_code_white"
+    app:tint="@color/textColorSecondary"
     grid:layout_column="0"
     grid:layout_gravity="center_vertical" />
 
@@ -99,6 +82,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     app:srcCompat="@drawable/ic_time_white"
+    app:tint="@color/textColorSecondary"
     grid:layout_column="0"
     grid:layout_gravity="center_vertical" />
 
@@ -114,12 +98,14 @@
       android:layout_height="wrap_content"
       android:importantForAutofill="no"
       android:inputType="number"
+      android:textSize="@dimen/textSizeLarge"
       tools:text="3" />
 
     <TextView
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:text="@string/general_hours" />
+      android:text="@string/general_hours"
+      android:textSize="@dimen/textSizeMedium" />
 
     <EditText
       android:id="@+id/minutesTextEdit"
@@ -127,12 +113,14 @@
       android:layout_height="wrap_content"
       android:importantForAutofill="no"
       android:inputType="number"
+      android:textSize="@dimen/textSizeLarge"
       tools:text="12" />
 
     <TextView
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:text="@string/general_minutes" />
+      android:text="@string/general_minutes"
+      android:textSize="@dimen/textSizeMedium" />
 
     <EditText
       android:id="@+id/secondsTextEdit"
@@ -140,16 +128,18 @@
       android:layout_height="wrap_content"
       android:importantForAutofill="no"
       android:inputType="number"
+      android:textSize="@dimen/textSizeLarge"
       tools:text="49" />
 
     <TextView
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:text="@string/general_seconds" />
+      android:text="@string/general_seconds"
+      android:textSize="@dimen/textSizeMedium" />
 
   </LinearLayout>
 
-  <FrameLayout
+  <RelativeLayout
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginTop="16dp"
@@ -162,11 +152,24 @@
       style="@style/default_button"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
+      android:layout_centerInParent="true"
       android:enabled="false"
       android:text="@string/general_save" />
 
-  </FrameLayout>
+    <Button
+      android:id="@+id/deleteButton"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignParentEnd="true"
+      android:layout_centerVertical="true"
+      android:background="?selectableItemBackground"
+      android:minWidth="0dp"
+      android:text="@string/general_delete"
+      android:textColor="@color/textColorSecondary"
+      android:textSize="@dimen/textSizeSmall"
+      android:visibility="visible" />
 
+  </RelativeLayout>
 
 </androidx.gridlayout.widget.GridLayout>
 
