@@ -3,6 +3,8 @@ package com.readtracker.android.integration_test_utils
 import android.content.Context
 import android.content.ContextWrapper
 import android.os.Build
+import androidx.test.core.app.ApplicationProvider
+import com.readtracker.android.ReadTrackerApp
 import java.util.*
 
 fun getContextWithLocale(context: Context, language: String, country: String): ContextWrapper {
@@ -23,4 +25,8 @@ fun getContextWithLocale(context: Context, language: String, country: String): C
         return ContextWrapper(context)
     }
     return ContextWrapper(context.createConfigurationContext(config))
+}
+
+fun getAppContext(): ReadTrackerApp {
+    return ApplicationProvider.getApplicationContext()
 }

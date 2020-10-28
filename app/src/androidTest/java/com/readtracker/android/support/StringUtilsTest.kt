@@ -1,9 +1,9 @@
 package com.readtracker.android.support
 
 import android.os.Build
-import androidx.test.platform.app.InstrumentationRegistry.getTargetContext
 import com.readtracker.android.db.Book
 import com.readtracker.android.db.Session
+import com.readtracker.android.integration_test_utils.getAppContext
 import com.readtracker.android.integration_test_utils.getContextWithLocale
 import com.readtracker.android.support.StringUtils.*
 import org.junit.Assert.assertEquals
@@ -25,7 +25,7 @@ class StringUtilsTest {
         val now = 1009886564000L /* some date at around noon */
         val millisPast22November1981 = now - 375254055000L
 
-        val context = getContextWithLocale(getTargetContext(), "en", "EN")
+        val context = getContextWithLocale(getAppContext(), "en", "EN")
 
         fun getStringForOffsetInPast(offsetMilliSeconds: Long): String {
             return StringUtils.humanPastTimeFromTimestamp(now - offsetMilliSeconds, now, context)
@@ -46,10 +46,10 @@ class StringUtilsTest {
     fun getDateString_returns_localized_dates() {
         val nov22nd1981 = 375292786000L
 
-        val englishLocale = getContextWithLocale(getTargetContext(), "en", "EN")
+        val englishLocale = getContextWithLocale(getAppContext(), "en", "EN")
         assertEquals("on Nov 22, 1981", StringUtils.getDateString(nov22nd1981, englishLocale))
 
-        val swedishLocale = getContextWithLocale(getTargetContext(), "sv", "SE")
+        val swedishLocale = getContextWithLocale(getAppContext(), "sv", "SE")
         val expectedResult = if (Build.VERSION.SDK_INT <= 22) {
             // NOTE(christoffer) The formatting seems to have changed around this time, not sure
             // exactly when but at least it's different between 22 and 25
@@ -65,7 +65,7 @@ class StringUtilsTest {
      */
     @Test
     fun hoursAndMinutesFromMillis_returnsExpectedStrings() {
-        val context = getContextWithLocale(getTargetContext(), "en", "EN")
+        val context = getContextWithLocale(getAppContext(), "en", "EN")
         assertEquals("0 minutes", hoursAndMinutesFromMillis(0, context))
         assertEquals("0 minutes", hoursAndMinutesFromMillis(36 * SECONDS, context))
         assertEquals("1 minute", hoursAndMinutesFromMillis(87 * SECONDS, context))
@@ -82,7 +82,7 @@ class StringUtilsTest {
      */
     @Test
     fun longHumanTimeFromMillis_returnsExpectedString() {
-        val context = getContextWithLocale(getTargetContext(), "en", "EN")
+        val context = getContextWithLocale(getAppContext(), "en", "EN")
         assertEquals("1 minute", longHumanTimeFromMillis(MINUTES, context))
         assertEquals("1 hour", longHumanTimeFromMillis(HOURS, context))
         assertEquals("1 second", longHumanTimeFromMillis(SECONDS, context))
@@ -96,7 +96,7 @@ class StringUtilsTest {
 
     @Test
     fun utilsTest_LongCoarseHumanTimeFromMillis_ReturnsString() {
-        val context = getTargetContext()
+        val context = getAppContext()
         assertEquals("13 seconds", longCoarseHumanTimeFromMillis(13 * SECONDS, context))
         assertEquals("3 minutes", longCoarseHumanTimeFromMillis(3 * MINUTES + 13 * SECONDS, context))
         assertEquals("3 hours and 47 minutes", longCoarseHumanTimeFromMillis(3 * HOURS + 47 * MINUTES + 13 * SECONDS, context))
@@ -105,7 +105,7 @@ class StringUtilsTest {
 
     @Test
     fun StringUtils_test_formatSessionReadAmountHtml() {
-        val context = getContextWithLocale(getTargetContext(), "en", "EN")
+        val context = getContextWithLocale(getAppContext(), "en", "EN")
 
         val noBookNoPages = Session().apply { startPosition = 0.381f; endPosition = 0.422f }
         assertEquals("<b>4.1%</b>", formatSessionReadAmountHtml(context, noBookNoPages))
@@ -130,7 +130,7 @@ class StringUtilsTest {
 
     @Test
     fun StringUtils_test_formatSessionDurationHtml() {
-        val context = getContextWithLocale(getTargetContext(), "en", "EN")
+        val context = getContextWithLocale(getAppContext(), "en", "EN")
 
         val hoursAndMinutes = Session().apply { durationSeconds = (2 * HOURS + 43 * MINUTES + 15 * SECONDS) / 1000 }
         assertEquals("<b>2</b>h, <b>43</b>min", formatSessionDurationHtml(context, hoursAndMinutes))
@@ -145,7 +145,7 @@ class StringUtilsTest {
 
     @Test
     fun StringUtils_test_formatSessionFromTo() {
-        val context = getContextWithLocale(getTargetContext(), "en", "EN")
+        val context = getContextWithLocale(getAppContext(), "en", "EN")
 
         val pctSession = Session().apply { startPosition = 0.113f; endPosition = 0.156f }
         assertEquals("11.3 - 15.6%", formatSessionFromTo(context, pctSession))
@@ -156,12 +156,12 @@ class StringUtilsTest {
             endPosition = 0.156f
             book = pagesBook
         }
-        assertEquals("p. 22 - 31", formatSessionFromTo(context, pageSession))
+        assertEquals("p. 23 - 31", formatSessionFromTo(context, pageSession))
 
-//        val onlyMinutes = Session().apply { durationSeconds = (14 * MINUTES + 35 * SECONDS) / 1000 }
-//        assertEquals("<b>14</b> minutes", formatSessionDurationHtml(context, onlyMinutes))
-//
-//        val onlyMinute = Session().apply { durationSeconds = (1 * MINUTES + 35 * SECONDS) / 1000 }
-//        assertEquals("<b>1</b> minute", formatSessionDurationHtml(context, onlyMinute))
+        val onlyMinutes = Session().apply { durationSeconds = (14 * MINUTES + 35 * SECONDS) / 1000 }
+        assertEquals("<b>14</b> minutes", formatSessionDurationHtml(context, onlyMinutes))
+
+        val onlyMinute = Session().apply { durationSeconds = (1 * MINUTES + 35 * SECONDS) / 1000 }
+        assertEquals("<b>1</b> minute", formatSessionDurationHtml(context, onlyMinute))
     }
 }

@@ -1,11 +1,11 @@
 package com.readtracker.android.db
 
-import androidx.test.platform.app.InstrumentationRegistry.getTargetContext
 import src.buildBook
 import src.buildQuote
 import src.buildSession
 import com.readtracker.android.db.export.JSONExporter
 import com.readtracker.android.db.export.JSONImporter
+import com.readtracker.android.integration_test_utils.getAppContext
 import src.JSONFixtureAssertions.assertBookListMatchesExpectedResultFromFixtureImport
 import org.junit.Assert.*
 import org.junit.Before
@@ -178,9 +178,9 @@ class JSONImporterTest : DatabaseTestBase() {
      * @throws Exception
      */
     private fun createExportFileForBooks(books: List<Book>): File {
-        assertNotNull(getTargetContext())
+        assertNotNull(getAppContext())
 
-        val exportFile = File(getTargetContext().filesDir, randomString())
+        val exportFile = File(getAppContext().filesDir, randomString())
         val content = JSONExporter.withDatabaseManager(databaseManager).exportAll(books).toString()
         FileOutputStream(exportFile).run {
             write(content.toByteArray())
@@ -207,9 +207,9 @@ class JSONImporterTest : DatabaseTestBase() {
      * @throws IOException
      */
     private fun copyResourceFile(resourcePath: String): File {
-        assertNotNull(getTargetContext())
+        assertNotNull(getAppContext())
 
-        val exportFile = File(getTargetContext().filesDir, randomString())
+        val exportFile = File(getAppContext().filesDir, randomString())
         val content = readFixtureFile(resourcePath)
         FileOutputStream(exportFile).run {
             write(content.toByteArray())

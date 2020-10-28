@@ -1,6 +1,7 @@
 package com.readtracker.android.db
 
-import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.core.app.ApplicationProvider
+import com.readtracker.android.ReadTrackerApp
 import org.junit.After
 
 const val TEST_DATABASE_NAME = "readtracker-test.db"
@@ -8,12 +9,14 @@ const val TEST_DATABASE_NAME = "readtracker-test.db"
 abstract class DatabaseTestBase {
     @After
     fun clearDatabase() {
-        InstrumentationRegistry.getTargetContext().deleteDatabase(TEST_DATABASE_NAME)
+        val appContext = ApplicationProvider.getApplicationContext<ReadTrackerApp>()
+        appContext.deleteDatabase(TEST_DATABASE_NAME)
     }
 
     fun getManagerOfTestDatabaseAtVersion(dbVersion: Int): DatabaseManager {
-        val dbHelper = DatabaseHelper(InstrumentationRegistry.getTargetContext(), TEST_DATABASE_NAME, null, dbVersion)
-        InstrumentationRegistry.getTargetContext().deleteDatabase(TEST_DATABASE_NAME)
+        val appContext = ApplicationProvider.getApplicationContext<ReadTrackerApp>()
+        val dbHelper = DatabaseHelper(appContext, TEST_DATABASE_NAME, null, dbVersion)
+        appContext.deleteDatabase(TEST_DATABASE_NAME)
         return DatabaseManager(dbHelper)
     }
 

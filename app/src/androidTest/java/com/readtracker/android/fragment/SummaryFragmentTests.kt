@@ -1,7 +1,7 @@
 package com.readtracker.android.fragment
 
-import androidx.test.platform.app.InstrumentationRegistry.getTargetContext
 import com.readtracker.android.custom_views.SessionHeaderView.getPepTalkString
+import com.readtracker.android.integration_test_utils.getAppContext
 import com.readtracker.android.integration_test_utils.getContextWithLocale
 import junit.framework.TestCase.*
 import org.junit.Test
@@ -9,7 +9,7 @@ import org.junit.Test
 class SummmaryFragmentTests {
     @Test
     fun getPepTalkString_returnsExpectedResults() {
-        val context = getContextWithLocale(getTargetContext(), "en", "EN")
+        val context = getContextWithLocale(getAppContext(), "en", "EN")
         fun toSeconds(hours: Int, minutes: Int): Float = (hours * 60 * 60 + minutes * 60).toFloat()
         assertNull(getPepTalkString(context, toSeconds(hours=0, minutes=0)))
         assertEquals("Why not finish it today?", getPepTalkString(context, toSeconds(hours=0, minutes=37)))

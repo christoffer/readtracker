@@ -13,7 +13,7 @@
           "page_count": 123.45,
           "sessions": [
             {
-              "start_position": 0.45,
+              "start_position": 0.44999998807907104,
               "end_position": 0.75,
               "duration_seconds": 1234,
               "timestamp": 4000000
@@ -50,7 +50,7 @@
                 {
                     "timestamp": 1400856553800,
                     "end_position": 0.9800000190734863,
-                    "start_position": 0.008720931,
+                    "start_position": 0.00872093066573143,
                     "duration_seconds": 1146
                 }
             ],

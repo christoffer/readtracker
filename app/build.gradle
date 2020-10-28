@@ -5,16 +5,22 @@ repositories {
     google()
     jcenter()
     jcenter {
-        url  "http://dl.bintray.com/lukaville/maven"
+        url "http://dl.bintray.com/lukaville/maven"
     }
 }
 
 android {
     compileSdkVersion 29
     buildToolsVersion '29.0.2'
+
+    useLibrary 'android.test.runner'
+    useLibrary 'android.test.base'
+    useLibrary 'android.test.mock'
+
     testOptions {
         unitTests.returnDefaultValues = true
     }
+
     signingConfigs {
         release {
             /*
@@ -38,9 +44,11 @@ android {
             }
         }
     }
+
     buildFeatures {
         viewBinding true
     }
+
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 29
@@ -50,6 +58,7 @@ android {
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         vectorDrawables.useSupportLibrary = true
     }
+
     buildTypes {
         release {
             minifyEnabled true
@@ -57,13 +66,16 @@ android {
             signingConfig signingConfigs.release
         }
     }
+
     lintOptions {
         abortOnError false
         disable 'DefaultLocale'
     }
+
     packagingOptions {
         exclude 'META-INF/services/javax.annotation.processing.Processor'
     }
+
     sourceSets {
         String sharedTestHelpers = 'src/sharedTest/src'
         String sharedTestResources = 'src/sharedTest/resources'
@@ -79,8 +91,6 @@ android {
                 srcDirs = [sharedTestResources]
             }
         }
-    }
-    productFlavors {
     }
 }
 
@@ -111,14 +121,11 @@ dependencies {
     implementation 'com.nbsp:library:1.8'
 
     // Required for instrumented tests
-    androidTestImplementation 'org.skyscreamer:jsonassert:1.2.3'
-    androidTestImplementation 'androidx.annotation:annotation:1.0.0'
-    androidTestImplementation('androidx.test.ext:junit:1.1.1') {
-        // Exclude the support annotations because they force upgrade the explicit support
-        // annotation version above.
-        exclude group: 'com.android.support', module: 'support-annotations'
-    }
+    testImplementation 'androidx.test:core:1.3.0'
+    androidTestImplementation 'androidx.test:runner:1.3.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
 
+    androidTestImplementation 'org.skyscreamer:jsonassert:1.2.3'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 

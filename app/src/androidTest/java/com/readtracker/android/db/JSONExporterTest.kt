@@ -1,7 +1,7 @@
 package com.readtracker.android.db
 
-import androidx.test.platform.app.InstrumentationRegistry.getTargetContext
 import com.readtracker.android.db.export.JSONExporter
+import com.readtracker.android.integration_test_utils.getAppContext
 import com.readtracker.android.support.Utils
 import src.JSONFixtureAssertions.populateBooksForExpectedOutput
 import org.json.JSONObject
@@ -44,11 +44,11 @@ class JSONExporterTest : DatabaseTestBase() {
         val exporter = JSONExporter.withDatabaseManager(databaseManager)
         val fixtureBooks = populateBooksForExpectedOutput(databaseManager)
         val exportFilename = randomString()
-        val exportFile = File(getTargetContext().filesDir, exportFilename)
+        val exportFile = File(getAppContext().filesDir, exportFilename)
 
         exporter.exportBooksToFile(fixtureBooks, exportFile)
 
-        val inputStream = FileInputStream(getTargetContext().getFileStreamPath(exportFilename))
+        val inputStream = FileInputStream(getAppContext().getFileStreamPath(exportFilename))
         val exportFileContent = Utils.readInputStream(inputStream)
         val actual = JSONObject(exportFileContent)
         val expected = readFixtureFile("expected_output_of_populated_book_test.json")
