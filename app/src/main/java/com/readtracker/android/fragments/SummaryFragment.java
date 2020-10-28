@@ -1,5 +1,6 @@
 package com.readtracker.android.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 
 import com.readtracker.android.activities.BookActivity;
 import com.readtracker.android.activities.BookBaseActivity;
+import com.readtracker.android.activities.FinishBookActivity;
 import com.readtracker.android.activities.SessionEditFragment;
 import com.readtracker.android.adapters.ReadingSessionAdapter;
 import com.readtracker.android.custom_views.SessionHeaderViewHandler;
@@ -25,6 +27,8 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+
+import static com.readtracker.android.activities.BookActivity.REQUEST_FINISH_BOOK;
 
 /**
  * Fragment for showing summary of a book
@@ -51,7 +55,14 @@ public class SummaryFragment extends BaseFragment implements SessionEditFragment
     mBlankText = binding.blankText;
 
     @NonNull SessionListHeaderBinding headerBinding = SessionListHeaderBinding.inflate(inflater, container, false);
-    mSessionHeaderViewHandler = new SessionHeaderViewHandler(headerBinding);
+    mSessionHeaderViewHandler = new SessionHeaderViewHandler(headerBinding, new SessionHeaderViewHandler.OnFinishBookListener() {
+      @Override public void onFinishBook(final int bookId) {
+        Log.d(TAG, "onFinishBook() called, showing finish book screen");
+        Intent intent = new Intent(getActivity(), FinishBookActivity.class);
+        intent.putExtra(BookBaseActivity.KEY_BOOK_ID, bookId);
+        getActivity().startActivityForResult(intent, REQUEST_FINISH_BOOK);
+      }
+    });
     mSessionList.addHeaderView(headerBinding.getRoot(), null, false);
 
     mSessionAdapter = new ReadingSessionAdapter(getContext());

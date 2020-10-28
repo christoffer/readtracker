@@ -51,4 +51,14 @@
     android:layout_marginBottom="12dp"
     android:textSize="@dimen/textSizeMedium" />
 
+  <Button
+    android:id="@+id/finishBook"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/summary_finish_book"
+    tools:text="Finish book"
+    android:layout_marginVertical="16dp"
+    android:visibility="gone"
+    android:layout_gravity="center_horizontal" />
+
 </LinearLayout>

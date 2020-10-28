@@ -31,7 +31,7 @@
     <string name="welcome_start_using">Start using ReadTracker</string>
     <string name="welcome_welcome_to_readtracker">Welcome to ReadTracker!</string>
 
-    <string name="book_fragment_header_summary">Summary</string>
+    <string name="book_fragment_header_summary">Progress</string>
     <string name="book_fragment_header_read">Read</string>
     <string name="book_fragment_header_quotes">Quotes</string>
 
@@ -41,10 +41,11 @@
     <string name="summary_eta_for_three_days">That\'s about %1$s per day to finish it in three days.</string>
     <string name="summary_eta_for_one_week">That\'s about %1$s per day to finish it in a week.</string>
     <string name="summary_eta_for_two_weeks">That\'s about %1$s per day to finish it in two weeks.</string>
+    <string name="summary_finish_book">Finish book now</string>
 
     <string name="quote_fragment_add_new_quote">Add quote from book</string>
     <string name="quote_fragment_no_quotes">No quotes</string>
-    <string name="quote_activity_position">Page in book where the text start</string>
+    <string name="quote_activity_position">Position in book where the text start</string>
     <string name="quote_activity_save">Save quote</string>
     <string name="quote_activity_title">Quoting</string>
     <string name="quote_text">Text</string>

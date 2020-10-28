@@ -1,20 +1,25 @@
 package com.readtracker.android.custom_views;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.readtracker.R;
+import com.readtracker.android.activities.BookBaseActivity;
+import com.readtracker.android.activities.FinishBookActivity;
 import com.readtracker.android.db.Book;
 import com.readtracker.android.db.Session;
 import com.readtracker.android.support.ColorUtils;
 import com.readtracker.android.support.Utils;
 import com.readtracker.databinding.SessionListHeaderBinding;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 import androidx.core.content.ContextCompat;
@@ -31,16 +36,32 @@ public class SessionHeaderViewHandler {
   private final TextView mTextClosingRemark;
   private final TextView mTextTimeLeft;
   private final Context mContext;
+  private final Button mFinishBook;
+  private final OnFinishBookListener mBookFinishListener;
 
-  public SessionHeaderViewHandler(SessionListHeaderBinding binding) {
+  private Book mBook;
+
+  public interface OnFinishBookListener {
+    public void onFinishBook(final int bookId);
+  }
+
+  public SessionHeaderViewHandler(SessionListHeaderBinding binding, final OnFinishBookListener onFinishBookListener) {
     Log.d(TAG, "SessionHeaderView()");
     mSegmentBar = binding.segmentBar;
     mTextSummary = binding.textSummary;
     mTextReadingState = binding.textReadingState;
     mTextClosingRemark = binding.textClosingRemarkContent;
     mTextTimeLeft = binding.textTimeLeft;
+    mFinishBook = binding.finishBook;
+
+    mFinishBook.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        handleFinishBookClick();
+      }
+    });
 
     mContext = binding.getRoot().getContext();
+    mBookFinishListener = onFinishBookListener;
   }
 
   /** Defer populating the fields until both the UI and the data is available. */
@@ -57,6 +78,12 @@ public class SessionHeaderViewHandler {
       populateClosingRemark(book.getClosingRemark());
       populateSummary(book);
       populateTimeLeft(book);
+    }
+
+    if(book.getState() == Book.State.Reading) {
+      mFinishBook.setVisibility(View.VISIBLE);
+    } else {
+      mFinishBook.setVisibility(View.GONE);
     }
   }
 
@@ -114,6 +141,8 @@ public class SessionHeaderViewHandler {
   }
 
   private void populateTimeLeft(Book book) {
+    mBook = book;
+
     // Hide the time left field when no relevant content
     String timeLeft = null;
     int visibility = View.GONE;
@@ -136,6 +165,18 @@ public class SessionHeaderViewHandler {
     }
     mTextTimeLeft.setVisibility(visibility);
     mTextTimeLeft.setText(timeLeft);
+  }
+
+  private void handleFinishBookClick() {
+    Log.d(TAG, String.format(
+        "handleFinishBookClick() with book: %s and listener? %s",
+        mBook == null ? "NULL" : "" + mBook.getId(),
+        mBookFinishListener == null ? "NULL" : "Yes"
+    ));
+
+    if(mBook != null && mBookFinishListener != null) {
+      mBookFinishListener.onFinishBook(mBook.getId());
+    }
   }
 
   /** Generate a short, encouraging, phrase on how long the user has to read. */
