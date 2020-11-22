@@ -83,6 +83,8 @@ public class BookSearchActivity extends BaseActivity implements GoogleBookSearch
   }
 
   @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
+
     // Fall through when coming back from a successful book activity
     if(requestCode == REQUEST_ADD_BOOK && resultCode == BookSettingsActivity.RESULT_ADDED_BOOK) {
       Intent searchResultData = new Intent();

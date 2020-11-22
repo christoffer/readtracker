@@ -17,7 +17,7 @@ public class ExportedFileParser {
   /** Returns a list of all books in the import JSON file. */
   public List<Book> parse(String fileContent) throws JSONException {
     JSONObject jsonRoot = new JSONObject(fileContent);
-    List<Book> books = new ArrayList<Book>();
+    List<Book> books = new ArrayList<>();
     JSONArray jsonBooks = jsonRoot.getJSONArray("books");
 
     for(int index = 0; index < jsonBooks.length(); index++) {

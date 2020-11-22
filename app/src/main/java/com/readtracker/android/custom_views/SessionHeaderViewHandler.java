@@ -1,7 +1,6 @@
 package com.readtracker.android.custom_views;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
@@ -11,15 +10,12 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.readtracker.R;
-import com.readtracker.android.activities.BookBaseActivity;
-import com.readtracker.android.activities.FinishBookActivity;
 import com.readtracker.android.db.Book;
 import com.readtracker.android.db.Session;
 import com.readtracker.android.support.ColorUtils;
 import com.readtracker.android.support.Utils;
 import com.readtracker.databinding.SessionListHeaderBinding;
 
-import java.lang.ref.WeakReference;
 import java.util.List;
 
 import androidx.core.content.ContextCompat;

@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import androidx.fragment.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -43,6 +42,8 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.ref.WeakReference;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import androidx.fragment.app.Fragment;
 
 import static com.readtracker.android.support.StringUtils.hoursAndMinutesFromMillis;
 
@@ -98,7 +99,7 @@ public class ReadFragment extends BaseFragment {
   }
 
   @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+  public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     Log.d(TAG, "onCreateView()");
     binding = ReadFragmentBinding.inflate(inflater, container, false);
 
@@ -273,7 +274,6 @@ public class ReadFragment extends BaseFragment {
 
     // NOTE(christoffer) Casting to View to get Android linter to realize we're calling
     // view.performClick() below.
-    //noinspection RedundantCast
     ((View) mTimeSpinner).setOnTouchListener(new View.OnTouchListener() {
       @Override
       public boolean onTouch(View view, MotionEvent motionEvent) {

@@ -54,7 +54,7 @@ public class SummaryFragment extends BaseFragment implements SessionEditFragment
     mSessionList = binding.sessionList;
     mBlankText = binding.blankText;
 
-    @NonNull SessionListHeaderBinding headerBinding = SessionListHeaderBinding.inflate(inflater, container, false);
+    @NonNull SessionListHeaderBinding headerBinding = SessionListHeaderBinding.inflate(inflater, null, false);
     mSessionHeaderViewHandler = new SessionHeaderViewHandler(headerBinding, new SessionHeaderViewHandler.OnFinishBookListener() {
       @Override public void onFinishBook(final int bookId) {
         Log.d(TAG, "onFinishBook() called, showing finish book screen");

@@ -1,8 +1,6 @@
 package com.readtracker.android.db.export;
 
 import android.app.Activity;
-import android.app.DownloadManager;
-import android.content.Context;
 import android.util.Log;
 
 import com.readtracker.android.ReadTrackerApp;

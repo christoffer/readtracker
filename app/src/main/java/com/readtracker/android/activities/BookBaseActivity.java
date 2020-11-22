@@ -2,9 +2,6 @@ package com.readtracker.android.activities;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
-import androidx.core.app.NavUtils;
-import androidx.appcompat.app.ActionBar;
-
 import android.util.Log;
 import android.util.TypedValue;
 
@@ -15,6 +12,8 @@ import com.readtracker.android.db.DatabaseManager;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Iterator;
+
+import androidx.appcompat.app.ActionBar;
 
 public abstract class BookBaseActivity extends BaseActivity {
   public static final String KEY_BOOK_ID = "BOOK_ID";

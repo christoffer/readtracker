@@ -103,7 +103,7 @@ public class ReadTrackerApp extends Application {
    * Remove the flag for first time usage.
    */
   public void removeFirstTimeFlag() {
-    mPreferences.edit().putBoolean(KEY_FIRST_TIME, false).commit();
+    mPreferences.edit().putBoolean(KEY_FIRST_TIME, false).apply();
     mFirstTimeFlag = false;
   }
 
@@ -112,9 +112,6 @@ public class ReadTrackerApp extends Application {
    * <p/>
    * This is useful when switching between Activities before a progress dialog
    * has been completed.
-   *
-   * @param ctx     Context to show dialog in
-   * @param message Message to show
    */
   public void showProgressDialog(Context ctx, int messageStringResourceId) {
     clearProgressDialog();

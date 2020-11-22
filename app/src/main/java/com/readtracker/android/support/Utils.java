@@ -10,10 +10,17 @@ import android.util.TypedValue;
 
 import com.readtracker.android.db.Session;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Locale;
+import java.util.Objects;
 
 /**
  * Generic utility functions
@@ -35,7 +42,7 @@ public class Utils {
 
   /** Lifted from Google Guava. */
   public static boolean equal(Object a, Object b) {
-    return a == b || (a != null && a.equals(b));
+    return Objects.equals(a, b);
   }
 
   /** Returns the string content of a file. */
@@ -47,7 +54,7 @@ public class Utils {
    * Reads an InputStream and returns it as a String.
    */
   public static String readInputStream(InputStream inputStream) throws IOException {
-    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "UTF8"));
+    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
     StringBuilder out = new StringBuilder();
     String line;
     while((line = reader.readLine()) != null) {

@@ -4,8 +4,6 @@ import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import androidx.core.view.ViewCompat;
-import androidx.appcompat.widget.AppCompatButton;
 import android.util.Log;
 import android.widget.NumberPicker;
 
@@ -13,11 +11,14 @@ import com.readtracker.android.db.Book;
 
 import java.lang.reflect.Field;
 
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.core.view.ViewCompat;
+
 /**
  * UI utilities for dealing with colors.
  */
 public class ColorUtils {
-  private static String TAG = ColorUtils.class.getName();
+  private static final String TAG = ColorUtils.class.getName();
 
   /**
    * Set the colors of divides on a NumberPicker.
@@ -40,11 +41,7 @@ public class ColorUtils {
         try {
           ColorDrawable colorDrawable = new ColorDrawable(color);
           field.set(numberPicker, colorDrawable);
-        } catch(IllegalArgumentException e) {
-          Log.e(TAG, Log.getStackTraceString(e));
-        } catch(Resources.NotFoundException e) {
-          Log.e(TAG, Log.getStackTraceString(e));
-        } catch(IllegalAccessException e) {
+        } catch(IllegalArgumentException | Resources.NotFoundException | IllegalAccessException e) {
           Log.e(TAG, Log.getStackTraceString(e));
         }
         break;

@@ -217,7 +217,7 @@ public class BookAdapter extends BaseAdapter implements ListAdapter {
       }
 
       if(finishedAtText != null) {
-        // Colorize the dot icon next to the finished at label by appl
+        // Colorize the dot icon next to the finished at label
         final int bookColor = ColorUtils.getColorForBook(book);
         Drawable[] compoundDrawables = finishedAtText.getCompoundDrawables();
         Drawable dot = compoundDrawables.length > 0 ? compoundDrawables[0] : null;

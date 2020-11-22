@@ -1,13 +1,16 @@
 package com.readtracker.android.fragments;
 
 import android.content.Context;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.readtracker.R;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Arrays;
+
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
 
 /**
  * Handles the fragments for the book activity
@@ -20,12 +23,12 @@ public class BookFragmentAdapter extends FragmentPagerAdapter {
   public static enum Page { SUMMARY, READING, QUOTES }
 
   public BookFragmentAdapter(Context context, FragmentManager fm, Page[] pages) {
-    super(fm);
+    super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
     mContext = context;
     mPages = pages;
   }
 
-  @Override
+  @NotNull @Override
   public Fragment getItem(int position) {
     switch(mPages[position]) {
       case SUMMARY:

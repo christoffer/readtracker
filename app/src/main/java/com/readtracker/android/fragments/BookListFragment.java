@@ -2,7 +2,6 @@ package com.readtracker.android.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.fragment.app.ListFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +19,10 @@ import com.readtracker.android.adapters.BookAdapter;
 import com.readtracker.android.db.Book;
 import com.readtracker.android.support.ReadTrackerDataImportHandler;
 import com.squareup.otto.Bus;
+
+import org.jetbrains.annotations.NotNull;
+
+import androidx.fragment.app.ListFragment;
 
 /** List fragments for displaying a list of Books. */
 public class BookListFragment extends ListFragment {
@@ -134,7 +137,7 @@ public class BookListFragment extends ListFragment {
   }
 
   @Override
-  public void onListItemClick(ListView listView, View clickedView, int position, long id) {
+  public void onListItemClick(ListView listView, @NotNull View clickedView, int position, long id) {
     Book book = (Book) listView.getItemAtPosition(position);
     mBus.post(new BookClickedEvent(book));
   }

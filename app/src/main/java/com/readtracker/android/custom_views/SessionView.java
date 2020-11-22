@@ -6,7 +6,6 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.Typeface;
-import androidx.core.content.ContextCompat;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
@@ -20,6 +19,8 @@ import com.readtracker.android.support.Utils;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+
+import androidx.core.content.ContextCompat;
 
 import static com.readtracker.android.support.StringUtils.hoursAndMinutesFromMillis;
 
@@ -262,7 +263,7 @@ public class SessionView extends View {
     return Math.max(min, Math.min(max, durationRelativeSize));
   }
 
-  private class Node {
+  private static class Node {
     public final long durationSeconds;
     public final float progress; // 0..1
     public final long sessionTimestampMs;
@@ -277,10 +278,10 @@ public class SessionView extends View {
   /**
    * Sorts nodes by progress
    */
-  private class LocalSessionComparator implements Comparator<Node> {
+  private static class LocalSessionComparator implements Comparator<Node> {
     @Override public int compare(Node a, Node b) {
       // Multiply by 10000 to get a percent sensitivity with two decimals
-      return (int)(10000 * (a.progress - b.progress));
+      return (int) (10000 * (a.progress - b.progress));
     }
   }
 }

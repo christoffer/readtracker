@@ -653,7 +653,12 @@ public class BookSettingsActivity extends BookBaseActivity implements GoogleBook
       mCoverURL = attemptedCoverUrl;
       mCoverImage.setImageBitmap(bitmap);
       new Palette.Builder(bitmap).maximumColorCount(32).generate(new Palette.PaletteAsyncListener() {
-        @Override public void onGenerated(@NonNull Palette palette) {
+        @Override public void onGenerated(Palette palette) {
+          if(palette == null) {
+            Log.w(TAG, "Got a null palette from the Palette.Builder()");
+            return;
+          }
+
           mRefreshCoverButton.setVisibility(View.GONE);
           mSuggestedColors.clear();
           final Palette.Swatch vibrant = palette.getVibrantSwatch();

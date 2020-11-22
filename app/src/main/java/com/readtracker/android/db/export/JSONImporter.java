@@ -21,7 +21,7 @@ public class JSONImporter {
   private final DatabaseManager mDatabaseManager;
   private final ProgressListener mProgressListener;
 
-  private static ProgressListener DUMMY_LISTENER = new ProgressListener() {
+  private static final ProgressListener DUMMY_LISTENER = new ProgressListener() {
     @Override public void onProgressUpdate(int currentBook, int totalBooks) {}
   };
 

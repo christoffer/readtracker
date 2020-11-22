@@ -35,7 +35,6 @@ public class GoogleBookSearch {
         .build();
 
     try(Response response = client.newCall(request).execute()) {
-      //noinspection ConstantConditions body is non-null when response created from execute()
       String responseBody = response.body().string();
       JSONObject json = new JSONObject(responseBody);
       JSONArray jsonItems = json.optJSONArray("items");

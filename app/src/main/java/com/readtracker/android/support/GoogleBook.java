@@ -53,7 +53,7 @@ public class GoogleBook {
 
     JSONArray jsonAuthors = jsonVolumeInfo.optJSONArray("authors");
     if(jsonAuthors != null) {
-      ArrayList<String> authors = new ArrayList<String>();
+      ArrayList<String> authors = new ArrayList<>();
       for(int i = 0; i < jsonAuthors.length(); i++) {
         try {
           authors.add(jsonAuthors.getString(i));

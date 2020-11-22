@@ -3,10 +3,6 @@ package com.readtracker.android.activities;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-
-import androidx.fragment.app.FragmentManager;
-import androidx.viewpager.widget.PagerTabStrip;
-import androidx.viewpager.widget.ViewPager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,7 +21,13 @@ import com.readtracker.databinding.BookActivityBinding;
 import com.squareup.otto.Produce;
 import com.squareup.otto.Subscribe;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.ref.WeakReference;
+
+import androidx.fragment.app.FragmentManager;
+import androidx.viewpager.widget.PagerTabStrip;
+import androidx.viewpager.widget.ViewPager;
 
 import static com.readtracker.android.fragments.BookFragmentAdapter.Page;
 
@@ -82,7 +84,7 @@ public class BookActivity extends BookBaseActivity implements EndSessionDialog.E
   }
 
   @Override
-  protected void onSaveInstanceState(Bundle outState) {
+  protected void onSaveInstanceState(@NotNull Bundle outState) {
     super.onSaveInstanceState(outState);
     Log.d(TAG, "freezing state");
     if(mViewPager != null) {

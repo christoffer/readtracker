@@ -5,9 +5,6 @@ import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,10 +17,10 @@ import android.widget.Toast;
 
 import com.readtracker.R;
 import com.readtracker.android.ReadTrackerApp;
-import com.readtracker.android.activities.BookSettingsActivity;
-import com.readtracker.android.activities.QuoteSettingsActivity;
 import com.readtracker.android.activities.BookActivity;
 import com.readtracker.android.activities.BookBaseActivity;
+import com.readtracker.android.activities.BookSettingsActivity;
+import com.readtracker.android.activities.QuoteSettingsActivity;
 import com.readtracker.android.adapters.QuoteAdapter;
 import com.readtracker.android.db.Book;
 import com.readtracker.android.db.DatabaseManager;
@@ -32,9 +29,14 @@ import com.readtracker.android.support.ColorUtils;
 import com.readtracker.databinding.QuotesFragmentBinding;
 import com.squareup.otto.Subscribe;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 
 public class QuotesFragment extends BaseFragment {
   private static final String TAG = QuotesFragment.class.getName();
@@ -72,7 +74,7 @@ public class QuotesFragment extends BaseFragment {
       List<Quote> quotesInBook = mBook.getQuotes();
 
       // If we are running this after the activity result, then
-      if(mPendingNewQuote != null && quotesInBook.indexOf(mPendingNewQuote) < 0) {
+      if(mPendingNewQuote != null && !quotesInBook.contains(mPendingNewQuote)) {
         Log.d(TAG, "Adding non-existing pending quote");
         quotesInBook.add(mPendingNewQuote);
         mPendingNewQuote = null;
@@ -85,7 +87,7 @@ public class QuotesFragment extends BaseFragment {
   }
 
   @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+  public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     @NonNull QuotesFragmentBinding binding = QuotesFragmentBinding.inflate(inflater, container, false);
     mQuoteList = binding.quoteList;
     mTextBlankState = binding.blankText;
@@ -101,7 +103,7 @@ public class QuotesFragment extends BaseFragment {
   }
 
   @Override
-  public void onViewCreated(View view, Bundle savedInstanceState) {
+  public void onViewCreated(@NotNull View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     Log.d(TAG, "onViewCreated()");
     mAddQuoteButton.setEnabled(false);
@@ -248,7 +250,7 @@ public class QuotesFragment extends BaseFragment {
 
     public DeleteTask(int quoteId, QuotesFragment fragment) {
       mQuoteId = quoteId;
-      mFragment = new WeakReference<QuotesFragment>(fragment);
+      mFragment = new WeakReference<>(fragment);
       mDatabaseManager = fragment.getDatabaseManager();
     }
 

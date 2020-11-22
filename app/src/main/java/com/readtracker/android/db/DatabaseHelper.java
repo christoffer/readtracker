@@ -6,7 +6,6 @@ import android.util.Log;
 
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.db.SqliteAndroidDatabaseType;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import com.readtracker.BuildConfig;
@@ -38,7 +37,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
   private Dao<LocalHighlight, Integer> highlightDao = null;
 
   private final Map<Class<? extends Model>, Dao<? extends Model, Integer>> mDaoCache =
-    new HashMap<Class<? extends Model>, Dao<? extends Model, Integer>>();
+      new HashMap<>();
 
   /** Cached lookup of DAOs by class. */
   <T extends Model> Dao<T, Integer> getDaoByClass(Class<T> modelClass) {
@@ -175,14 +174,14 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
    */
   private void _upgradeToVersion3(SQLiteDatabase db, ConnectionSource cs) {
     Log.i(TAG, "Running database upgrade 3");
-    db.execSQL("ALTER TABLE LocalReading ADD COLUMN " + LocalReading.LAST_READ_AT_FIELD_NAME + " INTEGER NULL;");
-    db.execSQL("ALTER TABLE LocalReading ADD COLUMN " + LocalReading.LOCALLY_CLOSED_AT_FIELD_NAME + " INTEGER NULL;");
+    db.execSQL("ALTER TABLE LocalReading ADD COLUMN " + LocalReading.LAST_READ_AT_FIELD_NAME + " INTEGER;");
+    db.execSQL("ALTER TABLE LocalReading ADD COLUMN " + LocalReading.LOCALLY_CLOSED_AT_FIELD_NAME + " INTEGER;");
     db.execSQL("ALTER TABLE LocalReading ADD COLUMN " + LocalReading.PROGRESS_FIELD_NAME + " DOUBLE NOT NULL DEFAULT 0;");
 
-    db.execSQL("ALTER TABLE LocalReading ADD COLUMN " + LocalReading.READMILL_TOUCHED_AT_FIELD_NAME + " INTEGER NULL;");
-    db.execSQL("ALTER TABLE LocalReading ADD COLUMN " + LocalReading.READMILL_STATE_FIELD_NAME + " INTEGER NULL;");
+    db.execSQL("ALTER TABLE LocalReading ADD COLUMN " + LocalReading.READMILL_TOUCHED_AT_FIELD_NAME + " INTEGER;");
+    db.execSQL("ALTER TABLE LocalReading ADD COLUMN " + LocalReading.READMILL_STATE_FIELD_NAME + " INTEGER;");
 
-    db.execSQL("ALTER TABLE LocalReading ADD COLUMN " + LocalReading.READMILL_CLOSING_REMARK + " TEXT NULL;");
+    db.execSQL("ALTER TABLE LocalReading ADD COLUMN " + LocalReading.READMILL_CLOSING_REMARK + " TEXT;");
 
     try {
       TableUtils.createTableIfNotExists(cs, LocalHighlight.class);
@@ -210,7 +209,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
       // If two highlights have the same reading id, same content and same synced at: delete the one that has readmill_reading_id -1
 
       // Group by highlighted at (most likely to be unique)
-      HashMap<Long, List<LocalHighlight>> timestampMap = new HashMap<Long, List<LocalHighlight>>();
+      HashMap<Long, List<LocalHighlight>> timestampMap = new HashMap<>();
 
       for(LocalHighlight highlight : highlights) {
         if(highlight.highlightedAt == null) {
@@ -345,9 +344,9 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
    */
   private void _upgradeToVersion10(SQLiteDatabase db, ConnectionSource connectionSource) throws SQLException {
     Log.i(TAG, "Running database upgrade 10");
-    db.execSQL("ALTER TABLE LocalHighlight ADD COLUMN " + LocalHighlight.COMMENT_FIELD_NAME + " TEXT NULL;");
-    db.execSQL("ALTER TABLE LocalReading ADD COLUMN " + LocalReading.UPDATED_AT_FIELD_NAME + " INTEGER NULL;");
-    db.execSQL("ALTER TABLE LocalHighlight ADD COLUMN " + LocalHighlight.EDITED_AT_FIELD_NAME + " INTEGER NULL;");
+    db.execSQL("ALTER TABLE LocalHighlight ADD COLUMN " + LocalHighlight.COMMENT_FIELD_NAME + " TEXT;");
+    db.execSQL("ALTER TABLE LocalReading ADD COLUMN " + LocalReading.UPDATED_AT_FIELD_NAME + " INTEGER;");
+    db.execSQL("ALTER TABLE LocalHighlight ADD COLUMN " + LocalHighlight.EDITED_AT_FIELD_NAME + " INTEGER;");
     db.execSQL("ALTER TABLE LocalHighlight ADD COLUMN " + LocalHighlight.DELETED_BY_USER_FIELD_NAME + " INTEGER NOT NULL DEFAULT 0;");
   }
 
@@ -370,7 +369,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
   private void _upgradeToVersion13(SQLiteDatabase db, ConnectionSource connectionSource) throws SQLException {
     Log.i(TAG, "Running database upgrade 13");
-    db.execSQL("ALTER TABLE `books` ADD COLUMN `book_color` INTEGER NULL;");
+    db.execSQL("ALTER TABLE `books` ADD COLUMN `book_color` INTEGER;");
   }
 
   /** Helper method for migrating sessions with timestamps from the broken 3.1 version. */

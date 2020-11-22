@@ -112,11 +112,13 @@ public class HomeActivity extends BaseActivity implements ImportReadTrackerFileT
 
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
+
     final boolean returnFromReadingSession = requestCode == REQUEST_READING_SESSION && resultCode == RESULT_OK;
     final boolean readingSessionFinishedBook = data != null && data.getBooleanExtra(BookActivity.KEY_FINISHED, false);
     final boolean returnFromAddBook = requestCode == ActivityCodes.REQUEST_ADD_BOOK;
 
-    if (ReadTrackerDataImportHandler.handleActivityResult(this, requestCode, resultCode, data)) {
+    if(ReadTrackerDataImportHandler.handleActivityResult(this, requestCode, resultCode, data)) {
       // Result was for an import request which was handled, so bail out
       return;
     }

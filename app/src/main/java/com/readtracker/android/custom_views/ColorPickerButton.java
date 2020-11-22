@@ -15,7 +15,7 @@ import com.readtracker.android.support.Utils;
 
 public class ColorPickerButton extends androidx.appcompat.widget.AppCompatImageButton {
   private static int[] COLOR_WHEEL_COLORS;
-  private static int OUTLINE_WIDTH_DP = 4;
+  private static final int OUTLINE_WIDTH_DP = 4;
   private static final Paint mOutlinePaint = new Paint();
   private static final Paint mColorDotBackgroundPaint = new Paint();
   private int mOutlineStrokeWidthPx;

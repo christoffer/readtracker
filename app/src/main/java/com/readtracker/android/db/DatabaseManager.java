@@ -64,11 +64,10 @@ public class DatabaseManager {
     try {
       if(instance.getId() > 0) {
         dao.update(instance);
-        return true;
       } else {
         dao.create(instance);
-        return true;
       }
+      return true;
     } catch(SQLException e) {
       throw new RuntimeException(e);
     }

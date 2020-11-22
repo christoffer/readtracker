@@ -53,15 +53,15 @@ public class Book extends Model {
 
   // Use manual handling of foreign keys here as we want to have complete
   // control over when and where these are loaded.
-  private List<Session> mSessions = new ArrayList<Session>();
-  private List<Quote> mQuotes = new ArrayList<Quote>();
+  private List<Session> mSessions = new ArrayList<>();
+  private List<Quote> mQuotes = new ArrayList<>();
 
   public Book() { }
 
   /** Load all sessions for this book from the database. */
   public void loadSessions(DatabaseManager databaseManager) {
     mSessions = databaseManager.getSessionsForBook(this);
-    for(Session session: mSessions) {
+    for(Session session : mSessions) {
       session.setBook(this);
     }
   }

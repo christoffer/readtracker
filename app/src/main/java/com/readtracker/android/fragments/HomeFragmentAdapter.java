@@ -1,13 +1,14 @@
 package com.readtracker.android.fragments;
 
 import android.content.res.Resources;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentStatePagerAdapter;
 import android.util.Log;
 
 import com.readtracker.R;
 import com.readtracker.android.activities.BaseActivity;
 import com.readtracker.android.db.Book;
+
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentStatePagerAdapter;
 
 /**
  * Managers a set of local readings and partitions them into two states:
@@ -33,7 +34,7 @@ public class HomeFragmentAdapter extends FragmentStatePagerAdapter {
   private final boolean mUseFullDates;
 
   public HomeFragmentAdapter(BaseActivity activity, boolean useCompactFinishList, boolean useFullDates) {
-    super(activity.getSupportFragmentManager());
+    super(activity.getSupportFragmentManager(), BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
     mResources = activity.getResources();
     mUseCompactFinishList = useCompactFinishList;
     mUseFullDates = useFullDates;
